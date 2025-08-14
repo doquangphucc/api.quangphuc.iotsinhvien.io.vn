@@ -41,16 +41,17 @@ try {
     $params = [$username];
     
     if ($status === 'completed') {
-        $statusCondition = ' AND is_completed = 1';
+        $statusCondition = ' AND w.status = 1';
     } elseif ($status === 'pending') {
-        $statusCondition = ' AND is_completed = 0';
+        $statusCondition = ' AND w.status = 0';
     }
 
     // Đếm tổng số wishes
     $countStmt = $pdo->prepare("
         SELECT COUNT(*) as total 
-        FROM wishes 
-        WHERE username = ? $statusCondition
+        FROM wishes w
+        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+        WHERE tk.user = ? $statusCondition
     ");
     $countStmt->execute($params);
     $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -58,11 +59,12 @@ try {
     // Lấy danh sách wishes với phân trang
     $stmt = $pdo->prepare("
         SELECT 
-            id, title, description, category, priority, price, 
-            store_location, purchase_link, is_completed, 
-            created_at, updated_at
-        FROM wishes 
-        WHERE username = ? $statusCondition
+            w.id, w.title, w.description, w.category, w.priority, w.price, 
+            w.product_url as store_location, w.product_url as purchase_link, 
+            w.status as is_completed, w.created_at, w.updated_at
+        FROM wishes w
+        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+        WHERE tk.user = ? $statusCondition
         ORDER BY $sort $order
         LIMIT ? OFFSET ?
     ");
@@ -135,13 +137,14 @@ try {
     $fullStatsStmt = $pdo->prepare("
         SELECT 
             COUNT(*) as total_count,
-            SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as completed_count,
-            SUM(CASE WHEN is_completed = 0 THEN 1 ELSE 0 END) as pending_count,
-            COALESCE(SUM(price), 0) as total_amount,
-            COALESCE(SUM(CASE WHEN is_completed = 1 THEN price ELSE 0 END), 0) as completed_amount,
-            COALESCE(SUM(CASE WHEN is_completed = 0 THEN price ELSE 0 END), 0) as pending_amount
-        FROM wishes 
-        WHERE username = ? $statusCondition
+            SUM(CASE WHEN w.status = 1 THEN 1 ELSE 0 END) as completed_count,
+            SUM(CASE WHEN w.status = 0 THEN 1 ELSE 0 END) as pending_count,
+            COALESCE(SUM(w.price), 0) as total_amount,
+            COALESCE(SUM(CASE WHEN w.status = 1 THEN w.price ELSE 0 END), 0) as completed_amount,
+            COALESCE(SUM(CASE WHEN w.status = 0 THEN w.price ELSE 0 END), 0) as pending_amount
+        FROM wishes w
+        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+        WHERE tk.user = ? $statusCondition
     ");
     $fullStatsStmt->execute($params);
     $fullStats = $fullStatsStmt->fetch(PDO::FETCH_ASSOC);

@@ -41,16 +41,17 @@ try {
     $params = [$username];
     
     if ($status === 'completed') {
-        $statusCondition = ' AND is_completed = 1';
+        $statusCondition = ' AND t.status = 1';
     } elseif ($status === 'pending') {
-        $statusCondition = ' AND is_completed = 0';
+        $statusCondition = ' AND t.status = 0';
     }
 
     // Đếm tổng số tasks
     $countStmt = $pdo->prepare("
         SELECT COUNT(*) as total 
-        FROM tasks 
-        WHERE username = ? $statusCondition
+        FROM tasks t
+        LEFT JOIN tai_khoan tk ON t.user_id = tk.id
+        WHERE tk.user = ? $statusCondition
     ");
     $countStmt->execute($params);
     $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -58,15 +59,17 @@ try {
     // Lấy danh sách tasks với phân trang
     $stmt = $pdo->prepare("
         SELECT 
-            id, title, description, category, priority, 
-            due_date, is_completed, created_at, updated_at,
+            t.id, t.title, t.description, t.category, t.priority, 
+            t.scheduled_date as due_date, t.status as is_completed, 
+            t.created_at, t.updated_at,
             CASE 
-                WHEN due_date IS NOT NULL AND due_date < CURDATE() AND is_completed = 0 
+                WHEN t.scheduled_date IS NOT NULL AND t.scheduled_date < CURDATE() AND t.status = 0 
                 THEN 1 
                 ELSE 0 
             END as is_overdue
-        FROM tasks 
-        WHERE username = ? $statusCondition
+        FROM tasks t
+        LEFT JOIN tai_khoan tk ON t.user_id = tk.id
+        WHERE tk.user = ? $statusCondition
         ORDER BY $sort $order
         LIMIT ? OFFSET ?
     ");
