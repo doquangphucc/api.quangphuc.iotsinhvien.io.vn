@@ -208,6 +208,16 @@
     box-shadow: 0 0 0 3px rgba(231, 111, 81, 0.1);
 }
 
+.datetime-input::placeholder {
+    color: #d2691e;
+    opacity: 0.7;
+}
+
+.datetime-input.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
 /* Modal Footer */
 .modal-footer {
     padding: 20px 30px 25px;

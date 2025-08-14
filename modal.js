@@ -80,9 +80,11 @@ class CustomModal {
                             <div class="datetime-group">
                                 <div>
                                     <input 
-                                        type="date" 
+                                        type="text" 
                                         class="datetime-input" 
                                         id="modal-date"
+                                        placeholder="dd/mm/yyyy"
+                                        maxlength="10"
                                     >
                                 </div>
                                 <div>
@@ -172,6 +174,97 @@ class CustomModal {
         
         // Xác nhận khi click nút xác nhận
         modal.querySelector('#modal-confirm-btn').addEventListener('click', () => this.confirm());
+        
+        // Setup date input formatting
+        this.setupDateInput();
+    }
+    
+    setupDateInput() {
+        const dateInput = this.modal.querySelector('#modal-date');
+        
+        // Format input as user types
+        dateInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2);
+            }
+            if (value.length >= 5) {
+                value = value.substring(0, 5) + '/' + value.substring(5, 9);
+            }
+            
+            e.target.value = value;
+        });
+        
+        // Validate date on blur
+        dateInput.addEventListener('blur', (e) => {
+            this.validateDateInput(e.target);
+        });
+    }
+    
+    validateDateInput(input) {
+        const value = input.value;
+        if (!value) return true;
+        
+        const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        const match = value.match(datePattern);
+        
+        if (!match) {
+            input.classList.add('error');
+            return false;
+        }
+        
+        const day = parseInt(match[1]);
+        const month = parseInt(match[2]);
+        const year = parseInt(match[3]);
+        
+        // Basic validation
+        if (month < 1 || month > 12 || day < 1 || day > 31) {
+            input.classList.add('error');
+            return false;
+        }
+        
+        // More detailed validation
+        const date = new Date(year, month - 1, day);
+        if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+            input.classList.add('error');
+            return false;
+        }
+        
+        input.classList.remove('error');
+        return true;
+    }
+    
+    // Convert dd/mm/yyyy to yyyy-mm-dd for database
+    formatDateForDatabase(dateString) {
+        if (!dateString) return null;
+        
+        const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        const match = dateString.match(datePattern);
+        
+        if (!match) return null;
+        
+        const day = match[1];
+        const month = match[2]; 
+        const year = match[3];
+        
+        return `${year}-${month}-${day}`;
+    }
+    
+    // Convert yyyy-mm-dd to dd/mm/yyyy for display
+    formatDateForDisplay(dateString) {
+        if (!dateString) return '';
+        
+        const datePattern = /^(\d{4})-(\d{2})-(\d{2})$/;
+        const match = dateString.match(datePattern);
+        
+        if (!match) return dateString;
+        
+        const year = match[1];
+        const month = match[2];
+        const day = match[3];
+        
+        return `${day}/${month}/${year}`;
     }
 
     // Hiển thị modal cho task
@@ -264,12 +357,15 @@ class CustomModal {
         const date = this.modal.querySelector('#modal-date').value;
         const time = this.modal.querySelector('#modal-time').value;
         
+        // Convert date format from dd/mm/yyyy to yyyy-mm-dd
+        const scheduledDate = this.formatDateForDatabase(date);
+        
         const baseData = {
             content,
             description,
             category,
             priority,
-            scheduled_date: date || null,
+            scheduled_date: scheduledDate,
             scheduled_time: time || null
         };
 
@@ -284,7 +380,8 @@ class CustomModal {
                 price: price ? parseFloat(price) : null,
                 currency: currency || 'VND',
                 product_url: productUrl || null,
-                purchase_status: purchaseStatus
+                purchase_status: purchaseStatus,
+                target_date: scheduledDate // For wishes, use same date as target_date
             };
         }
 
@@ -327,6 +424,12 @@ class CustomModal {
             contentInput.classList.remove('error');
             contentInput.classList.add('success');
             contentError.classList.remove('show');
+        }
+
+        // Validate date format
+        const dateInput = this.modal.querySelector('#modal-date');
+        if (dateInput.value && !this.validateDateInput(dateInput)) {
+            isValid = false;
         }
 
         // Validate price nếu có hiển thị
@@ -397,7 +500,10 @@ class CustomModal {
             if (data.description) this.modal.querySelector('#modal-description').value = data.description;
             if (data.category) this.modal.querySelector('#modal-category').value = data.category;
             if (data.priority) this.modal.querySelector('#modal-priority').value = data.priority;
-            if (data.scheduled_date) this.modal.querySelector('#modal-date').value = data.scheduled_date;
+            if (data.scheduled_date) {
+                // Convert yyyy-mm-dd to dd/mm/yyyy for display
+                this.modal.querySelector('#modal-date').value = this.formatDateForDisplay(data.scheduled_date);
+            }
             if (data.scheduled_time) this.modal.querySelector('#modal-time').value = data.scheduled_time;
 
             // Wish specific fields
@@ -406,6 +512,11 @@ class CustomModal {
                 if (data.currency) this.modal.querySelector('#modal-currency').value = data.currency;
                 if (data.product_url) this.modal.querySelector('#modal-url').value = data.product_url;
                 if (data.purchase_status) this.modal.querySelector('#modal-purchase-status').value = data.purchase_status;
+                
+                // For wishes, also check target_date
+                if (data.target_date && !data.scheduled_date) {
+                    this.modal.querySelector('#modal-date').value = this.formatDateForDisplay(data.target_date);
+                }
             }
         }, 100);
     }

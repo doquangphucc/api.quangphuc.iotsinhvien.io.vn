@@ -828,7 +828,7 @@
 
     <!-- Sidebar cố định -->
     <aside class="sidebar">
-        <h3>📋 Tác vụ</h3>
+    <h3>📋 Tác vụ</h3>
         
         <button class="action-btn btn-add-task" onclick="openAddTask()">
             ✅ Thêm việc muốn làm
@@ -1161,6 +1161,11 @@
                             }
                         }
                     });
+                    
+                    // Refresh stats after toggle
+                    setTimeout(() => {
+                        loadDashboardStats();
+                    }, 300);
                 } else {
                     alert('Có lỗi xảy ra: ' + (result.message || 'Không thể cập nhật'));
                 }
@@ -1272,7 +1277,10 @@
                         
                         if (result.success) {
                             showNotification('✅ Thêm task thành công!', 'success');
-                            await initializeBambooNodes();
+                            // Refresh dashboard data
+                            setTimeout(() => {
+                                refreshDashboardData();
+                            }, 500);
                         } else {
                             showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm task'), 'error');
                         }
@@ -1343,7 +1351,10 @@
                         
                         if (result.success) {
                             showNotification('✅ Thêm wish thành công!', 'success');
-                            await initializeBambooNodes();
+                            // Refresh dashboard data
+                            setTimeout(() => {
+                                refreshDashboardData();
+                            }, 500);
                         } else {
                             showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm wish'), 'error');
                         }
@@ -1446,6 +1457,124 @@
                     }
                 });
             }
+        });
+
+        // Load dashboard stats from API
+        async function loadDashboardStats() {
+            try {
+                const username = localStorage.getItem('username') || 'User';
+                const response = await fetch(`api/get-dashboard-stats.php?username=${encodeURIComponent(username)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateDashboardStats(result.data);
+                } else {
+                    console.error('Error loading dashboard stats:', result.message);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        // Update dashboard stats display
+        function updateDashboardStats(stats) {
+            // Update stats cards
+            const totalItemsEl = document.getElementById('total-items');
+            const completedItemsEl = document.getElementById('completed-items');
+            const pendingItemsEl = document.getElementById('pending-items');
+            const completionRateEl = document.getElementById('completion-rate');
+
+            if (totalItemsEl) totalItemsEl.textContent = stats.overall.total_items;
+            if (completedItemsEl) completedItemsEl.textContent = stats.overall.completed_items;
+            if (pendingItemsEl) pendingItemsEl.textContent = stats.overall.total_items - stats.overall.completed_items;
+            if (completionRateEl) completionRateEl.textContent = stats.overall.overall_completion_rate + '%';
+
+            // Add animations
+            animateCounter(totalItemsEl, stats.overall.total_items);
+            animateCounter(completedItemsEl, stats.overall.completed_items);
+            animateCounter(pendingItemsEl, stats.overall.total_items - stats.overall.completed_items);
+
+            console.log('Dashboard Stats Updated:', stats);
+        }
+
+        // Animate counter numbers
+        function animateCounter(element, targetValue, duration = 1000) {
+            if (!element || targetValue === 0) return;
+            
+            const startValue = 0;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const currentValue = Math.round(startValue + (targetValue - startValue) * easeOut);
+                
+                if (element.id === 'completion-rate') {
+                    element.textContent = currentValue + '%';
+                } else {
+                    element.textContent = currentValue;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Load recent dashboard items
+        async function loadDashboardItems(type = 'both', status = 'all', limit = 10) {
+            try {
+                const username = localStorage.getItem('username') || 'User';
+                const response = await fetch(`api/get-dashboard-items.php?username=${encodeURIComponent(username)}&type=${type}&status=${status}&limit=${limit}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.data;
+                } else {
+                    console.error('Error loading dashboard items:', result.message);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard items:', error);
+                return null;
+            }
+        }
+
+        // Refresh dashboard data
+        async function refreshDashboardData() {
+            console.log('Refreshing dashboard data...');
+            
+            // Load stats
+            await loadDashboardStats();
+            
+            // Load recent items
+            const items = await loadDashboardItems('both', 'all', 20);
+            if (items) {
+                console.log('Recent items:', items);
+                // Could update sidebar or other parts with recent items
+            }
+
+            // Reload timeline data
+            timelineData = {}; // Clear cache
+            await initializeBambooNodes();
+        }
+
+        // Auto refresh every 30 seconds
+        function startAutoRefresh() {
+            setInterval(refreshDashboardData, 30000); // 30 seconds
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            loadDashboardStats();
+            
+            // Start auto refresh
+            startAutoRefresh();
         });
 
         // Kiểm tra đăng nhập (đơn giản)
