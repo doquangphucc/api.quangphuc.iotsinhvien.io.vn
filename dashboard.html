@@ -910,15 +910,41 @@
         async function loadTimelineData(startDate, endDate) {
             try {
                 const username = localStorage.getItem('username') || 'User';
-                const response = await fetch(`api/get-timeline.php?username=${encodeURIComponent(username)}&start_date=${startDate}&end_date=${endDate}`);
+                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+                const response = await fetch(`api/get-timeline-data.php?username=${encodeURIComponent(username)}&days=${days}&limit=100`);
                 const result = await response.json();
                 
                 if (result.success) {
+                    // Chuyển đổi data từ API mới sang format cũ để tương thích
+                    const convertedData = {};
+                    result.data.forEach(item => {
+                        const date = item.timestamp.split('T')[0]; // Lấy YYYY-MM-DD
+                        if (!convertedData[date]) {
+                            convertedData[date] = {
+                                date: date,
+                                tasks: [],
+                                wishes: []
+                            };
+                        }
+                        
+                        if (item.type === 'task') {
+                            convertedData[date].tasks.push({
+                                title: item.title,
+                                is_completed: item.is_completed
+                            });
+                        } else {
+                            convertedData[date].wishes.push({
+                                title: item.title,
+                                is_completed: item.is_completed
+                            });
+                        }
+                    });
+                    
                     // Lưu dữ liệu vào cache
-                    result.data.forEach(dayData => {
+                    Object.values(convertedData).forEach(dayData => {
                         timelineData[dayData.date] = dayData;
                     });
-                    return result.data;
+                    return Object.values(convertedData);
                 } else {
                     console.error('Error loading timeline data:', result.message);
                     return [];
@@ -1177,6 +1203,10 @@
 
         // Infinite scroll functionality đã được loại bỏ để tối ưu hiệu suất
         // Dashboard chỉ hiển thị timeline overview, chi tiết sẽ xem trong các trang riêng
+        function setupInfiniteScroll() {
+            // Placeholder function - infinite scroll removed for performance
+            console.log('Infinite scroll setup skipped for performance');
+        }
 
         // Khởi tạo khi trang load
         setupInfiniteScroll();
