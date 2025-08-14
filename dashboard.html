@@ -917,9 +917,12 @@
                 console.log('Timeline API Response:', result); // Debug log
                 
                 if (result.success) {
+                    console.log('Raw API data items:', result.data); // Debug raw data
+                    
                     // Chuyển đổi data từ API mới sang format cũ để tương thích
                     const convertedData = {};
                     result.data.forEach(item => {
+                        console.log('Processing item:', item); // Debug each item
                         const date = item.timestamp.split('T')[0]; // Lấy YYYY-MM-DD
                         if (!convertedData[date]) {
                             convertedData[date] = {
@@ -941,6 +944,8 @@
                             });
                         }
                     });
+                    
+                    console.log('Converted data:', convertedData); // Debug converted data
                     
                     // Lưu dữ liệu vào cache
                     Object.values(convertedData).forEach(dayData => {
