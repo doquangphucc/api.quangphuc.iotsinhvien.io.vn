@@ -109,6 +109,114 @@
             box-shadow: 0 5px 15px rgba(231, 111, 81, 0.4);
         }
 
+        /* Modal đăng xuất */
+        .logout-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logout-modal-content {
+            background: linear-gradient(145deg, #fff 0%, #fef7f0 100%);
+            padding: 35px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
+            border: 2px solid rgba(231, 111, 81, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .logout-modal-content h3 {
+            color: #e76f51;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .logout-modal-content p {
+            color: #8b4513;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .logout-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-logout-confirm,
+        .btn-logout-cancel {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 130px;
+            font-family: 'Merriweather', serif;
+        }
+
+        .btn-logout-confirm {
+            background: linear-gradient(135deg, #e76f51, #f4a261);
+            color: white;
+            box-shadow: 0 5px 15px rgba(231, 111, 81, 0.3);
+        }
+
+        .btn-logout-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 111, 81, 0.4);
+        }
+
+        .btn-logout-cancel {
+            background: linear-gradient(135deg, #e9c46a, #f4a261);
+            color: #8b4513;
+            box-shadow: 0 5px 15px rgba(233, 196, 106, 0.3);
+        }
+
+        .btn-logout-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 196, 106, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .logout-modal-content {
+                padding: 25px 20px;
+                margin: 20px;
+            }
+            
+            .logout-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-logout-confirm,
+            .btn-logout-cancel {
+                width: 100%;
+            }
+        }
+
         /* Sidebar cố định */
         .sidebar {
             position: fixed;
@@ -390,16 +498,55 @@
         }
 
         function logout() {
-            if (confirm('Bạn có chắc muốn đăng xuất?')) {
-                localStorage.removeItem('username');
-                window.location.href = 'index.html';
-            }
+            showLogoutModal();
         }
+
+        function showLogoutModal() {
+            document.getElementById('logout-backdrop').style.display = 'block';
+        }
+
+        function hideLogoutModal() {
+            document.getElementById('logout-backdrop').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+
+        // Đóng modal khi click vào backdrop
+        document.addEventListener('DOMContentLoaded', function() {
+            const backdrop = document.getElementById('logout-backdrop');
+            if (backdrop) {
+                backdrop.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        hideLogoutModal();
+                    }
+                });
+            }
+        });
 
         // Kiểm tra đăng nhập (đơn giản)
         if (!username || username === 'User') {
             // Có thể redirect về trang login nếu chưa đăng nhập
         }
     </script>
+
+    <!-- Modal đăng xuất -->
+    <div class="logout-modal-backdrop" id="logout-backdrop" style="display: none;">
+        <div class="logout-modal-content">
+            <h3>🍂 Xác nhận đăng xuất</h3>
+            <p>Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?</p>
+            <div class="logout-buttons">
+                <button type="button" class="btn-logout-confirm" onclick="confirmLogout()">
+                    🚪 Đăng xuất
+                </button>
+                <button type="button" class="btn-logout-cancel" onclick="hideLogoutModal()">
+                    🍃 Ở lại
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
