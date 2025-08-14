@@ -103,13 +103,17 @@ try {
 
     // Lấy hoạt động gần đây (10 items gần nhất)
     $recentStmt = $pdo->prepare("
-        (SELECT 'task' as type, id, title, created_at, is_completed, NULL as price 
-         FROM tasks WHERE username = ? 
-         ORDER BY created_at DESC LIMIT 5)
+        (SELECT 'task' as type, t.id, t.title, t.created_at, t.status as is_completed, NULL as price 
+         FROM tasks t
+         LEFT JOIN tai_khoan tk ON t.user_id = tk.id
+         WHERE tk.user = ? 
+         ORDER BY t.created_at DESC LIMIT 5)
         UNION ALL
-        (SELECT 'wish' as type, id, title, created_at, is_completed, price 
-         FROM wishes WHERE username = ? 
-         ORDER BY created_at DESC LIMIT 5)
+        (SELECT 'wish' as type, w.id, w.title, w.created_at, w.status as is_completed, w.price 
+         FROM wishes w
+         LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+         WHERE tk.user = ? 
+         ORDER BY w.created_at DESC LIMIT 5)
         ORDER BY created_at DESC
         LIMIT 10
     ");
@@ -122,24 +126,26 @@ try {
     // Lấy thống kê theo thời gian (7 ngày gần nhất)
     $weeklyStmt = $pdo->prepare("
         SELECT 
-            DATE(created_at) as date,
+            DATE(t.created_at) as date,
             'task' as type,
             COUNT(*) as count,
-            SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as completed_count
-        FROM tasks 
-        WHERE username = ? AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-        GROUP BY DATE(created_at), type
+            SUM(CASE WHEN t.status = 1 THEN 1 ELSE 0 END) as completed_count
+        FROM tasks t
+        LEFT JOIN tai_khoan tk ON t.user_id = tk.id
+        WHERE tk.user = ? AND t.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE(t.created_at), type
         
         UNION ALL
         
         SELECT 
-            DATE(created_at) as date,
+            DATE(w.created_at) as date,
             'wish' as type,
             COUNT(*) as count,
-            SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as completed_count
-        FROM wishes 
-        WHERE username = ? AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-        GROUP BY DATE(created_at), type
+            SUM(CASE WHEN w.status = 1 THEN 1 ELSE 0 END) as completed_count
+        FROM wishes w
+        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+        WHERE tk.user = ? AND w.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE(w.created_at), type
         
         ORDER BY date DESC
     ");
