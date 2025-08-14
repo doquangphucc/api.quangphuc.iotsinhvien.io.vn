@@ -12,8 +12,10 @@ try {
     $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
     $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
 
-    // Xây dựng query
-    $sql = "SELECT id, title, description, due_date, is_completed, created_at 
+    // Xây dựng query với tất cả các trường mới
+    $sql = "SELECT id, item_id, title, description, category, priority, 
+                   scheduled_date, scheduled_time, due_date, is_completed, 
+                   created_at, updated_at 
             FROM tasks";
     
     $params = [];
@@ -46,7 +48,17 @@ try {
     foreach ($tasks as &$task) {
         $task['is_completed'] = (bool)$task['is_completed'];
         $task['due_date'] = $task['due_date'] ? date('d/m/Y', strtotime($task['due_date'])) : null;
+        $task['scheduled_date'] = $task['scheduled_date'] ? date('d/m/Y', strtotime($task['scheduled_date'])) : null;
         $task['created_at'] = date('d/m/Y H:i', strtotime($task['created_at']));
+        $task['updated_at'] = $task['updated_at'] ? date('d/m/Y H:i', strtotime($task['updated_at'])) : null;
+        
+        // Format priority icon
+        $priorityIcons = [
+            'low' => '🟢',
+            'medium' => '🟡', 
+            'high' => '🔴'
+        ];
+        $task['priority_icon'] = $priorityIcons[$task['priority']] ?? '🟡';
     }
 
     echo json_encode([

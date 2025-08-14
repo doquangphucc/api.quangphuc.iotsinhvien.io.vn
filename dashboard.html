@@ -6,6 +6,8 @@
     <title>Dashboard - Dòng thời gian cá nhân</title>
     <!-- Font web hỗ trợ tiếng Việt -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+    <!-- Custom Modal CSS -->
+    <link rel="stylesheet" href="modal.css">
     <style>
         * {
             margin: 0;
@@ -638,13 +640,13 @@
             border-radius: 15px;
             box-shadow: 0 3px 10px rgba(139, 69, 19, 0.15);
             border: 1px solid rgba(231, 111, 81, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .branch-content.completed {
@@ -652,9 +654,23 @@
             background: rgba(200, 200, 200, 0.8);
         }
 
-        .branch-content.completed .branch-text {
+        .branch-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 5px 0;
+        }
+
+        .branch-item.completed .branch-text {
             text-decoration: line-through;
             color: #888;
+        }
+
+        .branch-item.empty {
+            color: #999;
+            font-style: italic;
+            justify-content: center;
         }
 
         .tick-btn {
@@ -847,91 +863,11 @@
                     
                     <!-- Thân tre với các đốt -->
                     <div class="bamboo-trunk" id="bamboo-trunk">
-                        <!-- Các đốt sẽ được tạo bằng JavaScript -->
+                        <!-- Các đốt sẽ được tạo bằng JavaScript từ dữ liệu API -->
                         <div class="loading-indicator" id="loading" style="display: none;">
                             <div class="loading-text">Đang tải thêm ngày... 🍂</div>
                         </div>
                     </div>
-                </div>
-            </div>
-                        <!-- Đốt hôm nay -->
-                        <div class="bamboo-node today">
-                            <div class="node-date">Hôm nay</div>
-                            <div class="node-branches">
-                                <div class="branch-left task-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">�</span>
-                                        <span class="branch-text">Học tiếng Anh</span>
-                                    </div>
-                                </div>
-                                <div class="branch-right wish-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">🛒</span>
-                                        <span class="branch-text">Laptop mới</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Đốt hôm qua -->
-                        <div class="bamboo-node yesterday">
-                            <div class="node-date">Hôm qua</div>
-                            <div class="node-branches">
-                                <div class="branch-left task-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">📝</span>
-                                        <span class="branch-text">Tập thể dục</span>
-                                    </div>
-                                </div>
-                                <div class="branch-right wish-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">🛒</span>
-                                        <span class="branch-text">Áo khoác</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Đốt 2 ngày trước -->
-                        <div class="bamboo-node">
-                            <div class="node-date">2 ngày trước</div>
-                            <div class="node-branches">
-                                <div class="branch-left task-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">📝</span>
-                                        <span class="branch-text">Đọc sách</span>
-                                    </div>
-                                </div>
-                                <div class="branch-right wish-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">🛒</span>
-                                        <span class="branch-text">Tai nghe</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Đốt 3 ngày trước -->
-                        <div class="bamboo-node">
-                            <div class="node-date">3 ngày trước</div>
-                            <div class="node-branches">
-                                <div class="branch-left task-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">📝</span>
-                                        <span class="branch-text">Viết blog</span>
-                                    </div>
-                                </div>
-                                <div class="branch-right wish-branch">
-                                    <div class="branch-content">
-                                        <span class="branch-icon">🛒</span>
-                                        <span class="branch-text">Bàn phím</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -1234,75 +1170,8 @@
             }
         }
 
-        // Infinite scroll functionality
-        let loadedMonths = 1; // Đã load 1 tháng
-        const maxMonths = 12; // Tối đa 1 năm
-
-        function loadMoreBambooNodes() {
-            const bambooTrunk = document.querySelector('.bamboo-trunk');
-            const loadingElement = document.getElementById('bamboo-loading');
-            
-            if (loadedMonths >= maxMonths) {
-                loadingElement.style.display = 'none';
-                return;
-            }
-
-            // Tạo thêm các đốt cho tháng tiếp theo
-            const monthsAgo = loadedMonths + 1;
-            const monthNames = [
-                'tháng trước', '2 tháng trước', '3 tháng trước', '4 tháng trước',
-                '5 tháng trước', '6 tháng trước', '7 tháng trước', '8 tháng trước',
-                '9 tháng trước', '10 tháng trước', '11 tháng trước', '1 năm trước'
-            ];
-
-            const tasks = [
-                'Học JavaScript', 'Tập yoga', 'Viết nhật ký', 'Đọc sách văn học',
-                'Học Photoshop', 'Chạy bộ', 'Nấu ăn', 'Học thiền',
-                'Chơi piano', 'Vẽ tranh', 'Học tiếng Nhật', 'Làm vườn'
-            ];
-
-            const wishes = [
-                'iPad Pro', 'Apple Watch', 'Máy ảnh Canon', 'Xe đạp thể thao',
-                'Túi xách LV', 'Giày sneaker', 'Đàn guitar', 'Kính râm',
-                'Máy PS5', 'Smart TV', 'Điện thoại Samsung', 'Laptop gaming'
-            ];
-
-            const newNode = document.createElement('div');
-            newNode.className = 'bamboo-node';
-            newNode.innerHTML = `
-                <div class="node-date">${monthNames[loadedMonths - 1]}</div>
-                <div class="node-branches">
-                    <div class="branch-left task-branch">
-                        <div class="branch-content">
-                            <span class="branch-text">${tasks[Math.floor(Math.random() * tasks.length)]}</span>
-                        </div>
-                    </div>
-                    <div class="branch-right wish-branch">
-                        <div class="branch-content">
-                            <span class="branch-text">${wishes[Math.floor(Math.random() * wishes.length)]}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            bambooTrunk.insertBefore(newNode, loadingElement);
-            loadedMonths++;
-        }
-
-        // Thêm scroll listener cho infinite scroll
-        function setupInfiniteScroll() {
-            const scrollContainer = document.querySelector('.bamboo-scroll-container');
-            if (!scrollContainer) return;
-
-            scrollContainer.addEventListener('scroll', function() {
-                const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
-                
-                // Nếu cuộn gần đến cuối (còn 100px)
-                if (scrollTop + clientHeight >= scrollHeight - 100) {
-                    loadMoreBambooNodes();
-                }
-            });
-        }
+        // Infinite scroll functionality đã được loại bỏ để tối ưu hiệu suất
+        // Dashboard chỉ hiển thị timeline overview, chi tiết sẽ xem trong các trang riêng
 
         // Khởi tạo khi trang load
         setupInfiniteScroll();
@@ -1334,23 +1203,220 @@
             setTimeout(createFallingLeaf, i * 200);
         }
 
-        // Các functions tác vụ (sẽ implement sau)
+        // Các functions tác vụ
         function openAddTask() {
-            alert('Chức năng thêm việc muốn làm sẽ được phát triển tiếp!');
+            showTaskModal(function(data) {
+                addTask(data.content, data.datetime);
+            });
         }
 
         function openAddWish() {
-            alert('Chức năng thêm đồ muốn mua sẽ được phát triển tiếp!');
+            showWishModal(function(data) {
+                addWish(data.content, data.datetime, data.price);
+            });
+        }
+
+        // Thêm task mới
+        // Thêm task mới - Updated với modal mới
+        async function addTask(title = null, datetime = null) {
+            // Nếu được gọi với tham số cũ, dùng modal mới
+            if (title) {
+                // Backward compatibility - convert old format
+                try {
+                    const username = localStorage.getItem('username') || 'User';
+                    const requestBody = { 
+                        username: username,
+                        title: title 
+                    };
+                    
+                    if (datetime) requestBody.datetime = datetime;
+
+                    const response = await fetch('api/add-task.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        await initializeBambooNodes();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + (result.message || 'Không thể thêm việc'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi thêm việc');
+                }
+            } else {
+                // Sử dụng modal mới
+                showTaskModal(async (data) => {
+                    try {
+                        const username = localStorage.getItem('username') || 'User';
+                        
+                        const response = await fetch('api/add-task.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                username: username,
+                                title: data.content,
+                                description: data.description,
+                                category: data.category,
+                                priority: data.priority,
+                                scheduled_date: data.scheduled_date,
+                                scheduled_time: data.scheduled_time
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            showNotification('✅ Thêm task thành công!', 'success');
+                            await initializeBambooNodes();
+                        } else {
+                            showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm task'), 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showNotification('❌ Lỗi kết nối', 'error');
+                    }
+                });
+            }
+        }
+
+        // Thêm wish mới - Updated với modal mới
+        async function addWish(title = null, datetime = null, price = null) {
+            // Nếu được gọi với tham số cũ, dùng modal mới
+            if (title) {
+                // Backward compatibility - convert old format
+                try {
+                    const username = localStorage.getItem('username') || 'User';
+                    const requestBody = { 
+                        username: username,
+                        title: title 
+                    };
+                    
+                    if (datetime) requestBody.datetime = datetime;
+                    if (price && !isNaN(price)) requestBody.price = parseFloat(price);
+
+                    const response = await fetch('api/add-wish.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        await initializeBambooNodes();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + (result.message || 'Không thể thêm đồ'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi thêm đồ');
+                }
+            } else {
+                // Sử dụng modal mới
+                showWishModal(async (data) => {
+                    try {
+                        const username = localStorage.getItem('username') || 'User';
+                        
+                        const response = await fetch('api/add-wish.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                username: username,
+                                title: data.content,
+                                description: data.description,
+                                category: data.category,
+                                priority: data.priority,
+                                price: data.price,
+                                currency: data.currency,
+                                product_url: data.product_url,
+                                purchase_status: data.purchase_status,
+                                target_date: data.scheduled_date
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            showNotification('✅ Thêm wish thành công!', 'success');
+                            await initializeBambooNodes();
+                        } else {
+                            showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm wish'), 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showNotification('❌ Lỗi kết nối', 'error');
+                    }
+                });
+            }
+        }
+
+        // Hàm hiển thị thông báo
+        function showNotification(message, type = 'info') {
+            // Tạo notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            // Style cho notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-family: 'Merriweather', serif;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                max-width: 300px;
+            `;
+            
+            // Màu sắc theo type
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+            } else if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, #dc3545, #e76f51)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #17a2b8, #20c997)';
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
         }
 
         function viewAllTasks() {
             // Chuyển sang trang danh sách tất cả việc muốn làm
-            window.location.href = 'tasks.html';
+            window.location.href = 'all-tasks.html?user=' + encodeURIComponent(localStorage.getItem('username') || 'User');
         }
 
         function viewAllWishes() {
             // Chuyển sang trang danh sách tất cả đồ muốn mua  
-            window.location.href = 'wishes.html';
+            window.location.href = 'all-wishes.html?user=' + encodeURIComponent(localStorage.getItem('username') || 'User');
         }
 
         function logout() {
@@ -1387,6 +1453,9 @@
             // Có thể redirect về trang login nếu chưa đăng nhập
         }
     </script>
+
+    <!-- Custom Modal Script -->
+    <script src="modal.js"></script>
 
     <!-- Modal đăng xuất -->
     <div class="logout-modal-backdrop" id="logout-backdrop" style="display: none;">

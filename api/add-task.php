@@ -22,25 +22,55 @@ try {
     
     $username = $input['username'] ?? '';
     $title = $input['title'] ?? '';
-    $description = $input['description'] ?? '';
-    $targetDate = $input['target_date'] ?? date('Y-m-d');
+    $description = $input['description'] ?? null;
+    $category = $input['category'] ?? null;
+    $priority = $input['priority'] ?? 'medium';
+    $datetime = $input['datetime'] ?? null;
+    $scheduledDate = null;
+    $scheduledTime = null;
+
+    // Parse datetime if provided
+    if ($datetime) {
+        $dt = new DateTime($datetime);
+        $scheduledDate = $dt->format('Y-m-d');
+        $scheduledTime = $dt->format('H:i:s');
+    }
 
     if (empty($username) || empty($title)) {
         throw new Exception('Username and title are required');
     }
 
-    $query = "INSERT INTO tasks (username, title, description, target_date, is_completed, created_at) 
-              VALUES (?, ?, ?, ?, 0, NOW())";
+    // Generate unique item_id
+    $itemId = 'task_' . uniqid() . '_' . time();
+    
+    // Get user_id from username
+    $userQuery = "SELECT id FROM tai_khoan WHERE user = ?";
+    $userStmt = $pdo->prepare($userQuery);
+    $userStmt->execute([$username]);
+    $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+    $userId = $user ? $user['id'] : null;
+
+    $query = "INSERT INTO tasks 
+              (item_id, title, description, category, priority, user_id, scheduled_date, scheduled_time, created_at, updated_at) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
     
     $stmt = $pdo->prepare($query);
-    $result = $stmt->execute([$username, $title, $description, $targetDate]);
+    $result = $stmt->execute([
+        $itemId, 
+        $title, 
+        $description, 
+        $category, 
+        $priority, 
+        $userId, 
+        $scheduledDate, 
+        $scheduledTime
+    ]);
 
     if ($result) {
         $taskId = $pdo->lastInsertId();
         
         // Lấy thông tin task vừa tạo
-        $getTaskQuery = "SELECT id, title, description, target_date, is_completed, created_at 
-                         FROM tasks WHERE id = ?";
+        $getTaskQuery = "SELECT * FROM tasks WHERE id = ?";
         $getTaskStmt = $pdo->prepare($getTaskQuery);
         $getTaskStmt->execute([$taskId]);
         $newTask = $getTaskStmt->fetch(PDO::FETCH_ASSOC);
@@ -58,7 +88,11 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => $e->getMessage(),
+        'debug' => [
+            'input' => $input ?? null,
+            'error_details' => $e->getTraceAsString()
+        ]
     ]);
 }
 ?>

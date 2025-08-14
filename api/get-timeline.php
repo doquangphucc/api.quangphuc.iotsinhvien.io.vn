@@ -40,22 +40,49 @@ try {
         ];
 
         // Lấy tasks cho ngày này
-        $taskQuery = "SELECT id, title, description, is_completed, created_at 
+        $taskQuery = "SELECT id, item_id, title, description, category, priority, 
+                             scheduled_date, scheduled_time, is_completed, created_at 
                       FROM tasks 
-                      WHERE username = ? AND DATE(target_date) = ? 
-                      ORDER BY created_at DESC";
+                      WHERE username = ? AND DATE(scheduled_date) = ? 
+                      ORDER BY scheduled_time ASC, created_at DESC";
         $taskStmt = $pdo->prepare($taskQuery);
         $taskStmt->execute([$username, $dateString]);
-        $dayData['tasks'] = $taskStmt->fetchAll(PDO::FETCH_ASSOC);
+        $tasks = $taskStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Format tasks
+        foreach ($tasks as &$task) {
+            $task['is_completed'] = (bool)$task['is_completed'];
+            $priorityIcons = ['low' => '🟢', 'medium' => '🟡', 'high' => '🔴'];
+            $task['priority_icon'] = $priorityIcons[$task['priority']] ?? '🟡';
+        }
+        $dayData['tasks'] = $tasks;
 
         // Lấy wishes cho ngày này
-        $wishQuery = "SELECT id, title, description, price, priority, is_completed, created_at 
+        $wishQuery = "SELECT id, item_id, title, description, category, priority, price, 
+                             currency, product_url, purchase_status, is_completed, created_at 
                       FROM wishes 
                       WHERE username = ? AND DATE(target_date) = ? 
                       ORDER BY priority DESC, created_at DESC";
         $wishStmt = $pdo->prepare($wishQuery);
         $wishStmt->execute([$username, $dateString]);
-        $dayData['wishes'] = $wishStmt->fetchAll(PDO::FETCH_ASSOC);
+        $wishes = $wishStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Format wishes
+        foreach ($wishes as &$wish) {
+            $wish['is_completed'] = (bool)$wish['is_completed'];
+            $priorityIcons = ['low' => '🟢', 'medium' => '🟡', 'high' => '🔴'];
+            $wish['priority_icon'] = $priorityIcons[$wish['priority']] ?? '🟡';
+            
+            $statusIcons = ['researching' => '🔍', 'saving' => '💰', 'ready_to_buy' => '✅'];
+            $wish['purchase_status_icon'] = $statusIcons[$wish['purchase_status']] ?? '🔍';
+            
+            if ($wish['price']) {
+                $currencySymbols = ['VND' => 'đ', 'USD' => '$', 'EUR' => '€'];
+                $symbol = $currencySymbols[$wish['currency']] ?? 'đ';
+                $wish['formatted_price'] = number_format($wish['price']) . ' ' . $symbol;
+            }
+        }
+        $dayData['wishes'] = $wishes;
 
         $timeline[] = $dayData;
     }
