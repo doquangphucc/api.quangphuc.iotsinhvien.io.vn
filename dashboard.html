@@ -907,10 +907,11 @@
         let isLoading = false;
 
         // Tải dữ liệu timeline từ API
-        async function loadTimelineData(startDate, endDate) {
+        async function loadTimelineData(startOffset, endOffset) {
             try {
                 const username = localStorage.getItem('username') || 'User';
-                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+                const days = Math.abs(startOffset) + endOffset; // Tổng số ngày cần load
+                console.log(`Loading timeline data: ${days} days (from ${startOffset} to ${endOffset})`); // Debug
                 const response = await fetch(`api/get-timeline-data.php?username=${encodeURIComponent(username)}&days=${days}&limit=100`);
                 const result = await response.json();
                 
@@ -1063,7 +1064,7 @@
             const loadingElement = document.getElementById('loading');
             
             try {
-                // Load dữ liệu timeline từ API
+                // Load dữ liệu timeline từ API (30 ngày từ -10 đến +20)
                 await loadTimelineData(-10, 20);
                 
                 // Tạo đốt từ 10 ngày trước đến 20 ngày nữa
@@ -1074,6 +1075,7 @@
                     const dateString = date.toISOString().split('T')[0];
                     const dayData = timelineData[dateString];
                     
+                    console.log(`Node ${i} (${dateString}):`, dayData); // Debug each node
                     nodesHTML += createBambooNode(i, dayData);
                 }
                 
