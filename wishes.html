@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất cả đồ muốn mua - Dòng thời gian cá nhân</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animation cho lá rơi */
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #f4a261;
+            border-radius: 0 100% 0 100%;
+            animation: fall linear infinite;
+            opacity: 0.7;
+        }
+
+        .leaf:nth-child(odd) {
+            background: #e76f51;
+            border-radius: 100% 0 100% 0;
+            transform: rotate(15deg);
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            padding: 0 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            color: #8b4513;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #e76f51, #f4a261);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 111, 81, 0.4);
+        }
+
+        /* Main content */
+        .main-content {
+            margin-top: 90px;
+            padding: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-area {
+            background: linear-gradient(145deg, rgba(255, 248, 240, 0.95) 0%, rgba(255, 228, 196, 0.95) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(231, 111, 81, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(231, 111, 81, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(233, 196, 106, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(244, 162, 97, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .page-title {
+            color: #8b4513;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Wish list */
+        .wish-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .wish-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 248, 240, 0.9) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #f72585;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wish-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(247, 127, 0, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .wish-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .wish-title {
+            color: #8b4513;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .wish-price {
+            color: #f72585;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .wish-date {
+            color: #d2691e;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .wish-priority {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .priority-high {
+            background: rgba(247, 37, 133, 0.2);
+            color: #f72585;
+        }
+
+        .priority-medium {
+            background: rgba(247, 127, 0, 0.2);
+            color: #f77f00;
+        }
+
+        .priority-low {
+            background: rgba(42, 157, 143, 0.2);
+            color: #2a9d8f;
+        }
+
+        .wish-status {
+            margin-top: 15px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-planning {
+            background: rgba(233, 196, 106, 0.2);
+            color: #e9c46a;
+        }
+
+        .status-saving {
+            background: rgba(42, 157, 143, 0.2);
+            color: #2a9d8f;
+        }
+
+        .status-ready {
+            background: rgba(247, 37, 133, 0.2);
+            color: #f72585;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #d2691e;
+            font-size: 1.2rem;
+            margin-top: 100px;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .content-area {
+                padding: 25px;
+            }
+            
+            .wish-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Lá rơi -->
+    <div class="falling-leaves" id="falling-leaves"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>🛍️ Tất cả đồ muốn mua</h1>
+            <button class="back-btn" onclick="goBack()">
+                ← Quay lại Dashboard
+            </button>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="content-area">
+            <div class="wish-grid">
+                <!-- Wish card 1 -->
+                <div class="wish-card">
+                    <span class="wish-priority priority-high">Cao</span>
+                    <div class="wish-title">Laptop mới</div>
+                    <div class="wish-price">~25.000.000 VNĐ</div>
+                    <div class="wish-date">Thêm vào: 1 giờ trước</div>
+                    <span class="wish-status status-saving">Đang tiết kiệm</span>
+                </div>
+
+                <!-- Wish card 2 -->
+                <div class="wish-card">
+                    <span class="wish-priority priority-medium">Trung bình</span>
+                    <div class="wish-title">Áo khoác mùa thu</div>
+                    <div class="wish-price">~1.200.000 VNĐ</div>
+                    <div class="wish-date">Thêm vào: 5 giờ trước</div>
+                    <span class="wish-status status-ready">Sẵn sàng mua</span>
+                </div>
+
+                <!-- Wish card 3 -->
+                <div class="wish-card">
+                    <span class="wish-priority priority-low">Thấp</span>
+                    <div class="wish-title">Sách về lập trình</div>
+                    <div class="wish-price">~500.000 VNĐ</div>
+                    <div class="wish-date">Thêm vào: 1 ngày trước</div>
+                    <span class="wish-status status-planning">Đang tìm hiểu</span>
+                </div>
+
+                <!-- Wish card 4 -->
+                <div class="wish-card">
+                    <span class="wish-priority priority-high">Cao</span>
+                    <div class="wish-title">iPhone 16 Pro</div>
+                    <div class="wish-price">~35.000.000 VNĐ</div>
+                    <div class="wish-date">Thêm vào: 3 ngày trước</div>
+                    <span class="wish-status status-saving">Đang tiết kiệm</span>
+                </div>
+
+                <!-- Wish card 5 -->
+                <div class="wish-card">
+                    <span class="wish-priority priority-medium">Trung bình</span>
+                    <div class="wish-title">Tai nghe Sony WH-1000XM5</div>
+                    <div class="wish-price">~8.500.000 VNĐ</div>
+                    <div class="wish-date">Thêm vào: 1 tuần trước</div>
+                    <span class="wish-status status-planning">Đang tìm hiểu</span>
+                </div>
+
+                <!-- Wish card 6 -->
+                <div class="wish-card">
+                    <span class="wish-priority priority-low">Thấp</span>
+                    <div class="wish-title">Bàn phím cơ Keychron K3</div>
+                    <div class="wish-price">~2.800.000 VNĐ</div>
+                    <div class="wish-date">Thêm vào: 2 tuần trước</div>
+                    <span class="wish-status status-ready">Sẵn sàng mua</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tạo lá rơi
+        function createFallingLeaves() {
+            const leavesContainer = document.getElementById('falling-leaves');
+            const leafCount = 15;
+
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                leaf.style.animationDelay = Math.random() * 2 + 's';
+                leavesContainer.appendChild(leaf);
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Khởi tạo khi trang load
+        window.addEventListener('load', function() {
+            createFallingLeaves();
+        });
+    </script>
+</body>
+</html>

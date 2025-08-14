@@ -19,3 +19,33 @@ CREATE TABLE muon_mua (
     timestamp DATETIME NOT NULL,
     content TEXT
 );
+
+-- Create tasks table for tracking task completion status
+CREATE TABLE tasks (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    item_id VARCHAR(100) NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    status TINYINT(1) DEFAULT 0 COMMENT '0 = pending, 1 = completed',
+    user_id INT DEFAULT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    INDEX idx_item_id (item_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    FOREIGN KEY (user_id) REFERENCES tai_khoan(id) ON DELETE SET NULL
+);
+
+-- Create wishes table for tracking wish completion status  
+CREATE TABLE wishes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    item_id VARCHAR(100) NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    status TINYINT(1) DEFAULT 0 COMMENT '0 = pending, 1 = completed/purchased',
+    user_id INT DEFAULT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    INDEX idx_item_id (item_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    FOREIGN KEY (user_id) REFERENCES tai_khoan(id) ON DELETE SET NULL
+);
