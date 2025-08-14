@@ -518,7 +518,7 @@
         // Tải danh sách tất cả tasks từ API
         async function loadAllTasks() {
             try {
-                const response = await fetch(`api/get-tasks.php?username=${encodeURIComponent(username)}`);
+                const response = await fetch(`api/get-all-tasks.php?username=${encodeURIComponent(username)}&limit=100&sort=created_at&order=DESC`);
                 const result = await response.json();
                 
                 if (result.success) {
