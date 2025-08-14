@@ -914,6 +914,8 @@
                 const response = await fetch(`api/get-timeline-data.php?username=${encodeURIComponent(username)}&days=${days}&limit=100`);
                 const result = await response.json();
                 
+                console.log('Timeline API Response:', result); // Debug log
+                
                 if (result.success) {
                     // Chuyển đổi data từ API mới sang format cũ để tương thích
                     const convertedData = {};
@@ -944,6 +946,7 @@
                     Object.values(convertedData).forEach(dayData => {
                         timelineData[dayData.date] = dayData;
                     });
+                    console.log('Timeline data cached:', timelineData); // Debug log
                     return Object.values(convertedData);
                 } else {
                     console.error('Error loading timeline data:', result.message);
@@ -988,6 +991,8 @@
                 tasks = timelineData[dateString].tasks || [];
                 wishes = timelineData[dateString].wishes || [];
             }
+
+            console.log(`Creating node for ${dateString}:`, { tasks, wishes, dayData }); // Debug log
 
             // Tạo HTML cho tasks
             let tasksHTML = '';
