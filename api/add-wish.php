@@ -9,7 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'config.php';
-require_once 'connect.php';
+
+// Get PDO connection
+$pdo = db_get_pdo_connection();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -55,8 +57,8 @@ try {
     $userId = $user ? $user['id'] : null;
 
     $query = "INSERT INTO wishes 
-              (item_id, title, description, category, priority, price, currency, product_url, purchase_status, user_id, target_date, created_at, updated_at) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+              (item_id, title, description, category, priority, price, currency, product_url, purchase_status, user_id, target_date, status, created_at, updated_at) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
@@ -91,14 +93,27 @@ try {
         throw new Exception('Failed to add wish');
     }
 
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database error: ' . $e->getMessage(),
+        'error_type' => 'PDO_ERROR',
+        'debug' => [
+            'input' => $input ?? null,
+            'sql_error' => $e->errorInfo ?? null
+        ]
+    ]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage(),
+        'error_type' => 'GENERAL_ERROR',
         'debug' => [
             'input' => $input ?? null,
-            'error_details' => $e->getTraceAsString()
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
         ]
     ]);
 }
