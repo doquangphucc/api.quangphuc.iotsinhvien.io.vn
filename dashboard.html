@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Dòng thời gian cá nhân</title>
+    <!-- Font web hỗ trợ tiếng Việt -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animation cho lá rơi */
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #f4a261;
+            border-radius: 0 100% 0 100%;
+            animation: fall linear infinite;
+            opacity: 0.7;
+        }
+
+        .leaf:nth-child(odd) {
+            background: #e76f51;
+            border-radius: 100% 0 100% 0;
+            transform: rotate(15deg);
+        }
+
+        .leaf:nth-child(3n) {
+            background: #e9c46a;
+            width: 15px;
+            height: 15px;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header cố định */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            border-bottom: 2px solid rgba(233, 196, 106, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            font-size: 1.5rem;
+            color: #8b4513;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #e76f51, #f4a261);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 111, 81, 0.4);
+        }
+
+        /* Sidebar cố định */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px; /* Cách header */
+            width: 280px;
+            height: calc(100vh - 70px);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            color: #8b4513;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-add-task {
+            background: linear-gradient(135deg, #e9c46a, #f4a261);
+            color: #8b4513;
+            box-shadow: 0 3px 10px rgba(233, 196, 106, 0.3);
+        }
+
+        .btn-add-wish {
+            background: linear-gradient(135deg, #e76f51, #f4a261);
+            color: white;
+            box-shadow: 0 3px 10px rgba(231, 111, 81, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section h4 {
+            color: #8b4513;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .item-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            background: rgba(233, 196, 106, 0.1);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 3px solid #e76f51;
+            font-size: 0.85rem;
+            color: #8b4513;
+        }
+
+        .list-item .date {
+            font-size: 0.75rem;
+            color: #d2691e;
+            opacity: 0.8;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 70px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-area {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #d2691e;
+            font-size: 1.1rem;
+            margin-top: 100px;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                margin-top: 0;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .welcome {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Scrollbar custom */
+        .sidebar::-webkit-scrollbar, .item-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track, .item-list::-webkit-scrollbar-track {
+            background: rgba(233, 196, 106, 0.1);
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb, .item-list::-webkit-scrollbar-thumb {
+            background: rgba(231, 111, 81, 0.5);
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover, .item-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(231, 111, 81, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <!-- Lá rơi animation -->
+    <div class="falling-leaves">
+        <!-- Lá sẽ được tạo bằng JavaScript -->
+    </div>
+
+    <!-- Header cố định -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="welcome">🍂 Xin chào, <span id="username">User</span>!</h1>
+            <button class="logout-btn" onclick="logout()">🚪 Đăng xuất</button>
+        </div>
+    </header>
+
+    <!-- Sidebar cố định -->
+    <aside class="sidebar">
+        <h3>📋 Tác vụ</h3>
+        
+        <button class="action-btn btn-add-task" onclick="openAddTask()">
+            ✅ Thêm việc muốn làm
+        </button>
+        
+        <button class="action-btn btn-add-wish" onclick="openAddWish()">
+            🛒 Thêm đồ muốn mua
+        </button>
+
+        <div class="sidebar-section">
+            <h4>📝 Việc muốn làm gần đây</h4>
+            <div class="item-list" id="recent-tasks">
+                <div class="list-item">
+                    <div>Học tiếng Anh</div>
+                    <div class="date">2 giờ trước</div>
+                </div>
+                <div class="list-item">
+                    <div>Tập thể dục buổi sáng</div>
+                    <div class="date">1 ngày trước</div>
+                </div>
+                <div class="list-item">
+                    <div>Đọc sách kinh doanh</div>
+                    <div class="date">3 ngày trước</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h4>🛍️ Đồ muốn mua gần đây</h4>
+            <div class="item-list" id="recent-wishes">
+                <div class="list-item">
+                    <div>Laptop mới</div>
+                    <div class="date">1 giờ trước</div>
+                </div>
+                <div class="list-item">
+                    <div>Áo khoác mùa thu</div>
+                    <div class="date">5 giờ trước</div>
+                </div>
+                <div class="list-item">
+                    <div>Sách về lập trình</div>
+                    <div class="date">1 ngày trước</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <div class="content-area">
+            <div class="empty-state">
+                <div class="icon">📊</div>
+                <h2>Chào mừng đến với Dashboard!</h2>
+                <p>Không gian chính của bạn sẽ hiển thị ở đây.</p>
+                <p>Hãy bắt đầu bằng cách thêm việc muốn làm hoặc đồ muốn mua.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Lấy username từ localStorage hoặc URL params (tạm thời)
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('user') || localStorage.getItem('username') || 'User';
+        document.getElementById('username').textContent = username;
+
+        // Tạo lá rơi (tương tự index.html)
+        function createFallingLeaf() {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            
+            leaf.style.left = Math.random() * 100 + '%';
+            const fallDuration = Math.random() * 3 + 4;
+            leaf.style.animationDuration = fallDuration + 's';
+            leaf.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.querySelector('.falling-leaves').appendChild(leaf);
+            
+            setTimeout(() => {
+                leaf.remove();
+            }, (fallDuration + 2) * 1000);
+        }
+
+        function startFallingLeaves() {
+            setInterval(createFallingLeaf, 300);
+        }
+
+        window.addEventListener('load', startFallingLeaves);
+
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createFallingLeaf, i * 200);
+        }
+
+        // Các functions tác vụ (sẽ implement sau)
+        function openAddTask() {
+            alert('Chức năng thêm việc muốn làm sẽ được phát triển tiếp!');
+        }
+
+        function openAddWish() {
+            alert('Chức năng thêm đồ muốn mua sẽ được phát triển tiếp!');
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('username');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Kiểm tra đăng nhập (đơn giản)
+        if (!username || username === 'User') {
+            // Có thể redirect về trang login nếu chưa đăng nhập
+        }
+    </script>
+</body>
+</html>
