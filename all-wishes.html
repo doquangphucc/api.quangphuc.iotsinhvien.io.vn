@@ -536,8 +536,11 @@
                 const response = await fetch(`api/get-all-wishes.php?username=${encodeURIComponent(username)}&limit=100&sort=created_at&order=DESC`);
                 const result = await response.json();
                 
+                console.log('API Response:', result); // Debug log
+                
                 if (result.success) {
                     allWishes = result.data || [];
+                    console.log('Loaded wishes:', allWishes); // Debug log
                     displayWishes();
                     updateStats();
                 } else {

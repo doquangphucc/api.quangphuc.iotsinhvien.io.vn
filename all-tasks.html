@@ -521,8 +521,11 @@
                 const response = await fetch(`api/get-all-tasks.php?username=${encodeURIComponent(username)}&limit=100&sort=created_at&order=DESC`);
                 const result = await response.json();
                 
+                console.log('API Response:', result); // Debug log
+                
                 if (result.success) {
                     allTasks = result.data || [];
+                    console.log('Loaded tasks:', allTasks); // Debug log
                     displayTasks();
                     updateStats();
                 } else {
