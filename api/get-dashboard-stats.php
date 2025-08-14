@@ -47,10 +47,11 @@ try {
     $taskStmt = $pdo->prepare("
         SELECT 
             COUNT(*) as total_tasks,
-            SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as completed_tasks,
-            SUM(CASE WHEN is_completed = 0 THEN 1 ELSE 0 END) as pending_tasks
-        FROM tasks 
-        WHERE username = ?
+            SUM(CASE WHEN t.status = 1 THEN 1 ELSE 0 END) as completed_tasks,
+            SUM(CASE WHEN t.status = 0 THEN 1 ELSE 0 END) as pending_tasks
+        FROM tasks t
+        LEFT JOIN tai_khoan tk ON t.user_id = tk.id
+        WHERE tk.user = ?
     ");
     $taskStmt->execute([$username]);
     $taskResult = $taskStmt->fetch(PDO::FETCH_ASSOC);
@@ -69,12 +70,13 @@ try {
     $wishStmt = $pdo->prepare("
         SELECT 
             COUNT(*) as total_wishes,
-            SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as completed_wishes,
-            SUM(CASE WHEN is_completed = 0 THEN 1 ELSE 0 END) as pending_wishes,
-            COALESCE(SUM(price), 0) as total_price,
-            COALESCE(SUM(CASE WHEN is_completed = 1 THEN price ELSE 0 END), 0) as completed_price
-        FROM wishes 
-        WHERE username = ?
+            SUM(CASE WHEN w.status = 1 THEN 1 ELSE 0 END) as completed_wishes,
+            SUM(CASE WHEN w.status = 0 THEN 1 ELSE 0 END) as pending_wishes,
+            COALESCE(SUM(w.price), 0) as total_price,
+            COALESCE(SUM(CASE WHEN w.status = 1 THEN w.price ELSE 0 END), 0) as completed_price
+        FROM wishes w
+        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+        WHERE tk.user = ?
     ");
     $wishStmt->execute([$username]);
     $wishResult = $wishStmt->fetch(PDO::FETCH_ASSOC);
