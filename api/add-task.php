@@ -25,12 +25,14 @@ try {
     $description = $input['description'] ?? null;
     $category = $input['category'] ?? null;
     $priority = $input['priority'] ?? 'medium';
+    
+    // Handle both old datetime format and new separate date/time
+    $scheduledDate = $input['scheduled_date'] ?? null;
+    $scheduledTime = $input['scheduled_time'] ?? null;
+    
+    // Legacy datetime support
     $datetime = $input['datetime'] ?? null;
-    $scheduledDate = null;
-    $scheduledTime = null;
-
-    // Parse datetime if provided
-    if ($datetime) {
+    if ($datetime && !$scheduledDate) {
         $dt = new DateTime($datetime);
         $scheduledDate = $dt->format('Y-m-d');
         $scheduledTime = $dt->format('H:i:s');

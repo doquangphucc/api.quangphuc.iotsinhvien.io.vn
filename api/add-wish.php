@@ -29,11 +29,13 @@ try {
     $currency = $input['currency'] ?? 'VND';
     $productUrl = $input['product_url'] ?? null;
     $purchaseStatus = $input['purchase_status'] ?? 'researching';
+    
+    // Handle both old datetime format and new target_date
+    $targetDate = $input['target_date'] ?? null;
+    
+    // Legacy datetime support
     $datetime = $input['datetime'] ?? null;
-    $targetDate = null;
-
-    // Parse datetime if provided
-    if ($datetime) {
+    if ($datetime && !$targetDate) {
         $dt = new DateTime($datetime);
         $targetDate = $dt->format('Y-m-d');
     }
