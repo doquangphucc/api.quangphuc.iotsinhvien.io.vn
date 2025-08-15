@@ -30,29 +30,27 @@ try {
         (
             SELECT 
                 'task' as type,
-                    t.id AS id,
-                    t.title,
+                t.id AS id,
+                t.title,
                 DATE(t.created_at) AS date_only,
                 t.created_at as timestamp,
                 'việc nào' as category_text,
-                t.status as is_completed
+                t.completed as is_completed
             FROM tasks t
-            LEFT JOIN tai_khoan tk ON t.user_id = tk.id
-            WHERE tk.user = ? AND DATE(t.created_at) >= ?
+            WHERE t.username = ? AND DATE(t.created_at) >= ?
         )
         UNION ALL
         (
             SELECT 
                 'wish' as type,
-                    w.id AS id,
-                    w.title,
+                w.id AS id,
+                w.title,
                 DATE(w.created_at) AS date_only,
                 w.created_at as timestamp,
                 'đồ nào' as category_text,
-                w.status as is_completed
+                w.completed as is_completed
             FROM wishes w
-            LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-            WHERE tk.user = ? AND DATE(w.created_at) >= ?
+            WHERE w.username = ? AND DATE(w.created_at) >= ?
         )
         ORDER BY timestamp DESC
         LIMIT ?
