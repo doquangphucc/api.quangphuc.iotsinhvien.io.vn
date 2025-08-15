@@ -31,6 +31,7 @@ try {
             SELECT 
                 'task' as type,
                 t.title,
+                DATE(t.created_at) AS date_only,
                 t.created_at as timestamp,
                 'việc nào' as category_text,
                 t.status as is_completed
@@ -43,6 +44,7 @@ try {
             SELECT 
                 'wish' as type,
                 w.title,
+                DATE(w.created_at) AS date_only,
                 w.created_at as timestamp,
                 'đồ nào' as category_text,
                 w.status as is_completed
@@ -87,6 +89,7 @@ try {
             'type' => $item['type'],
             'title' => $displayText,
             'original_title' => $item['title'],
+            'date_only' => $item['date_only'], // normalized date
             'timestamp' => $item['timestamp'],
             'time_formatted' => $timestamp->format('d/m/Y H:i'),
             'days_ago' => $daysAgo,
