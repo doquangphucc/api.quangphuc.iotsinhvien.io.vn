@@ -565,7 +565,9 @@ class CustomModal {
                 currency: currency || 'VND',
                 product_url: productUrl || null,
                 purchase_status: purchaseStatus,
-                target_date: scheduledDate // For wishes, use same date as target_date
+                scheduled_date: scheduledDate,
+                scheduled_time: time || null,
+                target_date: scheduledDate // For backward compatibility
             };
         }
 
