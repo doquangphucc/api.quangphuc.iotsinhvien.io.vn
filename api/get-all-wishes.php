@@ -95,6 +95,7 @@ try {
         // Thêm status text
         $wish['status_text'] = $wish['is_completed'] ? 'Đã mua' : 'Chưa mua';
     }
+    unset($wish); // Avoid reference side-effects in next foreach
 
     // Tính tổng giá tiền
     $totalPrice = 0;

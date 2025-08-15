@@ -524,7 +524,7 @@
                 console.log('API Response:', result); // Debug log
                 
                 if (result.success) {
-                    allTasks = result.data || [];
+                    allTasks = (result.data || []).filter((t,i,self)=> self.findIndex(x=>x.id==t.id)===i);
                     console.log('Loaded tasks:', allTasks); // Debug log
                     displayTasks();
                     updateStats();

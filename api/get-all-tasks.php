@@ -99,6 +99,8 @@ try {
             $task['updated_at_formatted'] = date('d/m/Y H:i', strtotime($task['updated_at']));
         }
     }
+    // VERY IMPORTANT: unset reference to avoid subsequent foreach overwriting elements
+    unset($task);
 
     // Thống kê nhanh
     $stats = [

@@ -539,7 +539,7 @@
                 console.log('API Response:', result); // Debug log
                 
                 if (result.success) {
-                    allWishes = result.data || [];
+                    allWishes = (result.data || []).filter((w,i,self)=> self.findIndex(x=>x.id==w.id)===i);
                     console.log('Loaded wishes:', allWishes); // Debug log
                     displayWishes();
                     updateStats();
