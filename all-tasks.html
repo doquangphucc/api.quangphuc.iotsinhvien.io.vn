@@ -638,31 +638,22 @@
         // Toggle trạng thái hoàn thành
         async function toggleComplete(taskId) {
             try {
-                const response = await fetch('api/toggle-complete.php', {
+                const res = await fetch('api/toggle-complete.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'task', id: taskId })
                 });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Cập nhật trạng thái trong allTasks
-                    const taskIndex = allTasks.findIndex(task => task.id == taskId);
-                    if (taskIndex !== -1) {
-                        allTasks[taskIndex].is_completed = result.is_completed;
-                        allTasks[taskIndex].updated_at = new Date().toISOString();
-                    }
-                    
-                    displayTasks();
-                    updateStats();
-                } else {
-                    alert('Có lỗi xảy ra: ' + (result.message || 'Không thể cập nhật'));
+                const json = await res.json();
+                if (!json.success) throw new Error(json.message || 'Toggle failed');
+                const idx = allTasks.findIndex(t => t.id == taskId);
+                if (idx !== -1) {
+                    allTasks[idx].is_completed = json.is_completed; // backend returns bool
+                    allTasks[idx].updated_at = new Date().toISOString();
                 }
-            } catch (error) {
-                console.error('Error:', error);
+                displayTasks();
+                updateStats();
+            } catch (e) {
+                console.error(e);
                 alert('Có lỗi xảy ra khi cập nhật');
             }
         }

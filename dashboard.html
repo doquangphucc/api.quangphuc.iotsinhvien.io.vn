@@ -1042,18 +1042,18 @@
             // Tạo HTML cho tasks
             let tasksHTML = '';
             if (tasks.length > 0) {
-                tasks.forEach(task => {
-                    const completedClass = task.is_completed ? 'completed' : '';
-                    tasksHTML += `
-                        <div class="branch-item ${completedClass}">
-                            <span class="branch-text">${task.title}</span>
-                            <button class="tick-btn" onclick="toggleComplete('task', ${task.id})" 
-                                    title="${task.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
-                                ${task.is_completed ? '✅' : '⭕'}
-                            </button>
-                        </div>
-                    `;
-                });
+                    tasks.forEach(task => {
+                        const completedClass = task.is_completed ? 'completed' : '';
+                        tasksHTML += `
+                            <div class="branch-item ${completedClass}" data-type="task" data-id="${task.id}">
+                                <span class="branch-text">${task.title}</span>
+                                <button class="tick-btn" onclick="toggleComplete('task', ${task.id})" 
+                                        title="${task.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
+                                    ${task.is_completed ? '✅' : '⭕'}
+                                </button>
+                            </div>
+                        `;
+                    });
             } else {
                 tasksHTML = '<div class="branch-item empty">Chưa có việc nào</div>';
             }
@@ -1065,7 +1065,7 @@
                     const completedClass = wish.is_completed ? 'completed' : '';
                     const priceText = wish.price ? ` (${formatPrice(wish.price)})` : '';
                     wishesHTML += `
-                        <div class="branch-item ${completedClass}">
+                        <div class="branch-item ${completedClass}" data-type="wish" data-id="${wish.id}">
                             <span class="branch-text">${wish.title}${priceText}</span>
                             <button class="tick-btn" onclick="toggleComplete('wish', ${wish.id})"
                                     title="${wish.is_completed ? 'Đánh dấu chưa mua' : 'Đánh dấu đã mua'}">
@@ -1174,43 +1174,29 @@
         // Toggle trạng thái hoàn thành
         async function toggleComplete(type, id) {
             try {
-                const response = await fetch('api/toggle-complete.php', {
+                const res = await fetch('api/toggle-complete.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ type: type, id: id })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, id })
                 });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Tìm và cập nhật UI
-                    const branchItems = document.querySelectorAll('.branch-item');
-                    branchItems.forEach(item => {
-                        const tickBtn = item.querySelector('.tick-btn');
-                        if (tickBtn && tickBtn.onclick.toString().includes(`'${type}', ${id}`)) {
-                            if (result.is_completed) {
-                                item.classList.add('completed');
-                                tickBtn.innerHTML = '✅';
-                                tickBtn.title = type === 'task' ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu chưa mua';
-                            } else {
-                                item.classList.remove('completed');
-                                tickBtn.innerHTML = '⭕';
-                                tickBtn.title = type === 'task' ? 'Đánh dấu hoàn thành' : 'Đánh dấu đã mua';
-                            }
-                        }
-                    });
-                    
-                    // Refresh stats after toggle
-                    setTimeout(() => {
-                        loadDashboardStats();
-                    }, 300);
-                } else {
-                    alert('Có lỗi xảy ra: ' + (result.message || 'Không thể cập nhật'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
+                const json = await res.json();
+                if (!json.success) throw new Error(json.message || 'Toggle failed');
+                const selector = `.branch-item[data-type="${type}"][data-id="${id}"]`;
+                document.querySelectorAll(selector).forEach(item => {
+                    const tickBtn = item.querySelector('.tick-btn');
+                    if (json.is_completed) {
+                        item.classList.add('completed');
+                        tickBtn.innerHTML = '✅';
+                        tickBtn.title = type === 'task' ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu chưa mua';
+                    } else {
+                        item.classList.remove('completed');
+                        tickBtn.innerHTML = '⭕';
+                        tickBtn.title = type === 'task' ? 'Đánh dấu hoàn thành' : 'Đánh dấu đã mua';
+                    }
+                });
+                setTimeout(loadDashboardStats, 300);
+            } catch (e) {
+                console.error(e);
                 alert('Có lỗi xảy ra khi cập nhật');
             }
         }

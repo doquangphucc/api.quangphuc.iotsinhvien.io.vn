@@ -661,31 +661,22 @@
         // Toggle trạng thái hoàn thành
         async function toggleComplete(wishId) {
             try {
-                const response = await fetch('api/toggle-complete.php', {
+                const res = await fetch('api/toggle-complete.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'wish', id: wishId })
                 });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Cập nhật trạng thái trong allWishes
-                    const wishIndex = allWishes.findIndex(wish => wish.id == wishId);
-                    if (wishIndex !== -1) {
-                        allWishes[wishIndex].is_completed = result.is_completed;
-                        allWishes[wishIndex].updated_at = new Date().toISOString();
-                    }
-                    
-                    displayWishes();
-                    updateStats();
-                } else {
-                    alert('Có lỗi xảy ra: ' + (result.message || 'Không thể cập nhật'));
+                const json = await res.json();
+                if (!json.success) throw new Error(json.message || 'Toggle failed');
+                const idx = allWishes.findIndex(w => w.id == wishId);
+                if (idx !== -1) {
+                    allWishes[idx].is_completed = json.is_completed;
+                    allWishes[idx].updated_at = new Date().toISOString();
                 }
-            } catch (error) {
-                console.error('Error:', error);
+                displayWishes();
+                updateStats();
+            } catch (e) {
+                console.error(e);
                 alert('Có lỗi xảy ra khi cập nhật');
             }
         }
