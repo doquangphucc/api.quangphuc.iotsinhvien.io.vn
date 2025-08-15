@@ -329,26 +329,28 @@
 
         /* Main content */
         .main-content {
-            margin-left: 280px;
-            margin-top: 70px;
-            padding: 30px;
+            margin: 0;                 /* bỏ margin trùng gây thu hẹp */
+            padding: 0 40px 0 8px;     /* chừa rất ít cam bên trái, khoảng nhỏ bên phải */
             height: calc(100vh - 70px);
-            position: fixed;
-            top: 0;
+            position: fixed;           /* pin */
+            top: 70px;                 /* dưới header */
+            left: 280px;               /* bắt đầu ngay sau sidebar */
             right: 0;
-            left: 280px;
             z-index: 2;
             overflow: hidden;
+            display: flex;
+            box-sizing: border-box;
         }
 
         .content-area {
-            background: linear-gradient(145deg, rgba(255, 248, 240, 0.95) 0%, rgba(255, 228, 196, 0.95) 100%);
-            border-radius: 20px;
-            padding: 40px;
+            background: linear-gradient(145deg, #fff9f3 0%, #ffe6cc 100%);
+            border-radius: 26px; 
+            padding: 40px 50px 45px 50px;
             height: 100%;
-            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.2);
+            width: 100%;                 /* chiếm toàn bộ chiều ngang main-content */
+            box-shadow: 0 15px 35px rgba(139, 69, 19, 0.22), 0 0 0 1px rgba(231,111,81,0.10);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(231, 111, 81, 0.2);
+            border: 2px solid rgba(231, 111, 81, 0.35);
             position: relative;
             overflow: hidden;
             display: flex;
