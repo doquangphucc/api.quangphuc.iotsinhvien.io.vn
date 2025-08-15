@@ -89,9 +89,11 @@ class CustomModal {
                                 </div>
                                 <div>
                                     <input 
-                                        type="time" 
+                                        type="text" 
                                         class="datetime-input" 
                                         id="modal-time"
+                                        placeholder="hh:mm"
+                                        maxlength="5"
                                     >
                                 </div>
                             </div>
@@ -177,6 +179,22 @@ class CustomModal {
         
         // Setup date input formatting
         this.setupDateInput();
+
+        // Attach custom date picker
+        this.initCustomDatePicker();
+        // Attach custom time picker
+        this.initCustomTimePicker();
+        // Enforce 24h time (native time input already 24h in most locales, but normalize value)
+        const timeInput = modal.querySelector('#modal-time');
+        // Input formatting while typing (hhmm -> hh:mm)
+        timeInput.addEventListener('input', () => {
+            let v = timeInput.value.replace(/\D/g,'').slice(0,4);
+            if (v.length >= 3) v = v.slice(0,2)+':'+v.slice(2);
+            timeInput.value = v;
+        });
+        timeInput.addEventListener('blur', () => this.normalizeTimeInput(timeInput));
+        timeInput.addEventListener('focus', () => this.showTimePicker(timeInput.value));
+        timeInput.addEventListener('click', () => this.showTimePicker(timeInput.value));
     }
     
     setupDateInput() {
@@ -233,6 +251,172 @@ class CustomModal {
         
         input.classList.remove('error');
         return true;
+    }
+
+    // --- Custom Date Picker (scroll lists) ---
+    initCustomDatePicker() {
+        const dateInput = this.modal.querySelector('#modal-date');
+        if (!dateInput) return;
+
+        // Create overlay once
+        if (!document.getElementById('custom-date-picker')) {
+            const overlay = document.createElement('div');
+            overlay.id = 'custom-date-picker';
+            overlay.className = 'date-picker-overlay';
+            overlay.innerHTML = `
+                <div class="date-picker-panel">
+                    <div class="date-picker-header">Chọn ngày</div>
+                    <div class="date-wheel-wrapper">
+                        <div class="date-wheel" data-unit="day"></div>
+                        <div class="date-wheel" data-unit="month"></div>
+                        <div class="date-wheel" data-unit="year"></div>
+                    </div>
+                    <div class="date-picker-actions">
+                        <button type="button" class="date-picker-btn cancel">Hủy</button>
+                        <button type="button" class="date-picker-btn confirm">Xác nhận</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+
+            // Populate lists
+            const dayWheel = overlay.querySelector('[data-unit="day"]');
+            for (let d=1; d<=31; d++) dayWheel.appendChild(this.buildWheelItem(d));
+            const monthWheel = overlay.querySelector('[data-unit="month"]');
+            for (let m=1; m<=12; m++) monthWheel.appendChild(this.buildWheelItem(m));
+            const yearWheel = overlay.querySelector('[data-unit="year"]');
+            for (let y=2025; y<=2100; y++) yearWheel.appendChild(this.buildWheelItem(y));
+
+            // Selection logic
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) this.hideDatePicker();
+            });
+            overlay.querySelector('.cancel').addEventListener('click', ()=>this.hideDatePicker());
+            overlay.querySelector('.confirm').addEventListener('click', ()=>{
+                const selDay = overlay.querySelector('[data-unit="day"] .selected');
+                const selMonth = overlay.querySelector('[data-unit="month"] .selected');
+                const selYear = overlay.querySelector('[data-unit="year"] .selected');
+                if (selDay && selMonth && selYear) {
+                    const day = selDay.dataset.value.padStart(2,'0');
+                    const month = selMonth.dataset.value.padStart(2,'0');
+                    const year = selYear.dataset.value;
+                    dateInput.value = `${day}/${month}/${year}`;
+                }
+                this.validateDateInput(dateInput);
+                this.hideDatePicker();
+            });
+        }
+
+        dateInput.addEventListener('focus', ()=> this.showDatePicker(dateInput.value));
+        dateInput.addEventListener('click', ()=> this.showDatePicker(dateInput.value));
+    }
+
+    buildWheelItem(value) {
+        const div = document.createElement('div');
+        div.className = 'date-wheel-item';
+        div.textContent = value;
+        div.dataset.value = String(value);
+        div.addEventListener('click', () => {
+            const parent = div.parentElement;
+            parent.querySelectorAll('.date-wheel-item').forEach(i=>i.classList.remove('selected'));
+            div.classList.add('selected');
+        });
+        return div;
+    }
+
+    showDatePicker(currentValue) {
+        const overlay = document.getElementById('custom-date-picker');
+        if (!overlay) return;
+        overlay.classList.add('show');
+        // Preselect
+        let d=null,m=null,y=null;
+        const match = currentValue && currentValue.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (match) { d = parseInt(match[1]); m = parseInt(match[2]); y = parseInt(match[3]); }
+        this.preselectWheel(overlay.querySelector('[data-unit="day"]'), d || new Date().getDate());
+        this.preselectWheel(overlay.querySelector('[data-unit="month"]'), m || (new Date().getMonth()+1));
+        this.preselectWheel(overlay.querySelector('[data-unit="year"]'), y || new Date().getFullYear());
+    }
+
+    hideDatePicker() {
+        const overlay = document.getElementById('custom-date-picker');
+        if (overlay) overlay.classList.remove('show');
+    }
+
+    preselectWheel(wheel, value) {
+        let target=null;
+        wheel.querySelectorAll('.date-wheel-item').forEach(item => {
+            if (parseInt(item.dataset.value) === value) target = item;
+            item.classList.remove('selected');
+        });
+        if (target) {
+            target.classList.add('selected');
+            // Scroll into center view
+            wheel.scrollTop = target.offsetTop - wheel.clientHeight/2 + target.clientHeight/2;
+        }
+    }
+
+    // ---- TIME PICKER ----
+    initCustomTimePicker() {
+        if (document.getElementById('custom-time-picker')) return; // already
+        const overlay = document.createElement('div');
+        overlay.id = 'custom-time-picker';
+        overlay.className = 'date-picker-overlay';
+        overlay.innerHTML = `
+            <div class="date-picker-panel">
+                <div class="date-picker-header">Chọn thời gian</div>
+                <div class="date-wheel-wrapper">
+                    <div class="date-wheel" data-unit="hour"></div>
+                    <div class="date-wheel" data-unit="minute"></div>
+                </div>
+                <div class="date-picker-actions">
+                    <button type="button" class="date-picker-btn cancel">Hủy</button>
+                    <button type="button" class="date-picker-btn confirm">Xác nhận</button>
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+        const hourWheel = overlay.querySelector('[data-unit="hour"]');
+        for (let h=0; h<24; h++) hourWheel.appendChild(this.buildWheelItem(String(h).padStart(2,'0')));
+        const minuteWheel = overlay.querySelector('[data-unit="minute"]');
+        for (let m=0; m<60; m++) minuteWheel.appendChild(this.buildWheelItem(String(m).padStart(2,'0')));
+
+        overlay.addEventListener('click', e => { if (e.target === overlay) this.hideTimePicker(); });
+        overlay.querySelector('.cancel').addEventListener('click', ()=> this.hideTimePicker());
+        overlay.querySelector('.confirm').addEventListener('click', ()=> {
+            const hSel = overlay.querySelector('[data-unit="hour"] .selected');
+            const mSel = overlay.querySelector('[data-unit="minute"] .selected');
+            const input = this.modal.querySelector('#modal-time');
+            if (hSel && mSel) {
+                input.value = `${hSel.dataset.value}:${mSel.dataset.value}`;
+            }
+            this.normalizeTimeInput(input);
+            this.hideTimePicker();
+        });
+    }
+
+    showTimePicker(currentValue) {
+        const overlay = document.getElementById('custom-time-picker');
+        if (!overlay) return;
+        overlay.classList.add('show');
+        let h=null, m=null;
+        const match = currentValue && currentValue.match(/^(\d{2}):(\d{2})$/);
+        if (match) { h=parseInt(match[1]); m=parseInt(match[2]); }
+        this.preselectWheel(overlay.querySelector('[data-unit="hour"]'), h ?? new Date().getHours());
+        this.preselectWheel(overlay.querySelector('[data-unit="minute"]'), m ?? new Date().getMinutes());
+    }
+
+    hideTimePicker() {
+        const overlay = document.getElementById('custom-time-picker');
+        if (overlay) overlay.classList.remove('show');
+    }
+
+    normalizeTimeInput(input) {
+        if (!input.value) return;
+        const m = input.value.match(/^(\d{1,2})(?::(\d{1,2}))?$/);
+        if (m) {
+            let hh = parseInt(m[1]);
+            let mm = parseInt(m[2] ?? '0');
+            if (hh>23) hh=23; if (mm>59) mm=59;
+            input.value = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+        }
     }
     
     // Convert dd/mm/yyyy to yyyy-mm-dd for database
