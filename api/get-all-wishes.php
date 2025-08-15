@@ -30,17 +30,16 @@ try {
     if (!in_array($sort, $validSortColumns)) {
         $sort = 'created_at';
     }
-
-    // Validate order
-    if (!in_array($order, ['ASC', 'DESC'])) {
-        $order = 'DESC';
-    }
-
-    // Xây dựng điều kiện WHERE cho status
-    $statusCondition = '';
-    $params = [$username];
-    
-    if ($status === 'completed') {
+            $sql = "SELECT DISTINCT 
+                    w.id, w.title, w.description, w.category, w.priority, w.price, 
+                    w.product_url as store_location, w.product_url as purchase_link, 
+                    w.status as is_completed, w.created_at, w.updated_at
+                FROM wishes w
+                LEFT JOIN tai_khoan tk ON w.user_id = tk.id
+                WHERE tk.user = ? $statusCondition
+                ORDER BY $sort $order, w.id DESC
+                LIMIT ? OFFSET ?";
+            $stmt = $pdo->prepare($sql);
         $statusCondition = ' AND w.status = 1';
     } elseif ($status === 'pending') {
         $statusCondition = ' AND w.status = 0';
@@ -143,6 +142,13 @@ try {
         LEFT JOIN tai_khoan tk ON w.user_id = tk.id
         WHERE tk.user = ? $statusCondition
     ");
+            $payload['debug'] = [
+                'sql' => $sql,
+                'raw_ids' => array_map(fn($r)=>$r['id'],$rawWishes),
+                'unique_ids' => array_map(fn($r)=>$r['id'],$wishes),
+                'file' => __FILE__,
+                'version' => 'wishes_api_v2'
+            ];
     $fullStatsStmt->execute($params);
     $fullStats = $fullStatsStmt->fetch(PDO::FETCH_ASSOC);
 
