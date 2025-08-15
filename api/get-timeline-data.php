@@ -97,7 +97,16 @@ try {
         ];
     }
 
-    // Thống kê nhanh
+    // Thống kê nhanh và khoảng thời gian
+    $minDate = null;
+    $maxDate = null;
+    
+    if (count($timeline) > 0) {
+        $dates = array_map(fn($item) => $item['timestamp'], $timeline);
+        $minDate = min($dates);
+        $maxDate = max($dates);
+    }
+
     $stats = [
         'total_items' => count($timeline),
         'tasks' => count(array_filter($timeline, fn($item) => $item['type'] == 'task')),
@@ -106,7 +115,9 @@ try {
         'pending_items' => count(array_filter($timeline, fn($item) => !$item['is_completed'])),
         'days_range' => $days,
         'date_from' => $startDate,
-        'date_to' => date('Y-m-d')
+        'date_to' => date('Y-m-d'),
+        'actual_min_date' => $minDate ? substr($minDate, 0, 10) : null,
+        'actual_max_date' => $maxDate ? substr($maxDate, 0, 10) : null
     ];
 
     echo json_encode([

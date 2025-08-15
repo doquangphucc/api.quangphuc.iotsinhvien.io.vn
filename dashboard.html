@@ -903,22 +903,26 @@
 
         // Dữ liệu timeline từ API
         let timelineData = {};
-        let dayOffset = 20; // Số ngày từ hôm nay
+        let timelineRange = { minDate: null, maxDate: null }; // Khoảng thời gian có dữ liệu
         let isLoading = false;
 
         // Tải dữ liệu timeline từ API
-        async function loadTimelineData(startOffset, endOffset) {
+        async function loadTimelineData() {
             try {
                 const username = localStorage.getItem('username') || 'User';
-                const days = Math.abs(startOffset) + endOffset; // Tổng số ngày cần load
-                console.log(`Loading timeline data: ${days} days (from ${startOffset} to ${endOffset})`); // Debug
-                const response = await fetch(`api/get-timeline-data.php?username=${encodeURIComponent(username)}&days=${days}&limit=100`);
+                // Lấy tất cả dữ liệu có sẵn (30 ngày gần nhất)
+                const response = await fetch(`api/get-timeline-data.php?username=${encodeURIComponent(username)}&days=30&limit=100`);
                 const result = await response.json();
                 
                 console.log('Timeline API Response:', result); // Debug log
                 
                 if (result.success) {
                     console.log('Raw API data items:', result.data); // Debug raw data
+                    
+                    // Lưu khoảng thời gian có dữ liệu thực tế
+                    timelineRange.minDate = result.stats.actual_min_date;
+                    timelineRange.maxDate = result.stats.actual_max_date;
+                    console.log('Actual data range:', timelineRange);
                     
                     // Chuyển đổi data từ API mới sang format cũ để tương thích
                     const convertedData = {};
@@ -1058,18 +1062,38 @@
             `;
         }
 
-        // Tạo nhiều đốt tre ban đầu
+        // Tạo nodes dựa trên khoảng thời gian có dữ liệu
         async function initializeBambooNodes() {
             const trunkElement = document.getElementById('bamboo-trunk');
             const loadingElement = document.getElementById('loading');
             
             try {
-                // Load dữ liệu timeline từ API (30 ngày từ -10 đến +20)
-                await loadTimelineData(-10, 20);
+                // Load dữ liệu timeline từ API
+                await loadTimelineData();
                 
-                // Tạo đốt từ 10 ngày trước đến 20 ngày nữa
+                // Nếu không có dữ liệu, chỉ hiển thị vài ngày quanh hôm nay
+                let startOffset = -3;  // 3 ngày trước
+                let endOffset = 3;     // 3 ngày sau
+                
+                if (timelineRange.minDate && timelineRange.maxDate) {
+                    const today = new Date();
+                    const minDate = new Date(timelineRange.minDate);
+                    const maxDate = new Date(timelineRange.maxDate);
+                    
+                    // Tính offset từ hôm nay
+                    startOffset = Math.floor((minDate - today) / (1000 * 60 * 60 * 24)) - 1; // Thêm 1 ngày buffer
+                    endOffset = Math.ceil((maxDate - today) / (1000 * 60 * 60 * 24)) + 1;   // Thêm 1 ngày buffer
+                    
+                    // Giới hạn khoảng thời gian hợp lý
+                    startOffset = Math.max(startOffset, -30); // Không quá 30 ngày trước
+                    endOffset = Math.min(endOffset, 30);      // Không quá 30 ngày sau
+                }
+                
+                console.log(`Creating nodes from ${startOffset} to ${endOffset} days`);
+                
+                // Tạo nodes trong khoảng thời gian xác định
                 let nodesHTML = '';
-                for (let i = -10; i <= 20; i++) {
+                for (let i = startOffset; i <= endOffset; i++) {
                     const date = new Date();
                     date.setDate(date.getDate() + i);
                     const dateString = date.toISOString().split('T')[0];
@@ -1080,80 +1104,23 @@
                 }
                 
                 trunkElement.innerHTML = nodesHTML + loadingElement.outerHTML;
-                dayOffset = 20; // Cập nhật offset hiện tại
             } catch (error) {
                 console.error('Error initializing bamboo nodes:', error);
-                // Fallback: tạo nodes rỗng
+                // Fallback: tạo vài nodes cơ bản quanh hôm nay
                 let nodesHTML = '';
-                for (let i = -10; i <= 20; i++) {
+                for (let i = -3; i <= 3; i++) {
                     nodesHTML += createBambooNode(i);
                 }
                 trunkElement.innerHTML = nodesHTML + loadingElement.outerHTML;
-                dayOffset = 20;
             }
         }
 
-        // Thêm nhiều đốt hơn khi cuộn
-        async function loadMoreNodes() {
-            if (isLoading) return;
-            
-            isLoading = true;
-            const loadingElement = document.getElementById('loading');
-            loadingElement.style.display = 'block';
-            
-            try {
-                // Load dữ liệu cho 10 ngày tiếp theo
-                await loadTimelineData(dayOffset + 1, dayOffset + 10);
-                
-                const trunkElement = document.getElementById('bamboo-trunk');
-                let newNodesHTML = '';
-                
-                // Thêm 10 ngày nữa
-                for (let i = 1; i <= 10; i++) {
-                    const date = new Date();
-                    date.setDate(date.getDate() + dayOffset + i);
-                    const dateString = date.toISOString().split('T')[0];
-                    const dayData = timelineData[dateString];
-                    
-                    newNodesHTML += createBambooNode(dayOffset + i, dayData);
-                }
-                
-                // Thêm vào trước loading indicator
-                loadingElement.insertAdjacentHTML('beforebegin', newNodesHTML);
-                dayOffset += 10;
-                
-                setTimeout(() => {
-                    loadingElement.style.display = 'none';
-                    isLoading = false;
-                }, 500);
-            } catch (error) {
-                console.error('Error loading more nodes:', error);
-                loadingElement.style.display = 'none';
-                isLoading = false;
-            }
-        }
-
-        // Xử lý scroll event
-        function handleScroll() {
-            const container = document.getElementById('bamboo-container');
-            const scrollTop = container.scrollTop;
-            const scrollHeight = container.scrollHeight;
-            const clientHeight = container.clientHeight;
-            
-            // Khi cuộn gần đến cuối
-            if (scrollTop + clientHeight >= scrollHeight - 100) {
-                loadMoreNodes();
-            }
-        }
-
-        // Khởi tạo timeline
+        // Khởi tạo timeline (không còn infinite scroll)
         document.addEventListener('DOMContentLoaded', function() {
             initializeBambooNodes();
             
-            const container = document.getElementById('bamboo-container');
-            if (container) {
-                container.addEventListener('scroll', handleScroll);
-            }
+            // Không cần scroll listener nữa vì timeline có giới hạn
+            console.log('Timeline initialized with limited range based on actual data');
         });
 
         // Toggle trạng thái hoàn thành
