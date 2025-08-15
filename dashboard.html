@@ -945,9 +945,26 @@
     </main>
 
     <script>
-        // Lấy username từ localStorage hoặc URL params (tạm thời)
-        const urlParams = new URLSearchParams(window.location.search);
-        const username = urlParams.get('user') || localStorage.getItem('username') || 'quangphuc2k3';
+        // Check authentication
+        function checkAuth() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('user') || localStorage.getItem('username');
+            
+            if (!username) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            return username;
+        }
+
+        // Initialize authentication
+        const username = checkAuth();
+        if (!username) {
+            // Stop script execution if not authenticated
+            throw new Error('Authentication required');
+        }
         document.getElementById('username').textContent = username;
 
         // Helper function để lấy username
@@ -1553,7 +1570,7 @@
 
         function confirmLogout() {
             localStorage.removeItem('username');
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
         }
 
         // Đóng modal khi click vào backdrop

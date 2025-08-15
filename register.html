@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản - Dòng thời gian cá nhân</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background decorations */
+        .bg-decoration {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .bg-decoration:nth-child(1) {
+            top: 15%;
+            left: 15%;
+            background: #fff;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .bg-decoration:nth-child(2) {
+            top: 70%;
+            right: 15%;
+            background: #fff;
+            animation: float 7s ease-in-out infinite reverse;
+        }
+
+        .bg-decoration:nth-child(3) {
+            bottom: 15%;
+            left: 30%;
+            background: #fff;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .register-title {
+            color: #155724;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .register-subtitle {
+            color: #28a745;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            color: #155724;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid rgba(40, 167, 69, 0.2);
+            border-radius: 12px;
+            font-family: 'Merriweather', serif;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+            background: white;
+        }
+
+        .form-input::placeholder {
+            color: #28a745;
+            opacity: 0.7;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .register-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            color: #28a745;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .login-link:hover {
+            color: #155724;
+            text-decoration: underline;
+        }
+
+        .error-message, .success-message {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .success-message {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .loading {
+            display: none;
+            color: #28a745;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .password-hint {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 480px) {
+            .register-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+
+            .register-title {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <div class="register-container">
+        <div class="logo">✨</div>
+        <h1 class="register-title">Tạo tài khoản mới</h1>
+        <p class="register-subtitle">Tạo dòng thời gian cá nhân của riêng bạn</p>
+
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+
+        <form id="register-form">
+            <div class="form-group">
+                <label class="form-label" for="username">Tên đăng nhập:</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-input"
+                    placeholder="Chọn tên đăng nhập"
+                    required
+                    minlength="3"
+                    maxlength="50"
+                >
+                <div class="password-hint">Từ 3-50 ký tự, chỉ chứa chữ cái, số và dấu gạch dưới</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="display_name">Tên hiển thị:</label>
+                <input 
+                    type="text" 
+                    id="display_name" 
+                    name="display_name" 
+                    class="form-input"
+                    placeholder="Tên hiển thị của bạn"
+                    required
+                    maxlength="100"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Mật khẩu:</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input"
+                    placeholder="Tạo mật khẩu"
+                    required
+                    minlength="6"
+                >
+                <div class="password-hint">Ít nhất 6 ký tự</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirm_password">Xác nhận mật khẩu:</label>
+                <input 
+                    type="password" 
+                    id="confirm_password" 
+                    name="confirm_password" 
+                    class="form-input"
+                    placeholder="Nhập lại mật khẩu"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="register-btn">Tạo tài khoản</button>
+            
+            <div class="loading" id="loading">Đang tạo tài khoản...</div>
+        </form>
+
+        <p>
+            Đã có tài khoản? 
+            <a href="login.html" class="login-link">Đăng nhập</a>
+        </p>
+    </div>
+
+    <script>
+        const registerForm = document.getElementById('register-form');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const loadingEl = document.getElementById('loading');
+
+        // Check if already logged in
+        if (localStorage.getItem('username')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const displayName = document.getElementById('display_name').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            // Validate inputs
+            if (!username || !displayName || !password || !confirmPassword) {
+                showError('Vui lòng điền đầy đủ thông tin');
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9_]{3,50}$/.test(username)) {
+                showError('Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới (3-50 ký tự)');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('Mật khẩu phải có ít nhất 6 ký tự');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('Mật khẩu xác nhận không khớp');
+                return;
+            }
+
+            showLoading(true);
+            hideMessages();
+
+            try {
+                const response = await fetch('api/register.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username, 
+                        display_name: displayName, 
+                        password 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('Tạo tài khoản thành công! Đang chuyển đến trang đăng nhập...');
+                    
+                    // Redirect to login page after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showError(result.message || 'Tạo tài khoản thất bại');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showError('Không thể kết nối đến server');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        function showLoading(show) {
+            loadingEl.style.display = show ? 'block' : 'none';
+            document.querySelector('.register-btn').disabled = show;
+        }
+
+        // Auto-focus username field
+        document.getElementById('username').focus();
+
+        // Real-time password confirmation check
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = '';
+            }
+        });
+    </script>
+</body>
+</html>

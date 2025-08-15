@@ -1,97 +1,66 @@
 -- Complete Database Reset Script
--- Xóa toàn bộ database và tạo lại từ đầu với đầy đủ columns
+-- Run this script to reset the entire database structure for multi-user timeline system
 
 -- Drop existing tables if they exist
-DROP TABLE IF EXISTS wishes;
-DROP TABLE IF EXISTS tasks;
-DROP TABLE IF EXISTS muon_mua;
-DROP TABLE IF EXISTS muon_lam;
-DROP TABLE IF EXISTS tai_khoan;
+DROP TABLE IF EXISTS `tasks`;
+DROP TABLE IF EXISTS `wishes`;
+DROP TABLE IF EXISTS `users`;
 
--- Create tai_khoan table
-CREATE TABLE tai_khoan (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(15)
-);
+-- Drop legacy tables if they exist
+DROP TABLE IF EXISTS `muon_lam`;
+DROP TABLE IF EXISTS `muon_mua`;
+DROP TABLE IF EXISTS `tai_khoan`;
 
--- Create muon_lam table (legacy)
-CREATE TABLE muon_lam (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    timestamp DATETIME NOT NULL,
-    content TEXT
-);
+-- Create users table for authentication
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL UNIQUE,
+  `display_name` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_login` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create muon_mua table (legacy)
-CREATE TABLE muon_mua (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    timestamp DATETIME NOT NULL,
-    content TEXT
-);
+-- Create tasks table
+CREATE TABLE `tasks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `scheduled_date` date DEFAULT NULL,
+  `scheduled_time` time DEFAULT NULL,
+  `completed` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_username` (`username`),
+  KEY `idx_scheduled` (`scheduled_date`, `scheduled_time`),
+  KEY `idx_completed` (`completed`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create tasks table for tracking task completion status
-CREATE TABLE tasks (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    item_id VARCHAR(100) NOT NULL UNIQUE,
-    title VARCHAR(255) NOT NULL,
-    description TEXT DEFAULT NULL COMMENT 'Mô tả chi tiết công việc',
-    category VARCHAR(50) DEFAULT NULL COMMENT 'Danh mục: Học tập, Công việc, Cá nhân, Sức khỏe, etc',
-    priority ENUM('low', 'medium', 'high') DEFAULT 'medium' COMMENT 'Độ ưu tiên',
-    status TINYINT(1) DEFAULT 0 COMMENT '0 = pending, 1 = completed',
-    user_id INT DEFAULT NULL,
-    scheduled_date DATE DEFAULT NULL COMMENT 'Ngày dự kiến thực hiện (do user chọn)',
-    scheduled_time TIME DEFAULT NULL COMMENT 'Giờ dự kiến thực hiện (do user chọn)', 
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo record (chỉ set 1 lần)',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật lần cuối',
-    completed_at DATETIME DEFAULT NULL COMMENT 'Thời gian hoàn thành thực tế',
-    INDEX idx_item_id (item_id),
-    INDEX idx_user_id (user_id),
-    INDEX idx_status (status),
-    INDEX idx_category (category),
-    INDEX idx_priority (priority),
-    INDEX idx_scheduled_date (scheduled_date),
-    FOREIGN KEY (user_id) REFERENCES tai_khoan(id) ON DELETE SET NULL
-);
+-- Create wishes table
+CREATE TABLE `wishes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `scheduled_date` date DEFAULT NULL,
+  `scheduled_time` time DEFAULT NULL,
+  `completed` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_username` (`username`),
+  KEY `idx_scheduled` (`scheduled_date`, `scheduled_time`),
+  KEY `idx_completed` (`completed`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create wishes table for tracking wish completion status  
-CREATE TABLE wishes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    item_id VARCHAR(100) NOT NULL UNIQUE,
-    title VARCHAR(255) NOT NULL,
-    description TEXT DEFAULT NULL COMMENT 'Mô tả chi tiết sản phẩm',
-    category VARCHAR(50) DEFAULT NULL COMMENT 'Danh mục: Điện tử, Thời trang, Gia dụng, Sách, etc',
-    priority ENUM('low', 'medium', 'high') DEFAULT 'medium' COMMENT 'Độ ưu tiên mua',
-    price DECIMAL(15,2) DEFAULT NULL COMMENT 'Giá tiền dự kiến',
-    currency VARCHAR(3) DEFAULT 'VND' COMMENT 'Đơn vị tiền tệ',
-    product_url TEXT DEFAULT NULL COMMENT 'Link sản phẩm',
-    status TINYINT(1) DEFAULT 0 COMMENT '0 = pending, 1 = completed/purchased',
-    purchase_status ENUM('researching', 'saving', 'ready_to_buy', 'purchased') DEFAULT 'researching' COMMENT 'Trạng thái mua sắm',
-    user_id INT DEFAULT NULL,
-    scheduled_date DATE DEFAULT NULL COMMENT 'Ngày dự kiến mua (do user chọn)',
-    scheduled_time TIME DEFAULT NULL COMMENT 'Giờ dự kiến mua (do user chọn)',
-    target_date DATE DEFAULT NULL COMMENT 'Ngày dự kiến mua (backward compatibility)',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo record (chỉ set 1 lần)',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật lần cuối',
-    purchased_at DATETIME DEFAULT NULL COMMENT 'Thời gian mua thực tế',
-    actual_price DECIMAL(15,2) DEFAULT NULL COMMENT 'Giá mua thực tế',
-    purchase_note TEXT DEFAULT NULL COMMENT 'Ghi chú khi mua',
-    INDEX idx_item_id (item_id),
-    INDEX idx_user_id (user_id),
-    INDEX idx_status (status),
-    INDEX idx_category (category),
-    INDEX idx_priority (priority),
-    INDEX idx_purchase_status (purchase_status),
-    INDEX idx_price (price),
-    INDEX idx_scheduled_date (scheduled_date),
-    INDEX idx_target_date (target_date),
-    FOREIGN KEY (user_id) REFERENCES tai_khoan(id) ON DELETE SET NULL
-);
-
--- Insert default user (adjust password as needed)
-INSERT INTO tai_khoan (user, password, phone_number) VALUES 
-('quangphuc2k3', '$2y$10$example_hashed_password_here', NULL);
+-- Set timezone to Vietnam
+SET time_zone = '+07:00';
 
 -- Show table structures for verification
+DESCRIBE users;
 DESCRIBE tasks;
 DESCRIBE wishes;

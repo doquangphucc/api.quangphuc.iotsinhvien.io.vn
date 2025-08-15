@@ -1,59 +1,84 @@
 <?php
 require_once __DIR__.'/config.php';
 
+header('Content-Type: application/json; charset=utf-8');
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    json_response(['status'=>'error','message'=>'Method not allowed'], 405);
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit;
 }
 
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true);
+
 if (!is_array($data)) {
-    // Fallback nếu gửi form-encoded
     $data = $_POST;
 }
 
 $username = trim($data['username'] ?? '');
+$display_name = trim($data['display_name'] ?? '');
 $password = trim($data['password'] ?? '');
-$phone    = trim($data['phone'] ?? '');
 
-if ($username === '' || $password === '' || $phone === '') {
-    json_response(['status'=>'error','message'=>'Thiếu dữ liệu'],400);
+if (empty($username) || empty($display_name) || empty($password)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Vui lòng điền đầy đủ thông tin']);
+    exit;
 }
 
-if (!preg_match('/^[0-9]{8,15}$/',$phone)) {
-    json_response(['status'=>'error','message'=>'Số điện thoại không hợp lệ'],400);
+// Validate username format
+if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới (3-50 ký tự)']);
+    exit;
 }
 
-$conn = db_get_connection();
-
-// Kiểm tra số điện thoại
-$stmt = $conn->prepare('SELECT id FROM tai_khoan WHERE phone_number = ? LIMIT 1');
-$stmt->bind_param('s', $phone);
-$stmt->execute();
-$stmt->store_result();
-if ($stmt->num_rows > 0) {
-    json_response(['status'=>'error','code'=>'PHONE_EXISTS','message'=>'Số điện thoại đã tồn tại'],409);
-}
-$stmt->close();
-
-// Kiểm tra username
-$stmt = $conn->prepare('SELECT id FROM tai_khoan WHERE user = ? LIMIT 1');
-$stmt->bind_param('s', $username);
-$stmt->execute();
-$stmt->store_result();
-if ($stmt->num_rows > 0) {
-    json_response(['status'=>'error','code'=>'USER_EXISTS','message'=>'Username đã tồn tại'],409);
-}
-$stmt->close();
-
-// Hash mật khẩu (có thể dùng password_hash)
-$hash = password_hash($password, PASSWORD_BCRYPT);
-
-$stmt = $conn->prepare('INSERT INTO tai_khoan (user, password, phone_number) VALUES (?,?,?)');
-$stmt->bind_param('sss', $username, $hash, $phone);
-if ($stmt->execute()) {
-    json_response(['status'=>'success','message'=>'Đăng ký thành công','id'=>$stmt->insert_id],201);
+// Validate password length
+if (strlen($password) < 6) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Mật khẩu phải có ít nhất 6 ký tự']);
+    exit;
 }
 
-json_response(['status'=>'error','message'=>'Lỗi máy chủ'],500);
+try {
+    $conn = db_get_connection();
+    
+    // Check if username already exists
+    $stmt = $conn->prepare('SELECT id FROM users WHERE username = ?');
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        http_response_code(409);
+        echo json_encode(['success' => false, 'message' => 'Tên đăng nhập đã tồn tại']);
+        exit;
+    }
+    $stmt->close();
+    
+    // Hash password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    
+    // Insert new user
+    $stmt = $conn->prepare('INSERT INTO users (username, display_name, password, created_at) VALUES (?, ?, ?, NOW())');
+    $stmt->bind_param('sss', $username, $display_name, $hashedPassword);
+    
+    if ($stmt->execute()) {
+        $userId = $conn->insert_id;
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Đăng ký thành công',
+            'user_id' => $userId
+        ]);
+    } else {
+        throw new Exception('Database insert failed');
+    }
+    
+    $stmt->close();
+    $conn->close();
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Lỗi hệ thống']);
+}
 ?>

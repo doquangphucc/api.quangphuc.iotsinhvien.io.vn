@@ -3,50 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timeline - Lưu trữ ước mơ của bạn</title>
-    <!-- Font web hỗ trợ tiếng Việt để tránh lỗi khoảng cách ký tự khi in đậm -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;600;700&display=swap&subset=vietnamese" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <title>Chuyển hướng...</title>
+</head>
+<body>
+    <script>
+        // Check if user is logged in
+        const username = localStorage.getItem('username');
+        
+        if (username) {
+            // Redirect to dashboard if logged in
+            window.location.replace('dashboard.html');
+        } else {
+            // Redirect to landing page if not logged in
+            window.location.replace('landing.html');
         }
-
-        body {
-            font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
-            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Animation cho lá rơi */
-        .falling-leaves {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .leaf {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #f4a261;
-            border-radius: 0 100% 0 100%;
-            animation: fall linear infinite;
-            opacity: 0.7;
-        }
-
-        .leaf:nth-child(odd) {
-            background: #e76f51;
-            border-radius: 100% 0 100% 0;
-            transform: rotate(15deg);
-        }
+    </script>
+</body>
+</html>
 
         .leaf:nth-child(3n) {
             background: #e9c46a;
