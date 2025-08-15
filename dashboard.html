@@ -909,8 +909,13 @@
     <script>
         // Lấy username từ localStorage hoặc URL params (tạm thời)
         const urlParams = new URLSearchParams(window.location.search);
-        const username = urlParams.get('user') || localStorage.getItem('username') || 'User';
+        const username = urlParams.get('user') || localStorage.getItem('username') || 'quangphuc2k3';
         document.getElementById('username').textContent = username;
+
+        // Helper function để lấy username
+        function getUsername() {
+            return localStorage.getItem('username') || urlParams.get('user') || 'quangphuc2k3';
+        }
 
         // Cập nhật thời gian hiện tại
         function updateCurrentTime() {
@@ -944,7 +949,7 @@
         // Tải dữ liệu timeline từ API
         async function loadTimelineData() {
             try {
-                const username = localStorage.getItem('username') || 'User';
+                const username = getUsername();
                 // Lấy tất cả dữ liệu có sẵn (30 ngày gần nhất)
                 const response = await fetch(`api/get-timeline-data.php?username=${encodeURIComponent(username)}&days=30&limit=100`);
                 const result = await response.json();
@@ -963,7 +968,11 @@
                     const convertedData = {};
                     result.data.forEach(item => {
                         console.log('Processing item:', item); // Debug each item
-                        const date = item.timestamp.split('T')[0]; // Lấy YYYY-MM-DD
+                        const date = item.date_only || (item.timestamp ? item.timestamp.split('T')[0] : null);
+                        if (!date) {
+                            console.warn('Item without valid date:', item);
+                            return; // Skip items without valid date
+                        }
                         if (!convertedData[date]) {
                             convertedData[date] = {
                                 date: date,
@@ -974,11 +983,13 @@
                         
                         if (item.type === 'task') {
                             convertedData[date].tasks.push({
+                                id: item.id || null,
                                 title: item.title,
                                 is_completed: item.is_completed
                             });
                         } else {
                             convertedData[date].wishes.push({
+                                id: item.id || null,
                                 title: item.title,
                                 is_completed: item.is_completed
                             });
@@ -1007,7 +1018,8 @@
         function createBambooNode(daysFromToday, dayData = null) {
             const date = new Date();
             date.setDate(date.getDate() + daysFromToday);
-            const dateString = date.toISOString().split('T')[0];
+            // Build local date key (avoid UTC shift)
+            const dateString = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
             
             let dateLabel;
             if (daysFromToday === 0) {
@@ -1038,27 +1050,31 @@
             }
 
             console.log(`Creating node for ${dateString}:`, { tasks, wishes, dayData }); // Debug log
-
-            // Tạo HTML cho tasks
-            let tasksHTML = '';
-            if (tasks.length > 0) {
-                    tasks.forEach(task => {
-                        const completedClass = task.is_completed ? 'completed' : '';
-                        tasksHTML += `
-                            <div class="branch-item ${completedClass}" data-type="task" data-id="${task.id}">
-                                <span class="branch-text">${task.title}</span>
-                                <button class="tick-btn" onclick="toggleComplete('task', ${task.id})" 
-                                        title="${task.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
-                                    ${task.is_completed ? '✅' : '⭕'}
-                                </button>
-                            </div>
-                        `;
-                    });
-            } else {
-                tasksHTML = '<div class="branch-item empty">Chưa có việc nào</div>';
+            
+            // Nếu được gọi với dayData (có dữ liệu từ API), luôn hiển thị
+            // Chỉ skip khi không có dữ liệu và không phải hôm nay
+            if (!dayData && tasks.length === 0 && wishes.length === 0 && daysFromToday !== 0) {
+                return '';
             }
 
-            // Tạo HTML cho wishes
+            // Build tasks HTML (no placeholder when empty)
+            let tasksHTML = '';
+            if (tasks.length > 0) {
+                tasks.forEach(task => {
+                    const completedClass = task.is_completed ? 'completed' : '';
+                    tasksHTML += `
+                        <div class="branch-item ${completedClass}" data-type="task" data-id="${task.id}">
+                            <span class="branch-text">${task.title}</span>
+                            <button class="tick-btn" onclick="toggleComplete('task', ${task.id})" 
+                                    title="${task.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
+                                ${task.is_completed ? '✅' : '⭕'}
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+
+            // Build wishes HTML (no placeholder when empty)
             let wishesHTML = '';
             if (wishes.length > 0) {
                 wishes.forEach(wish => {
@@ -1074,8 +1090,6 @@
                         </div>
                     `;
                 });
-            } else {
-                wishesHTML = '<div class="branch-item empty">Chưa có đồ nào</div>';
             }
 
             return `
@@ -1106,47 +1120,49 @@
                 // Load dữ liệu timeline từ API
                 await loadTimelineData();
                 
-                // Nếu không có dữ liệu, chỉ hiển thị vài ngày quanh hôm nay
-                let startOffset = -3;  // 3 ngày trước
-                let endOffset = 3;     // 3 ngày sau
-                
-                if (timelineRange.minDate && timelineRange.maxDate) {
-                    const today = new Date();
-                    const minDate = new Date(timelineRange.minDate);
-                    const maxDate = new Date(timelineRange.maxDate);
-                    
-                    // Tính offset từ hôm nay
-                    startOffset = Math.floor((minDate - today) / (1000 * 60 * 60 * 24)) - 1; // Thêm 1 ngày buffer
-                    endOffset = Math.ceil((maxDate - today) / (1000 * 60 * 60 * 24)) + 1;   // Thêm 1 ngày buffer
-                    
-                    // Giới hạn khoảng thời gian hợp lý
-                    startOffset = Math.max(startOffset, -30); // Không quá 30 ngày trước
-                    endOffset = Math.min(endOffset, 30);      // Không quá 30 ngày sau
-                }
-                
-                console.log(`Creating nodes from ${startOffset} to ${endOffset} days`);
-                
-                // Tạo nodes trong khoảng thời gian xác định
+                // Chỉ hiển thị các ngày có dữ liệu thực tế
                 let nodesHTML = '';
-                for (let i = startOffset; i <= endOffset; i++) {
-                    const date = new Date();
-                    date.setDate(date.getDate() + i);
-                    const dateString = date.toISOString().split('T')[0];
-                    const dayData = timelineData[dateString];
+                
+                if (Object.keys(timelineData).length > 0) {
+                    // Sắp xếp các ngày theo thứ tự thời gian (mới nhất trước)
+                    const sortedDates = Object.keys(timelineData).sort((a, b) => new Date(b) - new Date(a));
                     
-                    console.log(`Node ${i} (${dateString}):`, dayData); // Debug each node
-                    nodesHTML += createBambooNode(i, dayData);
+                    for (const dateString of sortedDates) {
+                        const dayData = timelineData[dateString];
+                        
+                        // Tính số ngày từ hôm nay
+                        const today = new Date();
+                        const targetDate = new Date(dateString);
+                        const daysFromToday = Math.floor((targetDate - today) / (1000 * 60 * 60 * 24));
+                        
+                        console.log(`Creating node for ${dateString} (${daysFromToday} days from today):`, dayData);
+                        
+                        const nodeHTML = createBambooNode(daysFromToday, dayData);
+                        if (nodeHTML) nodesHTML += nodeHTML;
+                    }
+                    
+                    console.log('Generated nodes HTML:', nodesHTML.length > 0 ? 'Success' : 'Empty');
+                } 
+                
+                // Nếu không có dữ liệu nào, hiển thị ngày hôm nay trống
+                if (!nodesHTML) {
+                    console.log('No data found, showing today node');
+                    const todayData = timelineData[new Date().toISOString().split('T')[0]];
+                    nodesHTML = createBambooNode(0, todayData);
+                    
+                    // Nếu vẫn không có gì, tạo node hôm nay trống
+                    if (!nodesHTML) {
+                        nodesHTML = createBambooNode(0, { date: new Date().toISOString().split('T')[0], tasks: [], wishes: [] });
+                    }
                 }
                 
                 trunkElement.innerHTML = nodesHTML + loadingElement.outerHTML;
+                
             } catch (error) {
                 console.error('Error initializing bamboo nodes:', error);
-                // Fallback: tạo vài nodes cơ bản quanh hôm nay
-                let nodesHTML = '';
-                for (let i = -3; i <= 3; i++) {
-                    nodesHTML += createBambooNode(i);
-                }
-                trunkElement.innerHTML = nodesHTML + loadingElement.outerHTML;
+                // Fallback: hiển thị node hôm nay trống
+                const fallbackHTML = createBambooNode(0, { date: new Date().toISOString().split('T')[0], tasks: [], wishes: [] });
+                trunkElement.innerHTML = fallbackHTML + loadingElement.outerHTML;
             }
         }
 
@@ -1258,7 +1274,7 @@
             if (title) {
                 // Backward compatibility - convert old format
                 try {
-                    const username = localStorage.getItem('username') || 'User';
+                    const username = getUsername();
                     const requestBody = { 
                         username: username,
                         title: title 
@@ -1275,7 +1291,7 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        await initializeBambooNodes();
+                        await refreshTimeline(true);
                     } else {
                         alert('Có lỗi xảy ra: ' + (result.message || 'Không thể thêm việc'));
                     }
@@ -1287,7 +1303,7 @@
                 // Sử dụng modal mới
                 showTaskModal(async (data) => {
                     try {
-                        const username = localStorage.getItem('username') || 'User';
+                        const username = getUsername();
                         
                         const response = await fetch('api/add-task.php', {
                             method: 'POST',
@@ -1307,10 +1323,7 @@
                         
                         if (result.success) {
                             showNotification('✅ Thêm task thành công!', 'success');
-                            // Refresh dashboard data
-                            setTimeout(() => {
-                                refreshDashboardData();
-                            }, 500);
+                            setTimeout(() => { refreshTimeline(true); }, 300);
                         } else {
                             showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm task'), 'error');
                         }
@@ -1328,7 +1341,7 @@
             if (title) {
                 // Backward compatibility - convert old format
                 try {
-                    const username = localStorage.getItem('username') || 'User';
+                    const username = getUsername();
                     const requestBody = { 
                         username: username,
                         title: title 
@@ -1346,7 +1359,7 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        await initializeBambooNodes();
+                        await refreshTimeline(true);
                     } else {
                         alert('Có lỗi xảy ra: ' + (result.message || 'Không thể thêm đồ'));
                     }
@@ -1358,7 +1371,7 @@
                 // Sử dụng modal mới
                 showWishModal(async (data) => {
                     try {
-                        const username = localStorage.getItem('username') || 'User';
+                        const username = getUsername();
                         
                         const response = await fetch('api/add-wish.php', {
                             method: 'POST',
@@ -1381,10 +1394,7 @@
                         
                         if (result.success) {
                             showNotification('✅ Thêm wish thành công!', 'success');
-                            // Refresh dashboard data
-                            setTimeout(() => {
-                                refreshDashboardData();
-                            }, 500);
+                            setTimeout(() => { refreshTimeline(true); }, 300);
                         } else {
                             showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm wish'), 'error');
                         }
@@ -1452,12 +1462,12 @@
 
         function viewAllTasks() {
             // Chuyển sang trang danh sách tất cả việc muốn làm
-            window.location.href = 'all-tasks.html?user=' + encodeURIComponent(localStorage.getItem('username') || 'User');
+            window.location.href = 'all-tasks.html?user=' + encodeURIComponent(getUsername());
         }
 
         function viewAllWishes() {
             // Chuyển sang trang danh sách tất cả đồ muốn mua  
-            window.location.href = 'all-wishes.html?user=' + encodeURIComponent(localStorage.getItem('username') || 'User');
+            window.location.href = 'all-wishes.html?user=' + encodeURIComponent(getUsername());
         }
 
         function logout() {
@@ -1492,7 +1502,7 @@
         // Load dashboard stats from API
         async function loadDashboardStats() {
             try {
-                const username = localStorage.getItem('username') || 'User';
+                const username = getUsername();
                 const response = await fetch(`api/get-dashboard-stats.php?username=${encodeURIComponent(username)}`);
                 const result = await response.json();
                 
@@ -1558,7 +1568,7 @@
         // Load recent dashboard items
         async function loadDashboardItems(type = 'both', status = 'all', limit = 10) {
             try {
-                const username = localStorage.getItem('username') || 'User';
+                const username = getUsername();
                 const response = await fetch(`api/get-dashboard-items.php?username=${encodeURIComponent(username)}&type=${type}&status=${status}&limit=${limit}`);
                 const result = await response.json();
                 
@@ -1593,6 +1603,15 @@
             await initializeBambooNodes();
         }
 
+        // Chỉ refresh timeline + (tuỳ chọn) stats
+        async function refreshTimeline(includeStats = false) {
+            if (includeStats) {
+                await loadDashboardStats();
+            }
+            timelineData = {};
+            await initializeBambooNodes();
+        }
+
         // Auto refresh every 30 seconds
         function startAutoRefresh() {
             setInterval(refreshDashboardData, 30000); // 30 seconds
@@ -1600,16 +1619,16 @@
 
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Load initial data
-            loadDashboardStats();
-            
-            // Start auto refresh
+            // Load stats + timeline once
+            refreshTimeline(true);
+            // Start auto refresh (keeps stats + timeline fresh)
             startAutoRefresh();
         });
 
         // Kiểm tra đăng nhập (đơn giản)
         if (!username || username === 'User') {
             // Có thể redirect về trang login nếu chưa đăng nhập
+            console.warn('No valid username found, using default');
         }
     </script>
 
