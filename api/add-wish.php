@@ -1,4 +1,7 @@
 <?php
+// Đặt timezone cho PHP
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');

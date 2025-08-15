@@ -6,6 +6,7 @@ const DB_PASS = 'D645RzafcmX8Mtbt';
 const DB_NAME = 'dongthoigian';
 const DB_CHARSET = 'utf8mb4';
 
+// Đặt timezone cho PHP
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
 function db_get_connection(): mysqli {
@@ -18,6 +19,9 @@ function db_get_connection(): mysqli {
             exit;
         }
         $conn->set_charset(DB_CHARSET);
+        
+        // Đặt timezone cho MySQL connection
+        $conn->query("SET time_zone = '+07:00'");
     }
     return $conn;
 }
@@ -32,6 +36,10 @@ function db_get_pdo_connection(): PDO {
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            
+            // Đặt timezone cho MySQL connection
+            $pdo->exec("SET time_zone = '+07:00'");
+            
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['status'=>'error','message'=>'PDO connection failed: '.$e->getMessage()]);
