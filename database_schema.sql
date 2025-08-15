@@ -58,7 +58,9 @@ CREATE TABLE wishes (
     status TINYINT(1) DEFAULT 0 COMMENT '0 = pending, 1 = completed/purchased',
     purchase_status ENUM('researching', 'saving', 'ready_to_buy', 'purchased') DEFAULT 'researching' COMMENT 'Trạng thái mua sắm',
     user_id INT DEFAULT NULL,
-    target_date DATE DEFAULT NULL COMMENT 'Ngày dự kiến mua (do user chọn)',
+    scheduled_date DATE DEFAULT NULL COMMENT 'Ngày dự kiến mua (do user chọn)',
+    scheduled_time TIME DEFAULT NULL COMMENT 'Giờ dự kiến mua (do user chọn)',
+    target_date DATE DEFAULT NULL COMMENT 'Ngày dự kiến mua (backward compatibility)',
     created_at DATETIME NOT NULL COMMENT 'Thời gian tạo record (chỉ set 1 lần)',
     updated_at DATETIME NOT NULL COMMENT 'Thời gian cập nhật lần cuối (cùng lúc với created_at khi tạo mới)',
     purchased_at DATETIME DEFAULT NULL COMMENT 'Thời gian mua thực tế',
@@ -71,6 +73,7 @@ CREATE TABLE wishes (
     INDEX idx_priority (priority),
     INDEX idx_purchase_status (purchase_status),
     INDEX idx_price (price),
+    INDEX idx_scheduled_date (scheduled_date),
     INDEX idx_target_date (target_date),
     FOREIGN KEY (user_id) REFERENCES tai_khoan(id) ON DELETE SET NULL
 );
