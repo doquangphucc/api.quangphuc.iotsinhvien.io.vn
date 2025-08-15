@@ -30,7 +30,8 @@ try {
         (
             SELECT 
                 'task' as type,
-                t.title,
+                    t.id AS id,
+                    t.title,
                 DATE(t.created_at) AS date_only,
                 t.created_at as timestamp,
                 'việc nào' as category_text,
@@ -43,7 +44,8 @@ try {
         (
             SELECT 
                 'wish' as type,
-                w.title,
+                    w.id AS id,
+                    w.title,
                 DATE(w.created_at) AS date_only,
                 w.created_at as timestamp,
                 'đồ nào' as category_text,
@@ -85,19 +87,20 @@ try {
             $displayText = $item['title'];
         }
 
-        $timeline[] = [
-            'type' => $item['type'],
-            'title' => $displayText,
-            'original_title' => $item['title'],
-            'date_only' => $item['date_only'], // normalized date
-            'timestamp' => $item['timestamp'],
-            'time_formatted' => $timestamp->format('d/m/Y H:i'),
-            'days_ago' => $daysAgo,
-            'time_text' => $timeText,
-            'is_completed' => (bool)$item['is_completed'],
-            'status_text' => $item['is_completed'] ? 'Đã hoàn thành' : 'Chưa hoàn thành',
-            'side' => ($item['type'] == 'task') ? 'left' : 'right' // Để xác định bên trái hay phải của timeline
-        ];
+            $timeline[] = [
+                'type' => $item['type'],
+                'id' => (int)$item['id'],
+                'title' => $displayText,
+                'original_title' => $item['title'],
+                'date_only' => $item['date_only'], // normalized date
+                'timestamp' => $item['timestamp'],
+                'time_formatted' => $timestamp->format('d/m/Y H:i'),
+                'days_ago' => $daysAgo,
+                'time_text' => $timeText,
+                'is_completed' => (bool)$item['is_completed'],
+                'status_text' => $item['is_completed'] ? 'Đã hoàn thành' : 'Chưa hoàn thành',
+                'side' => ($item['type'] == 'task') ? 'left' : 'right' // Để xác định bên trái hay phải của timeline
+            ];
     }
 
     // Thống kê nhanh và khoảng thời gian
