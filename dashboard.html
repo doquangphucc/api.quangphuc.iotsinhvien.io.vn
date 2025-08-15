@@ -973,34 +973,27 @@
                             console.warn('Item without valid date:', item);
                             return; // Skip items without valid date
                         }
-                        if (!convertedData[date]) {
-                            convertedData[date] = {
-                                date: date,
-                                tasks: [],
-                                wishes: []
-                            };
-                        }
                         
-                        if (item.type === 'task') {
-                            convertedData[date].tasks.push({
-                                id: item.id || null,
-                                title: item.title,
-                                is_completed: item.is_completed
-                            });
-                        } else {
-                            convertedData[date].wishes.push({
-                                id: item.id || null,
-                                title: item.title,
-                                is_completed: item.is_completed
-                            });
-                        }
+                        // Tạo key duy nhất cho mỗi item bao gồm cả thời gian
+                        const itemKey = `${item.type}_${item.id}_${item.timestamp || date}`;
+                        
+                        convertedData[itemKey] = {
+                            date: date,
+                            timestamp: item.timestamp,
+                            time_formatted: item.time_formatted,
+                            type: item.type,
+                            id: item.id,
+                            title: item.title,
+                            is_completed: item.is_completed,
+                            price: item.price || null
+                        };
                     });
                     
                     console.log('Converted data:', convertedData); // Debug converted data
                     
-                    // Lưu dữ liệu vào cache
-                    Object.values(convertedData).forEach(dayData => {
-                        timelineData[dayData.date] = dayData;
+                    // Lưu dữ liệu vào cache - mỗi item riêng biệt
+                    Object.values(convertedData).forEach(itemData => {
+                        timelineData[itemData.timestamp || itemData.date] = itemData;
                     });
                     console.log('Timeline data cached:', timelineData); // Debug log
                     return Object.values(convertedData);
@@ -1014,82 +1007,60 @@
             }
         }
 
-        // Tạo một đốt tre cho một ngày cụ thể với dữ liệu thực tế
-        function createBambooNode(daysFromToday, dayData = null) {
-            const date = new Date();
-            date.setDate(date.getDate() + daysFromToday);
-            // Build local date key (avoid UTC shift)
-            const dateString = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        // Tạo một đốt tre cho một item cụ thể (task hoặc wish)
+        function createBambooNode(itemData) {
+            if (!itemData) return '';
+            
+            const itemDate = new Date(itemData.timestamp || itemData.date);
+            const today = new Date();
+            const daysFromToday = Math.floor((itemDate - today) / (1000 * 60 * 60 * 24));
             
             let dateLabel;
             if (daysFromToday === 0) {
-                dateLabel = 'Hôm nay';
+                dateLabel = `Hôm nay ${itemData.time_formatted || ''}`;
             } else if (daysFromToday === 1) {
-                dateLabel = 'Ngày mai';
+                dateLabel = `Ngày mai ${itemData.time_formatted || ''}`;
             } else if (daysFromToday === -1) {
-                dateLabel = 'Hôm qua';
+                dateLabel = `Hôm qua ${itemData.time_formatted || ''}`;
             } else if (daysFromToday > 1) {
-                dateLabel = `${daysFromToday} ngày nữa`;
+                dateLabel = `${daysFromToday} ngày nữa ${itemData.time_formatted || ''}`;
             } else {
-                dateLabel = `${Math.abs(daysFromToday)} ngày trước`;
+                dateLabel = `${Math.abs(daysFromToday)} ngày trước ${itemData.time_formatted || ''}`;
             }
 
             const nodeClass = daysFromToday === 0 ? 'today' : 
                              daysFromToday > 0 ? 'future' : '';
 
-            // Sử dụng dữ liệu thực tế hoặc dữ liệu từ cache
-            let tasks = [];
-            let wishes = [];
-
-            if (dayData) {
-                tasks = dayData.tasks || [];
-                wishes = dayData.wishes || [];
-            } else if (timelineData[dateString]) {
-                tasks = timelineData[dateString].tasks || [];
-                wishes = timelineData[dateString].wishes || [];
-            }
-
-            console.log(`Creating node for ${dateString}:`, { tasks, wishes, dayData }); // Debug log
+            const completedClass = itemData.is_completed ? 'completed' : '';
+            const priceText = itemData.price ? ` (${formatPrice(itemData.price)})` : '';
             
-            // Nếu được gọi với dayData (có dữ liệu từ API), luôn hiển thị
-            // Chỉ skip khi không có dữ liệu và không phải hôm nay
-            if (!dayData && tasks.length === 0 && wishes.length === 0 && daysFromToday !== 0) {
-                return '';
-            }
-
-            // Build tasks HTML (no placeholder when empty)
-            let tasksHTML = '';
-            if (tasks.length > 0) {
-                tasks.forEach(task => {
-                    const completedClass = task.is_completed ? 'completed' : '';
-                    tasksHTML += `
-                        <div class="branch-item ${completedClass}" data-type="task" data-id="${task.id}">
-                            <span class="branch-text">${task.title}</span>
-                            <button class="tick-btn" onclick="toggleComplete('task', ${task.id})" 
-                                    title="${task.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
-                                ${task.is_completed ? '✅' : '⭕'}
-                            </button>
-                        </div>
-                    `;
-                });
-            }
-
-            // Build wishes HTML (no placeholder when empty)
-            let wishesHTML = '';
-            if (wishes.length > 0) {
-                wishes.forEach(wish => {
-                    const completedClass = wish.is_completed ? 'completed' : '';
-                    const priceText = wish.price ? ` (${formatPrice(wish.price)})` : '';
-                    wishesHTML += `
-                        <div class="branch-item ${completedClass}" data-type="wish" data-id="${wish.id}">
-                            <span class="branch-text">${wish.title}${priceText}</span>
-                            <button class="tick-btn" onclick="toggleComplete('wish', ${wish.id})"
-                                    title="${wish.is_completed ? 'Đánh dấu chưa mua' : 'Đánh dấu đã mua'}">
-                                ${wish.is_completed ? '✅' : '⭕'}
-                            </button>
-                        </div>
-                    `;
-                });
+            // Tạo HTML cho item dựa trên loại
+            let itemHTML = '';
+            let branchClass = '';
+            let emptyBranchHTML = '<div class="branch-content"></div>';
+            
+            if (itemData.type === 'task') {
+                branchClass = 'task-branch';
+                itemHTML = `
+                    <div class="branch-item ${completedClass}" data-type="task" data-id="${itemData.id}">
+                        <span class="branch-text">${itemData.title}</span>
+                        <button class="tick-btn" onclick="toggleComplete('task', ${itemData.id})" 
+                                title="${itemData.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
+                            ${itemData.is_completed ? '✅' : '⭕'}
+                        </button>
+                    </div>
+                `;
+            } else {
+                branchClass = 'wish-branch';
+                itemHTML = `
+                    <div class="branch-item ${completedClass}" data-type="wish" data-id="${itemData.id}">
+                        <span class="branch-text">${itemData.title}${priceText}</span>
+                        <button class="tick-btn" onclick="toggleComplete('wish', ${itemData.id})"
+                                title="${itemData.is_completed ? 'Đánh dấu chưa mua' : 'Đánh dấu đã mua'}">
+                            ${itemData.is_completed ? '✅' : '⭕'}
+                        </button>
+                    </div>
+                `;
             }
 
             return `
@@ -1098,12 +1069,12 @@
                     <div class="node-branches">
                         <div class="branch-left task-branch">
                             <div class="branch-content">
-                                ${tasksHTML}
+                                ${itemData.type === 'task' ? itemHTML : ''}
                             </div>
                         </div>
                         <div class="branch-right wish-branch">
                             <div class="branch-content">
-                                ${wishesHTML}
+                                ${itemData.type === 'wish' ? itemHTML : ''}
                             </div>
                         </div>
                     </div>
@@ -1111,7 +1082,7 @@
             `;
         }
 
-        // Tạo nodes dựa trên khoảng thời gian có dữ liệu
+        // Tạo nodes dựa trên từng item riêng lẻ
         async function initializeBambooNodes() {
             const trunkElement = document.getElementById('bamboo-trunk');
             const loadingElement = document.getElementById('loading');
@@ -1120,48 +1091,49 @@
                 // Load dữ liệu timeline từ API
                 await loadTimelineData();
                 
-                // Chỉ hiển thị các ngày có dữ liệu thực tế
+                // Chỉ hiển thị các item có dữ liệu thực tế
                 let nodesHTML = '';
                 
                 if (Object.keys(timelineData).length > 0) {
-                    // Sắp xếp các ngày theo thứ tự thời gian (mới nhất trước)
-                    const sortedDates = Object.keys(timelineData).sort((a, b) => new Date(b) - new Date(a));
+                    // Sắp xếp các items theo thời gian (mới nhất trước)
+                    const sortedItems = Object.values(timelineData).sort((a, b) => 
+                        new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
+                    );
                     
-                    for (const dateString of sortedDates) {
-                        const dayData = timelineData[dateString];
+                    for (const itemData of sortedItems) {
+                        console.log(`Creating node for item:`, itemData);
                         
-                        // Tính số ngày từ hôm nay
-                        const today = new Date();
-                        const targetDate = new Date(dateString);
-                        const daysFromToday = Math.floor((targetDate - today) / (1000 * 60 * 60 * 24));
-                        
-                        console.log(`Creating node for ${dateString} (${daysFromToday} days from today):`, dayData);
-                        
-                        const nodeHTML = createBambooNode(daysFromToday, dayData);
+                        const nodeHTML = createBambooNode(itemData);
                         if (nodeHTML) nodesHTML += nodeHTML;
                     }
                     
                     console.log('Generated nodes HTML:', nodesHTML.length > 0 ? 'Success' : 'Empty');
                 } 
                 
-                // Nếu không có dữ liệu nào, hiển thị ngày hôm nay trống
+                // Nếu không có dữ liệu nào, hiển thị thông báo trống
                 if (!nodesHTML) {
-                    console.log('No data found, showing today node');
-                    const todayData = timelineData[new Date().toISOString().split('T')[0]];
-                    nodesHTML = createBambooNode(0, todayData);
-                    
-                    // Nếu vẫn không có gì, tạo node hôm nay trống
-                    if (!nodesHTML) {
-                        nodesHTML = createBambooNode(0, { date: new Date().toISOString().split('T')[0], tasks: [], wishes: [] });
-                    }
+                    console.log('No data found, showing empty state');
+                    nodesHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🍂</div>
+                            <h2>Chưa có dữ liệu</h2>
+                            <p>Hãy thêm việc muốn làm hoặc đồ muốn mua để bắt đầu!</p>
+                        </div>
+                    `;
                 }
                 
                 trunkElement.innerHTML = nodesHTML + loadingElement.outerHTML;
                 
             } catch (error) {
                 console.error('Error initializing bamboo nodes:', error);
-                // Fallback: hiển thị node hôm nay trống
-                const fallbackHTML = createBambooNode(0, { date: new Date().toISOString().split('T')[0], tasks: [], wishes: [] });
+                // Fallback: hiển thị thông báo lỗi
+                const fallbackHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h2>Lỗi tải dữ liệu</h2>
+                        <p>Không thể tải timeline. Vui lòng thử lại sau.</p>
+                    </div>
+                `;
                 trunkElement.innerHTML = fallbackHTML + loadingElement.outerHTML;
             }
         }
