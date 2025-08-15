@@ -1026,18 +1026,13 @@
             const today = new Date();
             const daysFromToday = Math.floor((itemDate - today) / (1000 * 60 * 60 * 24));
             
-            let dateLabel;
-            if (daysFromToday === 0) {
-                dateLabel = `Hôm nay ${itemData.time_formatted || ''}`;
-            } else if (daysFromToday === 1) {
-                dateLabel = `Ngày mai ${itemData.time_formatted || ''}`;
-            } else if (daysFromToday === -1) {
-                dateLabel = `Hôm qua ${itemData.time_formatted || ''}`;
-            } else if (daysFromToday > 1) {
-                dateLabel = `${daysFromToday} ngày nữa ${itemData.time_formatted || ''}`;
-            } else {
-                dateLabel = `${Math.abs(daysFromToday)} ngày trước ${itemData.time_formatted || ''}`;
-            }
+            // Hiển thị ngày tháng cụ thể thay vì "hôm nay", "hôm qua"
+            const dateFormatted = itemDate.toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit', 
+                year: 'numeric'
+            });
+            const dateLabel = `${dateFormatted} ${itemData.time_formatted || ''}`;
 
             const nodeClass = daysFromToday === 0 ? 'today' : 
                              daysFromToday > 0 ? 'future' : '';
