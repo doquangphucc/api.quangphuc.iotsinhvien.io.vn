@@ -1438,7 +1438,18 @@
                             })
                         });
 
+                        console.log('TASK SUBMIT DATA:', {
+                            username: username,
+                            title: data.content,
+                            description: data.description,
+                            category: data.category,
+                            priority: data.priority,
+                            scheduled_date: data.scheduled_date,
+                            scheduled_time: data.scheduled_time
+                        });
+
                         const result = await response.json();
+                        console.log('API RESPONSE:', result);
                         
                         if (result.success) {
                             showNotification('✅ Thêm task thành công!', 'success');
