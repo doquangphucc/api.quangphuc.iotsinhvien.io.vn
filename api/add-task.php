@@ -104,7 +104,14 @@ try {
         echo json_encode([
             'success' => true,
             'message' => 'Task added successfully',
-            'data' => $newTask
+            'data' => $newTask,
+            'debug' => [
+                'input_scheduled_date' => $input['scheduled_date'] ?? 'NOT_SET',
+                'input_scheduled_time' => $input['scheduled_time'] ?? 'NOT_SET',
+                'processed_scheduled_date' => $scheduledDate,
+                'processed_scheduled_time' => $scheduledTime,
+                'full_input' => $input
+            ]
         ]);
     } else {
         throw new Exception('Failed to add task');
