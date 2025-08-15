@@ -544,6 +544,17 @@ class CustomModal {
         // Convert date format from dd/mm/yyyy to yyyy-mm-dd
         const scheduledDate = this.formatDateForDatabase(date);
         
+        console.log('MODAL COLLECT DATA DEBUG:', {
+            content,
+            description,
+            category,
+            priority,
+            date,
+            time,
+            scheduledDate,
+            type: this.type
+        });
+        
         const baseData = {
             content,
             description,
@@ -558,6 +569,13 @@ class CustomModal {
             const currency = this.modal.querySelector('#modal-currency').value;
             const productUrl = this.modal.querySelector('#modal-url').value.trim();
             const purchaseStatus = this.modal.querySelector('#modal-purchase-status').value;
+
+            console.log('WISH SPECIFIC DATA:', {
+                price,
+                currency,
+                productUrl,
+                purchaseStatus
+            });
 
             return {
                 ...baseData,
