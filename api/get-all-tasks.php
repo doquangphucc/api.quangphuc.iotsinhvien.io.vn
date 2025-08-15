@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'connect.php';
+header('X-Tasks-Api-Version: tasks_api_clean_v1');
 
 try {
     // Lấy tham số từ query string
