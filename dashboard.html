@@ -332,21 +332,27 @@
             margin-left: 280px;
             margin-top: 70px;
             padding: 30px;
-            min-height: calc(100vh - 70px);
-            position: relative;
+            height: calc(100vh - 70px);
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 280px;
             z-index: 2;
+            overflow: hidden;
         }
 
         .content-area {
             background: linear-gradient(145deg, rgba(255, 248, 240, 0.95) 0%, rgba(255, 228, 196, 0.95) 100%);
             border-radius: 20px;
             padding: 40px;
-            min-height: 600px;
+            height: 100%;
             box-shadow: 0 10px 30px rgba(139, 69, 19, 0.2);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(231, 111, 81, 0.2);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .content-area::before {
@@ -390,6 +396,11 @@
             margin-top: 100px;
             position: relative;
             z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .empty-state .icon {
@@ -416,9 +427,9 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            height: 500px;
-            padding: 20px;
+            flex: 1;
             overflow: hidden;
+            padding: 20px 0;
         }
 
         .bamboo-scroll-container {
@@ -780,6 +791,9 @@
             .main-content {
                 margin-left: 0;
                 margin-top: 0;
+                left: 0;
+                position: relative;
+                height: calc(100vh - 70px);
             }
             
             .header-content {
