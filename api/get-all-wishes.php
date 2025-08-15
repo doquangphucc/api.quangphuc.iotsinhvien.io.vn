@@ -34,162 +34,164 @@ try {
                     w.id, w.title, w.description, w.category, w.priority, w.price, 
                     w.product_url as store_location, w.product_url as purchase_link, 
                     w.status as is_completed, w.created_at, w.updated_at
-                FROM wishes w
-                LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-                WHERE tk.user = ? $statusCondition
-                ORDER BY $sort $order, w.id DESC
-                LIMIT ? OFFSET ?";
-            $stmt = $pdo->prepare($sql);
-        $statusCondition = ' AND w.status = 1';
-    } elseif ($status === 'pending') {
-        $statusCondition = ' AND w.status = 0';
-    }
+                <?php
+                // get-all-wishes.php (clean)
+                header('Content-Type: application/json');
+                header('Access-Control-Allow-Origin: *');
+                header('Access-Control-Allow-Methods: GET, OPTIONS');
+                header('Access-Control-Allow-Headers: Content-Type');
+                if($_SERVER['REQUEST_METHOD']==='OPTIONS'){ http_response_code(200); exit; }
 
-    // Đếm tổng số wishes
-    $countStmt = $pdo->prepare("
-        SELECT COUNT(*) as total 
-        FROM wishes w
-        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-        WHERE tk.user = ? $statusCondition
-    ");
-    $countStmt->execute($params);
-    $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+                require_once 'connect.php';
 
-    // Lấy danh sách wishes với phân trang (ORDER BY kèm id để ổn định)
-    $stmt = $pdo->prepare("
-        SELECT 
-            w.id, w.title, w.description, w.category, w.priority, w.price, 
-            w.product_url as store_location, w.product_url as purchase_link, 
-            w.status as is_completed, w.created_at, w.updated_at
-        FROM wishes w
-        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-        WHERE tk.user = ? $statusCondition
-        ORDER BY $sort $order, w.id DESC
-        LIMIT ? OFFSET ?
-    ");
-    
-    $executeParams = array_merge($params, [$limit, $offset]);
-    $stmt->execute($executeParams);
-    $rawWishes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                try {
+                    $username = $_GET['username'] ?? '';
+                    $status   = $_GET['status'] ?? 'all';
+                    $limit    = max(1,(int)($_GET['limit'] ?? 100));
+                    $offset   = max(0,(int)($_GET['offset'] ?? 0));
+                    $sort     = $_GET['sort'] ?? 'created_at';
+                    $order    = strtoupper($_GET['order'] ?? 'DESC');
+                    $debug    = !empty($_GET['debug']);
+                    if(!$username) throw new Exception('Username is required');
 
-    // Khử trùng duplicates theo id
-    $uniqW = [];
-    foreach ($rawWishes as $row) {
-        $uniqW[$row['id']] = $row;
-    }
-    $wishes = array_values($uniqW);
+                    $validSort=['created_at','title','price','priority','category'];
+                    if(!in_array($sort,$validSort,true)) $sort='created_at';
+                    if(!in_array($order,['ASC','DESC'],true)) $order='DESC';
 
-    $wishes = array_map(function($wish){
-        $wish['id'] = (int)$wish['id'];
-        $wish['is_completed'] = (bool)$wish['is_completed'];
-        $wish['price'] = $wish['price'] ? (float)$wish['price'] : null;
-        $wish['price_formatted'] = $wish['price'] ? number_format($wish['price'],0,',','.') . ' VND' : 'Chưa có giá';
-        $wish['created_at_formatted'] = date('d/m/Y H:i', strtotime($wish['created_at']));
-        if (!empty($wish['updated_at'])) {
-            $wish['updated_at_formatted'] = date('d/m/Y H:i', strtotime($wish['updated_at']));
-        }
-        $wish['status_text'] = $wish['is_completed'] ? 'Đã mua' : 'Chưa mua';
-        return $wish;
-    }, $wishes);
+                    $statusCond='';
+                    if($status==='completed') $statusCond=' AND w.status=1';
+                    elseif($status==='pending') $statusCond=' AND w.status=0';
 
-    // Tính tổng giá tiền
-    $totalPrice = 0;
-    $completedPrice = 0;
-    $pendingPrice = 0;
-    
-    foreach ($wishes as $wish) {
-        if ($wish['price']) {
-            $totalPrice += $wish['price'];
-            if ($wish['is_completed']) {
-                $completedPrice += $wish['price'];
-            } else {
-                $pendingPrice += $wish['price'];
-            }
-        }
-    }
+                    $countSql="SELECT COUNT(*) FROM wishes w INNER JOIN tai_khoan u ON w.user_id=u.id WHERE u.user=? $statusCond";
+                    $cStmt=$pdo->prepare($countSql); $cStmt->execute([$username]); $total=(int)$cStmt->fetchColumn();
 
-    // Thống kê nhanh
-    $stats = [
-        'total' => $totalCount,
-        'completed' => 0,
-        'pending' => 0,
-        'total_price' => $totalPrice,
-        'completed_price' => $completedPrice,
-        'pending_price' => $pendingPrice,
-        'total_price_formatted' => number_format($totalPrice, 0, ',', '.') . ' VND',
-        'completed_price_formatted' => number_format($completedPrice, 0, ',', '.') . ' VND',
-        'pending_price_formatted' => number_format($pendingPrice, 0, ',', '.') . ' VND'
-    ];
+                    $sql="SELECT w.id,w.title,w.description,w.category,w.priority,w.price,
+                                 w.product_url store_location,w.product_url purchase_link,
+                                 w.status is_completed,w.created_at,w.updated_at
+                          FROM wishes w INNER JOIN tai_khoan u ON w.user_id=u.id
+                          WHERE u.user=? $statusCond
+                          ORDER BY $sort $order, w.id DESC
+                          LIMIT ? OFFSET ?";
+                    $stmt=$pdo->prepare($sql); $stmt->execute([$username,$limit,$offset]);
+                    $raw=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($wishes as $wish) {
-        if ($wish['is_completed']) {
-            $stats['completed']++;
-        } else {
-            $stats['pending']++;
-        }
-    }
+                    $idCounts=[]; foreach($raw as $r){ $id=$r['id']; $idCounts[$id]=($idCounts[$id]??0)+1; }
+                    $byId=[]; foreach($raw as $r){ $byId[$r['id']]=$r; }
+                    $wishes=array_values($byId);
 
-    // Lấy thêm thống kê từ toàn bộ database (không chỉ trang hiện tại)
-    $fullStatsStmt = $pdo->prepare("
-        SELECT 
-            COUNT(*) as total_count,
-            SUM(CASE WHEN w.status = 1 THEN 1 ELSE 0 END) as completed_count,
-            SUM(CASE WHEN w.status = 0 THEN 1 ELSE 0 END) as pending_count,
-            COALESCE(SUM(w.price), 0) as total_amount,
-            COALESCE(SUM(CASE WHEN w.status = 1 THEN w.price ELSE 0 END), 0) as completed_amount,
-            COALESCE(SUM(CASE WHEN w.status = 0 THEN w.price ELSE 0 END), 0) as pending_amount
-        FROM wishes w
-        LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-        WHERE tk.user = ? $statusCondition
-    ");
-            $payload['debug'] = [
-                'sql' => $sql,
-                'raw_ids' => array_map(fn($r)=>$r['id'],$rawWishes),
-                'unique_ids' => array_map(fn($r)=>$r['id'],$wishes),
-                'file' => __FILE__,
-                'version' => 'wishes_api_v2'
-            ];
-    $fullStatsStmt->execute($params);
-    $fullStats = $fullStatsStmt->fetch(PDO::FETCH_ASSOC);
+                    foreach($wishes as &$w){
+                        $w['id']=(int)$w['id'];
+                        $w['is_completed']=(bool)$w['is_completed'];
+                        $w['price']=$w['price']!==null ? (float)$w['price'] : null;
+                        $w['price_formatted']=$w['price']!==null?number_format($w['price'],0,',','.').' VND':'Chưa có giá';
+                        $w['created_at_formatted']=date('d/m/Y H:i',strtotime($w['created_at']));
+                        if(!empty($w['updated_at'])) $w['updated_at_formatted']=date('d/m/Y H:i',strtotime($w['updated_at']));
+                        $w['status_text']=$w['is_completed']?'Đã mua':'Chưa mua';
+                    }
+                    unset($w);
 
-    $payload = [
-        'success' => true,
-        'data' => $wishes,
-        'stats' => $stats,
-        'full_stats' => [
-            'total' => (int)$fullStats['total_count'],
-            'completed' => (int)$fullStats['completed_count'],
-            'pending' => (int)$fullStats['pending_count'],
-            'total_price' => (float)$fullStats['total_amount'],
-            'completed_price' => (float)$fullStats['completed_amount'],
-            'pending_price' => (float)$fullStats['pending_amount'],
-            'total_price_formatted' => number_format($fullStats['total_amount'], 0, ',', '.') . ' VND',
-            'completed_price_formatted' => number_format($fullStats['completed_amount'], 0, ',', '.') . ' VND',
-            'pending_price_formatted' => number_format($fullStats['pending_amount'], 0, ',', '.') . ' VND'
-        ],
-        'pagination' => [
-            'total' => $totalCount,
-            'limit' => $limit,
-            'offset' => $offset,
-            'has_more' => ($offset + $limit) < $totalCount
-        ],
-        'message' => 'Wishes loaded successfully'
-    ];
-    if (!empty($_GET['debug'])) {
-        $payload['raw'] = $rawWishes;
-    }
-    echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+                    $stats=['total'=>$total,'completed'=>0,'pending'=>0,'total_price'=>0,'completed_price'=>0,'pending_price'=>0];
+                    foreach($wishes as $w){
+                        if($w['price']!==null){ $stats['total_price']+=$w['price']; if($w['is_completed']) $stats['completed_price']+=$w['price']; else $stats['pending_price']+=$w['price']; }
+                        if($w['is_completed']) $stats['completed']++; else $stats['pending']++; }
+                    $stats['total_price_formatted']=number_format($stats['total_price'],0,',','.').' VND';
+                    $stats['completed_price_formatted']=number_format($stats['completed_price'],0,',','.').' VND';
+                    $stats['pending_price_formatted']=number_format($stats['pending_price'],0,',','.').' VND';
 
-} catch (PDOException $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Database error: ' . $e->getMessage(),
-        'error_code' => $e->getCode()
-    ], JSON_UNESCAPED_UNICODE);
-} catch (Exception $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
-}
-?>
+                    $payload=[
+                        'success'=>true,
+                        'data'=>$wishes,
+                        'stats'=>$stats,
+                        'pagination'=>['total'=>$total,'limit'=>$limit,'offset'=>$offset,'has_more'=>($offset+$limit)<$total],
+                        'message'=>'Wishes loaded successfully'
+                    ];
+                    <?php
+                    // get-all-wishes.php (clean standalone)
+                    header('Content-Type: application/json');
+                    header('Access-Control-Allow-Origin: *');
+                    header('Access-Control-Allow-Methods: GET, OPTIONS');
+                    header('Access-Control-Allow-Headers: Content-Type');
+                    if($_SERVER['REQUEST_METHOD']==='OPTIONS'){ http_response_code(200); exit; }
+
+                    require_once 'connect.php';
+
+                    try {
+                        $username = $_GET['username'] ?? '';
+                        $status   = $_GET['status'] ?? 'all';
+                        $limit    = max(1,(int)($_GET['limit'] ?? 100));
+                        $offset   = max(0,(int)($_GET['offset'] ?? 0));
+                        $sort     = $_GET['sort'] ?? 'created_at';
+                        $order    = strtoupper($_GET['order'] ?? 'DESC');
+                        $debug    = !empty($_GET['debug']);
+                        if(!$username) throw new Exception('Username is required');
+
+                        $validSort=['created_at','title','price','priority','category'];
+                        if(!in_array($sort,$validSort,true)) $sort='created_at';
+                        if(!in_array($order,['ASC','DESC'],true)) $order='DESC';
+
+                        $statusCond='';
+                        if($status==='completed') $statusCond=' AND w.status=1';
+                        elseif($status==='pending') $statusCond=' AND w.status=0';
+
+                        $countSql="SELECT COUNT(*) FROM wishes w INNER JOIN tai_khoan u ON w.user_id=u.id WHERE u.user=? $statusCond";
+                        $cStmt=$pdo->prepare($countSql); $cStmt->execute([$username]); $total=(int)$cStmt->fetchColumn();
+
+                        $sql="SELECT w.id,w.title,w.description,w.category,w.priority,w.price,
+                                     w.product_url store_location,w.product_url purchase_link,
+                                     w.status is_completed,w.created_at,w.updated_at
+                              FROM wishes w INNER JOIN tai_khoan u ON w.user_id=u.id
+                              WHERE u.user=? $statusCond
+                              ORDER BY $sort $order, w.id DESC
+                              LIMIT ? OFFSET ?";
+                        $stmt=$pdo->prepare($sql); $stmt->execute([$username,$limit,$offset]);
+                        $raw=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        $idCounts=[]; foreach($raw as $r){ $id=$r['id']; $idCounts[$id]=($idCounts[$id]??0)+1; }
+                        $byId=[]; foreach($raw as $r){ $byId[$r['id']]=$r; }
+                        $wishes=array_values($byId);
+
+                        foreach($wishes as &$w){
+                            $w['id']=(int)$w['id'];
+                            $w['is_completed']=(bool)$w['is_completed'];
+                            $w['price']=$w['price']!==null ? (float)$w['price'] : null;
+                            $w['price_formatted']=$w['price']!==null?number_format($w['price'],0,',','.').' VND':'Chưa có giá';
+                            $w['created_at_formatted']=date('d/m/Y H:i',strtotime($w['created_at']));
+                            if(!empty($w['updated_at'])) $w['updated_at_formatted']=date('d/m/Y H:i',strtotime($w['updated_at']));
+                            $w['status_text']=$w['is_completed']?'Đã mua':'Chưa mua';
+                        }
+                        unset($w);
+
+                        $stats=['total'=>$total,'completed'=>0,'pending'=>0,'total_price'=>0,'completed_price'=>0,'pending_price'=>0];
+                        foreach($wishes as $w){
+                            if($w['price']!==null){ $stats['total_price']+=$w['price']; if($w['is_completed']) $stats['completed_price']+=$w['price']; else $stats['pending_price']+=$w['price']; }
+                            if($w['is_completed']) $stats['completed']++; else $stats['pending']++; }
+                        $stats['total_price_formatted']=number_format($stats['total_price'],0,',','.').' VND';
+                        $stats['completed_price_formatted']=number_format($stats['completed_price'],0,',','.').' VND';
+                        $stats['pending_price_formatted']=number_format($stats['pending_price'],0,',','.').' VND';
+
+                        $payload=[
+                            'success'=>true,
+                            'data'=>$wishes,
+                            'stats'=>$stats,
+                            'pagination'=>['total'=>$total,'limit'=>$limit,'offset'=>$offset,'has_more'=>($offset+$limit)<$total],
+                            'message'=>'Wishes loaded successfully'
+                        ];
+                        if($debug){
+                            $payload['debug']=[
+                                'sql'=>$sql,
+                                'count_sql'=>$countSql,
+                                'raw_count'=>count($raw),
+                                'unique_after_php'=>count($wishes),
+                                'id_counts'=>$idCounts,
+                                'duplicate_ids'=>array_values(array_filter(array_keys($idCounts),fn($k)=>$idCounts[$k]>1)),
+                                'version'=>'wishes_api_clean_v2'
+                            ];
+                            $payload['raw']=$raw;
+                        }
+                        echo json_encode($payload,JSON_UNESCAPED_UNICODE);
+                    } catch(PDOException $e){
+                        http_response_code(500); echo json_encode(['success'=>false,'message'=>'DB error: '.$e->getMessage()]);
+                    } catch(Exception $e){
+                        http_response_code(400); echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+                    }
+                    ?>
