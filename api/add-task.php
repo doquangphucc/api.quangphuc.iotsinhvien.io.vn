@@ -25,9 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
     $input = json_decode(file_get_contents('php://input'), true);
     
-    // Debug log
-    error_log('ADD TASK INPUT: ' . json_encode($input));
-    
     $username = $input['username'] ?? '';
     $title = $input['title'] ?? '';
     $description = $input['description'] ?? null;
@@ -38,16 +35,12 @@ try {
     $scheduledDate = $input['scheduled_date'] ?? null;
     $scheduledTime = $input['scheduled_time'] ?? null;
     
-    // Debug log
-    error_log('SCHEDULED DATA: date=' . ($scheduledDate ?: 'NULL') . ', time=' . ($scheduledTime ?: 'NULL'));
-    
     // Legacy datetime support
     $datetime = $input['datetime'] ?? null;
     if ($datetime && !$scheduledDate) {
         $dt = new DateTime($datetime);
         $scheduledDate = $dt->format('Y-m-d');
         $scheduledTime = $dt->format('H:i:s');
-        error_log('LEGACY DATETIME CONVERTED: date=' . $scheduledDate . ', time=' . $scheduledTime);
     }
 
     if (empty($username) || empty($title)) {
@@ -65,20 +58,8 @@ try {
     $userId = $user ? $user['id'] : null;
 
     $query = "INSERT INTO tasks 
-              (item_id, title, description, category, priority, user_id, scheduled_date, scheduled_time, status, created_at, updated_at) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
-    
-    // Debug log before execute
-    error_log('FINAL BIND VALUES: ' . json_encode([
-        'item_id' => $itemId,
-        'title' => $title,
-        'description' => $description,
-        'category' => $category,
-        'priority' => $priority,
-        'user_id' => $userId,
-        'scheduled_date' => $scheduledDate,
-        'scheduled_time' => $scheduledTime
-    ]));
+              (item_id, title, description, category, priority, user_id, scheduled_date, scheduled_time, status) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
@@ -104,14 +85,7 @@ try {
         echo json_encode([
             'success' => true,
             'message' => 'Task added successfully',
-            'data' => $newTask,
-            'debug' => [
-                'input_scheduled_date' => $input['scheduled_date'] ?? 'NOT_SET',
-                'input_scheduled_time' => $input['scheduled_time'] ?? 'NOT_SET',
-                'processed_scheduled_date' => $scheduledDate,
-                'processed_scheduled_time' => $scheduledTime,
-                'full_input' => $input
-            ]
+            'data' => $newTask
         ]);
     } else {
         throw new Exception('Failed to add task');

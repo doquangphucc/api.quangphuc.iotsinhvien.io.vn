@@ -1,3 +1,13 @@
+-- Complete Database Reset Script
+-- Xóa toàn bộ database và tạo lại từ đầu với đầy đủ columns
+
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS wishes;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS muon_mua;
+DROP TABLE IF EXISTS muon_lam;
+DROP TABLE IF EXISTS tai_khoan;
+
 -- Create tai_khoan table
 CREATE TABLE tai_khoan (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -77,3 +87,11 @@ CREATE TABLE wishes (
     INDEX idx_target_date (target_date),
     FOREIGN KEY (user_id) REFERENCES tai_khoan(id) ON DELETE SET NULL
 );
+
+-- Insert default user (adjust password as needed)
+INSERT INTO tai_khoan (user, password, phone_number) VALUES 
+('quangphuc2k3', '$2y$10$example_hashed_password_here', NULL);
+
+-- Show table structures for verification
+DESCRIBE tasks;
+DESCRIBE wishes;

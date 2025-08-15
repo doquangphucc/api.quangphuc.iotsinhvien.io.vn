@@ -541,15 +541,6 @@ class CustomModal {
         const dateEl = this.modal.querySelector('#modal-date');
         const timeEl = this.modal.querySelector('#modal-time');
         
-        console.log('MODAL ELEMENTS CHECK:', {
-            contentEl: !!contentEl,
-            descriptionEl: !!descriptionEl,
-            categoryEl: !!categoryEl,
-            priorityEl: !!priorityEl,
-            dateEl: !!dateEl,
-            timeEl: !!timeEl
-        });
-        
         const content = contentEl ? contentEl.value.trim() : '';
         const description = descriptionEl ? descriptionEl.value.trim() : '';
         const category = categoryEl ? categoryEl.value : '';
@@ -559,17 +550,6 @@ class CustomModal {
         
         // Convert date format from dd/mm/yyyy to yyyy-mm-dd
         const scheduledDate = this.formatDateForDatabase(date);
-        
-        console.log('MODAL COLLECT DATA DEBUG:', {
-            content,
-            description,
-            category,
-            priority,
-            date,
-            time,
-            scheduledDate,
-            type: this.type
-        });
         
         const baseData = {
             content,
@@ -585,13 +565,6 @@ class CustomModal {
             const currency = this.modal.querySelector('#modal-currency').value;
             const productUrl = this.modal.querySelector('#modal-url').value.trim();
             const purchaseStatus = this.modal.querySelector('#modal-purchase-status').value;
-
-            console.log('WISH SPECIFIC DATA:', {
-                price,
-                currency,
-                productUrl,
-                purchaseStatus
-            });
 
             return {
                 ...baseData,
@@ -617,8 +590,6 @@ class CustomModal {
 
         // Thu thập dữ liệu
         const data = this.collectFormData();
-        
-        console.log('MODAL CONFIRM - Final data before callback:', data);
 
         // Gọi callback
         if (this.callbacks.confirm) {
