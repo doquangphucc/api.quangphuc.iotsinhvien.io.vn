@@ -534,12 +534,28 @@ class CustomModal {
 
     // Thu thập dữ liệu từ form
     collectFormData() {
-        const content = this.modal.querySelector('#modal-content').value.trim();
-        const description = this.modal.querySelector('#modal-description').value.trim();
-        const category = this.modal.querySelector('#modal-category').value;
-        const priority = this.modal.querySelector('#modal-priority').value;
-        const date = this.modal.querySelector('#modal-date').value;
-        const time = this.modal.querySelector('#modal-time').value;
+        const contentEl = this.modal.querySelector('#modal-content');
+        const descriptionEl = this.modal.querySelector('#modal-description');
+        const categoryEl = this.modal.querySelector('#modal-category');
+        const priorityEl = this.modal.querySelector('#modal-priority');
+        const dateEl = this.modal.querySelector('#modal-date');
+        const timeEl = this.modal.querySelector('#modal-time');
+        
+        console.log('MODAL ELEMENTS CHECK:', {
+            contentEl: !!contentEl,
+            descriptionEl: !!descriptionEl,
+            categoryEl: !!categoryEl,
+            priorityEl: !!priorityEl,
+            dateEl: !!dateEl,
+            timeEl: !!timeEl
+        });
+        
+        const content = contentEl ? contentEl.value.trim() : '';
+        const description = descriptionEl ? descriptionEl.value.trim() : '';
+        const category = categoryEl ? categoryEl.value : '';
+        const priority = priorityEl ? priorityEl.value : 'medium';
+        const date = dateEl ? dateEl.value : '';
+        const time = timeEl ? timeEl.value : '';
         
         // Convert date format from dd/mm/yyyy to yyyy-mm-dd
         const scheduledDate = this.formatDateForDatabase(date);
@@ -601,6 +617,8 @@ class CustomModal {
 
         // Thu thập dữ liệu
         const data = this.collectFormData();
+        
+        console.log('MODAL CONFIRM - Final data before callback:', data);
 
         // Gọi callback
         if (this.callbacks.confirm) {
