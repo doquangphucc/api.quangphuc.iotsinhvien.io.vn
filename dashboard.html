@@ -425,8 +425,9 @@
         /* Cây tre timeline */
         .bamboo-timeline {
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             flex: 1;
             overflow: hidden;
             padding: 20px 0;
@@ -439,6 +440,7 @@
             width: 100%;
             max-width: 800px;
             padding: 0 20px;
+            flex: 1;
         }
 
         .bamboo-scroll-container::-webkit-scrollbar {
@@ -472,6 +474,10 @@
             text-align: center;
             margin-bottom: 20px;
             position: relative;
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
         }
 
         .current-time {
@@ -865,16 +871,16 @@
     <main class="main-content">
         <div class="content-area">
             <div class="bamboo-timeline">
-                <!-- Container có thể cuộn -->
-                <div class="bamboo-scroll-container" id="bamboo-container">
-                    <!-- Gốc tre với thời gian hiện tại ở trên cùng -->
-                    <div class="bamboo-root">
-                        <div class="root-decoration">🌱</div>
-                        <div class="current-time" id="current-time">
-                            <!-- Thời gian sẽ được cập nhật bằng JavaScript -->
-                        </div>
+                <!-- Gốc tre với thời gian hiện tại cố định -->
+                <div class="bamboo-root">
+                    <div class="root-decoration">🌱</div>
+                    <div class="current-time" id="current-time">
+                        <!-- Thời gian sẽ được cập nhật bằng JavaScript -->
                     </div>
-                    
+                </div>
+                
+                <!-- Container có thể cuộn chỉ chứa trunk -->
+                <div class="bamboo-scroll-container" id="bamboo-container">
                     <!-- Thân tre với các đốt -->
                     <div class="bamboo-trunk" id="bamboo-trunk">
                         <!-- Các đốt sẽ được tạo bằng JavaScript từ dữ liệu API -->
@@ -882,6 +888,8 @@
                             <div class="loading-text">Đang tải thêm ngày... 🍂</div>
                         </div>
                     </div>
+                </div>
+            </div>
         </div>
     </main>
 
