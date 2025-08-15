@@ -610,7 +610,7 @@
         .node-branches {
             display: flex;
             width: 100%;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             gap: 80px;
             padding: 0 40px;
@@ -620,6 +620,7 @@
             position: relative;
             flex: 1;
             min-width: 250px;
+            max-width: 400px;
         }
 
         .task-branch {
@@ -736,6 +737,15 @@
         .wish-branch .branch-content {
             margin-left: 60px;
             border-left: 4px solid #f72585;
+        }
+
+        /* Khi hiển thị đơn lẻ, không cần margin */
+        .node-branches .task-branch:only-child .branch-content {
+            margin-right: 0;
+        }
+
+        .node-branches .wish-branch:only-child .branch-content {
+            margin-left: 0;
         }
 
         .branch-content:hover {
@@ -1067,16 +1077,19 @@
                 <div class="bamboo-node ${nodeClass}">
                     <div class="node-date">${dateLabel}</div>
                     <div class="node-branches">
-                        <div class="branch-left task-branch">
-                            <div class="branch-content">
-                                ${itemData.type === 'task' ? itemHTML : ''}
+                        ${itemData.type === 'task' ? `
+                            <div class="branch-left task-branch">
+                                <div class="branch-content">
+                                    ${itemHTML}
+                                </div>
                             </div>
-                        </div>
-                        <div class="branch-right wish-branch">
-                            <div class="branch-content">
-                                ${itemData.type === 'wish' ? itemHTML : ''}
+                        ` : `
+                            <div class="branch-right wish-branch">
+                                <div class="branch-content">
+                                    ${itemHTML}
+                                </div>
                             </div>
-                        </div>
+                        `}
                     </div>
                 </div>
             `;
