@@ -1375,8 +1375,48 @@
 
         // Các functions tác vụ
         function openAddTask() {
-            showTaskModal(function(data) {
-                addTask(data.content, data.datetime);
+            // Sử dụng modal mới với format đầy đủ
+            showTaskModal(async (data) => {
+                try {
+                    const username = getUsername();
+                    
+                    console.log('TASK SUBMIT DATA:', {
+                        username: username,
+                        title: data.content,
+                        description: data.description,
+                        category: data.category,
+                        priority: data.priority,
+                        scheduled_date: data.scheduled_date,
+                        scheduled_time: data.scheduled_time
+                    });
+                    
+                    const response = await fetch('api/add-task.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: username,
+                            title: data.content,
+                            description: data.description,
+                            category: data.category,
+                            priority: data.priority,
+                            scheduled_date: data.scheduled_date,
+                            scheduled_time: data.scheduled_time
+                        })
+                    });
+
+                    const result = await response.json();
+                    console.log('API RESPONSE:', result);
+                    
+                    if (result.success) {
+                        showNotification('✅ Thêm task thành công!', 'success');
+                        setTimeout(() => { refreshTimeline(true); }, 300);
+                    } else {
+                        showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm task'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('❌ Lỗi kết nối', 'error');
+                }
             });
         }
 
@@ -1387,84 +1427,6 @@
         }
 
         // Thêm task mới
-        // Thêm task mới - Updated với modal mới
-        async function addTask(title = null, datetime = null) {
-            // Nếu được gọi với tham số cũ, dùng modal mới
-            if (title) {
-                // Backward compatibility - convert old format
-                try {
-                    const username = getUsername();
-                    const requestBody = { 
-                        username: username,
-                        title: title 
-                    };
-                    
-                    if (datetime) requestBody.datetime = datetime;
-
-                    const response = await fetch('api/add-task.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestBody)
-                    });
-
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        await refreshTimeline(true);
-                    } else {
-                        alert('Có lỗi xảy ra: ' + (result.message || 'Không thể thêm việc'));
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi thêm việc');
-                }
-            } else {
-                // Sử dụng modal mới
-                showTaskModal(async (data) => {
-                    try {
-                        const username = getUsername();
-                        
-                        const response = await fetch('api/add-task.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                username: username,
-                                title: data.content,
-                                description: data.description,
-                                category: data.category,
-                                priority: data.priority,
-                                scheduled_date: data.scheduled_date,
-                                scheduled_time: data.scheduled_time
-                            })
-                        });
-
-                        console.log('TASK SUBMIT DATA:', {
-                            username: username,
-                            title: data.content,
-                            description: data.description,
-                            category: data.category,
-                            priority: data.priority,
-                            scheduled_date: data.scheduled_date,
-                            scheduled_time: data.scheduled_time
-                        });
-
-                        const result = await response.json();
-                        console.log('API RESPONSE:', result);
-                        
-                        if (result.success) {
-                            showNotification('✅ Thêm task thành công!', 'success');
-                            setTimeout(() => { refreshTimeline(true); }, 300);
-                        } else {
-                            showNotification('❌ Lỗi: ' + (result.message || 'Không thể thêm task'), 'error');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        showNotification('❌ Lỗi kết nối', 'error');
-                    }
-                });
-            }
-        }
-
         // Thêm wish mới - Updated với modal mới
         async function addWish(title = null, datetime = null, price = null) {
             // Nếu được gọi với tham số cũ, dùng modal mới
