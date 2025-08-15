@@ -1032,7 +1032,16 @@
                 month: '2-digit', 
                 year: 'numeric'
             });
-            const dateLabel = `${dateFormatted} ${itemData.time_formatted || ''}`;
+            
+            // Lấy chỉ phần giờ từ time_formatted (bỏ phần ngày)
+            let timeOnly = '';
+            if (itemData.time_formatted) {
+                // Nếu time_formatted có dạng "15/08/2025 08:19", chỉ lấy phần "08:19"
+                const timeParts = itemData.time_formatted.split(' ');
+                timeOnly = timeParts.length > 1 ? timeParts[1] : itemData.time_formatted;
+            }
+            
+            const dateLabel = `${dateFormatted} ${timeOnly}`;
 
             const nodeClass = daysFromToday === 0 ? 'today' : 
                              daysFromToday > 0 ? 'future' : '';
