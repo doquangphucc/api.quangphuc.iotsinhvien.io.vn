@@ -56,7 +56,7 @@ try {
     $countStmt->execute($params);
     $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // Lấy danh sách wishes với phân trang
+    // Lấy danh sách wishes với phân trang (ORDER BY kèm id để ổn định)
     $stmt = $pdo->prepare("
         SELECT 
             w.id, w.title, w.description, w.category, w.priority, w.price, 
@@ -65,37 +65,33 @@ try {
         FROM wishes w
         LEFT JOIN tai_khoan tk ON w.user_id = tk.id
         WHERE tk.user = ? $statusCondition
-        ORDER BY $sort $order
+        ORDER BY $sort $order, w.id DESC
         LIMIT ? OFFSET ?
     ");
     
     $executeParams = array_merge($params, [$limit, $offset]);
     $stmt->execute($executeParams);
-    $wishes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $rawWishes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Format dữ liệu
-    foreach ($wishes as &$wish) {
+    // Khử trùng duplicates theo id
+    $uniqW = [];
+    foreach ($rawWishes as $row) {
+        $uniqW[$row['id']] = $row;
+    }
+    $wishes = array_values($uniqW);
+
+    $wishes = array_map(function($wish){
         $wish['id'] = (int)$wish['id'];
         $wish['is_completed'] = (bool)$wish['is_completed'];
         $wish['price'] = $wish['price'] ? (float)$wish['price'] : null;
-        
-        // Format giá tiền
-        if ($wish['price']) {
-            $wish['price_formatted'] = number_format($wish['price'], 0, ',', '.') . ' VND';
-        } else {
-            $wish['price_formatted'] = 'Chưa có giá';
-        }
-        
+        $wish['price_formatted'] = $wish['price'] ? number_format($wish['price'],0,',','.') . ' VND' : 'Chưa có giá';
         $wish['created_at_formatted'] = date('d/m/Y H:i', strtotime($wish['created_at']));
-        
-        if ($wish['updated_at']) {
+        if (!empty($wish['updated_at'])) {
             $wish['updated_at_formatted'] = date('d/m/Y H:i', strtotime($wish['updated_at']));
         }
-
-        // Thêm status text
         $wish['status_text'] = $wish['is_completed'] ? 'Đã mua' : 'Chưa mua';
-    }
-    unset($wish); // Avoid reference side-effects in next foreach
+        return $wish;
+    }, $wishes);
 
     // Tính tổng giá tiền
     $totalPrice = 0;
@@ -150,7 +146,7 @@ try {
     $fullStatsStmt->execute($params);
     $fullStats = $fullStatsStmt->fetch(PDO::FETCH_ASSOC);
 
-    echo json_encode([
+    $payload = [
         'success' => true,
         'data' => $wishes,
         'stats' => $stats,
@@ -172,7 +168,11 @@ try {
             'has_more' => ($offset + $limit) < $totalCount
         ],
         'message' => 'Wishes loaded successfully'
-    ], JSON_UNESCAPED_UNICODE);
+    ];
+    if (!empty($_GET['debug'])) {
+        $payload['raw'] = $rawWishes;
+    }
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE);
 
 } catch (PDOException $e) {
     echo json_encode([
