@@ -59,7 +59,7 @@ try {
 
     $query = "INSERT INTO tasks 
               (item_id, title, description, category, priority, user_id, scheduled_date, scheduled_time, status, created_at, updated_at) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NULL)";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([

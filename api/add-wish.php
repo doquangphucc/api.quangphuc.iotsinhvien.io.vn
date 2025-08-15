@@ -61,7 +61,7 @@ try {
 
     $query = "INSERT INTO wishes 
               (item_id, title, description, category, priority, price, currency, product_url, purchase_status, user_id, target_date, status, created_at, updated_at) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NULL)";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
