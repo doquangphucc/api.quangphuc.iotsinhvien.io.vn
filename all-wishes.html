@@ -298,26 +298,31 @@
 
         .wish-meta {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            flex-direction: column; /* Chia theo cột (trên dưới) */
+            gap: 10px; /* Khoảng cách giữa 2 tầng */
             margin-bottom: 15px;
             font-size: 0.9rem;
             color: #d2691e;
-            gap: 20px; /* Khoảng cách giữa date và actions */
         }
 
         .wish-date {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex: 1;
+            justify-content: space-between; /* Chia đôi trái phải */
+            align-items: center;
+            width: 100%;
+        }
+
+        .wish-date > div {
+            flex: 1; /* Mỗi phần chiếm 50% */
+            text-align: center; /* Căn giữa nội dung */
         }
 
         .wish-actions {
             display: flex;
-            gap: 10px;
-            flex-shrink: 0;
-            align-items: flex-start;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 5px;
         }
 
         .action-btn {
@@ -330,6 +335,7 @@
             transition: all 0.3s ease;
             font-size: 0.8rem;
             font-weight: 600;
+            text-align: center;
         }
 
         .action-btn:hover {
@@ -337,7 +343,24 @@
             color: white;
         }
 
+        .edit-btn {
+            flex: 1.5; /* Chiếm 1.5/5 phần */
+        }
+
+        .delete-btn {
+            flex: 1.5; /* Chiếm 1.5/5 phần */
+            background: transparent;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
         .complete-btn {
+            flex: 2; /* Chiếm 2/5 phần */
             background: #f72585;
             color: white;
             border: none;
@@ -483,6 +506,115 @@
         @keyframes gentleFloat {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-3px) rotate(5deg); }
+        }
+
+        /* Modal xác nhận xóa wish */
+        .delete-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(139, 69, 19, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .delete-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .delete-modal-content {
+            background: linear-gradient(135deg, #fff8f0 0%, #faf0e6 100%);
+            padding: 40px 35px;
+            border-radius: 25px;
+            box-shadow: 
+                0 20px 60px rgba(139, 69, 19, 0.3),
+                0 0 0 1px rgba(231, 111, 81, 0.2);
+            backdrop-filter: blur(15px);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            animation: modalIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .delete-modal-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #e74c3c;
+            animation: gentleFloat 2s ease-in-out infinite;
+        }
+
+        .delete-modal-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .delete-modal-message {
+            font-size: 1rem;
+            color: #d2691e;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .delete-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .delete-modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .delete-modal-btn.confirm {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .delete-modal-btn.confirm:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .delete-modal-btn.cancel {
+            background: transparent;
+            color: #8b4513;
+            border: 2px solid #d2691e;
+        }
+
+        .delete-modal-btn.cancel:hover {
+            background: #d2691e;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 105, 30, 0.3);
         }
 
         @media (max-width: 480px) {
@@ -703,12 +835,16 @@
                         <div class="wish-meta">
                             <div class="wish-date">
                                 <div>📅 Tạo: ${createdDate}</div>
-                                ${scheduledDate ? `<div>⏰ Ngày đến hạn: ${scheduledDate}</div>` : ''}
+                                <div>${scheduledDate ? `⏰ Hạn: ${scheduledDate}` : '⏰ Không có hạn'}</div>
                             </div>
                             <div class="wish-actions">
                                 <button class="action-btn edit-btn" onclick="editWish(${wish.id})" 
                                         title="Sửa đồ này">
                                     ✏️ Sửa
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteWish(${wish.id})" 
+                                        title="Xóa đồ này">
+                                    🗑️ Xóa
                                 </button>
                                 <button class="action-btn complete-btn" onclick="toggleComplete(${wish.id})" 
                                         title="${actionText}">
@@ -853,6 +989,53 @@
             }
         }
 
+        // Global variable để lưu wishId cần xóa
+        let pendingDeleteWishId = null;
+
+        // Hiển thị modal xác nhận xóa wish
+        function deleteWish(wishId) {
+            pendingDeleteWishId = wishId;
+            const modal = document.getElementById('deleteWishModal');
+            modal.classList.add('show');
+        }
+
+        // Ẩn modal xác nhận xóa wish
+        function hideDeleteWishModal() {
+            const modal = document.getElementById('deleteWishModal');
+            modal.classList.remove('show');
+            pendingDeleteWishId = null;
+        }
+
+        // Xác nhận xóa wish - thực hiện xóa thật
+        async function confirmDeleteWish() {
+            if (!pendingDeleteWishId) return;
+            
+            const wishId = pendingDeleteWishId;
+            hideDeleteWishModal();
+            
+            try {
+                const res = await fetch('api/delete-item.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'wish', id: wishId })
+                });
+                const json = await res.json();
+                if (!json.success) throw new Error(json.message || 'Delete failed');
+                
+                // Xóa khỏi mảng local
+                const idx = allWishes.findIndex(w => w.id == wishId);
+                if (idx !== -1) {
+                    allWishes.splice(idx, 1);
+                }
+                displayWishes();
+                updateStats();
+                showNotification('✅ Đã xóa đồ thành công', 'success');
+            } catch (e) {
+                console.error(e);
+                showNotification('❌ Có lỗi xảy ra khi xóa', 'error');
+            }
+        }
+
         // Thêm wish mới
         function openAddWish() {
             showWishModal(function(data) {
@@ -978,7 +1161,34 @@
                 setTimeout(createFallingLeaf, i * 200);
             }
         });
+
+        // Event listeners cho modal delete wish
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideDeleteWishModal();
+            }
+        });
+
+        // Click bên ngoài để đóng modal
+        document.getElementById('deleteWishModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDeleteWishModal();
+            }
+        });
     </script>
+
+    <!-- Modal xác nhận xóa wish -->
+    <div id="deleteWishModal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-icon">🍂</div>
+            <h3 class="delete-modal-title">Xác nhận xóa wish</h3>
+            <p class="delete-modal-message">Bạn có chắc chắn muốn xóa wish này? Hành động này không thể hoàn tác.</p>
+            <div class="delete-modal-buttons">
+                <button class="delete-modal-btn cancel" onclick="hideDeleteWishModal()">Hủy</button>
+                <button class="delete-modal-btn confirm" onclick="confirmDeleteWish()">Xóa</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom Modal Script -->
     <script src="modal.js"></script>
