@@ -493,6 +493,115 @@
             50% { transform: translateY(-3px) rotate(5deg); }
         }
 
+        /* Modal xác nhận xóa */
+        .delete-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(139, 69, 19, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .delete-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .delete-modal-content {
+            background: linear-gradient(135deg, #fff8f0 0%, #faf0e6 100%);
+            padding: 40px 35px;
+            border-radius: 25px;
+            box-shadow: 
+                0 20px 60px rgba(139, 69, 19, 0.3),
+                0 0 0 1px rgba(231, 111, 81, 0.2);
+            backdrop-filter: blur(15px);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            animation: modalIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .delete-modal-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #e74c3c;
+            animation: gentleFloat 2s ease-in-out infinite;
+        }
+
+        .delete-modal-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .delete-modal-message {
+            font-size: 1rem;
+            color: #d2691e;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .delete-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .delete-modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .delete-modal-btn.confirm {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .delete-modal-btn.confirm:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .delete-modal-btn.cancel {
+            background: transparent;
+            color: #8b4513;
+            border: 2px solid #d2691e;
+        }
+
+        .delete-modal-btn.cancel:hover {
+            background: #d2691e;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 105, 30, 0.3);
+        }
+
         @media (max-width: 480px) {
             .notification {
                 top: 10px;
@@ -855,9 +964,29 @@
             }
         }
 
-        // Xóa task
-        async function deleteTask(taskId) {
-            if (!confirm('Bạn có chắc muốn xóa việc này không?')) return;
+        // Global variable để lưu taskId cần xóa
+        let pendingDeleteTaskId = null;
+
+        // Hiển thị modal xác nhận xóa
+        function deleteTask(taskId) {
+            pendingDeleteTaskId = taskId;
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('show');
+        }
+
+        // Ẩn modal xác nhận xóa
+        function hideDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('show');
+            pendingDeleteTaskId = null;
+        }
+
+        // Xác nhận xóa - thực hiện xóa thật
+        async function confirmDelete() {
+            if (!pendingDeleteTaskId) return;
+            
+            const taskId = pendingDeleteTaskId;
+            hideDeleteModal();
             
             try {
                 const res = await fetch('api/delete-item.php', {
@@ -881,6 +1010,21 @@
                 showNotification('❌ Có lỗi xảy ra khi xóa', 'error');
             }
         }
+
+        // Click outside để đóng modal
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('deleteModal');
+            if (e.target === modal) {
+                hideDeleteModal();
+            }
+        });
+
+        // ESC key để đóng modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideDeleteModal();
+            }
+        });
 
         // Thêm task mới
         function openAddTask() {
@@ -997,6 +1141,23 @@
             }
         });
     </script>
+
+    <!-- Modal xác nhận xóa -->
+    <div id="deleteModal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-icon">🗑️</div>
+            <div class="delete-modal-title">Xác nhận xóa</div>
+            <div class="delete-modal-message">Bạn có chắc muốn xóa việc này không?<br>Hành động này không thể hoàn tác.</div>
+            <div class="delete-modal-buttons">
+                <button class="delete-modal-btn cancel" onclick="hideDeleteModal()">
+                    ❌ Hủy bỏ
+                </button>
+                <button class="delete-modal-btn confirm" onclick="confirmDelete()">
+                    🗑️ Xóa ngay
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom Modal Script -->
     <script src="modal.js"></script>
