@@ -86,7 +86,7 @@
 }
 
 .modal-title {
-    font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
+    font-family: 'Times New Roman', serif;
     color: #8b4513;
     font-size: 1.4rem;
     font-weight: 700;
@@ -153,7 +153,7 @@
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 8px;
-    font-family: 'Merriweather', serif;
+    font-family: 'Times New Roman', serif;
 }
 
 .form-input {
@@ -162,7 +162,7 @@
     border: 2px solid rgba(231, 111, 81, 0.2);
     border-radius: 12px;
     font-size: 1rem;
-    font-family: 'Merriweather', serif;
+    font-family: 'Times New Roman', serif;
     color: #8b4513;
     background: rgba(255, 248, 240, 0.8);
     transition: all 0.3s ease;
@@ -195,7 +195,7 @@
     border: 2px solid rgba(231, 111, 81, 0.2);
     border-radius: 10px;
     font-size: 0.95rem;
-    font-family: 'Merriweather', serif;
+    font-family: 'Times New Roman', serif;
     color: #8b4513;
     background: rgba(255, 248, 240, 0.8);
     transition: all 0.3s ease;
@@ -235,7 +235,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'Merriweather', serif;
+    font-family: 'Times New Roman', serif;
     min-width: 100px;
 }
 
@@ -354,7 +354,7 @@
     width: 360px;
     max-width: 90%;
     animation: modalSlideIn .35s ease;
-    font-family: 'Merriweather', serif;
+    font-family: 'Times New Roman', serif;
     color: #8b4513;
 }
 
@@ -369,7 +369,7 @@
 .date-wheel-item.selected { background: linear-gradient(135deg,#e76f51,#f4a261); color:#fff; font-weight:600; }
 
 .date-picker-actions { display:flex; gap:12px; margin-top:16px; }
-.date-picker-btn { flex:1; padding:10px 14px; border:none; border-radius:20px; font-weight:600; cursor:pointer; font-family:'Merriweather',serif; font-size:0.9rem; }
+.date-picker-btn { flex:1; padding:10px 14px; border:none; border-radius:20px; font-weight:600; cursor:pointer; font-family:'Times New Roman',serif; font-size:0.9rem; }
 .date-picker-btn.confirm { background: linear-gradient(135deg,#e76f51,#f4a261); color:#fff; box-shadow:0 4px 12px rgba(231,111,81,0.35); }
 .date-picker-btn.confirm:hover { transform: translateY(-2px); }
 .date-picker-btn.cancel { background: linear-gradient(135deg,#e9c46a,#f4a261); color:#8b4513; }
