@@ -21,6 +21,7 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            padding-top: 70px; /* Đảm bảo có khoảng trống cho fixed header */
         }
 
         /* Animation cho lá rơi */
@@ -79,6 +80,7 @@
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             z-index: 100;
             border-bottom: 2px solid rgba(233, 196, 106, 0.3);
+            min-height: 70px; /* Đảm bảo min height */
         }
 
         .header-content {
@@ -330,7 +332,7 @@
         /* Main content */
         .main-content {
             margin: 0;                 /* bỏ margin trùng gây thu hẹp */
-            padding: 0 40px 0 8px;     /* chừa rất ít cam bên trái, khoảng nhỏ bên phải */
+            padding: 20px 40px 0 8px;  /* Tăng padding-top để tránh bị che */
             height: calc(100vh - 70px);
             position: fixed;           /* pin */
             top: 70px;                 /* dưới header */
@@ -901,6 +903,15 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding-top: 100px; /* Tăng padding cho mobile vì header có thể cao hơn */
+            }
+            
+            .header {
+                min-height: 90px; /* Header cao hơn trên mobile */
+                padding: 15px 15px;
+            }
+            
             .sidebar {
                 width: 100%;
                 height: auto;
@@ -913,7 +924,10 @@
                 margin-top: 0;
                 left: 0;
                 position: relative;
-                height: calc(100vh - 70px);
+                height: auto;
+                min-height: calc(100vh - 120px); /* Tăng để chừa chỗ cho header cao hơn trên mobile */
+                padding-top: 30px;
+                top: 0; /* Reset top trên mobile */
             }
             
             .header-content {
