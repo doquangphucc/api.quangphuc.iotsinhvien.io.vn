@@ -20,8 +20,9 @@ function db_get_connection(): mysqli {
         }
         $conn->set_charset(DB_CHARSET);
         
-        // Đặt timezone cho MySQL connection
+        // Đặt timezone cho MySQL connection - sử dụng offset thay vì named timezone
         $conn->query("SET time_zone = '+07:00'");
+        $conn->query("SET SESSION sql_mode = 'TRADITIONAL'");
     }
     return $conn;
 }
@@ -37,8 +38,9 @@ function db_get_pdo_connection(): PDO {
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
             
-            // Đặt timezone cho MySQL connection
+            // Đặt timezone cho MySQL connection - sử dụng offset thay vì named timezone
             $pdo->exec("SET time_zone = '+07:00'");
+            $pdo->exec("SET SESSION sql_mode = 'TRADITIONAL'");
             
         } catch (PDOException $e) {
             http_response_code(500);

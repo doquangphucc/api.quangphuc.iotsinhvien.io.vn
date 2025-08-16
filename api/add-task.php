@@ -73,14 +73,6 @@ try {
         $getTaskStmt->execute([$taskId]);
         $newTask = $getTaskStmt->fetch(PDO::FETCH_ASSOC);
 
-        // Convert timestamps to Vietnam time for display
-        if ($newTask['created_at']) {
-            $newTask['created_at'] = date('Y-m-d H:i:s', strtotime($newTask['created_at'] . ' +7 hours'));
-        }
-        if ($newTask['updated_at']) {
-            $newTask['updated_at'] = date('Y-m-d H:i:s', strtotime($newTask['updated_at'] . ' +7 hours'));
-        }
-
         echo json_encode([
             'success' => true,
             'message' => 'Task added successfully',
