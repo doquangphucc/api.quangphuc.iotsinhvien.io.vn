@@ -789,6 +789,7 @@
         // Hiển thị danh sách wishes
         function displayWishes() {
             const wishesList = document.getElementById('wishes-list');
+            if (!wishesList) return;
             
             let filteredWishes = allWishes;
             if (currentFilter === 'pending') {
@@ -867,15 +868,21 @@
             const pendingWishes = totalWishes - completedWishes;
             const completionRate = totalWishes > 0 ? Math.round((completedWishes / totalWishes) * 100) : 0;
 
-            document.getElementById('total-wishes').textContent = totalWishes;
-            document.getElementById('pending-wishes').textContent = pendingWishes;
-            document.getElementById('completed-wishes').textContent = completedWishes;
-            document.getElementById('completion-rate').textContent = completionRate + '%';
+            const totalWishesEl = document.getElementById('total-wishes');
+            const pendingWishesEl = document.getElementById('pending-wishes');
+            const completedWishesEl = document.getElementById('completed-wishes');
+            const completionRateEl = document.getElementById('completion-rate');
+            
+            if (totalWishesEl) totalWishesEl.textContent = totalWishes;
+            if (pendingWishesEl) pendingWishesEl.textContent = pendingWishes;
+            if (completedWishesEl) completedWishesEl.textContent = completedWishes;
+            if (completionRateEl) completionRateEl.textContent = completionRate + '%';
         }
 
         // Hiển thị trạng thái rỗng
         function showEmptyState(message) {
             const wishesList = document.getElementById('wishes-list');
+            if (!wishesList) return;
             wishesList.innerHTML = `
                 <div class="empty-state">
                     <div class="icon">🛍️</div>
@@ -997,13 +1004,17 @@
         function deleteWish(wishId) {
             pendingDeleteWishId = wishId;
             const modal = document.getElementById('deleteWishModal');
-            modal.classList.add('show');
+            if (modal) {
+                modal.classList.add('show');
+            }
         }
 
         // Ẩn modal xác nhận xóa wish
         function hideDeleteWishModal() {
             const modal = document.getElementById('deleteWishModal');
-            modal.classList.remove('show');
+            if (modal) {
+                modal.classList.remove('show');
+            }
             pendingDeleteWishId = null;
         }
 
@@ -1110,7 +1121,10 @@
             leaf.style.animationDuration = fallDuration + 's';
             leaf.style.animationDelay = Math.random() * 2 + 's';
             
-            document.querySelector('.falling-leaves').appendChild(leaf);
+            const fallingLeaves = document.querySelector('.falling-leaves');
+            if (fallingLeaves) {
+                fallingLeaves.appendChild(leaf);
+            }
             
             setTimeout(() => {
                 leaf.remove();
@@ -1170,10 +1184,15 @@
             }
         });
 
-        // Click bên ngoài để đóng modal
-        document.getElementById('deleteWishModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideDeleteWishModal();
+        // Click bên ngoài để đóng modal - chờ DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteWishModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        hideDeleteWishModal();
+                    }
+                });
             }
         });
     </script>
