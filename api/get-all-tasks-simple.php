@@ -11,14 +11,9 @@ $debug = !empty($_GET['debug']);
 if(!$username){ http_response_code(400); echo json_encode(['success'=>false,'message'=>'Username required']); exit; }
 
 try {
-    // get user id
-    $uStmt = $pdo->prepare('SELECT id FROM users WHERE username=? LIMIT 1');
-    $uStmt->execute([$username]);
-    $userId = $uStmt->fetchColumn();
-    if(!$userId){ echo json_encode(['success'=>true,'data'=>[], 'message'=>'No user']); exit; }
-
-    $stmt = $pdo->prepare('SELECT id,item_id,title,status,scheduled_date,created_at,updated_at FROM tasks WHERE user_id=? ORDER BY id ASC');
-    $stmt->execute([$userId]);
+    // Database hiện tại sử dụng username trực tiếp, không cần user_id
+    $stmt = $pdo->prepare('SELECT id,username,title,description,scheduled_date,scheduled_time,completed,created_at,updated_at FROM tasks WHERE username=? ORDER BY id ASC');
+    $stmt->execute([$username]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // build id counts for diagnostics

@@ -43,8 +43,8 @@ try {
         $statusCondition = ' AND t.completed = 0';
     }
 
-    // Validate sort column
-    $validSortColumns = ['created_at', 'title', 'due_date', 'priority'];
+    // Validate sort column - dựa trên database schema thực tế
+    $validSortColumns = ['created_at', 'updated_at', 'title', 'scheduled_date'];
     if (!in_array($sort, $validSortColumns)) {
         $sort = 'created_at';
     }
@@ -66,33 +66,36 @@ try {
         $countTasksStmt->execute([$username]);
         $tasksCount = $countTasksStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-        // Lấy danh sách tasks
+        // Lấy danh sách tasks - theo database schema thực tế
         $tasksStmt = $pdo->prepare("
             SELECT 
-                t.id, t.title, t.description, t.priority, t.category, 
-                t.scheduled_date as due_date, t.completed as is_completed, 
+                t.id, t.username, t.title, t.description, 
+                t.scheduled_date, t.scheduled_time, t.completed as is_completed, 
                 t.created_at, t.updated_at
             FROM tasks t
             WHERE t.username = ? $statusCondition
-            ORDER BY $sort $order
+            ORDER BY t.$sort $order
             LIMIT ? OFFSET ?
         ");
         $tasksStmt->execute([$username, $limit, $offset]);
         $tasks = $tasksStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Format dữ liệu tasks
+        // Format dữ liệu tasks - theo database schema
         foreach ($tasks as &$task) {
             $task['type'] = 'task';
             $task['id'] = (int)$task['id'];
             $task['is_completed'] = (bool)$task['is_completed'];
             
             // Format dates
-            if ($task['due_date']) {
-                $task['due_date'] = date('d/m/Y', strtotime($task['due_date']));
+            if ($task['scheduled_date']) {
+                $task['scheduled_date_formatted'] = date('d/m/Y', strtotime($task['scheduled_date']));
             }
-            $task['created_at'] = date('d/m/Y H:i', strtotime($task['created_at']));
+            if ($task['scheduled_time']) {
+                $task['scheduled_time_formatted'] = date('H:i', strtotime($task['scheduled_time']));
+            }
+            $task['created_at_formatted'] = date('d/m/Y H:i', strtotime($task['created_at']));
             if ($task['updated_at']) {
-                $task['updated_at'] = date('d/m/Y H:i', strtotime($task['updated_at']));
+                $task['updated_at_formatted'] = date('d/m/Y H:i', strtotime($task['updated_at']));
             }
         }
 
@@ -120,30 +123,36 @@ try {
         $countWishesStmt->execute([$username]);
         $wishesCount = $countWishesStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-        // Lấy danh sách wishes
+        // Lấy danh sách wishes - theo database schema thực tế
         $wishesStmt = $pdo->prepare("
             SELECT 
-                w.id, w.title, w.description, w.category, 
-                w.product_url as store_location, w.product_url as purchase_link, 
-                w.priority, w.completed as is_completed, w.created_at, w.updated_at
+                w.id, w.username, w.title, w.description, 
+                w.scheduled_date, w.scheduled_time, w.completed as is_completed, 
+                w.created_at, w.updated_at
             FROM wishes w
             WHERE w.username = ? $wishStatusCondition
-            ORDER BY $sort $order
+            ORDER BY w.$sort $order
             LIMIT ? OFFSET ?
         ");
         $wishesStmt->execute([$username, $limit, $offset]);
         $wishes = $wishesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Format dữ liệu wishes
+        // Format dữ liệu wishes - theo database schema  
         foreach ($wishes as &$wish) {
             $wish['type'] = 'wish';
             $wish['id'] = (int)$wish['id'];
             $wish['is_completed'] = (bool)$wish['is_completed'];
             
             // Format dates
-            $wish['created_at'] = date('d/m/Y H:i', strtotime($wish['created_at']));
+            if ($wish['scheduled_date']) {
+                $wish['scheduled_date_formatted'] = date('d/m/Y', strtotime($wish['scheduled_date']));
+            }
+            if ($wish['scheduled_time']) {
+                $wish['scheduled_time_formatted'] = date('H:i', strtotime($wish['scheduled_time']));
+            }
+            $wish['created_at_formatted'] = date('d/m/Y H:i', strtotime($wish['created_at']));
             if ($wish['updated_at']) {
-                $wish['updated_at'] = date('d/m/Y H:i', strtotime($wish['updated_at']));
+                $wish['updated_at_formatted'] = date('d/m/Y H:i', strtotime($wish['updated_at']));
             }
         }
 
