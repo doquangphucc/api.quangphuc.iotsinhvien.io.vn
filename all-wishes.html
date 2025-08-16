@@ -262,10 +262,25 @@
 
         .wish-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 15px;
             gap: 15px;
+            min-height: 40px; /* Đảm bảo chiều cao tối thiểu */
+        }
+
+        .wish-title-section {
+            flex: 1;
+            min-width: 0; /* Cho phép flex item shrink */
+        }
+
+        .wish-status-section {
+            flex-shrink: 0; /* Không cho phép status bị shrink */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            min-width: 120px; /* Đảm bảo không gian tối thiểu cho status và actions */
         }
 
         .wish-title {
@@ -288,11 +303,13 @@
         .wish-status {
             background: #f72585;
             color: white;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: 600;
             white-space: nowrap;
+            margin-bottom: 8px;
+            flex-shrink: 0;
         }
 
         .wish-item.completed .wish-status {
@@ -331,7 +348,9 @@
 
         .wish-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-shrink: 0;
+            align-items: center;
         }
 
         .action-btn {
@@ -711,8 +730,22 @@
                 wishesHTML += `
                     <div class="wish-item ${completedClass}">
                         <div class="wish-header">
-                            <div class="wish-title">${escapeHtml(wish.title)}</div>
-                            <div class="wish-status">${statusText}</div>
+                            <div class="wish-title-section">
+                                <div class="wish-title">${escapeHtml(wish.title)}</div>
+                            </div>
+                            <div class="wish-status-section">
+                                <div class="wish-status">${statusText}</div>
+                                <div class="wish-actions">
+                                    <button class="action-btn edit-btn" onclick="editWish(${wish.id})" 
+                                            title="Sửa đồ này">
+                                        ✏️ Sửa
+                                    </button>
+                                    <button class="action-btn complete-btn" onclick="toggleComplete(${wish.id})" 
+                                            title="${actionText}">
+                                        ${actionIcon} ${actionText}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         ${priceHTML}
                         <div class="wish-meta">
@@ -720,16 +753,6 @@
                                 📅 Tạo: ${createdDate}
                                 ${scheduledDate ? `<br>⏰ Ngày đến hạn: ${scheduledDate}` : ''}
                             </div>
-                        </div>
-                        <div class="wish-actions">
-                            <button class="action-btn edit-btn" onclick="editWish(${wish.id})" 
-                                    title="Sửa đồ này">
-                                ✏️ Sửa
-                            </button>
-                            <button class="action-btn complete-btn" onclick="toggleComplete(${wish.id})" 
-                                    title="${actionText}">
-                                ${actionIcon} ${actionText}
-                            </button>
                         </div>
                     </div>
                 `;

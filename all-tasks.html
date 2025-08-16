@@ -262,10 +262,25 @@
 
         .task-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 15px;
             gap: 15px;
+            min-height: 40px; /* Đảm bảo chiều cao tối thiểu */
+        }
+
+        .task-title-section {
+            flex: 1;
+            min-width: 0; /* Cho phép flex item shrink */
+        }
+
+        .task-status-section {
+            flex-shrink: 0; /* Không cho phép status bị shrink */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            min-width: 120px; /* Đảm bảo không gian tối thiểu cho status và actions */
         }
 
         .task-title {
@@ -288,11 +303,13 @@
         .task-status {
             background: #2a9d8f;
             color: white;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: 600;
             white-space: nowrap;
+            margin-bottom: 8px;
+            flex-shrink: 0;
         }
 
         .task-item.completed .task-status {
@@ -316,7 +333,9 @@
 
         .task-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-shrink: 0;
+            align-items: center;
         }
 
         .action-btn {
@@ -689,24 +708,28 @@
                 tasksHTML += `
                     <div class="task-item ${completedClass}">
                         <div class="task-header">
-                            <div class="task-title">${escapeHtml(task.title)}</div>
-                            <div class="task-status">${statusText}</div>
+                            <div class="task-title-section">
+                                <div class="task-title">${escapeHtml(task.title)}</div>
+                            </div>
+                            <div class="task-status-section">
+                                <div class="task-status">${statusText}</div>
+                                <div class="task-actions">
+                                    <button class="action-btn edit-btn" onclick="editTask(${task.id})" 
+                                            title="Sửa việc này">
+                                        ✏️ Sửa
+                                    </button>
+                                    <button class="action-btn complete-btn" onclick="toggleComplete(${task.id})" 
+                                            title="${actionText}">
+                                        ${actionIcon} ${actionText}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div class="task-meta">
                             <div class="task-date">
                                 📅 Tạo: ${createdDate}
                                 ${scheduledDate ? `<br>⏰ Ngày đến hạn: ${scheduledDate}` : ''}
                             </div>
-                        </div>
-                        <div class="task-actions">
-                            <button class="action-btn edit-btn" onclick="editTask(${task.id})" 
-                                    title="Sửa việc này">
-                                ✏️ Sửa
-                            </button>
-                            <button class="action-btn complete-btn" onclick="toggleComplete(${task.id})" 
-                                    title="${actionText}">
-                                ${actionIcon} ${actionText}
-                            </button>
                         </div>
                     </div>
                 `;
