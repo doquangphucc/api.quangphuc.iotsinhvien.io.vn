@@ -20,7 +20,8 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto; /* Cho phép cuộn dọc */
+            padding: 20px 0; /* Thêm padding để tránh bị cắt */
         }
 
         /* Background decorations */
@@ -70,6 +71,9 @@
             text-align: center;
             position: relative;
             z-index: 2;
+            margin: 20px; /* Thêm margin để tránh sát mép */
+            max-height: calc(100vh - 40px); /* Giới hạn chiều cao */
+            overflow-y: auto; /* Cho phép cuộn nội dung trong container */
         }
 
         .logo {
@@ -200,8 +204,9 @@
         /* Mobile responsive */
         @media (max-width: 480px) {
             .register-container {
-                margin: 20px;
-                padding: 30px 25px;
+                margin: 10px;
+                padding: 20px 15px;
+                max-height: calc(100vh - 20px); /* Điều chỉnh cho màn hình nhỏ */
             }
 
             .register-title {
@@ -210,6 +215,34 @@
 
             .logo {
                 font-size: 2.5rem;
+                margin-bottom: 5px; /* Giảm khoảng cách */
+            }
+            
+            .form-group {
+                margin-bottom: 15px; /* Giảm khoảng cách giữa các field */
+            }
+        }
+        
+        /* Thêm responsive cho màn hình rất nhỏ */
+        @media (max-height: 600px) {
+            .register-container {
+                padding: 15px;
+                margin: 5px;
+                max-height: calc(100vh - 10px);
+            }
+            
+            .logo {
+                font-size: 2rem;
+                margin-bottom: 5px;
+            }
+            
+            .register-title {
+                font-size: 1.3rem;
+                margin-bottom: 10px;
+            }
+            
+            .form-group {
+                margin-bottom: 10px;
             }
         }
     </style>
