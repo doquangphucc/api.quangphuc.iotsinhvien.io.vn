@@ -28,10 +28,6 @@ try {
     $username = $input['username'] ?? '';
     $title = $input['title'] ?? '';
     $description = $input['description'] ?? null;
-    $price = $input['price'] ?? null;
-    $currency = $input['currency'] ?? 'VND';
-    $productUrl = $input['product_url'] ?? null;
-    $purchaseStatus = $input['purchase_status'] ?? 'researching';
     
     // Handle both old datetime format and new separate date/time
     $scheduledDate = $input['scheduled_date'] ?? null;
@@ -56,10 +52,6 @@ try {
         throw new Exception('Username and title are required');
     }
 
-    // Generate unique item_id (không cần thiết cho database mới nhưng giữ lại cho tương thích)
-    $itemId = 'wish_' . uniqid() . '_' . time();
-    
-    // Database mới dùng username trực tiếp, không cần user_id và các cột phức tạp
     // Explicitly set timezone before insert  
     $pdo->exec("SET time_zone = '+07:00'");
     
