@@ -16,11 +16,7 @@
 
         body {
             font-family: 'Merriweather', 'Georgia', 'Times New Roman', serif;
-            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 10                        if (updateResult.success) {
-                            // Refresh danh sách wishes
-                            loadAllWishes();
-                            alert('✅ Cập nhật wish thành công!');
-                        } else {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 100%);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
@@ -733,7 +729,7 @@
                         
                         if (updateResult.success) {
                             // Refresh danh sách wishes
-                            loadWishes();
+                            loadAllWishes();
                             alert('✅ Cập nhật đồ thành công!');
                         } else {
                             throw new Error(updateResult.message || 'Cập nhật thất bại');
