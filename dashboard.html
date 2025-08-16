@@ -617,43 +617,20 @@
             padding: 0 40px;
         }
 
-        .task-branch, .wish-branch {
+        .task-branch {
             position: relative;
             flex: 1;
             min-width: 250px;
             max-width: 400px;
-        }
-
-        .task-branch {
             text-align: right;
         }
 
         .wish-branch {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
             text-align: left;
-        }
-
-        .task-branch::before {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            width: 50px;
-            height: 4px;
-            background: linear-gradient(90deg, #2a9d8f, #43aa8b);
-            transform: translateY(-50%);
-            border-radius: 2px;
-        }
-
-        .wish-branch::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            width: 50px;
-            height: 4px;
-            background: linear-gradient(90deg, #f72585, #f77f00);
-            transform: translateY(-50%);
-            border-radius: 2px;
         }
 
         .branch-content {
@@ -908,11 +885,6 @@
                 max-width: 280px; /* Giảm chiều rộng trên mobile */
                 word-wrap: break-word;
                 overflow-wrap: break-word;
-            }
-            
-            .task-branch::before,
-            .wish-branch::before {
-                display: none;
             }
             
             .current-time {
