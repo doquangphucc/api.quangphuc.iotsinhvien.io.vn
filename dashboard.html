@@ -663,15 +663,20 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
-            padding: 5px 0;
+            gap: 2%; /* Gap tổng 2% để tạo khoảng cách */
+            padding: 5px 1% 5px 1%; /* Padding trái phải mỗi bên 1% */
             min-height: 32px; /* Đảm bảo chiều cao tối thiểu */
+            width: 100%; /* Đảm bảo sử dụng hết chiều rộng */
+            box-sizing: border-box;
         }
 
         .branch-actions {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex: 1; /* Chiếm 1 phần trong layout flex */
+            justify-content: flex-end; /* Căn nút về bên phải */
+            max-width: 8%; /* Tối đa 8% để có khoảng cách */
         }
 
         /* CSS cho edit-btn đã được loại bỏ vì edit chuyển sang all-tasks.html và all-wishes.html */
@@ -755,7 +760,8 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
-            max-width: 100%;
+            flex: 9; /* Chiếm 9 phần trong layout flex */
+            max-width: 88%; /* Tối đa 88% để có khoảng cách */
         }
 
         .loading-indicator {
