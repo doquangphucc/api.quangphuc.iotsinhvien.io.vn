@@ -27,10 +27,8 @@ try {
     }
 
     // Xây dựng query với điều kiện username nếu có
-    $query = "SELECT id, item_id, title, description, category, priority, 
-                     price, currency, product_url, purchase_status,
-                     target_date, status, user_id,
-                     created_at, updated_at, purchased_at, actual_price, purchase_note
+    $query = "SELECT id, title, description, price, scheduled_date, scheduled_time,
+                     completed, created_at, updated_at
               FROM wishes 
               WHERE id = ?";
     

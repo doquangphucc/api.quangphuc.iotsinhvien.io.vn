@@ -60,22 +60,17 @@ try {
 
     // Update wish
     $query = "UPDATE wishes 
-              SET title = ?, description = ?, category = ?, priority = ?, 
-                  price = ?, currency = ?, product_url = ?, purchase_status = ?, 
-                  target_date = ?, updated_at = NOW()
+              SET title = ?, description = ?, price = ?, 
+                  scheduled_date = ?, scheduled_time = ?, updated_at = NOW()
               WHERE id = ?";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
         $title,
         $description,
-        $category,
-        $priority,
         $price,
-        $currency,
-        $productUrl,
-        $purchaseStatus,
-        $targetDate,
+        $scheduledDate,
+        $scheduledTime,
         $wishId
     ]);
 

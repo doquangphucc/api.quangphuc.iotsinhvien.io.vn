@@ -40,8 +40,8 @@ try {
         ];
 
         // Lấy tasks cho ngày này
-        $taskQuery = "SELECT id, item_id, title, description, category, priority, 
-                             scheduled_date, scheduled_time, is_completed, created_at 
+        $taskQuery = "SELECT id, title, description, scheduled_date, scheduled_time, 
+                             completed as is_completed, created_at 
                       FROM tasks 
                       WHERE username = ? AND DATE(scheduled_date) = ? 
                       ORDER BY scheduled_time ASC, created_at DESC";
@@ -52,17 +52,16 @@ try {
         // Format tasks
         foreach ($tasks as &$task) {
             $task['is_completed'] = (bool)$task['is_completed'];
-            $priorityIcons = ['low' => '🟢', 'medium' => '🟡', 'high' => '🔴'];
-            $task['priority_icon'] = $priorityIcons[$task['priority']] ?? '🟡';
+            // Remove priority formatting since priority column doesn't exist
         }
         $dayData['tasks'] = $tasks;
 
         // Lấy wishes cho ngày này
-        $wishQuery = "SELECT id, item_id, title, description, category, priority, price, 
-                             currency, product_url, purchase_status, is_completed, created_at 
+        $wishQuery = "SELECT id, title, description, price, completed as is_completed, 
+                             created_at, scheduled_date as target_date
                       FROM wishes 
-                      WHERE username = ? AND DATE(target_date) = ? 
-                      ORDER BY priority DESC, created_at DESC";
+                      WHERE username = ? AND DATE(scheduled_date) = ? 
+                      ORDER BY created_at DESC";
         $wishStmt = $pdo->prepare($wishQuery);
         $wishStmt->execute([$username, $dateString]);
         $wishes = $wishStmt->fetchAll(PDO::FETCH_ASSOC);

@@ -27,9 +27,8 @@ try {
     }
 
     // Xây dựng query với điều kiện username nếu có
-    $query = "SELECT id, item_id, title, description, category, priority, 
-                     scheduled_date, scheduled_time, status, user_id,
-                     created_at, updated_at, completed_at
+    $query = "SELECT id, title, description, scheduled_date, scheduled_time, 
+                     completed, created_at, updated_at
               FROM tasks 
               WHERE id = ?";
     

@@ -58,16 +58,14 @@ try {
 
     // Update task
     $query = "UPDATE tasks 
-              SET title = ?, description = ?, category = ?, priority = ?, 
-                  scheduled_date = ?, scheduled_time = ?, updated_at = NOW()
+              SET title = ?, description = ?, scheduled_date = ?, scheduled_time = ?, 
+                  updated_at = NOW()
               WHERE id = ?";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
         $title, 
         $description, 
-        $category, 
-        $priority, 
         $scheduledDate, 
         $scheduledTime,
         $taskId
