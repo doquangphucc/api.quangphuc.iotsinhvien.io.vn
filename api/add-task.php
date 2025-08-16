@@ -47,30 +47,21 @@ try {
         throw new Exception('Username and title are required');
     }
 
-    // Generate unique item_id
+    // Generate unique item_id (không cần thiết cho database mới nhưng giữ lại cho tương thích)
     $itemId = 'task_' . uniqid() . '_' . time();
     
-    // Get user_id from username
-    $userQuery = "SELECT id FROM tai_khoan WHERE user = ?";
-    $userStmt = $pdo->prepare($userQuery);
-    $userStmt->execute([$username]);
-    $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-    $userId = $user ? $user['id'] : null;
-
+    // Database mới dùng username trực tiếp, không cần user_id
     $query = "INSERT INTO tasks 
-              (item_id, title, description, category, priority, user_id, scheduled_date, scheduled_time, status) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
+              (username, title, description, scheduled_date, scheduled_time, completed) 
+              VALUES (?, ?, ?, ?, ?, 0)";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
-        $itemId, 
+        $username,  // Dùng username trực tiếp
         $title, 
         $description, 
-        $category, 
-        $priority, 
-        $userId, 
-        $scheduledDate, 
-        $scheduledTime
+        $scheduled_date, 
+        $scheduled_time 
     ]);
 
     if ($result) {

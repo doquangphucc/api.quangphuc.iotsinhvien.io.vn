@@ -58,35 +58,20 @@ try {
         throw new Exception('Username and title are required');
     }
 
-    // Generate unique item_id
+    // Generate unique item_id (không cần thiết cho database mới nhưng giữ lại cho tương thích)
     $itemId = 'wish_' . uniqid() . '_' . time();
     
-    // Get user_id from username
-    $userQuery = "SELECT id FROM tai_khoan WHERE user = ?";
-    $userStmt = $pdo->prepare($userQuery);
-    $userStmt->execute([$username]);
-    $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-    $userId = $user ? $user['id'] : null;
-
+    // Database mới dùng username trực tiếp, không cần user_id và các cột phức tạp
     $query = "INSERT INTO wishes 
-              (item_id, title, description, category, priority, price, currency, product_url, purchase_status, user_id, scheduled_date, scheduled_time, target_date, status) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+              (username, title, description, scheduled_date, scheduled_time, completed) 
+              VALUES (?, ?, ?, ?, ?, 0)";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
-        $itemId,
+        $username, // Dùng username trực tiếp
         $title,
         $description,
-        $category,
-        $priority,
-        $price,
-        $currency,
-        $productUrl,
-        $purchaseStatus,
-        $userId,
-        $scheduledDate,
-        $scheduledTime,
-        $targetDate
+        $scheduled_time // Chỉ 5 tham số cho 5 cột
     ]);
 
     if ($result) {
