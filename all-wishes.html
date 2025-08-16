@@ -357,6 +357,17 @@
             background: #f77f00;
         }
 
+        .edit-btn {
+            background: #f77f00;
+            color: white;
+            border: 2px solid #f77f00;
+        }
+
+        .edit-btn:hover {
+            background: #ff9500;
+            border-color: #ff9500;
+        }
+
         .wish-item.completed .complete-btn {
             background: #e76f51;
             border-color: #e76f51;
@@ -530,6 +541,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const username = urlParams.get('user') || localStorage.getItem('username') || 'User';
 
+        // Helper function để lấy username
+        function getUsername() {
+            return localStorage.getItem('username') || urlParams.get('user') || 'User';
+        }
+
         // Tải danh sách tất cả wishes từ API
         async function loadAllWishes() {
             try {
@@ -608,6 +624,10 @@
                             </div>
                         </div>
                         <div class="wish-actions">
+                            <button class="action-btn edit-btn" onclick="editWish(${wish.id})" 
+                                    title="Sửa đồ này">
+                                ✏️ Sửa
+                            </button>
                             <button class="action-btn complete-btn" onclick="toggleComplete(${wish.id})" 
                                     title="${actionText}">
                                 ${actionIcon} ${actionText}
@@ -656,6 +676,75 @@
             event.target.classList.add('active');
             
             displayWishes();
+        }
+
+        // Edit wish function
+        async function editWish(wishId) {
+            try {
+                console.log(`Editing wish with ID: ${wishId}`);
+                
+                // Lấy dữ liệu wish hiện tại từ API
+                const username = getUsername();
+                const response = await fetch(`api/get-wish-by-id.php?id=${wishId}&username=${encodeURIComponent(username)}`);
+                const result = await response.json();
+                
+                if (!result.success || !result.data || result.data.length === 0) {
+                    throw new Error('Không tìm thấy đồ này');
+                }
+                
+                const wishData = result.data[0];
+                console.log('Wish data for edit:', wishData);
+                
+                // Chuẩn bị data cho modal
+                const modalData = {
+                    content: wishData.title,
+                    description: wishData.description || '',
+                    scheduled_date: wishData.scheduled_date,
+                    scheduled_time: wishData.scheduled_time,
+                    price: wishData.price || ''
+                };
+                
+                // Mở modal edit với callback update
+                showEditWishModal(modalData, async (updatedData) => {
+                    try {
+                        // Gọi API update
+                        const requestData = {
+                            id: wishId,
+                            title: updatedData.content,
+                            description: updatedData.description,
+                            scheduled_date: updatedData.scheduled_date,
+                            scheduled_time: updatedData.scheduled_time,
+                            price: updatedData.price
+                        };
+                        
+                        console.log('Sending update request:', requestData);
+                        
+                        const updateResponse = await fetch('api/update-wish.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestData)
+                        });
+                        
+                        const updateResult = await updateResponse.json();
+                        
+                        if (updateResult.success) {
+                            // Refresh danh sách wishes
+                            loadWishes();
+                            alert('✅ Cập nhật đồ thành công!');
+                        } else {
+                            throw new Error(updateResult.message || 'Cập nhật thất bại');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Update error:', error);
+                        alert(`❌ Lỗi cập nhật: ${error.message}`);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Edit error:', error);
+                alert(`❌ Lỗi: ${error.message}`);
+            }
         }
 
         // Toggle trạng thái hoàn thành

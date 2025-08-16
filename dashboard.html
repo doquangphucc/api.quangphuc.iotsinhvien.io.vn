@@ -691,26 +691,7 @@
             gap: 8px;
         }
 
-        .edit-btn {
-            background: rgba(255, 193, 7, 0.8);
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-            color: #8b4513;
-            flex-shrink: 0;
-        }
-
-        .edit-btn:hover {
-            background: rgba(255, 193, 7, 1);
-            transform: scale(1.1);
-        }
+        /* CSS cho edit-btn đã được loại bỏ vì edit chuyển sang all-tasks.html và all-wishes.html */
 
         .tick-btn {
             background: rgba(42, 157, 143, 0.8);
@@ -1125,10 +1106,6 @@
                     <div class="branch-item ${completedClass}" data-type="task" data-id="${itemData.id}">
                         <span class="branch-text">${itemData.title}</span>
                         <div class="branch-actions">
-                            <button class="edit-btn" onclick="editItem('task', ${itemData.id})" 
-                                    title="Sửa việc này">
-                                ✏️
-                            </button>
                             <button class="tick-btn" onclick="toggleComplete('task', ${itemData.id})" 
                                     title="${itemData.is_completed ? 'Đánh dấu chưa hoàn thành' : 'Đánh dấu hoàn thành'}">
                                 ${itemData.is_completed ? '✅' : '⭕'}
@@ -1142,10 +1119,6 @@
                     <div class="branch-item ${completedClass}" data-type="wish" data-id="${itemData.id}">
                         <span class="branch-text">${itemData.title}${priceText}</span>
                         <div class="branch-actions">
-                            <button class="edit-btn" onclick="editItem('wish', ${itemData.id})" 
-                                    title="Sửa đồ này">
-                                ✏️
-                            </button>
                             <button class="tick-btn" onclick="toggleComplete('wish', ${itemData.id})"
                                     title="${itemData.is_completed ? 'Đánh dấu chưa mua' : 'Đánh dấu đã mua'}">
                                 ${itemData.is_completed ? '✅' : '⭕'}
@@ -1280,95 +1253,8 @@
             return parseInt(price).toLocaleString('vi-VN') + 'đ';
         }
 
-        // Edit item function
-        async function editItem(type, id) {
-            try {
-                console.log(`Editing ${type} with ID: ${id}`);
-                
-                // Lấy dữ liệu item hiện tại từ API
-                const endpoint = type === 'task' ? 'get-task-by-id.php' : 'get-wish-by-id.php';
-                const username = getUsername();
-                const response = await fetch(`api/${endpoint}?id=${id}&username=${encodeURIComponent(username)}`);
-                const result = await response.json();
-                
-                if (!result.success || !result.data || result.data.length === 0) {
-                    throw new Error(`Không tìm thấy ${type === 'task' ? 'việc' : 'đồ'} này`);
-                }
-                
-                const itemData = result.data[0]; // Lấy item đầu tiên
-                console.log('Item data for edit:', itemData);
-                
-                // Chuẩn bị data cho modal với mapping đúng
-                const modalData = {
-                    content: itemData.title,
-                    description: itemData.description || '',
-                    category: itemData.category || '',
-                    priority: itemData.priority || 'medium',
-                    scheduled_date: itemData.scheduled_date || (type === 'wish' ? itemData.target_date : null),
-                    scheduled_time: itemData.scheduled_time || null
-                };
-                
-                if (type === 'wish') {
-                    modalData.price = itemData.price || '';
-                    modalData.currency = itemData.currency || 'VND';
-                    modalData.product_url = itemData.product_url || '';
-                    modalData.purchase_status = itemData.purchase_status || 'researching';
-                    modalData.target_date = itemData.target_date;
-                }
-                
-                // Mở modal edit với callback update
-                const modalFunction = type === 'task' ? showEditTaskModal : showEditWishModal;
-                modalFunction(modalData, async (updatedData) => {
-                    try {
-                        // Gọi API update
-                        const updateEndpoint = type === 'task' ? 'update-task.php' : 'update-wish.php';
-                        const requestData = {
-                            id: id,
-                            title: updatedData.content,
-                            description: updatedData.description,
-                            category: updatedData.category,
-                            priority: updatedData.priority,
-                            scheduled_date: updatedData.scheduled_date,
-                            scheduled_time: updatedData.scheduled_time
-                        };
-                        
-                        if (type === 'wish') {
-                            requestData.price = updatedData.price;
-                            requestData.currency = updatedData.currency;
-                            requestData.product_url = updatedData.product_url;
-                            requestData.purchase_status = updatedData.purchase_status;
-                            requestData.target_date = updatedData.target_date;
-                        }
-                        
-                        console.log('Sending update request:', requestData);
-                        
-                        const updateResponse = await fetch(`api/${updateEndpoint}`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(requestData)
-                        });
-                        
-                        const updateResult = await updateResponse.json();
-                        
-                        if (updateResult.success) {
-                            showNotification(`✅ Cập nhật ${type === 'task' ? 'việc' : 'đồ'} thành công!`, 'success');
-                            // Refresh timeline để hiển thị thay đổi
-                            setTimeout(() => { refreshTimeline(true); }, 300);
-                        } else {
-                            throw new Error(updateResult.message || 'Cập nhật thất bại');
-                        }
-                        
-                    } catch (error) {
-                        console.error('Update error:', error);
-                        showNotification(`❌ Lỗi cập nhật: ${error.message}`, 'error');
-                    }
-                });
-                
-            } catch (error) {
-                console.error('Edit error:', error);
-                showNotification(`❌ Lỗi: ${error.message}`, 'error');
-            }
-        }
+        // Edit function đã được chuyển sang all-tasks.html và all-wishes.html
+        // Dashboard chỉ hiển thị timeline tổng quan và toggle complete
 
         // Toggle trạng thái hoàn thành
         async function toggleComplete(type, id) {
