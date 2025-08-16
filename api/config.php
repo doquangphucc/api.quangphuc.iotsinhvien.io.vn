@@ -36,11 +36,8 @@ function db_get_pdo_connection(): PDO {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '+07:00', sql_mode = 'TRADITIONAL'"
             ]);
-            
-            // Đặt timezone cho MySQL connection - sử dụng offset thay vì named timezone
-            $pdo->exec("SET time_zone = '+07:00'");
-            $pdo->exec("SET SESSION sql_mode = 'TRADITIONAL'");
             
         } catch (PDOException $e) {
             http_response_code(500);

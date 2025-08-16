@@ -51,9 +51,12 @@ try {
     $itemId = 'task_' . uniqid() . '_' . time();
     
     // Database mới dùng username trực tiếp, không cần user_id
+    // Explicitly set timezone before insert
+    $pdo->exec("SET time_zone = '+07:00'");
+    
     $query = "INSERT INTO tasks 
-              (username, title, description, scheduled_date, scheduled_time, completed) 
-              VALUES (?, ?, ?, ?, ?, 0)";
+              (username, title, description, scheduled_date, scheduled_time, completed, created_at, updated_at) 
+              VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())";
     
     $stmt = $pdo->prepare($query);
     $result = $stmt->execute([
