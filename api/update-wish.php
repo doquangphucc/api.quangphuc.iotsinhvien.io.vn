@@ -28,6 +28,12 @@ try {
     $wishId = $input['id'] ?? '';
     $title = $input['title'] ?? '';
     $description = $input['description'] ?? null;
+    
+    // Lấy scheduled_date và scheduled_time từ input
+    $scheduledDate = $input['scheduled_date'] ?? null;
+    $scheduledTime = $input['scheduled_time'] ?? null;
+    
+    // Các field khác (để tương thích với frontend nhưng không dùng trong database)
     $category = $input['category'] ?? null;
     $priority = $input['priority'] ?? 'medium';
     $price = $input['price'] ?? null;
@@ -38,11 +44,17 @@ try {
     // Handle both old datetime format and new target_date
     $targetDate = $input['target_date'] ?? null;
     
+    // Fallback: nếu không có scheduled_date nhưng có target_date, sử dụng target_date
+    if (!$scheduledDate && $targetDate) {
+        $scheduledDate = $targetDate;
+    }
+    
     // Legacy datetime support
     $datetime = $input['datetime'] ?? null;
-    if ($datetime && !$targetDate) {
+    if ($datetime && !$scheduledDate) {
         $dt = new DateTime($datetime);
-        $targetDate = $dt->format('Y-m-d');
+        $scheduledDate = $dt->format('Y-m-d');
+        $scheduledTime = $dt->format('H:i:s');
     }
 
     if (empty($wishId) || empty($title)) {
