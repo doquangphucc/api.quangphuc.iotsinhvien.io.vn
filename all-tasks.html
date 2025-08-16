@@ -570,7 +570,7 @@
                 const actionIcon = task.is_completed ? '↩️' : '✅';
                 
                 const createdDate = new Date(task.created_at).toLocaleDateString('vi-VN');
-                const updatedDate = task.updated_at ? new Date(task.updated_at).toLocaleDateString('vi-VN') : null;
+                const scheduledDate = task.scheduled_date ? new Date(task.scheduled_date).toLocaleDateString('vi-VN') : null;
 
                 tasksHTML += `
                     <div class="task-item ${completedClass}">
@@ -581,7 +581,7 @@
                         <div class="task-meta">
                             <div class="task-date">
                                 📅 Tạo: ${createdDate}
-                                ${updatedDate ? `<br>🔄 Cập nhật: ${updatedDate}` : ''}
+                                ${scheduledDate ? `<br>� Ngày set: ${scheduledDate}` : ''}
                             </div>
                         </div>
                         <div class="task-actions">
