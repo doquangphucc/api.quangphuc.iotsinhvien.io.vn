@@ -74,48 +74,6 @@ class CustomModal {
                             </div>
                         </div>
 
-                        <div class="form-group" id="price-group" style="display: none;">
-                            <label class="form-label" for="modal-price">Giá tiền (tùy chọn):</label>
-                            <div class="form-row">
-                                <div class="form-col-large">
-                                    <input 
-                                        type="number" 
-                                        class="form-input" 
-                                        id="modal-price" 
-                                        placeholder="Nhập giá tiền..."
-                                        min="0"
-                                        step="1000"
-                                    >
-                                </div>
-                                <div class="form-col-small">
-                                    <select class="form-input" id="modal-currency">
-                                        <option value="VND">VNĐ</option>
-                                        <option value="USD">USD</option>
-                                        <option value="EUR">EUR</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="error-message" id="price-error">Giá tiền không hợp lệ</div>
-                        </div>
-
-                        <div class="form-group" id="wish-extra-group" style="display: none;">
-                            <label class="form-label" for="modal-url">Link sản phẩm (tùy chọn):</label>
-                            <input 
-                                type="url" 
-                                class="form-input" 
-                                id="modal-url" 
-                                placeholder="https://..."
-                            >
-                            
-                            <div style="margin-top: 15px;">
-                                <label class="form-label" for="modal-purchase-status">Trạng thái mua sắm:</label>
-                                <select class="form-input" id="modal-purchase-status">
-                                    <option value="researching">🔍 Đang tìm hiểu</option>
-                                    <option value="saving">💰 Đang tiết kiệm</option>
-                                    <option value="ready_to_buy">✅ Sẵn sàng mua</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn modal-btn-secondary" type="button" id="modal-cancel-btn">
@@ -469,16 +427,8 @@ class CustomModal {
 
     // Hiển thị/ẩn các trường phù hợp với type
     showTypeSpecificFields() {
-        const priceGroup = this.modal.querySelector('#price-group');
-        const wishExtraGroup = this.modal.querySelector('#wish-extra-group');
-        
-        if (this.type === 'wish') {
-            priceGroup.style.display = 'block';
-            wishExtraGroup.style.display = 'block';
-        } else {
-            priceGroup.style.display = 'none';
-            wishExtraGroup.style.display = 'none';
-        }
+        // Không còn trường đặc biệt nào cho wish
+        // Tất cả các trường đều dùng chung cho cả task và wish
     }
 
     // Xử lý phím tắt
@@ -522,32 +472,12 @@ class CustomModal {
         // Convert date format from dd/mm/yyyy to yyyy-mm-dd
         const scheduledDate = this.formatDateForDatabase(date);
         
-        const baseData = {
+        return {
             content,
             description,
             scheduled_date: scheduledDate,
             scheduled_time: time || null
         };
-
-        if (this.type === 'wish') {
-            const price = this.modal.querySelector('#modal-price').value;
-            const currency = this.modal.querySelector('#modal-currency').value;
-            const productUrl = this.modal.querySelector('#modal-url').value.trim();
-            const purchaseStatus = this.modal.querySelector('#modal-purchase-status').value;
-
-            return {
-                ...baseData,
-                price: price ? parseFloat(price) : null,
-                currency: currency || 'VND',
-                product_url: productUrl || null,
-                purchase_status: purchaseStatus,
-                scheduled_date: scheduledDate,
-                scheduled_time: time || null,
-                target_date: scheduledDate // For backward compatibility
-            };
-        }
-
-        return baseData;
     }
 
     // Xác nhận và trả về dữ liệu
@@ -594,35 +524,6 @@ class CustomModal {
             isValid = false;
         }
 
-        // Validate price nếu có hiển thị
-        const priceGroup = this.modal.querySelector('#price-group');
-        if (priceGroup.style.display !== 'none') {
-            const price = this.modal.querySelector('#modal-price').value;
-            const priceInput = this.modal.querySelector('#modal-price');
-            const priceError = this.modal.querySelector('#price-error');
-            
-            if (price && (isNaN(price) || parseFloat(price) < 0)) {
-                priceInput.classList.add('error');
-                priceError.classList.add('show');
-                isValid = false;
-            } else {
-                priceInput.classList.remove('error');
-                priceError.classList.remove('show');
-            }
-        }
-
-        // Validate URL nếu có nhập
-        const urlInput = this.modal.querySelector('#modal-url');
-        if (urlInput && urlInput.value.trim()) {
-            try {
-                new URL(urlInput.value.trim());
-                urlInput.classList.remove('error');
-            } catch {
-                urlInput.classList.add('error');
-                isValid = false;
-            }
-        }
-
         return isValid;
     }
 
@@ -630,18 +531,7 @@ class CustomModal {
     resetForm() {
         const inputs = this.modal.querySelectorAll('.form-input, .datetime-input');
         inputs.forEach(input => {
-            if (input.tagName === 'SELECT') {
-                // Reset select về giá trị mặc định
-                if (input.id === 'modal-currency') {
-                    input.value = 'VND';
-                } else if (input.id === 'modal-purchase-status') {
-                    input.value = 'researching';
-                } else {
-                    input.selectedIndex = 0;
-                }
-            } else {
-                input.value = '';
-            }
+            input.value = '';
             input.classList.remove('error', 'success');
         });
 
@@ -663,19 +553,6 @@ class CustomModal {
                 this.modal.querySelector('#modal-date').value = this.formatDateForDisplay(data.scheduled_date);
             }
             if (data.scheduled_time) this.modal.querySelector('#modal-time').value = data.scheduled_time;
-
-            // Wish specific fields
-            if (this.type === 'wish') {
-                if (data.price) this.modal.querySelector('#modal-price').value = data.price;
-                if (data.currency) this.modal.querySelector('#modal-currency').value = data.currency;
-                if (data.product_url) this.modal.querySelector('#modal-url').value = data.product_url;
-                if (data.purchase_status) this.modal.querySelector('#modal-purchase-status').value = data.purchase_status;
-                
-                // For wishes, also check target_date
-                if (data.target_date && !data.scheduled_date) {
-                    this.modal.querySelector('#modal-date').value = this.formatDateForDisplay(data.target_date);
-                }
-            }
         }, 100);
     }
 }
