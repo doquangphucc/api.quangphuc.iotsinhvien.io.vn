@@ -38,9 +38,9 @@ try {
     $statusParams = [];
     
     if ($status === 'completed') {
-        $statusCondition = ' AND t.status = 1';
+        $statusCondition = ' AND t.completed = 1';
     } elseif ($status === 'pending') {
-        $statusCondition = ' AND t.status = 0';
+        $statusCondition = ' AND t.completed = 0';
     }
 
     // Validate sort column
@@ -61,8 +61,7 @@ try {
         $countTasksStmt = $pdo->prepare("
             SELECT COUNT(*) as total 
             FROM tasks t
-            LEFT JOIN tai_khoan tk ON t.user_id = tk.id
-            WHERE tk.user = ? $statusCondition
+            WHERE t.username = ? $statusCondition
         ");
         $countTasksStmt->execute([$username]);
         $tasksCount = $countTasksStmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -71,11 +70,10 @@ try {
         $tasksStmt = $pdo->prepare("
             SELECT 
                 t.id, t.title, t.description, t.priority, t.category, 
-                t.scheduled_date as due_date, t.status as is_completed, 
+                t.scheduled_date as due_date, t.completed as is_completed, 
                 t.created_at, t.updated_at
             FROM tasks t
-            LEFT JOIN tai_khoan tk ON t.user_id = tk.id
-            WHERE tk.user = ? $statusCondition
+            WHERE t.username = ? $statusCondition
             ORDER BY $sort $order
             LIMIT ? OFFSET ?
         ");
@@ -106,9 +104,9 @@ try {
     // Sửa điều kiện status cho wishes
     $wishStatusCondition = '';
     if ($status === 'completed') {
-        $wishStatusCondition = ' AND w.status = 1';
+        $wishStatusCondition = ' AND w.completed = 1';
     } elseif ($status === 'pending') {
-        $wishStatusCondition = ' AND w.status = 0';
+        $wishStatusCondition = ' AND w.completed = 0';
     }
 
     // Lấy wishes nếu được yêu cầu
@@ -117,8 +115,7 @@ try {
         $countWishesStmt = $pdo->prepare("
             SELECT COUNT(*) as total 
             FROM wishes w
-            LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-            WHERE tk.user = ? $wishStatusCondition
+            WHERE w.username = ? $wishStatusCondition
         ");
         $countWishesStmt->execute([$username]);
         $wishesCount = $countWishesStmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -126,12 +123,11 @@ try {
         // Lấy danh sách wishes
         $wishesStmt = $pdo->prepare("
             SELECT 
-                w.id, w.title, w.description, w.price, w.category, 
+                w.id, w.title, w.description, w.category, 
                 w.product_url as store_location, w.product_url as purchase_link, 
-                w.priority, w.status as is_completed, w.created_at, w.updated_at
+                w.priority, w.completed as is_completed, w.created_at, w.updated_at
             FROM wishes w
-            LEFT JOIN tai_khoan tk ON w.user_id = tk.id
-            WHERE tk.user = ? $wishStatusCondition
+            WHERE w.username = ? $wishStatusCondition
             ORDER BY $sort $order
             LIMIT ? OFFSET ?
         ");
@@ -143,7 +139,6 @@ try {
             $wish['type'] = 'wish';
             $wish['id'] = (int)$wish['id'];
             $wish['is_completed'] = (bool)$wish['is_completed'];
-            $wish['price'] = $wish['price'] ? (float)$wish['price'] : null;
             
             // Format dates
             $wish['created_at'] = date('d/m/Y H:i', strtotime($wish['created_at']));

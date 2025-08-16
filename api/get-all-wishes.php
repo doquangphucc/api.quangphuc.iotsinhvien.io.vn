@@ -24,18 +24,18 @@ try {
     if(!in_array($order,['ASC','DESC'],true)) $order='DESC';
 
     $statusCond='';
-    if($status==='completed') $statusCond=' AND w.status=1';
-    elseif($status==='pending') $statusCond=' AND w.status=0';
+    if($status==='completed') $statusCond=' AND completed=1';
+    elseif($status==='pending') $statusCond=' AND completed=0';
 
-    $countSql="SELECT COUNT(*) FROM wishes w INNER JOIN tai_khoan u ON w.user_id=u.id WHERE u.user=? $statusCond";
+    $countSql="SELECT COUNT(*) FROM wishes WHERE username=? $statusCond";
     $c=$pdo->prepare($countSql); $c->execute([$username]); $total=(int)$c->fetchColumn();
 
-    $sql="SELECT w.id,w.title,w.description,w.category,w.priority,w.price,
-                 w.product_url store_location,w.product_url purchase_link,
-                 w.status is_completed,w.created_at,w.updated_at
-          FROM wishes w INNER JOIN tai_khoan u ON w.user_id=u.id
-          WHERE u.user=? $statusCond
-          ORDER BY $sort $order, w.id DESC
+    $sql="SELECT id,title,description,category,priority,
+                 product_url store_location,product_url purchase_link,
+                 completed is_completed,created_at,updated_at
+          FROM wishes
+          WHERE username=? $statusCond
+          ORDER BY $sort $order, id DESC
           LIMIT ? OFFSET ?";
     $st=$pdo->prepare($sql); $st->execute([$username,$limit,$offset]);
     $raw=$st->fetchAll(PDO::FETCH_ASSOC);
@@ -47,8 +47,6 @@ try {
     foreach($wishes as &$w){
         $w['id']=(int)$w['id'];
         $w['is_completed']=(bool)$w['is_completed'];
-        $w['price']=$w['price']!==null ? (float)$w['price'] : null;
-        $w['price_formatted']=$w['price']!==null?number_format($w['price'],0,',','.').' VND':'Chưa có giá';
         $w['created_at_formatted']=date('d/m/Y H:i',strtotime($w['created_at']));
         if(!empty($w['updated_at'])) $w['updated_at_formatted']=date('d/m/Y H:i',strtotime($w['updated_at']));
         $w['status_text']=$w['is_completed']?'Đã mua':'Chưa mua';
@@ -56,19 +54,11 @@ try {
     unset($w);
 
     $stats=[
-        'total'=>$total,'completed'=>0,'pending'=>0,
-        'total_price'=>0,'completed_price'=>0,'pending_price'=>0
+        'total'=>$total,'completed'=>0,'pending'=>0
     ];
     foreach($wishes as $w){
-        if($w['price']!==null){
-            $stats['total_price']+=$w['price'];
-            if($w['is_completed']) $stats['completed_price']+=$w['price']; else $stats['pending_price']+=$w['price'];
-        }
         if($w['is_completed']) $stats['completed']++; else $stats['pending']++;
     }
-    $stats['total_price_formatted']=number_format($stats['total_price'],0,',','.').' VND';
-    $stats['completed_price_formatted']=number_format($stats['completed_price'],0,',','.').' VND';
-    $stats['pending_price_formatted']=number_format($stats['pending_price'],0,',','.').' VND';
 
     $payload=[
         'success'=>true,

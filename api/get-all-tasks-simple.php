@@ -12,7 +12,7 @@ if(!$username){ http_response_code(400); echo json_encode(['success'=>false,'mes
 
 try {
     // get user id
-    $uStmt = $pdo->prepare('SELECT id FROM tai_khoan WHERE user=? LIMIT 1');
+    $uStmt = $pdo->prepare('SELECT id FROM users WHERE username=? LIMIT 1');
     $uStmt->execute([$username]);
     $userId = $uStmt->fetchColumn();
     if(!$userId){ echo json_encode(['success'=>true,'data'=>[], 'message'=>'No user']); exit; }

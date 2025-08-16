@@ -32,19 +32,19 @@ try {
     if(!in_array($order,['ASC','DESC'],true)) $order='DESC';
 
     $statusCond='';
-    if($status==='completed') $statusCond=' AND t.status=1';
-    elseif($status==='pending') $statusCond=' AND t.status=0';
+    if($status==='completed') $statusCond=' AND completed=1';
+    elseif($status==='pending') $statusCond=' AND completed=0';
 
-    $countSql="SELECT COUNT(*) FROM tasks t INNER JOIN tai_khoan u ON t.user_id=u.id WHERE u.user=? $statusCond";
+    $countSql="SELECT COUNT(*) FROM tasks WHERE username=? $statusCond";
     $c=$pdo->prepare($countSql); $c->execute([$username]); $total=(int)$c->fetchColumn();
 
-    $sql="SELECT t.id,t.title,t.description,t.category,t.priority,
-                 t.scheduled_date due_date,t.status is_completed,
-                 t.created_at,t.updated_at,
-                 CASE WHEN t.scheduled_date IS NOT NULL AND t.scheduled_date < CURDATE() AND t.status=0 THEN 1 ELSE 0 END is_overdue
-          FROM tasks t INNER JOIN tai_khoan u ON t.user_id=u.id
-          WHERE u.user=? $statusCond
-          ORDER BY $sort $order, t.id DESC
+    $sql="SELECT id,title,description,category,priority,
+                 scheduled_date due_date,completed is_completed,
+                 created_at,updated_at,
+                 CASE WHEN scheduled_date IS NOT NULL AND scheduled_date < CURDATE() AND completed=0 THEN 1 ELSE 0 END is_overdue
+          FROM tasks
+          WHERE username=? $statusCond
+          ORDER BY $sort $order, id DESC
           LIMIT ? OFFSET ?";
     $st=$pdo->prepare($sql); $st->execute([$username,$limit,$offset]);
     $raw=$st->fetchAll(PDO::FETCH_ASSOC);

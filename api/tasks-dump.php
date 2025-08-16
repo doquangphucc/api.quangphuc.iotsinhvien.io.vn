@@ -4,7 +4,7 @@ require_once 'connect.php';
 $username = $_GET['u'] ?? '';
 if(!$username){ echo json_encode(['error'=>'u required']); exit; }
 try {
-  $u = $pdo->prepare('SELECT id FROM tai_khoan WHERE user=? LIMIT 1');
+  $u = $pdo->prepare('SELECT id FROM users WHERE username=? LIMIT 1');
   $u->execute([$username]);
   $uid = $u->fetchColumn();
   if(!$uid){ echo json_encode(['user_found'=>false,'rows'=>[]]); exit; }

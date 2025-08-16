@@ -37,7 +37,7 @@ try {
     
     // Thêm điều kiện username nếu có
     if (!empty($username)) {
-        $query .= " AND user_id = (SELECT id FROM tai_khoan WHERE user = ?)";
+        $query .= " AND username = ?";
         $params[] = $username;
     }
 
