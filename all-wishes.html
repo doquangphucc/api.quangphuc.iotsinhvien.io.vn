@@ -955,6 +955,10 @@
                         const updateResult = await updateResponse.json();
                         
                         if (updateResult.success) {
+                            // Đóng modal trước
+                            if (typeof customModal !== 'undefined' && customModal) {
+                                customModal.close();
+                            }
                             // Refresh danh sách wishes
                             loadAllWishes();
                             showNotification('✅ Cập nhật đồ thành công!', 'success');
@@ -1051,26 +1055,21 @@
         // Thêm wish mới
         function openAddWish() {
             showWishModal(function(data) {
-                addWish(data.content, data.datetime, data.price);
+                addWish(data);
             });
         }
 
-        async function addWish(title, datetime = null, price = null) {
+        async function addWish(data) {
             try {
                 const requestBody = { 
                     username: getUsername(),
-                    title: title 
+                    title: data.content,
+                    description: data.description || null,
+                    scheduled_date: data.scheduled_date || null,
+                    scheduled_time: data.scheduled_time || null
                 };
-                
-                // Thêm datetime nếu có
-                if (datetime) {
-                    requestBody.datetime = datetime;
-                }
-                
-                // Thêm price nếu có
-                if (price && !isNaN(price)) {
-                    requestBody.price = parseFloat(price);
-                }
+
+                console.log('Sending wish data:', requestBody); // Debug log
 
                 const response = await fetch('api/add-wish.php', {
                     method: 'POST',
@@ -1083,6 +1082,10 @@
                 const result = await response.json();
                 
                 if (result.success) {
+                    // Đóng modal trước
+                    if (typeof customModal !== 'undefined' && customModal) {
+                        customModal.close();
+                    }
                     // Reload danh sách wishes
                     await loadAllWishes();
                     showNotification('✅ Thêm đồ thành công!', 'success');

@@ -922,6 +922,10 @@
                         const updateResult = await updateResponse.json();
                         
                         if (updateResult.success) {
+                            // Đóng modal trước
+                            if (typeof customModal !== 'undefined' && customModal) {
+                                customModal.close();
+                            }
                             // Refresh danh sách tasks
                             loadAllTasks();
                             showNotification('✅ Cập nhật việc thành công!', 'success');
@@ -1029,21 +1033,21 @@
         // Thêm task mới
         function openAddTask() {
             showTaskModal(function(data) {
-                addTask(data.content, data.datetime);
+                addTask(data);
             });
         }
 
-        async function addTask(title, datetime = null) {
+        async function addTask(data) {
             try {
                 const requestBody = { 
                     username: username,
-                    title: title 
+                    title: data.content,
+                    description: data.description || null,
+                    scheduled_date: data.scheduled_date || null,
+                    scheduled_time: data.scheduled_time || null
                 };
-                
-                // Thêm datetime nếu có
-                if (datetime) {
-                    requestBody.datetime = datetime;
-                }
+
+                console.log('Sending task data:', requestBody); // Debug log
 
                 const response = await fetch('api/add-task.php', {
                     method: 'POST',
@@ -1056,6 +1060,10 @@
                 const result = await response.json();
                 
                 if (result.success) {
+                    // Đóng modal trước
+                    if (typeof customModal !== 'undefined' && customModal) {
+                        customModal.close();
+                    }
                     // Reload danh sách tasks
                     await loadAllTasks();
                     showNotification('✅ Thêm việc thành công!', 'success');
