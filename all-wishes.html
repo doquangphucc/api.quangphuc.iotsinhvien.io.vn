@@ -765,7 +765,8 @@
         // Tải danh sách tất cả wishes từ API
         async function loadAllWishes() {
             try {
-                const response = await fetch(`api/get-all-wishes.php?username=${encodeURIComponent(username)}&limit=100&sort=created_at&order=DESC`);
+                const currentUsername = getUsername();
+                const response = await fetch(`api/get-all-wishes.php?username=${encodeURIComponent(currentUsername)}&limit=100&sort=created_at&order=DESC`);
                 const result = await response.json();
                 
                 console.log('API Response:', result); // Debug log
@@ -1046,7 +1047,7 @@
         async function addWish(title, datetime = null, price = null) {
             try {
                 const requestBody = { 
-                    username: username,
+                    username: getUsername(),
                     title: title 
                 };
                 
