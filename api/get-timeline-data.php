@@ -25,19 +25,32 @@ try {
     // Tính ngày bắt đầu
     $startDate = date('Y-m-d', strtotime("-$days days"));
 
-    // Lấy dữ liệu từ cả 2 bảng tasks và wishes, sắp xếp theo thời gian
+    // Lấy dữ liệu từ cả 2 bảng tasks và wishes, sắp xếp theo scheduled_date + scheduled_time
     $stmt = $pdo->prepare("
         (
             SELECT 
                 'task' as type,
                 t.id AS id,
                 t.title,
-                DATE(t.created_at) AS date_only,
-                t.created_at as timestamp,
+                t.scheduled_date,
+                t.scheduled_time,
+                COALESCE(
+                    CASE 
+                        WHEN t.scheduled_date IS NOT NULL AND t.scheduled_time IS NOT NULL 
+                        THEN CONCAT(t.scheduled_date, ' ', t.scheduled_time)
+                        WHEN t.scheduled_date IS NOT NULL 
+                        THEN CONCAT(t.scheduled_date, ' 00:00:00')
+                        ELSE t.created_at
+                    END
+                ) as timestamp,
+                DATE(COALESCE(t.scheduled_date, DATE(t.created_at))) AS date_only,
                 'việc nào' as category_text,
                 t.completed as is_completed
             FROM tasks t
-            WHERE t.username = ? AND DATE(t.created_at) >= ?
+            WHERE t.username = ? AND (
+                (t.scheduled_date IS NOT NULL AND t.scheduled_date >= ?) OR
+                (t.scheduled_date IS NULL AND DATE(t.created_at) >= ?)
+            )
         )
         UNION ALL
         (
@@ -45,18 +58,31 @@ try {
                 'wish' as type,
                 w.id AS id,
                 w.title,
-                DATE(w.created_at) AS date_only,
-                w.created_at as timestamp,
+                w.scheduled_date,
+                w.scheduled_time,
+                COALESCE(
+                    CASE 
+                        WHEN w.scheduled_date IS NOT NULL AND w.scheduled_time IS NOT NULL 
+                        THEN CONCAT(w.scheduled_date, ' ', w.scheduled_time)
+                        WHEN w.scheduled_date IS NOT NULL 
+                        THEN CONCAT(w.scheduled_date, ' 00:00:00')
+                        ELSE w.created_at
+                    END
+                ) as timestamp,
+                DATE(COALESCE(w.scheduled_date, DATE(w.created_at))) AS date_only,
                 'đồ nào' as category_text,
                 w.completed as is_completed
             FROM wishes w
-            WHERE w.username = ? AND DATE(w.created_at) >= ?
+            WHERE w.username = ? AND (
+                (w.scheduled_date IS NOT NULL AND w.scheduled_date >= ?) OR
+                (w.scheduled_date IS NULL AND DATE(w.created_at) >= ?)
+            )
         )
-        ORDER BY timestamp DESC
+        ORDER BY timestamp ASC
         LIMIT ?
     ");
     
-    $stmt->execute([$username, $startDate, $username, $startDate, $limit]);
+    $stmt->execute([$username, $startDate, $startDate, $username, $startDate, $startDate, $limit]);
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Format dữ liệu cho timeline
@@ -90,6 +116,8 @@ try {
                 'id' => (int)$item['id'],
                 'title' => $displayText,
                 'original_title' => $item['title'],
+                'scheduled_date' => $item['scheduled_date'],
+                'scheduled_time' => $item['scheduled_time'],
                 'date_only' => $item['date_only'], // normalized date
                 'timestamp' => $item['timestamp'],
                 'time_formatted' => $timestamp->format('d/m/Y H:i'),

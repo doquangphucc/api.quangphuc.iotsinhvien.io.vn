@@ -1036,6 +1036,8 @@
                             date: date,
                             timestamp: item.timestamp,
                             time_formatted: item.time_formatted,
+                            scheduled_date: item.scheduled_date,
+                            scheduled_time: item.scheduled_time,
                             type: item.type,
                             id: item.id,
                             title: item.title,
@@ -1046,9 +1048,17 @@
                     
                     console.log('Converted data:', convertedData); // Debug converted data
                     
-                    // Lưu dữ liệu vào cache - mỗi item riêng biệt
+                    // Lưu dữ liệu vào cache - sử dụng scheduled_date+time làm key ưu tiên
                     Object.values(convertedData).forEach(itemData => {
-                        timelineData[itemData.timestamp || itemData.date] = itemData;
+                        let cacheKey;
+                        if (itemData.scheduled_date && itemData.scheduled_time) {
+                            cacheKey = `${itemData.scheduled_date}T${itemData.scheduled_time}`;
+                        } else if (itemData.scheduled_date) {
+                            cacheKey = `${itemData.scheduled_date}T00:00:00`;
+                        } else {
+                            cacheKey = itemData.timestamp || itemData.date;
+                        }
+                        timelineData[cacheKey] = itemData;
                     });
                     console.log('Timeline data cached:', timelineData); // Debug log
                     return Object.values(convertedData);
@@ -1066,26 +1076,37 @@
         function createBambooNode(itemData) {
             if (!itemData) return '';
             
-            const itemDate = new Date(itemData.timestamp || itemData.date);
-            const today = new Date();
-            const daysFromToday = Math.floor((itemDate - today) / (1000 * 60 * 60 * 24));
+            // Sử dụng scheduled_date và scheduled_time thay vì timestamp
+            let scheduledDateTime;
+            if (itemData.scheduled_date && itemData.scheduled_time) {
+                // Kết hợp scheduled_date và scheduled_time
+                scheduledDateTime = new Date(`${itemData.scheduled_date}T${itemData.scheduled_time}`);
+            } else if (itemData.scheduled_date) {
+                // Chỉ có scheduled_date, set thời gian mặc định là 00:00
+                scheduledDateTime = new Date(`${itemData.scheduled_date}T00:00:00`);
+            } else {
+                // Fallback về created_at nếu không có scheduled
+                scheduledDateTime = new Date(itemData.timestamp || itemData.date);
+            }
             
-            // Hiển thị ngày tháng cụ thể thay vì "hôm nay", "hôm qua"
-            const dateFormatted = itemDate.toLocaleDateString('vi-VN', {
+            const today = new Date();
+            const daysFromToday = Math.floor((scheduledDateTime - today) / (1000 * 60 * 60 * 24));
+            
+            // Format ngày theo scheduled_date
+            const dateFormatted = scheduledDateTime.toLocaleDateString('vi-VN', {
                 day: '2-digit',
                 month: '2-digit', 
                 year: 'numeric'
             });
             
-            // Lấy chỉ phần giờ từ time_formatted (bỏ phần ngày)
-            let timeOnly = '';
-            if (itemData.time_formatted) {
-                // Nếu time_formatted có dạng "15/08/2025 08:19", chỉ lấy phần "08:19"
-                const timeParts = itemData.time_formatted.split(' ');
-                timeOnly = timeParts.length > 1 ? timeParts[1] : itemData.time_formatted;
-            }
+            // Format giờ theo scheduled_time
+            const timeFormatted = scheduledDateTime.toLocaleTimeString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
             
-            const dateLabel = `${dateFormatted} ${timeOnly}`;
+            const dateLabel = `${dateFormatted} ${timeFormatted}`;
 
             const nodeClass = daysFromToday === 0 ? 'today' : 
                              daysFromToday > 0 ? 'future' : '';
@@ -1169,10 +1190,36 @@
                 let nodesHTML = '';
                 
                 if (Object.keys(timelineData).length > 0) {
-                    // Sắp xếp các items theo thời gian (mới nhất trước)
-                    const sortedItems = Object.values(timelineData).sort((a, b) => 
-                        new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
-                    );
+                    // Sắp xếp các items theo scheduled_date + scheduled_time tăng dần (gần nhất trên, xa nhất dưới)
+                    const sortedItems = Object.values(timelineData).sort((a, b) => {
+                        // Tạo DateTime từ scheduled_date và scheduled_time
+                        let dateA, dateB;
+                        
+                        if (a.scheduled_date && a.scheduled_time) {
+                            dateA = new Date(`${a.scheduled_date}T${a.scheduled_time}`);
+                        } else if (a.scheduled_date) {
+                            dateA = new Date(`${a.scheduled_date}T00:00:00`);
+                        } else {
+                            dateA = new Date(a.timestamp || a.date);
+                        }
+                        
+                        if (b.scheduled_date && b.scheduled_time) {
+                            dateB = new Date(`${b.scheduled_date}T${b.scheduled_time}`);
+                        } else if (b.scheduled_date) {
+                            dateB = new Date(`${b.scheduled_date}T00:00:00`);
+                        } else {
+                            dateB = new Date(b.timestamp || b.date);
+                        }
+                        
+                        // Sắp xếp tăng dần theo thời gian scheduled (gần nhất trước)
+                        return dateA - dateB;
+                    });
+                    
+                    console.log('Sorted items by scheduled time (ASC):', sortedItems.map(item => ({
+                        title: item.title,
+                        scheduled_date: item.scheduled_date,
+                        scheduled_time: item.scheduled_time
+                    })));
                     
                     for (const itemData of sortedItems) {
                         console.log(`Creating node for item:`, itemData);
