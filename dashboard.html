@@ -670,6 +670,11 @@
             flex-direction: column;
             gap: 10px;
             font-size: 1rem;
+            max-width: 320px; /* Tăng chiều rộng tối đa */
+            width: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         .branch-content.completed {
@@ -683,6 +688,7 @@
             justify-content: space-between;
             gap: 8px;
             padding: 5px 0;
+            min-height: 32px; /* Đảm bảo chiều cao tối thiểu */
         }
 
         .branch-actions {
@@ -741,11 +747,13 @@
         .task-branch .branch-content {
             margin-right: 60px;
             border-left: 4px solid #2a9d8f;
+            max-width: 350px; /* Tăng chiều rộng cho task */
         }
 
         .wish-branch .branch-content {
             margin-left: 60px;
             border-left: 4px solid #f72585;
+            max-width: 350px; /* Tăng chiều rộng cho wish */
         }
 
         /* Khi hiển thị đơn lẻ, không cần margin */
@@ -767,6 +775,10 @@
             color: #8b4513;
             font-weight: 500;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
         }
 
         .loading-indicator {
@@ -893,6 +905,9 @@
             .wish-branch .branch-content {
                 margin: 0;
                 font-size: 0.95rem;
+                max-width: 280px; /* Giảm chiều rộng trên mobile */
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
             
             .task-branch::before,
