@@ -410,7 +410,7 @@
             color: white;
             font-family: 'Merriweather', serif;
             font-weight: 600;
-            z-index: 10000;
+            z-index: 99999;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
             opacity: 0;
             transform: translateX(100%) scale(0.95);
@@ -418,7 +418,6 @@
             max-width: 320px;
             backdrop-filter: blur(10px);
             border-left: 5px solid rgba(255,255,255,0.3);
-            position: relative;
             overflow: hidden;
         }
 
@@ -565,7 +564,7 @@
                     ➕ Thêm việc
                 </button>
                 <!-- Test button cho notification -->
-                <button class="add-btn" onclick="showNotification('🎉 Test notification thành công!', 'success')" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                <button class="add-btn" onclick="testNotification()" style="background: linear-gradient(135deg, #28a745, #20c997); margin-left: 10px;">
                     🧪 Test
                 </button>
             </div>
@@ -953,10 +952,23 @@
             }, 4000);
         }
 
+        // Function test notification
+        function testNotification() {
+            console.log('testNotification called');
+            showNotification('🎉 Test notification thành công!', 'success');
+        }
+
         // Khởi tạo khi trang load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...'); // Debug log
             loadAllTasks();
             startFallingLeaves();
+            
+            // Test notification khi load (để debug)
+            setTimeout(() => {
+                console.log('Testing notification system...');
+                showNotification('🎉 System notification hoạt động!', 'info');
+            }, 2000);
             
             // Tạo lá ban đầu
             for (let i = 0; i < 10; i++) {
