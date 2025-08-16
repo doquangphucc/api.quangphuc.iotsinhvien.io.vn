@@ -949,7 +949,7 @@
     <!-- Header cố định -->
     <header class="header">
         <div class="header-content">
-            <h1 class="welcome">🍂 Xin chào, <span id="username">User</span>!</h1>
+            <h1 class="welcome">🍂 Xin chào, <span id="display-name">User</span>!</h1>
             <button class="logout-btn" onclick="logout()">🚪 Đăng xuất</button>
         </div>
     </header>
@@ -1022,7 +1022,10 @@
             // Stop script execution if not authenticated
             throw new Error('Authentication required');
         }
-        document.getElementById('username').textContent = username;
+        
+        // Hiển thị display_name thay vì username
+        const displayName = localStorage.getItem('display_name') || username;
+        document.getElementById('display-name').textContent = displayName;
 
         // Helper function để lấy username
         function getUsername() {
