@@ -49,7 +49,7 @@ try {
     }
 
     // Format dữ liệu
-    $task['is_completed'] = (bool)$task['status'];
+    $task['is_completed'] = (bool)$task['completed'];
     $task['scheduled_date'] = $task['scheduled_date'] ?: null;
     $task['scheduled_time'] = $task['scheduled_time'] ?: null;
 
