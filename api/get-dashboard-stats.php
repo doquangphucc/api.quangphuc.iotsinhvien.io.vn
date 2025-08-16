@@ -32,10 +32,9 @@ try {
         SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) as completed_tasks
         FROM tasks WHERE username = ?";
     
-    $stmt = $conn->prepare($taskQuery);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $taskResult = $stmt->get_result()->fetch_assoc();
+    $stmt = $pdo->prepare($taskQuery);
+    $stmt->execute([$username]);
+    $taskResult = $stmt->fetch();
     
     // Wishes statistics  
     $wishQuery = "SELECT 
@@ -43,10 +42,9 @@ try {
         SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) as completed_wishes
         FROM wishes WHERE username = ?";
     
-    $stmt = $conn->prepare($wishQuery);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $wishResult = $stmt->get_result()->fetch_assoc();
+    $stmt = $pdo->prepare($wishQuery);
+    $stmt->execute([$username]);
+    $wishResult = $stmt->fetch();
     
     // Calculate overall stats
     $totalItems = ($taskResult['total_tasks'] ?? 0) + ($wishResult['total_wishes'] ?? 0);
@@ -109,5 +107,5 @@ try {
     ]);
 }
 
-$conn->close();
+// No need to close PDO connection
 ?>
