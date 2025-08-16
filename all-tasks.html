@@ -704,7 +704,7 @@
                         
                         if (updateResult.success) {
                             // Refresh danh sách tasks
-                            loadTasks();
+                            loadAllTasks();
                             alert('✅ Cập nhật việc thành công!');
                         } else {
                             throw new Error(updateResult.message || 'Cập nhật thất bại');
