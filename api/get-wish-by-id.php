@@ -27,7 +27,7 @@ try {
     }
 
     // Xây dựng query với điều kiện username nếu có
-    $query = "SELECT id, title, description, price, scheduled_date, scheduled_time,
+    $query = "SELECT id, title, description, scheduled_date, scheduled_time,
                      completed, created_at, updated_at
               FROM wishes 
               WHERE id = ?";
@@ -49,10 +49,9 @@ try {
     }
 
     // Format dữ liệu
-    $wish['is_completed'] = (bool)$wish['status'];
-    $wish['price'] = $wish['price'] ? floatval($wish['price']) : null;
-    $wish['actual_price'] = $wish['actual_price'] ? floatval($wish['actual_price']) : null;
-    $wish['target_date'] = $wish['target_date'] ?: null;
+    $wish['is_completed'] = (bool)$wish['completed'];
+    // Xóa price processing vì không có cột price trong database
+    $wish['price'] = null; // Set default price là null để tương thích với frontend
 
     echo json_encode([
         'success' => true,

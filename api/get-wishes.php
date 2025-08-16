@@ -46,9 +46,9 @@ try {
 
     // Format dữ liệu
     foreach ($wishes as &$wish) {
-        $wish['is_completed'] = (bool)$wish['is_completed'];
-        $wish['price'] = $wish['price'] ? intval($wish['price']) : null;
-        $wish['target_date'] = $wish['target_date'] ? date('d/m/Y', strtotime($wish['target_date'])) : null;
+        $wish['is_completed'] = (bool)$wish['completed'];
+        $wish['price'] = null; // Set null để tương thích với frontend
+        $wish['target_date'] = $wish['scheduled_date'] ? date('d/m/Y', strtotime($wish['scheduled_date'])) : null;
         $wish['created_at'] = date('d/m/Y H:i', strtotime($wish['created_at']));
         $wish['updated_at'] = $wish['updated_at'] ? date('d/m/Y H:i', strtotime($wish['updated_at'])) : null;
         
@@ -68,18 +68,8 @@ try {
         ];
         $wish['purchase_status_icon'] = $statusIcons[$wish['purchase_status']] ?? '🔍';
         
-        // Format price with currency
-        if ($wish['price']) {
-            $currencySymbols = [
-                'VND' => 'đ',
-                'USD' => '$',
-                'EUR' => '€'
-            ];
-            $symbol = $currencySymbols[$wish['currency']] ?? 'đ';
-            $wish['formatted_price'] = number_format($wish['price']) . ' ' . $symbol;
-        } else {
-            $wish['formatted_price'] = null;
-        }
+        // Xóa price formatting vì không có cột price
+        $wish['formatted_price'] = null;
     }
 
     echo json_encode([

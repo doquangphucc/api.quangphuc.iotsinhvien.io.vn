@@ -57,7 +57,7 @@ try {
         $dayData['tasks'] = $tasks;
 
         // Lấy wishes cho ngày này
-        $wishQuery = "SELECT id, title, description, price, completed as is_completed, 
+        $wishQuery = "SELECT id, title, description, completed as is_completed, 
                              created_at, scheduled_date as target_date
                       FROM wishes 
                       WHERE username = ? AND DATE(scheduled_date) = ? 
@@ -69,17 +69,9 @@ try {
         // Format wishes
         foreach ($wishes as &$wish) {
             $wish['is_completed'] = (bool)$wish['is_completed'];
-            $priorityIcons = ['low' => '🟢', 'medium' => '🟡', 'high' => '🔴'];
-            $wish['priority_icon'] = $priorityIcons[$wish['priority']] ?? '🟡';
-            
-            $statusIcons = ['researching' => '🔍', 'saving' => '💰', 'ready_to_buy' => '✅'];
-            $wish['purchase_status_icon'] = $statusIcons[$wish['purchase_status']] ?? '🔍';
-            
-            if ($wish['price']) {
-                $currencySymbols = ['VND' => 'đ', 'USD' => '$', 'EUR' => '€'];
-                $symbol = $currencySymbols[$wish['currency']] ?? 'đ';
-                $wish['formatted_price'] = number_format($wish['price']) . ' ' . $symbol;
-            }
+            // Xóa price processing vì không có các cột này trong database
+            $wish['price'] = null; // Set null để tương thích với frontend
+            $wish['formatted_price'] = null;
         }
         $dayData['wishes'] = $wishes;
 

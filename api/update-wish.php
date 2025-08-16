@@ -60,7 +60,7 @@ try {
 
     // Update wish
     $query = "UPDATE wishes 
-              SET title = ?, description = ?, price = ?, 
+              SET title = ?, description = ?, 
                   scheduled_date = ?, scheduled_time = ?, updated_at = NOW()
               WHERE id = ?";
     
@@ -68,7 +68,6 @@ try {
     $result = $stmt->execute([
         $title,
         $description,
-        $price,
         $scheduledDate,
         $scheduledTime,
         $wishId
