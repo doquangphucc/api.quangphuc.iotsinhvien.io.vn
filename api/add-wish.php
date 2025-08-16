@@ -28,8 +28,6 @@ try {
     $username = $input['username'] ?? '';
     $title = $input['title'] ?? '';
     $description = $input['description'] ?? null;
-    $category = $input['category'] ?? null;
-    $priority = $input['priority'] ?? 'medium';
     $price = $input['price'] ?? null;
     $currency = $input['currency'] ?? 'VND';
     $productUrl = $input['product_url'] ?? null;

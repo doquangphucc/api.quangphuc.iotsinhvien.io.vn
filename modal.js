@@ -49,15 +49,6 @@ class CustomModal {
                                 rows="2"
                             ></textarea>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Ưu tiên:</label>
-                            <select class="form-input" id="modal-priority">
-                                <option value="low">🟢 Thấp</option>
-                                <option value="medium" selected>🟡 Trung bình</option>
-                                <option value="high">🔴 Cao</option>
-                            </select>
-                        </div>
                         
                         <div class="form-group">
                             <label class="form-label">Thời gian:</label>
@@ -520,13 +511,11 @@ class CustomModal {
     collectFormData() {
         const contentEl = this.modal.querySelector('#modal-content');
         const descriptionEl = this.modal.querySelector('#modal-description');
-        const priorityEl = this.modal.querySelector('#modal-priority');
         const dateEl = this.modal.querySelector('#modal-date');
         const timeEl = this.modal.querySelector('#modal-time');
         
         const content = contentEl ? contentEl.value.trim() : '';
         const description = descriptionEl ? descriptionEl.value.trim() : '';
-        const priority = priorityEl ? priorityEl.value : 'medium';
         const date = dateEl ? dateEl.value : '';
         const time = timeEl ? timeEl.value : '';
         
@@ -536,7 +525,6 @@ class CustomModal {
         const baseData = {
             content,
             description,
-            priority,
             scheduled_date: scheduledDate,
             scheduled_time: time || null
         };
@@ -672,7 +660,6 @@ class CustomModal {
         setTimeout(() => {
             if (data.content) this.modal.querySelector('#modal-content').value = data.content;
             if (data.description) this.modal.querySelector('#modal-description').value = data.description;
-            if (data.priority) this.modal.querySelector('#modal-priority').value = data.priority;
             if (data.scheduled_date) {
                 // Convert yyyy-mm-dd to dd/mm/yyyy for display
                 this.modal.querySelector('#modal-date').value = this.formatDateForDisplay(data.scheduled_date);

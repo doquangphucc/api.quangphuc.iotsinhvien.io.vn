@@ -28,8 +28,6 @@ try {
     $username = $input['username'] ?? '';
     $title = $input['title'] ?? '';
     $description = $input['description'] ?? null;
-    $category = $input['category'] ?? null;
-    $priority = $input['priority'] ?? 'medium';
     
     // Handle both old datetime format and new separate date/time
     $scheduledDate = $input['scheduled_date'] ?? null;

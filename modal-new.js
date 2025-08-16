@@ -49,15 +49,6 @@ class CustomModal {
                                 rows="2"
                             ></textarea>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Ưu tiên:</label>
-                            <select class="form-input" id="modal-priority">
-                                <option value="low">🟢 Thấp</option>
-                                <option value="medium" selected>🟡 Trung bình</option>
-                                <option value="high">🔴 Cao</option>
-                            </select>
-                        </div>
                         
                         <div class="form-group">
                             <label class="form-label">Thời gian:</label>
@@ -222,14 +213,12 @@ class CustomModal {
     collectFormData() {
         const content = this.modal.querySelector('#modal-content').value.trim();
         const description = this.modal.querySelector('#modal-description').value.trim();
-        const priority = this.modal.querySelector('#modal-priority').value;
         const date = this.modal.querySelector('#modal-date').value;
         const time = this.modal.querySelector('#modal-time').value;
         
         const baseData = {
             content,
             description,
-            priority,
             scheduled_date: date || null,
             scheduled_time: time || null
         };
@@ -356,7 +345,6 @@ class CustomModal {
         setTimeout(() => {
             if (data.content) this.modal.querySelector('#modal-content').value = data.content;
             if (data.description) this.modal.querySelector('#modal-description').value = data.description;
-            if (data.priority) this.modal.querySelector('#modal-priority').value = data.priority;
             if (data.scheduled_date) this.modal.querySelector('#modal-date').value = data.scheduled_date;
             if (data.scheduled_time) this.modal.querySelector('#modal-time').value = data.scheduled_time;
 
