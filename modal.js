@@ -51,28 +51,12 @@ class CustomModal {
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Danh mục và ưu tiên:</label>
-                            <div class="form-row">
-                                <div class="form-col">
-                                    <select class="form-input" id="modal-category">
-                                        <option value="">-- Chọn danh mục --</option>
-                                        <option value="work">Công việc</option>
-                                        <option value="study">Học tập</option>
-                                        <option value="personal">Cá nhân</option>
-                                        <option value="health">Sức khỏe</option>
-                                        <option value="hobby">Sở thích</option>
-                                        <option value="family">Gia đình</option>
-                                        <option value="other">Khác</option>
-                                    </select>
-                                </div>
-                                <div class="form-col">
-                                    <select class="form-input" id="modal-priority">
-                                        <option value="low">🟢 Thấp</option>
-                                        <option value="medium" selected>🟡 Trung bình</option>
-                                        <option value="high">🔴 Cao</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <label class="form-label">Ưu tiên:</label>
+                            <select class="form-input" id="modal-priority">
+                                <option value="low">🟢 Thấp</option>
+                                <option value="medium" selected>🟡 Trung bình</option>
+                                <option value="high">🔴 Cao</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
@@ -536,14 +520,12 @@ class CustomModal {
     collectFormData() {
         const contentEl = this.modal.querySelector('#modal-content');
         const descriptionEl = this.modal.querySelector('#modal-description');
-        const categoryEl = this.modal.querySelector('#modal-category');
         const priorityEl = this.modal.querySelector('#modal-priority');
         const dateEl = this.modal.querySelector('#modal-date');
         const timeEl = this.modal.querySelector('#modal-time');
         
         const content = contentEl ? contentEl.value.trim() : '';
         const description = descriptionEl ? descriptionEl.value.trim() : '';
-        const category = categoryEl ? categoryEl.value : '';
         const priority = priorityEl ? priorityEl.value : 'medium';
         const date = dateEl ? dateEl.value : '';
         const time = timeEl ? timeEl.value : '';
@@ -554,7 +536,6 @@ class CustomModal {
         const baseData = {
             content,
             description,
-            category,
             priority,
             scheduled_date: scheduledDate,
             scheduled_time: time || null
@@ -691,7 +672,6 @@ class CustomModal {
         setTimeout(() => {
             if (data.content) this.modal.querySelector('#modal-content').value = data.content;
             if (data.description) this.modal.querySelector('#modal-description').value = data.description;
-            if (data.category) this.modal.querySelector('#modal-category').value = data.category;
             if (data.priority) this.modal.querySelector('#modal-priority').value = data.priority;
             if (data.scheduled_date) {
                 // Convert yyyy-mm-dd to dd/mm/yyyy for display
