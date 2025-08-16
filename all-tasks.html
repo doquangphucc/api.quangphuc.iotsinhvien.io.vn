@@ -400,6 +400,101 @@
             50% { opacity: 1; }
         }
 
+        /* Notification styles - Autumn theme */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 18px 25px;
+            border-radius: 15px;
+            color: white;
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
+            opacity: 0;
+            transform: translateX(100%) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 320px;
+            backdrop-filter: blur(10px);
+            border-left: 5px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #2a9d8f 0%, #43aa8b 50%, #e9c46a 100%);
+            border-left-color: #e9c46a;
+            box-shadow: 0 8px 25px rgba(42, 157, 143, 0.3), 0 0 0 1px rgba(233, 196, 106, 0.2);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #d62828 0%, #f77f00 50%, #fcbf49 100%);
+            border-left-color: #fcbf49;
+            box-shadow: 0 8px 25px rgba(214, 40, 40, 0.3), 0 0 0 1px rgba(247, 127, 0, 0.2);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #e76f51 0%, #f4a261 50%, #90e0ef 100%);
+            border-left-color: #90e0ef;
+            box-shadow: 0 8px 25px rgba(231, 111, 81, 0.3), 0 0 0 1px rgba(144, 224, 239, 0.2);
+        }
+
+        .notification::after {
+            content: '🍂';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+
+        .notification-success::after {
+            content: '🌿';
+        }
+
+        .notification-error::after {
+            content: '🍄';
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(5deg); }
+        }
+
+        @media (max-width: 480px) {
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                transform: translateY(-100%) scale(0.95);
+            }
+            
+            .notification.show {
+                transform: translateY(0) scale(1);
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -705,20 +800,20 @@
                         if (updateResult.success) {
                             // Refresh danh sách tasks
                             loadAllTasks();
-                            alert('✅ Cập nhật việc thành công!');
+                            showNotification('✅ Cập nhật việc thành công!', 'success');
                         } else {
                             throw new Error(updateResult.message || 'Cập nhật thất bại');
                         }
                         
                     } catch (error) {
                         console.error('Update error:', error);
-                        alert(`❌ Lỗi cập nhật: ${error.message}`);
+                        showNotification(`❌ Lỗi cập nhật: ${error.message}`, 'error');
                     }
                 });
                 
             } catch (error) {
                 console.error('Edit error:', error);
-                alert(`❌ Lỗi: ${error.message}`);
+                showNotification(`❌ Lỗi: ${error.message}`, 'error');
             }
         }
 
@@ -741,7 +836,7 @@
                 updateStats();
             } catch (e) {
                 console.error(e);
-                alert('Có lỗi xảy ra khi cập nhật');
+                showNotification('❌ Có lỗi xảy ra khi cập nhật', 'error');
             }
         }
 
@@ -777,12 +872,13 @@
                 if (result.success) {
                     // Reload danh sách tasks
                     await loadAllTasks();
+                    showNotification('✅ Thêm việc thành công!', 'success');
                 } else {
-                    alert('Có lỗi xảy ra: ' + (result.message || 'Không thể thêm việc'));
+                    showNotification('❌ Có lỗi xảy ra: ' + (result.message || 'Không thể thêm việc'), 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Có lỗi xảy ra khi thêm việc');
+                showNotification('❌ Có lỗi xảy ra khi thêm việc', 'error');
             }
         }
 
@@ -815,6 +911,37 @@
 
         function startFallingLeaves() {
             setInterval(createFallingLeaf, 300);
+        }
+
+        // Hàm hiển thị thông báo đẹp theo phong cách mùa thu
+        function showNotification(message, type = 'info') {
+            // Xóa notification cũ nếu có
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Tạo notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in với delay nhỏ để CSS có thể apply
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 50);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 400);
+            }, 4000);
         }
 
         // Khởi tạo khi trang load
