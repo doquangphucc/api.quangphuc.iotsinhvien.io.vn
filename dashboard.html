@@ -786,6 +786,95 @@
             50% { opacity: 1; }
         }
 
+        /* Notification styles - Autumn theme */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 18px 25px;
+            border-radius: 15px;
+            color: white;
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            z-index: 99999;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
+            opacity: 0;
+            transform: translateX(100%) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 320px;
+            backdrop-filter: blur(10px);
+            border-left: 5px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #e76f51 0%, #f4a261 50%, #e9c46a 100%);
+            border-left-color: #e9c46a;
+            box-shadow: 0 8px 25px rgba(231, 111, 81, 0.3), 0 0 0 1px rgba(233, 196, 106, 0.2);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #d62828 0%, #f77f00 50%, #fcbf49 100%);
+            border-left-color: #fcbf49;
+            box-shadow: 0 8px 25px rgba(214, 40, 40, 0.3), 0 0 0 1px rgba(247, 127, 0, 0.2);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #2a9d8f 0%, #43aa8b 50%, #90e0ef 100%);
+            border-left-color: #90e0ef;
+            box-shadow: 0 8px 25px rgba(42, 157, 143, 0.3), 0 0 0 1px rgba(144, 224, 239, 0.2);
+        }
+
+        .notification::after {
+            content: '🍂';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+
+        .notification-success::after {
+            content: '🍁';
+        }
+
+        .notification-error::after {
+            content: '🍄';
+        }
+
+        @media (max-width: 480px) {
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                transform: translateY(-100%) scale(0.95);
+            }
+            
+            .notification.show {
+                transform: translateY(0) scale(1);
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .node-branches {
@@ -1425,58 +1514,35 @@
         }
 
         // Thêm task mới
-        // Hàm hiển thị thông báo
+        // Hàm hiển thị thông báo đẹp theo phong cách mùa thu
         function showNotification(message, type = 'info') {
+            // Xóa notification cũ nếu có
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
             // Tạo notification element
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
             notification.textContent = message;
             
-            // Style cho notification
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 10px;
-                color: white;
-                font-family: 'Merriweather', serif;
-                font-weight: 600;
-                z-index: 10000;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                max-width: 300px;
-            `;
-            
-            // Màu sắc theo type
-            if (type === 'success') {
-                notification.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
-            } else if (type === 'error') {
-                notification.style.background = 'linear-gradient(135deg, #dc3545, #e76f51)';
-            } else {
-                notification.style.background = 'linear-gradient(135deg, #17a2b8, #20c997)';
-            }
-            
             document.body.appendChild(notification);
             
-            // Animate in
+            // Animate in với delay nhỏ để CSS có thể apply
             setTimeout(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
+                notification.classList.add('show');
+            }, 50);
             
-            // Auto remove after 3 seconds
+            // Auto remove after 4 seconds
             setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
+                notification.classList.remove('show');
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
-                }, 300);
-            }, 3000);
+                }, 400);
+            }, 4000);
         }
 
         function viewAllTasks() {

@@ -563,10 +563,6 @@
                 <button class="add-btn" onclick="openAddTask()">
                     ➕ Thêm việc
                 </button>
-                <!-- Test button cho notification -->
-                <button class="add-btn" onclick="testNotification()" style="background: linear-gradient(135deg, #28a745, #20c997); margin-left: 10px;">
-                    🧪 Test
-                </button>
             </div>
         </div>
     </header>
@@ -918,8 +914,6 @@
 
         // Hàm hiển thị thông báo đẹp theo phong cách mùa thu
         function showNotification(message, type = 'info') {
-            console.log('showNotification called:', message, type); // Debug log
-            
             // Xóa notification cũ nếu có
             const existingNotification = document.querySelector('.notification');
             if (existingNotification) {
@@ -932,12 +926,10 @@
             notification.textContent = message;
             
             document.body.appendChild(notification);
-            console.log('Notification added to DOM'); // Debug log
             
             // Animate in với delay nhỏ để CSS có thể apply
             setTimeout(() => {
                 notification.classList.add('show');
-                console.log('Show class added'); // Debug log
             }, 50);
             
             // Auto remove after 4 seconds
@@ -946,29 +938,15 @@
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
-                        console.log('Notification removed'); // Debug log
                     }
                 }, 400);
             }, 4000);
         }
 
-        // Function test notification
-        function testNotification() {
-            console.log('testNotification called');
-            showNotification('🎉 Test notification thành công!', 'success');
-        }
-
         // Khởi tạo khi trang load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing...'); // Debug log
             loadAllTasks();
             startFallingLeaves();
-            
-            // Test notification khi load (để debug)
-            setTimeout(() => {
-                console.log('Testing notification system...');
-                showNotification('🎉 System notification hoạt động!', 'info');
-            }, 2000);
             
             // Tạo lá ban đầu
             for (let i = 0; i < 10; i++) {
