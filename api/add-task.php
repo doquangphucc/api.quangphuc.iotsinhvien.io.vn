@@ -60,8 +60,8 @@ try {
         $username,  // Dùng username trực tiếp
         $title, 
         $description, 
-        $scheduled_date, 
-        $scheduled_time 
+        $scheduledDate,  // Sửa từ $scheduled_date
+        $scheduledTime   // Sửa từ $scheduled_time 
     ]);
 
     if ($result) {

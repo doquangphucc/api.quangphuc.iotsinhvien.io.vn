@@ -71,7 +71,8 @@ try {
         $username, // Dùng username trực tiếp
         $title,
         $description,
-        $scheduled_time // Chỉ 5 tham số cho 5 cột
+        $scheduledDate,  // Đã thiếu cái này!
+        $scheduledTime   // Sửa tên biến
     ]);
 
     if ($result) {
