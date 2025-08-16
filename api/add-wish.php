@@ -84,6 +84,14 @@ try {
         $getWishStmt->execute([$wishId]);
         $newWish = $getWishStmt->fetch(PDO::FETCH_ASSOC);
 
+        // Convert timestamps to Vietnam time for display
+        if ($newWish['created_at']) {
+            $newWish['created_at'] = date('Y-m-d H:i:s', strtotime($newWish['created_at'] . ' +7 hours'));
+        }
+        if ($newWish['updated_at']) {
+            $newWish['updated_at'] = date('Y-m-d H:i:s', strtotime($newWish['updated_at'] . ' +7 hours'));
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Wish added successfully',

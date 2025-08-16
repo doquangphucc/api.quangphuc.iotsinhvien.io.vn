@@ -1,6 +1,9 @@
 -- Complete Database Reset Script
 -- Run this script to reset the entire database structure for multi-user timeline system
 
+-- Set timezone to Vietnam time
+SET time_zone = '+07:00';
+
 -- Drop existing tables if they exist
 DROP TABLE IF EXISTS `tasks`;
 DROP TABLE IF EXISTS `wishes`;
