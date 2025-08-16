@@ -632,9 +632,7 @@ class CustomModal {
         inputs.forEach(input => {
             if (input.tagName === 'SELECT') {
                 // Reset select về giá trị mặc định
-                if (input.id === 'modal-priority') {
-                    input.value = 'medium';
-                } else if (input.id === 'modal-currency') {
+                if (input.id === 'modal-currency') {
                     input.value = 'VND';
                 } else if (input.id === 'modal-purchase-status') {
                     input.value = 'researching';
