@@ -37,7 +37,7 @@ try {
     // Đếm tổng số wishes
     $countSql = "SELECT COUNT(*) as total FROM wishes";
     if ($status !== 'all') {
-        $countSql .= " WHERE is_completed = " . (($status === 'completed') ? 1 : 0);
+        $countSql .= " WHERE completed = " . (($status === 'completed') ? 1 : 0);
     }
     
     $countStmt = $conn->prepare($countSql);

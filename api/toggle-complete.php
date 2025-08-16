@@ -36,7 +36,7 @@ try {
     $table = $type === 'task' ? 'tasks' : 'wishes';
 
     // Lấy bản ghi theo primary key id trước (phù hợp cấu trúc hiện tại trên trang all-tasks / all-wishes)
-    $select = $pdo->prepare("SELECT id, status FROM {$table} WHERE id = ? LIMIT 1");
+    $select = $pdo->prepare("SELECT id, completed FROM {$table} WHERE id = ? LIMIT 1");
     $select->execute([$id]);
     $row = $select->fetch(PDO::FETCH_ASSOC);
 
@@ -46,7 +46,7 @@ try {
 
     // Nếu client không gửi status thì tự toggle
     if ($explicitStatus === null) {
-        $newStatusValue = $row['status'] ? 0 : 1;
+        $newStatusValue = $row['completed'] ? 0 : 1;
     } else {
         if (!in_array($explicitStatus, ['completed','pending'])) {
             throw new Exception('Invalid status value');
@@ -54,7 +54,7 @@ try {
         $newStatusValue = $explicitStatus === 'completed' ? 1 : 0;
     }
 
-    $update = $pdo->prepare("UPDATE {$table} SET status = ?, updated_at = NOW() WHERE id = ?");
+    $update = $pdo->prepare("UPDATE {$table} SET completed = ?, updated_at = NOW() WHERE id = ?");
     $update->execute([$newStatusValue, $id]);
 
     echo json_encode([
