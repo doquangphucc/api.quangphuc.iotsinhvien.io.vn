@@ -39,7 +39,7 @@ try {
     $c=$pdo->prepare($countSql); $c->execute([$username]); $total=(int)$c->fetchColumn();
 
     $sql="SELECT id,title,description,
-                 scheduled_date due_date,scheduled_time,completed is_completed,
+                 scheduled_date,scheduled_time,completed is_completed,
                  created_at,updated_at,
                  CASE WHEN scheduled_date IS NOT NULL AND scheduled_date < CURDATE() AND completed=0 THEN 1 ELSE 0 END is_overdue
           FROM tasks
@@ -57,8 +57,8 @@ try {
         $t['id']=(int)$t['id'];
         $t['is_completed']=(bool)$t['is_completed'];
         $t['is_overdue']=(bool)$t['is_overdue'];
-        if($t['due_date']){ $t['due_date_formatted']=date('d/m/Y',strtotime($t['due_date'])); $t['due_date_relative']=rel_days($t['due_date']); }
-        else { $t['due_date_formatted']=null; $t['due_date_relative']=null; }
+        if($t['scheduled_date']){ $t['scheduled_date_formatted']=date('d/m/Y',strtotime($t['scheduled_date'])); $t['scheduled_date_relative']=rel_days($t['scheduled_date']); }
+        else { $t['scheduled_date_formatted']=null; $t['scheduled_date_relative']=null; }
         $t['created_at_formatted']=date('d/m/Y H:i',strtotime($t['created_at']));
         if(!empty($t['updated_at'])) $t['updated_at_formatted']=date('d/m/Y H:i',strtotime($t['updated_at']));
     }
