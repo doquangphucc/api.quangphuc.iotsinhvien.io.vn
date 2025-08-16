@@ -19,7 +19,7 @@ try {
     $debug    = !empty($_GET['debug']);
     if(!$username) throw new Exception('Username is required');
 
-    $validSort=['created_at','title','price','priority','category'];
+    $validSort=['created_at','title','scheduled_date'];
     if(!in_array($sort,$validSort,true)) $sort='created_at';
     if(!in_array($order,['ASC','DESC'],true)) $order='DESC';
 
@@ -30,8 +30,8 @@ try {
     $countSql="SELECT COUNT(*) FROM wishes WHERE username=? $statusCond";
     $c=$pdo->prepare($countSql); $c->execute([$username]); $total=(int)$c->fetchColumn();
 
-    $sql="SELECT id,title,description,category,priority,
-                 product_url store_location,product_url purchase_link,
+    $sql="SELECT id,title,description,
+                 scheduled_date,scheduled_time,
                  completed is_completed,created_at,updated_at
           FROM wishes
           WHERE username=? $statusCond

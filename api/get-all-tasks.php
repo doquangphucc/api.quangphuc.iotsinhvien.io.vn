@@ -27,7 +27,7 @@ try {
     $debug    = !empty($_GET['debug']);
     if(!$username) throw new Exception('Username is required');
 
-    $validSort=['created_at','title','due_date','priority','category'];
+    $validSort=['created_at','title','scheduled_date'];
     if(!in_array($sort,$validSort,true)) $sort='created_at';
     if(!in_array($order,['ASC','DESC'],true)) $order='DESC';
 
@@ -38,8 +38,8 @@ try {
     $countSql="SELECT COUNT(*) FROM tasks WHERE username=? $statusCond";
     $c=$pdo->prepare($countSql); $c->execute([$username]); $total=(int)$c->fetchColumn();
 
-    $sql="SELECT id,title,description,category,priority,
-                 scheduled_date due_date,completed is_completed,
+    $sql="SELECT id,title,description,
+                 scheduled_date due_date,scheduled_time,completed is_completed,
                  created_at,updated_at,
                  CASE WHEN scheduled_date IS NOT NULL AND scheduled_date < CURDATE() AND completed=0 THEN 1 ELSE 0 END is_overdue
           FROM tasks

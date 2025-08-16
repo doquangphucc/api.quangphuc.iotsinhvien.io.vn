@@ -12,20 +12,20 @@ try {
     $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
     $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
 
-    // Xây dựng query với tất cả các trường mới
-    $sql = "SELECT id, item_id, title, description, category, priority, 
-                   scheduled_date, scheduled_time, due_date, is_completed, 
+    // Xây dựng query với các trường có trong database
+    $sql = "SELECT id, username, title, description,
+                   scheduled_date, scheduled_time, completed, 
                    created_at, updated_at 
             FROM tasks";
     
     $params = [];
     
     if ($status !== 'all') {
-        $sql .= " WHERE is_completed = ?";
+        $sql .= " WHERE completed = ?";
         $params[] = ($status === 'completed') ? 1 : 0;
     }
     
-    $sql .= " ORDER BY due_date ASC, created_at DESC";
+    $sql .= " ORDER BY scheduled_date ASC, created_at DESC";
     $sql .= " LIMIT ? OFFSET ?";
     $params[] = $limit;
     $params[] = $offset;
@@ -37,7 +37,7 @@ try {
     // Đếm tổng số tasks
     $countSql = "SELECT COUNT(*) as total FROM tasks";
     if ($status !== 'all') {
-        $countSql .= " WHERE is_completed = " . (($status === 'completed') ? 1 : 0);
+        $countSql .= " WHERE completed = " . (($status === 'completed') ? 1 : 0);
     }
     
     $countStmt = $conn->prepare($countSql);
