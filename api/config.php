@@ -1,9 +1,9 @@
 <?php
 // Cấu hình kết nối MySQL
 const DB_HOST = 'localhost';
-const DB_USER = 'dongthoigiancanhan';
+const DB_USER = 'kn3p4jer78tb_dongthoigiancanhan';
 const DB_PASS = 'D645RzafcmX8Mtbt';
-const DB_NAME = 'dongthoigian';
+const DB_NAME = 'kn3p4jer78tb_dongthoigian';
 const DB_CHARSET = 'utf8mb4';
 
 // Đặt timezone cho PHP
