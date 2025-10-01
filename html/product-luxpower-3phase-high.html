@@ -904,32 +904,6 @@
 
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/shopping-cart.js"></script>
-<script>
-function updateAllCartCounters(totalItems) {
-    let computedTotal = typeof totalItems === 'number' ? totalItems : undefined;
-
-    if (computedTotal === undefined) {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        computedTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    }
-
-    const fabCounter = document.getElementById('fab-cart-count');
-    if (fabCounter) {
-        if (computedTotal > 0) {
-            fabCounter.textContent = computedTotal;
-            fabCounter.style.display = 'flex';
-        } else {
-            fabCounter.textContent = 0;
-            fabCounter.style.display = 'none';
-        }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    updateAllCartCounters();
-    window.addEventListener('storage', updateAllCartCounters);
-});
-</script>
 
 </body>
 </html>
