@@ -195,6 +195,27 @@ class Database {
             throw $e;
         }
     }
+    
+    public function delete($table, $conditions = []) {
+        if (empty($conditions)) {
+            throw new Exception("Delete operation requires conditions to prevent accidental full table deletion");
+        }
+        
+        $whereClause = [];
+        foreach ($conditions as $field => $value) {
+            $whereClause[] = "{$field} = :{$field}";
+        }
+        
+        $sql = "DELETE FROM {$table} WHERE " . implode(' AND ', $whereClause);
+        
+        try {
+            $stmt = $this->query($sql, $conditions);
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            error_log("Delete failed: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }
 
 // Utility functions
