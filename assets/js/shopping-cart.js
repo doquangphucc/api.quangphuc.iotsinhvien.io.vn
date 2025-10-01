@@ -46,7 +46,7 @@ function showNotification(message, isError = false) {
                 document.body.removeChild(notification);
             }
         }, 400);
-    }, 4000);
+    }, 2000);  // Thay đổi từ 4000ms (4s) thành 2000ms (2s)
 }
 
 
@@ -85,6 +85,16 @@ function showLoginRequiredNotification() {
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
+
+    // Tự động ẩn sau 2 giây
+    setTimeout(() => {
+        notification.style.transform = 'translateX(120%)';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 400);
+    }, 2000);
 
     notification.addEventListener('click', () => {
         // Determine correct path based on current location
