@@ -53,11 +53,23 @@ try {
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['username'] = $user['username'];
     
+    // Debug logging
+    error_log("Login Success - Session ID: " . session_id());
+    error_log("Login Success - User ID set: " . $_SESSION['user_id']);
+    error_log("Login Success - Session Data: " . print_r($_SESSION, true));
+    
     // Remove password from response
     unset($user['password']);
     
-    // Return user data
-    sendSuccess(['user' => $user], 'Đăng nhập thành công');
+    // Return user data with session info for debugging
+    sendSuccess([
+        'user' => $user,
+        'session_id' => session_id(),
+        'debug' => [
+            'session_name' => session_name(),
+            'cookie_params' => session_get_cookie_params()
+        ]
+    ], 'Đăng nhập thành công');
     
 } catch (PDOException $e) {
     error_log("Login error: " . $e->getMessage());
