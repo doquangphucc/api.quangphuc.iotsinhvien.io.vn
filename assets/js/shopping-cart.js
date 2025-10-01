@@ -28,7 +28,7 @@ function showNotification(message, isError = false) {
 
     notification.innerHTML = `
         <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span>${isError ? 'âŒ' : 'âœ…'}</span>
+            <span>${isError ? '❌' : '✅'}</span>
             <div>${message}</div>
         </div>
     `;
@@ -71,11 +71,11 @@ function showLoginRequiredNotification() {
 
     notification.innerHTML = `
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span>ðŸ”’</span>
+            <span>🔒</span>
             <div>
-                <div>YÃªu cáº§u Ä‘Äƒng nháº­p</div>
-                <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.25rem;">Vui lÃ²ng Ä‘Äƒng nháº­p Ä‘á»ƒ sá»­ dá»¥ng giá» hÃ ng.</div>
-                <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.25rem;">Nháº¥n Ä‘á»ƒ Ä‘áº¿n trang Ä‘Äƒng nháº­p</div>
+                <div>Yêu cầu đăng nhập</div>
+                <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.25rem;">Vui lòng đăng nhập để sử dụng giỏ hàng.</div>
+                <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.25rem;">Nhấn để đến trang đăng nhập</div>
             </div>
         </div>
     `;
@@ -125,14 +125,14 @@ async function addToCart(productId, productName) {
         const result = await response.json();
 
         if (result.success) {
-            showNotification(`ÄÃ£ thÃªm "${productName}" vÃ o giá» hÃ ng.`);
+            showNotification(`Đã thêm "${productName}" vào giỏ hàng.`);
             updateAllCartCounters(result.data.total_items);
         } else {
             throw new Error(result.message || 'Có lỗi xảy ra.');
         }
     } catch (error) {
         console.error('Add to cart error:', error);
-        showNotification(error.message || 'KhÃ´ng thá»ƒ thÃªm vÃ o giá» hÃ ng.', true);
+        showNotification(error.message || 'Không thể thêm vào giỏ hàng.', true);
     }
 }
 
@@ -212,7 +212,7 @@ function initializeProductActionButtons() {
                     showLoginRequiredNotification();
                 } else {
                     // Placeholder for future Buy Now logic with database
-                    alert('Chá»©c nÄƒng "Mua Ngay" sáº½ Ä‘Æ°á»£c phÃ¡t triá»ƒn sau.');
+                    alert('Chức năng "Mua Ngay" sẽ được phát triển sau.');
                 }
              });
         }

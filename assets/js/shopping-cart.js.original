@@ -1,29 +1,9 @@
 ﻿// Common shopping cart functions for all product pages
-// File: asset    notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span>🔒</span>
-            <div>
-                <div>Yêu cầu đăng nhập</div>
-                <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.25rem;">Vui lòng đăng nhập để sử dụng giỏ hàng.</div>
-                <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.25rem;">Nhấn để đến trang đăng nhập</div>
-            </div>
-        </div>
-    `;ing-cart.js
+// File: assets/js/shopping-cart.js
 
-function showNotification(mess        if (result.success) {
-            showNotification(`Đã thêm "${productName}" vào giỏ hàng.`);
-            updateAllCartCounters(result.data.total_items);
-        } else {
-            throw new Error(result.message || 'Có lỗi xảy ra.');
-        }    } catch (error) {
-        console.error('Add to cart error:', error);
-        showNotification(error.message || 'Không thể thêm vào giỏ hàng.', true);
-    }or = false) {
+function showNotification(message, isError = false) {
     const notification = document.createElement('div');
-                    } else {
-                    // Placeholder for future Buy Now logic with database
-                    alert('Chức năng "Mua Ngay" sẽ được phát triển sau.');
-                }t bgColor = isError 
+    const bgColor = isError 
         ? 'linear-gradient(135deg, #ef4444, #dc2626)' 
         : 'linear-gradient(135deg, #3FA34D, #1E5631)';
     const shadowColor = isError 
@@ -148,7 +128,7 @@ async function addToCart(productId, productName) {
             showNotification(`ÄÃ£ thÃªm "${productName}" vÃ o giá» hÃ ng.`);
             updateAllCartCounters(result.data.total_items);
         } else {
-            throw new Error(result.message || 'CÃ³ lá»—i xáº£y ra.');
+            throw new Error(result.message || 'Có lỗi xảy ra.');
         }
     } catch (error) {
         console.error('Add to cart error:', error);
@@ -211,7 +191,7 @@ function initializeProductActionButtons() {
 
         const productId = addButton.dataset.productId;
         const nameEl = row.querySelector('.product-specs h4');
-        const productName = nameEl ? nameEl.textContent.trim() : 'Sáº£n pháº©m';
+        const productName = nameEl ? nameEl.textContent.trim() : 'Sản phẩm';
 
         if (addButton && productId && !addButton.dataset.cartBound) {
             addButton.dataset.cartBound = 'true';
