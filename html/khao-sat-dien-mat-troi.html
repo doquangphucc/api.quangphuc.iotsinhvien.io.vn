@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -11,656 +11,154 @@
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
     <style>
-        .survey-page {
+        body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
         }
-        
-        /* Animated background particles */
-        .survey-page::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(63, 163, 77, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(197, 227, 132, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(63, 163, 77, 0.05) 0%, transparent 50%);
-            z-index: -1;
-            animation: backgroundMove 20s ease-in-out infinite;
+        .survey-container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 2rem;
         }
-        
-        @keyframes backgroundMove {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(1deg); }
-        }
-        
-        .survey-hero {
-            padding: 5rem 0 4rem;
-            background: linear-gradient(145deg, rgba(63, 163, 77, 0.12) 0%, rgba(197, 227, 132, 0.18) 50%, rgba(63, 163, 77, 0.08) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .survey-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 20%),
-                radial-gradient(circle at 70% 70%, rgba(63, 163, 77, 0.1) 0%, transparent 30%);
-            animation: heroGlow 15s ease-in-out infinite;
-            z-index: 1;
-        }
-        
-        @keyframes heroGlow {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(10deg) scale(1.05); }
-        }
-        
-        .survey-hero .container {
-            max-width: 820px;
-            margin: 0 auto;
-            text-align: center;
-            display: grid;
-            gap: 1.5rem;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .survey-hero .eyebrow {
-            background: linear-gradient(135deg, #3FA34D, #C5E384);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 600;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
-        .survey-hero h1 {
-            margin: 0;
-            font-size: clamp(2.2rem, 4vw, 3.2rem);
-            background: linear-gradient(135deg, #3FA34D 0%, #2d4a2d 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            line-height: 1.2;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-        
-        .survey-hero p {
-            margin: 0 auto;
-            max-width: 640px;
-            color: #5a6c5a;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            animation: fadeInUp 0.8s ease-out 0.4s both;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .survey-form {
-            padding: 4rem 0 5rem;
-            position: relative;
-        }
-        
-        .survey-form .container {
-            max-width: 900px;
-            margin: 0 auto;
-            display: grid;
-            gap: 3rem;
-        }
-        
-        .survey-form fieldset {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 2px solid transparent;
-            border-radius: 24px;
-            padding: 2.5rem;
-            margin: 0;
-            display: grid;
-            gap: 1.5rem;
-            box-shadow: 0 20px 60px rgba(63, 163, 77, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .survey-form fieldset::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(63, 163, 77, 0.03) 0%, rgba(197, 227, 132, 0.05) 100%);
-            border-radius: 24px;
-            z-index: -1;
-        }
-        
-        .survey-form fieldset:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 80px rgba(63, 163, 77, 0.15);
-            border-color: rgba(63, 163, 77, 0.2);
-        }
-        
-        .survey-form fieldset legend {
-            padding: 0.8rem 1.5rem;
-            font-weight: 700;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #3FA34D 0%, #2d4a2d 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-        }
-        
-        .survey-form fieldset legend::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -2px;
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, #3FA34D, #C5E384);
-            border-radius: 2px;
-        }
-        
-        .survey-form label {
-            display: grid;
-            gap: 0.8rem;
-            font-weight: 600;
-            color: #2d4a2d;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .survey-form label:hover {
-            color: #3FA34D;
-        }
-        
-        .survey-form input,
-        .survey-form select,
-        .survey-form textarea {
-            border-radius: 16px;
-            border: 2px solid rgba(63, 163, 77, 0.2);
-            padding: 1rem 1.5rem;
-            font-family: inherit;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(63, 163, 77, 0.05);
-        }
-        
-        .survey-form input:focus,
-        .survey-form select:focus,
-        .survey-form textarea:focus {
-            outline: none;
-            border-color: #3FA34D;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 8px 30px rgba(63, 163, 77, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .field-hint {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #6b7c6b;
-            opacity: 0.8;
-        }
-        
-        .bill-spell {
-            display: block;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #3FA34D;
-            font-style: italic;
-            font-weight: 500;
-        }
-        
-        .bill-usage {
-            display: block;
-            margin-top: 0.3rem;
-            font-size: 0.9rem;
-            color: #6b7c6b;
-        }
-        
-        .options-inline {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem 2rem;
-            font-weight: 500;
-        }
-        
-        .phase-options {
-            align-items: center;
-            padding: 1.5rem;
-            border: 2px solid rgba(63, 163, 77, 0.2);
+        .survey-card {
+            background: white;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(63, 163, 77, 0.08);
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
-        
-        .phase-options:hover {
-            background: rgba(63, 163, 77, 0.05);
-            border-color: #3FA34D;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(63, 163, 77, 0.15);
-        }
-        
-        .phase-options input:checked + span {
+        .survey-card h2 {
             color: #3FA34D;
-            font-weight: 700;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
         }
-        
-        .phase-options input {
-            accent-color: #3FA34D;
-            transform: scale(1.2);
+        .form-group {
+            margin-bottom: 2rem;
         }
-        
-        .rate-table {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            border: 2px solid transparent;
-            border-radius: 28px;
-            padding: 2.5rem;
-            box-shadow: 0 25px 70px rgba(63, 163, 77, 0.12);
-            position: relative;
-            overflow: hidden;
-            animation: slideInUp 0.8s ease-out;
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #2d4a2d;
         }
-        
-        .rate-table::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3FA34D, #C5E384, #3FA34D);
-            background-size: 200% 100%;
-            animation: shimmer 3s ease-in-out infinite;
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
-        
-        @keyframes shimmer {
-            0%, 100% { background-position: -200% 0; }
-            50% { background-position: 200% 0; }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #3FA34D;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(63,163,77,0.1);
         }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
-        
-        .rate-heading {
-            margin: 0 0 1.5rem;
-            font-size: 1.6rem;
+        .radio-option {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            background: linear-gradient(135deg, #3FA34D 0%, #2d4a2d 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 16px;
-            box-shadow: inset 0 0 20px rgba(63, 163, 77, 0.05);
+        .radio-option:hover {
+            border-color: #3FA34D;
+            background: rgba(63,163,77,0.05);
         }
-        
-        .rate-table table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 560px;
+        .radio-option input {
+            width: auto;
+            margin: 0;
         }
-
-        .rate-table th,
-        .rate-table td {
-            padding: 1.2rem 1.5rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(63, 163, 77, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .rate-table th {
-            background: linear-gradient(135deg, rgba(63, 163, 77, 0.15) 0%, rgba(197, 227, 132, 0.1) 100%);
-            color: #3FA34D;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .rate-table tbody tr {
-            transition: all 0.3s ease;
-        }
-        
-        .rate-table tbody tr:nth-child(even) {
-            background: rgba(63, 163, 77, 0.03);
-        }
-        
-        .rate-table tbody tr:hover {
-            background: linear-gradient(135deg, rgba(197, 227, 132, 0.15) 0%, rgba(63, 163, 77, 0.08) 100%);
-            transform: scale(1.01);
-            box-shadow: 0 5px 15px rgba(63, 163, 77, 0.1);
-        }
-        
-        .rate-table .highlight {
-            color: #3FA34D;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-        
-        .survey-actions {
-            display: grid;
-            gap: 1.2rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #3FA34D 0%, #2d4a2d 100%);
+        .btn-calculate {
+            background: linear-gradient(135deg, #3FA34D, #2d4a2d);
             color: white;
             border: none;
-            padding: 1.2rem 2.5rem;
+            padding: 1.2rem 3rem;
             border-radius: 50px;
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(63, 163, 77, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s;
+            margin-top: 2rem;
+            transition: all 0.3s;
         }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(63, 163, 77, 0.4);
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(63,163,77,0.3);
         }
-        
-        .btn:hover::before {
-            left: 100%;
+        .results {
+            display: none;
         }
-        
-        .btn:active {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+        .results.show {
+            display: block;
         }
-        
-        .survey-disclaimer {
-            margin: 1rem 0 0;
-            color: #6b7c6b;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        /* Enhanced calculation results */
-        .calculation-results {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            border: 2px solid transparent;
-            border-radius: 28px;
-            padding: 3rem;
-            margin-top: 3rem;
-            box-shadow: 0 30px 80px rgba(63, 163, 77, 0.15);
-            position: relative;
-            overflow: hidden;
-            animation: resultsFadeIn 1s ease-out;
-        }
-        
-        @keyframes resultsFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        .calculation-results::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #3FA34D, #C5E384, #3FA34D);
-            background-size: 200% 100%;
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        .calculation-results h2 {
-            margin: 0 0 2rem;
-            background: linear-gradient(135deg, #3FA34D 0%, #2d4a2d 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2rem;
-            text-align: center;
-            font-weight: 800;
-        }
-        
-        .results-grid {
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            margin-bottom: 2.5rem;
-        }
-        
-        .result-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(63, 163, 77, 0.1);
-            border-radius: 20px;
+        .result-section {
+            background: #f8f9fa;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(63, 163, 77, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            border-radius: 16px;
+            margin-bottom: 2rem;
         }
-        
-        .result-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(63, 163, 77, 0.05), transparent);
-            transition: left 0.6s ease;
-        }
-        
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(63, 163, 77, 0.15);
-            border-color: rgba(63, 163, 77, 0.3);
-        }
-        
-        .result-card:hover::before {
-            left: 100%;
-        }
-        
-        .result-card.highlight {
-            background: linear-gradient(135deg, rgba(63, 163, 77, 0.08) 0%, rgba(197, 227, 132, 0.12) 100%);
-            border-color: #3FA34D;
-            transform: scale(1.02);
-        }
-        
-        .result-card h3 {
-            margin: 0 0 1.5rem;
+        .result-section h3 {
             color: #3FA34D;
-            font-size: 1.3rem;
-            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
         }
-        
-        .result-row {
+        .result-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid rgba(63, 163, 77, 0.08);
-            transition: all 0.3s ease;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e0e0e0;
         }
-        
-        .result-row:hover {
-            background: rgba(63, 163, 77, 0.03);
-            margin: 0 -1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-        }
-        
-        .result-row:last-child {
+        .result-item:last-child {
             border-bottom: none;
         }
-        
-        .result-row.major {
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: #3FA34D;
-            background: linear-gradient(135deg, rgba(63, 163, 77, 0.08) 0%, rgba(197, 227, 132, 0.1) 100%);
-            margin: 0 -1rem;
-            padding: 1rem 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(63, 163, 77, 0.2);
-        }
-        
-        .package-recommendation {
-            background: linear-gradient(135deg, rgba(197, 227, 132, 0.12) 0%, rgba(63, 163, 77, 0.08) 100%);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 2px solid rgba(197, 227, 132, 0.3);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-        
-        .package-recommendation h3 {
-            margin: 0 0 1.5rem;
-            color: #3FA34D;
-            font-size: 1.4rem;
-            font-weight: 800;
-        }
-        
-        .package-card {
-            background: var(--color-white);
-            border: 3px solid #C5E384;
-            border-radius: 16px;
-            padding: 1.5rem;
+        .result-label {
             font-weight: 600;
-            box-shadow: 0 15px 40px rgba(197, 227, 132, 0.2);
-            transition: all 0.3s ease;
+            color: #555;
         }
-        
-        .package-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(197, 227, 132, 0.3);
-        }
-        
-        .package-card .package-name {
-            font-size: 1.3rem;
-            color: #3FA34D;
-            margin-bottom: 0.8rem;
-            font-weight: 800;
-        }
-        
-        .package-card .package-price {
-            font-size: 1.2rem;
-            color: #2d4a2d;
-            margin-bottom: 0.8rem;
+        .result-value {
             font-weight: 700;
+            color: #3FA34D;
         }
-        
-        .package-card .package-features {
-            font-size: 1rem;
-            color: #6b7c6b;
+        .total-section {
+            background: linear-gradient(135deg, #3FA34D, #2d4a2d);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
         }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .survey-hero {
-                padding: 3rem 0 2rem;
-            }
-            
-            .survey-form {
-                padding: 2rem 0 3rem;
-            }
-            
-            .survey-form fieldset {
-                padding: 1.5rem;
-            }
-            
-            .phase-options {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            .rate-heading {
-                font-size: 1.3rem;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-            
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .result-card,
-            .calculation-results,
-            .rate-table {
-                padding: 1.5rem;
-            }
+        .total-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+        }
+        .total-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+        .product-list {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        .product-item {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .product-item:last-child {
+            border-bottom: none;
         }
         
         /* Floating Action Button for Cart */
@@ -715,6 +213,12 @@
                 height: 55px;
                 font-size: 1.3rem;
             }
+            .survey-container {
+                padding: 0 1rem;
+            }
+            .survey-card {
+                padding: 2rem 1.5rem;
+            }
         }
     </style>
 </head>
@@ -755,14 +259,13 @@
             </div>
         </div>
     </header>
-<div class="auth-floating" id="auth-floating">
-    <div class="auth-buttons" id="auth-buttons">
-        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
-        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
-    </div>
-    
-</div>
 
+    <div class="auth-floating" id="auth-floating">
+        <div class="auth-buttons" id="auth-buttons">
+            <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+            <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+        </div>
+    </div>
 
     <aside class="quick-contact" aria-label="Liên hệ nhanh">
         <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hc.ecosystem" target="_blank" rel="noopener">
@@ -813,6 +316,7 @@
             <span class="icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img" focusable="false">
                     <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
+                </svg>
             </span>
             <span class="label">
                 <strong>Hotline</strong>
@@ -831,192 +335,83 @@
         </a>
     </aside>
 
-    <main class="survey-page">
-        <section class="survey-hero">
-            <div class="container">
-                <span class="eyebrow">Khảo sát nhu cầu</span>
-                <h1>Khảo Sát Hệ Thống Điện Mặt Trời Phù Hợp</h1>
-                <p>Trả lời nhanh một vài câu hỏi miễn phí để nhận gói đề xuất gói lắp đặt công suất tính hiệu quả dành riêng cho công trình của bạn.</p>
-            </div>
-        </section>
-
-        <section class="survey-form">
-            <div class="container">
-                <section class="rate-table">
-                    <h2 class="rate-heading">📋 Bảng giá bán lẻ điện sinh hoạt (đã gồm 10% VAT) của EVN - 2025</h2>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Bậc</th>
-                                    <th>Mức sử dụng (kWh/tháng)</th>
-                                    <th>Giá chưa VAT (đ/kWh)</th>
-                                    <th>Giá có VAT (đ/kWh)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>0 – 50</td>
-                                    <td>1.984</td>
-                                    <td class="highlight">2.182</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>51 – 100</td>
-                                    <td>2.050</td>
-                                    <td class="highlight">2.255</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>101 – 200</td>
-                                    <td>2.380</td>
-                                    <td class="highlight">2.618</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>201 – 300</td>
-                                    <td>2.998</td>
-                                    <td class="highlight">3.298</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>301 – 400</td>
-                                    <td>3.350</td>
-                                    <td class="highlight">3.685</td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>Trên 400</td>
-                                    <td>3.460</td'
-                                    <td class="highlight">3.806</td>
-                                </tr>
-                            </tbody>
-                        </table>
+    <main>
+        <div class="survey-container">
+            <div class="survey-card">
+                <h2>📋 Khảo Sát Chi Tiết Hệ Thống Điện Mặt Trời</h2>
+                
+                <form id="surveyForm">
+                    <!-- Thông tin cơ bản -->
+                    <div class="form-group">
+                        <label>Họ và Tên *</label>
+                        <input type="text" name="fullname" required placeholder="Nguyễn Văn A" />
                     </div>
-                </section>
 
-                <form class="form" id="survey-form" action="#" method="post">
-                    <fieldset>
-                        <legend>Thông tin liên hệ</legend>
-                        <label>Họ và Tên
-                            <input type="text" name="fullname" placeholder="Nguyễn Văn A" required />
-                        </label>
-                        <label>Số Điện Thoại
-                            <span class="field-hint">(Để nhận điện thoại tư vấn từ HC Eco System)</span>
-                            <input type="tel" name="phone" placeholder="097x xxx xxx" required inputmode="tel" pattern="^\d{8,11}$" />
-                        </label>
-                    </fieldset>
+                    <div class="form-group">
+                        <label>Số Điện Thoại *</label>
+                        <input type="tel" name="phone" required placeholder="0977247393" />
+                    </div>
 
-                    <fieldset>
-                        <legend>Nhu cầu sử dụng</legend>
-                        <label>Khu Vực Sinh Sống
-                            <select name="region" required>
-                                <option value="">Chọn khu vực</option>
-                                <option value="mien-bac">Miền Bắc</option>
-                                <option value="mien-trung">Miền Trung</option>
-                                <option value="mien-nam">Miền Nam</option>
-                            </select>
-                        </label>
-                        <div class="options-inline phase-options" role="radiogroup" aria-label="Sử dụng điện">
-                            <span class="options-label">Sử dụng điện</span>
-                            <label class="option-pill">
-                                <input type="radio" name="phase" value="1-pha" required />
+                    <div class="form-group">
+                        <label>Khu Vực *</label>
+                        <select name="region" required>
+                            <option value="">-- Chọn khu vực --</option>
+                            <option value="mien-bac">Miền Bắc</option>
+                            <option value="mien-trung">Miền Trung</option>
+                            <option value="mien-nam">Miền Nam</option>
+                        </select>
+                    </div>
+
+                    <!-- Loại điện -->
+                    <div class="form-group">
+                        <label>Loại Điện *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="phase" value="1" required />
                                 <span>1 Pha</span>
                             </label>
-                            <label class="option-pill">
-                                <input type="radio" name="phase" value="3-pha" />
+                            <label class="radio-option">
+                                <input type="radio" name="phase" value="3" />
                                 <span>3 Pha</span>
                             </label>
                         </div>
-                        <label>Tiền điện trung bình 1 tháng (VNĐ)
-                            <input type="text" id="monthly-bill-display" inputmode="numeric" placeholder="VD: 1.500.000 đ" required />
-                            <input type="hidden" name="monthly-bill" id="monthly-bill-value" />
-                            <small id="monthly-bill-spell" class="bill-spell"></small>
-                            <small id="monthly-bill-usage" class="bill-usage"></small>
-                        </label>
-                    </fieldset>
-
-                    <div class="survey-actions">
-                        <button type="submit" class="btn primary">Nhận kết quả gói đề xuất</button>
-                        <p class="survey-disclaimer">Sau khi gửi, chuyên gia HC Eco System sẽ liên hệ trong vòng 24 giờ để tư vấn chi tiết về gói bảng giá đặc tính phù hợp.</p>
                     </div>
+
+                    <!-- Loại tấm pin -->
+                    <div class="form-group">
+                        <label>Chọn Loại Tấm Pin *</label>
+                        <select name="solarPanel" required>
+                            <option value="">-- Chọn loại tấm pin --</option>
+                            <option value="590" data-price="2300000">Jinko Solar 590W Tiger Neo - 2.300.000đ</option>
+                            <option value="630" data-price="2600000">Jinko Solar 630W Tiger Neo - 2.600.000đ</option>
+                        </select>
+                    </div>
+
+                    <!-- Tiền điện hàng tháng -->
+                    <div class="form-group">
+                        <label>Tiền Điện Trung Bình/Tháng (VNĐ) *</label>
+                        <input type="text" name="monthlyBill" required placeholder="VD: 1500000" />
+                    </div>
+
+                    <!-- Thời gian sử dụng -->
+                    <div class="form-group">
+                        <label>Thời Gian Sử Dụng Điện Chủ Yếu *</label>
+                        <select name="usageTime" required>
+                            <option value="">-- Chọn thời gian --</option>
+                            <option value="day">Ban ngày nhiều (pin = 1/3 điện tạo ra)</option>
+                            <option value="balanced">Cả ngày đều (pin = 1/2 điện tạo ra)</option>
+                            <option value="night">Ban đêm nhiều (pin = 3/5 điện tạo ra)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-calculate">🔍 Tính Toán Báo Giá</button>
                 </form>
-
-                <!-- Bảng kết quả tính toán -->
-                <section id="calculation-results" class="calculation-results" style="display: none;">
-                    <h2>🔍 Kết quả tính toán gói đề xuất</h2>
-                    <div class="results-grid">
-                        <div class="result-card">
-                            <h3>📊 Thông số đầu vào</h3>
-                            <div class="result-row">
-                                <span>Khu vực:</span>
-                                <span id="result-region">-</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Loại điện:</span>
-                                <span id="result-phase">-</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Tiền điện/tháng:</span>
-                                <span id="result-bill">-</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Mức tiêu thụ (Y):</span>
-                                <span id="result-consumption">- kWh/tháng</span>
-                            </div>
-                        </div>
-
-                        <div class="result-card">
-                            <h3>⚡ Thông số kỹ thuật</h3>
-                            <div class="result-row">
-                                <span>Giờ nắng trung bình (H):</span>
-                                <span id="result-sunshine">- h/ngày</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Số ngày trong tháng (D):</span>
-                                <span>30 ngày</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Công suất 1 tấm pin (P_pin):</span>
-                                <span>0.59 kWp</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Điện năng 1 tấm pin/tháng:</span>
-                                <span id="result-panel-energy">- kWh/tháng</span>
-                            </div>
-                        </div>
-
-                        <div class="result-card highlight">
-                            <h3>🔋 Kết quả đề xuất</h3>
-                            <div class="result-row major">
-                                <span>Số tấm pin cần thiết (N):</span>
-                                <span id="result-panels-needed">- tấm</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Tổng công suất hệ thống:</span>
-                                <span id="result-total-capacity">- kWp</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Điện năng dự kiến/tháng:</span>
-                                <span id="result-expected-energy">- kWh/tháng</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Tỷ lệ đáp ứng nhu cầu:</span>
-                                <span id="result-coverage">- %</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="package-recommendation">
-                        <h3>💡 Gói sản phẩm phù hợp</h3>
-                        <div id="recommended-package" class="package-card">
-                            <!-- Nội dung gói sẽ được thêm bằng JavaScript -->
-                        </div>
-                    </div>
-                </section>
             </div>
-        </section>
+
+            <div id="results" class="results survey-card">
+                <!-- Kết quả sẽ được hiển thị ở đây -->
+            </div>
+        </div>
     </main>
 
     <footer id="site-footer" class="footer">
@@ -1057,326 +452,354 @@
         </div>
     </footer>
 
-    <script>
-        (function () {
-            const display = document.getElementById('monthly-bill-display');
-            const hidden = document.getElementById('monthly-bill-value');
-            const spell = document.getElementById('monthly-bill-spell');
-            const usage = document.getElementById('monthly-bill-usage');
-            if (!display || !hidden || !spell || !usage) {
-                return;
-            }
-
-            const numberWords = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-            const unitWords = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ", " tỷ tỷ"];
-            const displaySuffix = " đ";
-            const currencyWord = "đồng";
-            const tierConfig = [
-                { limit: 50, price: 2182 },
-                { limit: 50, price: 2255 },
-                { limit: 100, price: 2618 },
-                { limit: 100, price: 3298 },
-                { limit: 100, price: 3685 },
-                { limit: Infinity, price: 3806 }
-            ];
-
-            let usageVisible = false;
-
-            const readThreeDigits = (num, full) => {
-                const hundred = Math.floor(num / 100);
-                const ten = Math.floor((num % 100) / 10);
-                const unit = num % 10;
-                const words = [];
-
-                if (hundred > 0 || full) {
-                    words.push(numberWords[hundred] || numberWords[0]);
-                    words.push("trăm");
-                }
-
-                if (ten > 1) {
-                    words.push(numberWords[ten]);
-                    words.push("mười");
-                    if (unit === 1) {
-                        words.push("một");
-                    } else if (unit === 5) {
-                        words.push("lăm");
-                    } else if (unit > 0) {
-                        words.push(numberWords[unit]);
-                    }
-                } else if (ten === 1) {
-                    words.push("mười");
-                    if (unit === 0) {
-                        // nothing
-                    } else if (unit === 5) {
-                        words.push("lăm");
-                    } else {
-                        words.push(numberWords[unit]);
-                    }
-                } else {
-                    if ((hundred > 0 || full) && unit > 0) {
-                        words.push("lẻ");
-                    }
-                    if (unit > 0) {
-                        words.push(numberWords[unit]);
-                    }
-                }
-
-                return words.join(' ').replace(/\s+/g, ' ').trim();
-            };
-
-            const toVietnamese = (digitString) => {
-                if (!digitString) {
-                    return numberWords[0];
-                }
-                const clean = digitString.replace(/^0+/, '') || '0';
-                const groups = [];
-                let remaining = clean;
-                while (remaining.length > 0) {
-                    groups.push(parseInt(remaining.slice(-3), 10));
-                    remaining = remaining.slice(0, -3);
-                }
-
-                const parts = [];
-                let hasHigher = false;
-
-                for (let i = groups.length - 1; i >= 0; i -= 1) {
-                    const group = groups[i];
-                    if (group !== 0) {
-                        const segment = readThreeDigits(group, hasHigher);
-                        if (segment) {
-                            parts.push(segment + (unitWords[i] || ''));
-                        }
-                        hasHigher = true;
-                    }
-                }
-
-                if (!parts.length) {
-                    return numberWords[0];
-                }
-
-                return parts.join(' ').replace(/\s+/g, ' ').trim();
-            };
-
-            const formatNumber = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            const calculateUsage = (amount) => {
-                let remaining = amount;
-                let total = 0;
-                for (const tier of tierConfig) {
-                    const { limit, price } = tier;
-                    if (!Number.isFinite(limit)) {
-                        total += remaining / price;
-                        remaining = 0;
-                        break;
-                    }
-                    const tierCost = price * limit;
-                    if (remaining >= tierCost) {
-                        total += limit;
-                        remaining -= tierCost;
-                    } else {
-                        total += remaining / price;
-                        remaining = 0;
-                        break;
-                    }
-                }
-                return total;
-            };
-
-            const updateOutputs = (digits) => {
-                if (!digits) {
-                    spell.textContent = '';
-                    usage.textContent = '';
-                    return;
-                }
-                const text = toVietnamese(digits);
-                const pretty = text.charAt(0).toUpperCase() + text.slice(1);
-                spell.textContent = `(${pretty})`;
-                if (usageVisible) {
-                    const kWh = calculateUsage(Number(digits));
-                    usage.textContent = `≈ ${kWh} kWh/tháng`;
-                } else {
-                    usage.textContent = '';
-                }
-            };
-
-            const syncDisplay = () => {
-                const digits = hidden.value;
-                display.value = digits ? formatNumber(digits) + displaySuffix : '';
-                updateOutputs(digits);
-            };
-
-            display.addEventListener('focus', () => {
-                const digits = hidden.value || display.value.replace(/\D/g, '');
-                display.value = digits;
-                requestAnimationFrame(() => {
-                    const length = display.value.length;
-                    display.setSelectionRange(length, length);
-                });
-            });
-
-            display.addEventListener('blur', () => {
-                hidden.value = display.value.replace(/\D/g, '');
-                syncDisplay();
-            });
-
-            display.addEventListener('input', () => {
-                const digits = display.value.replace(/\D/g, '');
-                hidden.value = digits;
-                syncDisplay();
-                if (digits) {
-                    requestAnimationFrame(() => {
-                        const caret = Math.max(display.value.length - displaySuffix.length, 0);
-                        display.setSelectionRange(caret, caret);
-                    });
-                }
-            });
-
-            const form = display.closest('form');
-            if (form) {
-                form.addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    const digits = display.value.replace(/\D/g, '');
-                    hidden.value = digits;
-                    usageVisible = true;
-                    syncDisplay();
-                    
-                    // Tính toán và hiển thị kết quả
-                    try {
-                        calculateAndShowResults(form);
-                    } catch (error) {
-                        console.error("Error during calculation or display:", error);
-                        alert("Đã xảy ra lỗi trong quá trình tính toán. Vui lòng thử lại.");
-                    }
-                });
-            }
-
-            // Hàm tính toán số tấm pin cần thiết
-            function calculateAndShowResults(form) {
-                const formData = new FormData(form);
-                
-                // Lấy dữ liệu từ form
-                const fullname = formData.get('fullname');
-                const phone = formData.get('phone');
-                const region = formData.get('region');
-                const phase = formData.get('phase');
-                const monthlyBillValue = formData.get('monthly-bill');
-                
-                if (!fullname || !phone || !region || !phase || !monthlyBillValue) {
-                    alert('Vui lòng điền đầy đủ thông tin!');
-                    return;
-                }
-                
-                // Thông số kỹ thuật
-                const P_pin = 0.59; // kWp - công suất 1 tấm pin (590W = 0.59kWp)
-                const D = 30; // số ngày trong tháng
-                
-                // Giờ nắng theo vùng miền (H)
-                let H; // giờ nắng/ngày
-                let regionName;
-                switch(region) {
-                    case 'mien-bac':
-                        H = 3;
-                        regionName = 'Miền Bắc';
-                        break;
-                    case 'mien-trung':
-                        H = 3.5;
-                        regionName = 'Miền Trung';
-                        break;
-                    case 'mien-nam':
-                        H = 4;
-                        regionName = 'Miền Nam';
-                        break;
-                    default:
-                        H = 3.5;
-                        regionName = 'Chưa xác định';
-                }
-                
-                // Tính Y (mức tiêu thụ điện kWh/tháng)
-                const Y = calculateUsage(Number(monthlyBillValue));
-                
-                // Tính điện năng 1 tấm pin tạo ra trong 1 tháng: E_pin = P_pin × H × D
-                const E_pin = P_pin * H * D; // kWh/tháng
-                
-                // Tính số tấm pin cần thiết: N = Y / E_pin
-                const N = Math.ceil(Y / E_pin); // làm tròn lên
-                
-                // Tính các thông số bổ sung
-                const totalCapacity = N * P_pin; // kWp
-                const expectedEnergy = N * E_pin; // kWh/tháng
-                const coverage = Math.min(100, (expectedEnergy / Y) * 100); // %
-                
-                // Hiển thị kết quả
-                displayResults({
-                    fullname,
-                    phone,
-                    regionName,
-                    phase: phase === '1-pha' ? '1 Pha' : '3 Pha',
-                    monthlyBill: formatNumber(monthlyBillValue) + ' đ',
-                    Y: Y.toFixed(2),
-                    H,
-                    E_pin: E_pin.toFixed(2),
-                    N,
-                    totalCapacity: totalCapacity.toFixed(2),
-                    expectedEnergy: expectedEnergy.toFixed(2),
-                    coverage: coverage.toFixed(1)
-                });
-            }
-            
-            function displayResults(data) {
-                document.getElementById('result-region').textContent = data.regionName;
-                document.getElementById('result-phase').textContent = data.phase;
-                document.getElementById('result-bill').textContent = data.monthlyBill;
-                document.getElementById('result-consumption').textContent = data.Y + ' kWh/tháng';
-                document.getElementById('result-sunshine').textContent = data.H + ' h/ngày';
-                document.getElementById('result-panel-energy').textContent = data.E_pin + ' kWh/tháng';
-                document.getElementById('result-panels-needed').textContent = data.N + ' tấm';
-                document.getElementById('result-total-capacity').textContent = data.totalCapacity + ' kWp';
-                document.getElementById('result-expected-energy').textContent = data.expectedEnergy + ' kWh/tháng';
-                document.getElementById('result-coverage').textContent = data.coverage + '%';
-                
-                // Đề xuất gói sản phẩm
-                const packageElement = document.getElementById('recommended-package');
-                let recommendedPackage = '';
-                
-                if (data.totalCapacity <= 5) {
-                    recommendedPackage = `
-                        <div class="package-name">📦 Gói Tiết Kiệm</div>
-                        <div class="package-price">💰 45-65 triệu VNĐ</div>
-                        <div class="package-features">✅ Phù hợp cho hệ thống ${data.totalCapacity} kWp - Tấm pin Mono PERC 550W - Inverter On-Grid - Bảo hành 10 năm</div>
-                    `;
-                } else if (data.totalCapacity <= 8) {
-                    recommendedPackage = `
-                        <div class="package-name">🏠 Gói Gia Đình</div>
-                        <div class="package-price">💰 75-110 triệu VNĐ</div>
-                        <div class="package-features">✅ Phù hợp cho hệ thống ${data.totalCapacity} kWp - Tấm pin Tier 1 Longi 580W - Inverter Hybrid + Pin lưu trữ - Bảo hành 12 năm</div>
-                    `;
-                } else {
-                    const priceRange = Math.round(data.totalCapacity * 12) + '-' + Math.round(data.totalCapacity * 15);
-                    recommendedPackage = `
-                        <div class="package-name">🏢 Gói Doanh Nghiệp</div>
-                        <div class="package-price">💰 ${priceRange} triệu VNĐ</div>
-                        <div class="package-features">✅ Phù hợp cho hệ thống ${data.totalCapacity} kWp - Tấm pin công nghiệp Tier 1 - Inverter trung tâm 3 pha - Bảo hành 15 năm</div>
-                    `;
-                }
-                
-                packageElement.innerHTML = recommendedPackage;
-                
-                const resultsSection = document.getElementById('calculation-results');
-                resultsSection.style.display = 'block';
-                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            syncDisplay();
-        })();
-    </script>
-    
     <!-- Floating Action Button for Cart -->
     <a href="gio-hang.html" class="cart-fab" id="cart-fab">
         🛒
         <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
     </a>
-    
+
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
+    <script>
+        // Cấu hình sản phẩm
+        const PRODUCTS = {
+            panels: {
+                590: { id: 1, name: 'Tấm Pin Jinko Solar 590W', power: 0.59, price: 2300000 },
+                630: { id: 2, name: 'Tấm Pin Jinko Solar 630W', power: 0.63, price: 2600000 }
+            },
+            inverters_1phase: [
+                { id: 3, name: 'ECO Hybrid 5kW', capacity: 5, price: 16500000 },
+                { id: 4, name: 'ECO Hybrid 6kW', capacity: 6, price: 17500000 },
+                { id: 7, name: 'Hybrid GEN-LB-EU 6K', capacity: 6, price: 28900000 },
+                { id: 8, name: 'Hybrid GEN-LB-EU 8K', capacity: 8, price: 48000000 },
+                { id: 9, name: 'Hybrid GEN-LB-EU 10K', capacity: 10, price: 54000000 },
+                { id: 10, name: 'Hybrid LXP-12K 12kW', capacity: 12, price: 59000000 },
+                { id: 5, name: 'ECO Hybrid 12kW', capacity: 12, price: 35500000 },
+                { id: 6, name: 'ECO Hybrid 14kW', capacity: 14, price: 39000000 }
+            ],
+            inverters_3phase: [
+                { id: 13, name: 'LUXPOWER Hybrid TRIP 10K', capacity: 10, price: 69000000 },
+                { id: 11, name: 'Hybrid TriP2-LB-3P 12K', capacity: 12, price: 59000000 },
+                { id: 14, name: 'LUXPOWER Hybrid TRIP 15K', capacity: 15, price: 89000000 },
+                { id: 12, name: 'Hybrid TriP2-LB-3P 15K', capacity: 15, price: 63000000 },
+                { id: 15, name: 'LUXPOWER Hybrid TRIP 20K', capacity: 20, price: 109000000 }
+            ],
+            cabinets_1phase: [
+                { id: 19, name: 'Tủ điện Hybrid 1 pha 6kW', capacity: 6, price: 1850000 },
+                { id: 20, name: 'Tủ điện Hybrid 1 pha 12kW', capacity: 12, price: 2850000 },
+                { id: 21, name: 'Tủ điện Hybrid 1 pha 15kW', capacity: 15, price: 3800000 }
+            ],
+            cabinets_3phase: [
+                { id: 22, name: 'Tủ điện Hybrid 3 pha 15kW', capacity: 15, price: 4850000 }
+            ],
+            batteries: [
+                { id: 18, name: 'Cell BYD 173ah LiFePO4', capacity: 8.8, price: 15500000 },
+                { id: 17, name: 'Cell A-Cornex LiFePO4 16 Cell', capacity: 16, price: 50000000 }
+            ]
+        };
+
+        // Giá phụ kiện
+        const ACCESSORIES = {
+            bachZ: 20000,        // 20k/cái
+            clip: 15000,         // 15k/cái
+            jackMC4: 30000,      // 30k/bộ
+            dcCable: 20000,      // 20k/mét
+            laborBase: 6000000   // 6 triệu/công
+        };
+
+        // Bảng giá điện EVN
+        const TIER_CONFIG = [
+            { limit: 50, price: 2182 },
+            { limit: 50, price: 2255 },
+            { limit: 100, price: 2618 },
+            { limit: 100, price: 3298 },
+            { limit: 100, price: 3685 },
+            { limit: Infinity, price: 3806 }
+        ];
+
+        // Hàm tính kWh từ tiền điện
+        function calculateKWhFromBill(amount) {
+            let remaining = amount;
+            let total = 0;
+            for (const tier of TIER_CONFIG) {
+                const { limit, price } = tier;
+                if (!Number.isFinite(limit)) {
+                    total += remaining / price;
+                    break;
+                }
+                const tierCost = price * limit;
+                if (remaining >= tierCost) {
+                    total += limit;
+                    remaining -= tierCost;
+                } else {
+                    total += remaining / price;
+                    break;
+                }
+            }
+            return Math.round(total);
+        }
+
+        // Hàm format số tiền
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
+        }
+
+        // Xử lý submit form
+        document.getElementById('surveyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                fullname: formData.get('fullname'),
+                phone: formData.get('phone'),
+                region: formData.get('region'),
+                phase: parseInt(formData.get('phase')),
+                solarPanel: formData.get('solarPanel'),
+                monthlyBill: parseInt(formData.get('monthlyBill').replace(/\D/g, '')),
+                usageTime: formData.get('usageTime')
+            };
+
+            // Tính toán
+            const results = calculateSystem(data);
+            
+            // Hiển thị kết quả
+            displayResults(results);
+        });
+
+        function calculateSystem(data) {
+            // 1. Tính kWh tiêu thụ
+            const monthlyKWh = calculateKWhFromBill(data.monthlyBill);
+            
+            // 2. Giờ nắng theo khu vực
+            const sunHours = data.region === 'mien-bac' ? 3 : (data.region === 'mien-trung' ? 3.5 : 4);
+            
+            // 3. Thông tin tấm pin
+            const panelInfo = PRODUCTS.panels[data.solarPanel];
+            const energyPerPanel = panelInfo.power * sunHours * 30; // kWh/tháng
+            
+            // 4. Số tấm pin cần thiết
+            const panelsNeeded = Math.ceil(monthlyKWh / energyPerPanel);
+            const totalCapacity = panelsNeeded * panelInfo.power;
+            
+            // 5. Chọn biến tần phù hợp
+            const inverterList = data.phase === 1 ? PRODUCTS.inverters_1phase : PRODUCTS.inverters_3phase;
+            const inverter = inverterList.find(inv => inv.capacity >= totalCapacity) || inverterList[inverterList.length - 1];
+            
+            // 6. Chọn tủ điện
+            const cabinetList = data.phase === 1 ? PRODUCTS.cabinets_1phase : PRODUCTS.cabinets_3phase;
+            const cabinet = cabinetList.find(cab => cab.capacity >= inverter.capacity) || cabinetList[cabinetList.length - 1];
+            
+            // 7. Tính pin lưu trữ
+            const totalEnergy = panelsNeeded * energyPerPanel;
+            let batteryRatio;
+            switch(data.usageTime) {
+                case 'day': batteryRatio = 1/3; break;
+                case 'balanced': batteryRatio = 1/2; break;
+                case 'night': batteryRatio = 3/5; break;
+                default: batteryRatio = 1/2;
+            }
+            const batteryNeeded = totalEnergy * batteryRatio;
+            
+            // Chọn loại pin phù hợp
+            let batteries = [];
+            let remainingBattery = batteryNeeded;
+            
+            // Ưu tiên dùng pin 16 Cell trước
+            const battery16 = PRODUCTS.batteries[1]; // 16 Cell
+            const battery8 = PRODUCTS.batteries[0]; // 8 Cell
+            
+            const count16 = Math.floor(remainingBattery / battery16.capacity);
+            if (count16 > 0) {
+                batteries.push({ ...battery16, quantity: count16 });
+                remainingBattery -= count16 * battery16.capacity;
+            }
+            
+            const count8 = Math.ceil(remainingBattery / battery8.capacity);
+            if (count8 > 0) {
+                batteries.push({ ...battery8, quantity: count8 });
+            }
+            
+            // 8. Phụ kiện
+            const bachZQty = panelsNeeded * 6;
+            const clipQty = panelsNeeded * 6;
+            const jackMC4Qty = panelsNeeded;
+            
+            // 9. Công thợ
+            const laborCost = panelsNeeded <= 9 ? ACCESSORIES.laborBase : Math.ceil(panelsNeeded / 9) * ACCESSORIES.laborBase;
+            
+            // 10. Dây DC (ước tính 20m/tấm)
+            const dcCableLength = panelsNeeded * 20;
+            const dcCableCost = dcCableLength * ACCESSORIES.dcCable;
+            
+            // 11. Tổng chi phí
+            let totalCost = 0;
+            
+            // Tấm pin
+            const panelCost = panelsNeeded * panelInfo.price;
+            totalCost += panelCost;
+            
+            // Biến tần
+            totalCost += inverter.price;
+            
+            // Tủ điện
+            totalCost += cabinet.price;
+            
+            // Pin lưu trữ
+            const batteryCost = batteries.reduce((sum, b) => sum + (b.price * b.quantity), 0);
+            totalCost += batteryCost;
+            
+            // Phụ kiện
+            const accessoriesCost = (bachZQty * ACCESSORIES.bachZ) + (clipQty * ACCESSORIES.clip) + (jackMC4Qty * ACCESSORIES.jackMC4);
+            totalCost += accessoriesCost;
+            
+            // Công thợ
+            totalCost += laborCost;
+            
+            // Dây DC
+            totalCost += dcCableCost;
+            
+            return {
+                data,
+                monthlyKWh,
+                sunHours,
+                panelInfo,
+                panelsNeeded,
+                totalCapacity,
+                inverter,
+                cabinet,
+                batteries,
+                batteryNeeded,
+                accessories: {
+                    bachZ: { qty: bachZQty, cost: bachZQty * ACCESSORIES.bachZ },
+                    clip: { qty: clipQty, cost: clipQty * ACCESSORIES.clip },
+                    jackMC4: { qty: jackMC4Qty, cost: jackMC4Qty * ACCESSORIES.jackMC4 }
+                },
+                dcCable: { length: dcCableLength, cost: dcCableCost },
+                laborCost,
+                panelCost,
+                batteryCost,
+                accessoriesCost,
+                totalCost
+            };
+        }
+
+        function displayResults(results) {
+            const html = `
+                <h2>✅ Kết Quả Báo Giá Chi Tiết</h2>
+                
+                <div class="result-section">
+                    <h3>📊 Thông Tin Khách Hàng</h3>
+                    <div class="result-item">
+                        <span class="result-label">Họ tên:</span>
+                        <span class="result-value">${results.data.fullname}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Số điện thoại:</span>
+                        <span class="result-value">${results.data.phone}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Tiêu thụ điện:</span>
+                        <span class="result-value">${results.monthlyKWh} kWh/tháng</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Giờ nắng:</span>
+                        <span class="result-value">${results.sunHours} giờ/ngày</span>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>⚡ Tấm Pin Năng Lượng</h3>
+                    <div class="result-item">
+                        <span class="result-label">Loại tấm:</span>
+                        <span class="result-value">${results.panelInfo.name}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Số lượng:</span>
+                        <span class="result-value">${results.panelsNeeded} tấm</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Tổng công suất:</span>
+                        <span class="result-value">${results.totalCapacity.toFixed(2)} kWp</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Thành tiền:</span>
+                        <span class="result-value">${formatPrice(results.panelCost)}</span>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>🔌 Biến Tần & Tủ Điện</h3>
+                    <div class="result-item">
+                        <span class="result-label">Biến tần:</span>
+                        <span class="result-value">${results.inverter.name}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Giá biến tần:</span>
+                        <span class="result-value">${formatPrice(results.inverter.price)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Tủ điện:</span>
+                        <span class="result-value">${results.cabinet.name}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Giá tủ điện:</span>
+                        <span class="result-value">${formatPrice(results.cabinet.price)}</span>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>🔋 Pin Lưu Trữ</h3>
+                    <div class="result-item">
+                        <span class="result-label">Dung lượng cần:</span>
+                        <span class="result-value">${results.batteryNeeded.toFixed(2)} kWh</span>
+                    </div>
+                    ${results.batteries.map(b => `
+                        <div class="result-item">
+                            <span class="result-label">${b.name}:</span>
+                            <span class="result-value">${b.quantity} bộ</span>
+                        </div>
+                    `).join('')}
+                    <div class="result-item">
+                        <span class="result-label">Tổng tiền pin:</span>
+                        <span class="result-value">${formatPrice(results.batteryCost)}</span>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>🔧 Phụ Kiện & Lắp Đặt</h3>
+                    <div class="result-item">
+                        <span class="result-label">Bach Z:</span>
+                        <span class="result-value">${results.accessories.bachZ.qty} cái - ${formatPrice(results.accessories.bachZ.cost)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Kẹp biên:</span>
+                        <span class="result-value">${results.accessories.clip.qty} cái - ${formatPrice(results.accessories.clip.cost)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Jack MC4:</span>
+                        <span class="result-value">${results.accessories.jackMC4.qty} bộ - ${formatPrice(results.accessories.jackMC4.cost)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dây DC:</span>
+                        <span class="result-value">${results.dcCable.length}m - ${formatPrice(results.dcCable.cost)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Công thợ:</span>
+                        <span class="result-value">${formatPrice(results.laborCost)}</span>
+                    </div>
+                </div>
+
+                <div class="total-section">
+                    <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
+                    <div class="total-price">${formatPrice(results.totalCost)}</div>
+                    <p style="opacity: 0.9;">Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
+                </div>
+            `;
+            
+            document.getElementById('results').innerHTML = html;
+            document.getElementById('results').classList.add('show');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
