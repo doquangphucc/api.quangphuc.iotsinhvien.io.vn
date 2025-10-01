@@ -128,7 +128,7 @@ async function addToCart(productId, productName) {
             showNotification(`ÄÃ£ thÃªm "${productName}" vÃ o giá» hÃ ng.`);
             updateAllCartCounters(result.data.total_items);
         } else {
-            throw new Error(result.message || 'CÃ³ lá»—i xáº£y ra.');
+            throw new Error(result.message || 'Có lỗi xảy ra.');
         }
     } catch (error) {
         console.error('Add to cart error:', error);
@@ -191,7 +191,7 @@ function initializeProductActionButtons() {
 
         const productId = addButton.dataset.productId;
         const nameEl = row.querySelector('.product-specs h4');
-        const productName = nameEl ? nameEl.textContent.trim() : 'Sáº£n pháº©m';
+        const productName = nameEl ? nameEl.textContent.trim() : 'Sản phẩm';
 
         if (addButton && productId && !addButton.dataset.cartBound) {
             addButton.dataset.cartBound = 'true';
