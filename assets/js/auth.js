@@ -53,6 +53,14 @@
             logoutBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 storeUser(null); // Clear user from storage
+                
+                // Clear cart counter before reload
+                const fabCounter = document.getElementById('fab-cart-count');
+                if (fabCounter) {
+                    fabCounter.style.display = 'none';
+                    fabCounter.textContent = '0';
+                }
+                
                 window.location.reload(); // Reload the page to reset state
             });
 
