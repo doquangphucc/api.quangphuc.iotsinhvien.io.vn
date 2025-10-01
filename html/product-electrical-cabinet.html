@@ -1,0 +1,668 @@
+﻿
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Tủ điện hybrid cho hệ thống năng lượng mặt trời: lựa chọn 1 pha và 3 pha, tích hợp đầy đủ bảo vệ và giám sát." />
+    <title>Tủ Điện Hybrid - HC Eco System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    <style>
+        /* Modern Product Table Styles */
+        .product-details-table {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f6f9f2 0%, #e8f5e8 50%, #f0f8f0 100%);
+        }
+
+        .products-table {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products-table table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 2rem;
+        }
+
+        .products-table thead {
+            display: none;
+        }
+
+        .products-table tbody tr {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(63, 163, 77, 0.08);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .products-table tbody tr:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(63, 163, 77, 0.15);
+        }
+
+        .products-table tbody tr::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384, #3FA34D);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .products-table tbody tr:hover::before {
+            opacity: 1;
+        }
+
+        .product-image {
+            width: 220px;
+            min-width: 220px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2rem;
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fdf8 100%);
+        }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 12px;
+            height: 12px;
+            background: #3FA34D;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(63, 163, 77, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+            max-width: 180px;
+            object-fit: contain;
+            border-radius: 16px;
+            padding: 12px;
+            background: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .product-specs {
+            width: 45%;
+            padding: 2rem 2.5rem;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .product-specs h4 {
+            color: #3FA34D;
+            margin: 0 0 1.5rem 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .product-specs h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384);
+            border-radius: 2px;
+        }
+        .product-specs ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .product-specs ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            border-left: 3px solid #C5E384;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-specs ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(135deg, rgba(63, 163, 77, 0.1), rgba(197, 227, 132, 0.1));
+            transition: width 0.3s ease;
+        }
+
+        .product-specs ul li:hover::before {
+            width: 100%;
+        }
+
+        .product-specs ul li:hover {
+            transform: translateX(5px);
+            border-left-color: #3FA34D;
+        }
+
+        .product-specs ul li strong {
+            color: #3FA34D;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-specs ul li span {
+            color: #2d4a2d;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-price {
+            width: 200px;
+            min-width: 200px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2rem;
+            position: relative;
+            background: white;
+            color: #3FA34D;
+        }
+
+        .product-price .price-main {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #3FA34D;
+            background: rgba(63, 163, 77, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid rgba(63, 163, 77, 0.3);
+            text-shadow: 0 2px 4px rgba(63, 163, 77, 0.2);
+        }
+
+        .product-price .price-unit {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 500;
+            color: #3FA34D;
+        }
+
+        .product-actions {
+            width: 160px;
+            min-width: 160px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .product-actions .btn {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-actions .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .product-actions .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .product-actions .btn.primary {
+            background: linear-gradient(135deg, #3FA34D, #0a7d20);
+            color: white;
+            box-shadow: 0 6px 20px rgba(63, 163, 77, 0.3);
+        }
+
+        .product-actions .btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(63, 163, 77, 0.4);
+        }
+
+        .product-actions .btn.secondary {
+            background: white;
+            color: #3FA34D;
+            border: 2px solid #3FA34D;
+        }
+
+        .product-actions .btn.secondary:hover {
+            background: #3FA34D;
+            color: white;
+            transform: translateY(-3px);
+        }
+        .cart-fab .fab-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        @media (max-width: 768px) {
+            .cart-fab {
+                bottom: 70px;
+                right: 15px;
+                width: 55px;
+                height: 55px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-layout">
+        <a href="../index.html" class="branding">
+            <img class="logo-image" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+            <div class="brand-copy">
+                <div class="logo">HC<span>ECO SYSTEM</span></div>
+                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+            </div>
+        </a>
+        <div class="topbar-actions">
+            <nav class="nav">
+                <div class="nav-item nav-item--dropdown">
+                    <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
+                    <div class="nav-dropdown" role="menu">
+                        <a href="product-solar-panels.html>Tấm pin Jinko Solar</a>
+                        <a href="product-luxpower-hybrid.html>Inverter LuxPower Hybrid</a>
+                        <a href="product-luxpower-1pha.html>LuxPower Hybrid 1 Pha</a>
+                        <a href="product-luxpower-3phase.html>LuxPower Hybrid 3 Pha</a>
+                        <a href="product-luxpower-3phase-high.html>LuxPower 3 Pha Áp Cao</a>
+                        <a href="product-growatt-110kw.html>Growatt MAX 110kW</a>
+                        <a href="product-battery-storage.html>Pin lưu trữ A-Cornex</a>
+                        <a href="product-battery-byd.html>Pin lưu trữ BYD</a>
+                        <a href="product-electrical-cabinet.html>Tủ điện Hybrid</a>
+                        <a href="product-cables.html>Phụ kiện &amp; Cáp</a>
+                    </div>
+                </div>
+                <a href="index.html#solutions" class="nav-link">Giải pháp</a>
+                <a href="index.html#process" class="nav-link">Quy trình</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
+                <a href="tin-tuc.html" class="nav-link">Tin tức</a>
+                <a href="#site-footer" class="nav-link">Liên hệ</a>
+            </nav>
+            <a class="cta" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+        </div>
+    </div>
+</header>
+<div class="auth-floating" id="auth-floating">
+    <div class="auth-buttons" id="auth-buttons">
+        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+    </div>
+</div>
+<aside class="quick-contact" aria-label="Liên hệ nhanh">
+    <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hc.ecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Fanpage</strong>
+            <span>HC Eco System</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--zalo" href="https://zalo.me/0977247393" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Zalo</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>TikTok</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>YouTube</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--phone" href="tel:0977247393">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Hotline</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&query=790+Ngô+Quyền,+Phường+An+Hải,+Thành+Phố+Đà+Nẵng" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Văn phòng</strong>
+            <span>790 Ngô Quyền, Đà Nẵng</span>
+        </span>
+    </a>
+</aside>
+<main>
+    <section class="product-hero">
+        <div class="container">
+            <div class="product-hero-content">
+                <div class="product-info">
+                    <span class="eyebrow">TỦ ĐIỆN HYBRID · AN TOÀN ĐA LỚP · LẮP ĐẶT NHANH</span>
+                    <h1>Tủ Điện Hybrid Cho Hệ Năng Lượng Mặt Trời</h1>
+                    <p>Bộ tủ điện lắp ráp sẵn cho inverter hybrid, tích hợp đầy đủ bảo vệ DC/AC, chuyển mạch ATS và giao tiếp giám sát, phù hợp từ hộ gia đình tới doanh nghiệp.</p>
+                    <div class="product-highlights">
+                        <div class="highlight-item">
+                            <strong>4</strong>
+                            <span>Cấu hình tuỳ chọn</span>
+                        </div>
+                        <div class="highlight-item">
+                            <strong>IP54</strong>
+                            <span>Vỏ chống nước bụi</span>
+                        </div>
+                        <div class="highlight-item">
+                            <strong>72h</strong>
+                            <span>Hoàn thiện & bàn giao</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="product-details-table">
+        <div class="container">
+            <h2>Chi tiết các cấu hình tủ điện hybrid</h2>
+            <div class="products-table">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="product-image">
+                                <img src="../assets/img/products/electrical-cabinet.jpg" alt="Tủ điện hybrid 1 pha 6kW" />
+                            </td>
+                            <td class="product-specs">
+                                <h4>Tủ điện hybrid 1 pha · Hệ 6 kW</h4>
+                                <ul>
+                                    <li><strong>Công suất inverter:</strong> <span>5–6 kW 1 pha</span></li>
+                                    <li><strong>Ngõ vào PV:</strong> <span>100–500 VDC, 2 MPPT, 2×15 A</span></li>
+                                    <li><strong>Bảo vệ DC:</strong> <span>MCB 2P 600 VDC + SPD Type 2</span></li>
+                                    <li><strong>Bảo vệ AC:</strong> <span>MCB 2P 40 A + RCCB 30 mA</span></li>
+                                    <li><strong>Ắc quy tương thích:</strong> <span>48 VDC / 51.2 VDC lithium (100–200 Ah)</span></li>
+                                    <li><strong>Phụ kiện kèm theo:</strong> <span>ATS mini, đồng hồ kWh</span></li>
+                                </ul>
+                            </td>
+                            <td class="product-price">
+                                <div class="price-main">1.850.000₫</div>
+                                <div class="price-unit">1,85 triệu</div>
+                            </td>
+                            <td class="product-actions">
+                                <button class="btn primary" data-product-id="19">🛒 Thêm vào giỏ hàng</button>
+                                <button class="btn secondary">💬 Mua hàng</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="product-image">
+                                <img src="../assets/img/products/electrical-cabinet.jpg" alt="Tủ điện hybrid 1 pha 12kW" />
+                            </td>
+                            <td class="product-specs">
+                                <h4>Tủ điện hybrid 1 pha · Hệ 12 kW</h4>
+                                <ul>
+                                    <li><strong>Công suất inverter:</strong> <span>10–12 kW 1 pha</span></li>
+                                    <li><strong>Ngõ vào PV:</strong> <span>150–600 VDC, 3 MPPT, 3×20 A</span></li>
+                                    <li><strong>Bảo vệ DC:</strong> <span>MCB 3P 1000 VDC + SPD Type 1+2</span></li>
+                                    <li><strong>Bảo vệ AC:</strong> <span>MCB 2P 63 A + RCCB 100 A/30 mA</span></li>
+                                    <li><strong>Lưu trữ đề xuất:</strong> <span>Pin lithium 48 VDC 200–400 Ah</span></li>
+                                    <li><strong>Tính năng bổ sung:</strong> <span>Bộ chuyển nguồn ATS, cầu dao bảo trì</span></li>
+                                </ul>
+                            </td>
+                            <td class="product-price">
+                                <div class="price-main">2.850.000₫</div>
+                                <div class="price-unit">2,85 triệu</div>
+                            </td>
+                            <td class="product-actions">
+                                <button class="btn primary" data-product-id="20">🛒 Thêm vào giỏ hàng</button>
+                                <button class="btn secondary">💬 Mua hàng</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="product-image">
+                                <img src="../assets/img/products/electrical-cabinet.jpg" alt="Tủ điện hybrid 3 pha 15kW" />
+                            </td>
+                            <td class="product-specs">
+                                <h4>Tủ điện hybrid 3 pha · Hệ 15 kW</h4>
+                                <ul>
+                                    <li><strong>Công suất inverter:</strong> <span>12–15 kW 3 pha</span></li>
+                                    <li><strong>Ngõ vào PV:</strong> <span>200–1000 VDC, 3 MPPT, 3×32 A</span></li>
+                                    <li><strong>Bảo vệ DC:</strong> <span>DC isolator 4P 1000 VDC + SPD Type 2</span></li>
+                                    <li><strong>Bảo vệ AC:</strong> <span>MCB 3P 50 A + MCCB phụ tải</span></li>
+                                    <li><strong>Lưu trữ tương thích:</strong> <span>Pin lithium 96 V/160 V (≥ 200 Ah)</span></li>
+                                    <li><strong>Giám sát:</strong> <span>CT đo dòng 3 pha + cổng RS485/WiFi</span></li>
+                                </ul>
+                            </td>
+                            <td class="product-price">
+                                <div class="price-main">3.800.000₫</div>
+                                <div class="price-unit">3,8 triệu</div>
+                            </td>
+                            <td class="product-actions">
+                                <button class="btn primary" data-product-id="21">🛒 Thêm vào giỏ hàng</button>
+                                <button class="btn secondary">💬 Mua hàng</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="product-image">
+                                <img src="../assets/img/products/electrical-cabinet.jpg" alt="Tủ điện giám sát trung tâm" />
+                            </td>
+                            <td class="product-specs">
+                                <h4>Tủ điện giám sát & phân phối · Trạm 20–30 kW</h4>
+                                <ul>
+                                    <li><strong>Công suất hệ thống:</strong> <span>20–30 kW hybrid/ongrid</span></li>
+                                    <li><strong>Ngõ vào PV:</strong> <span>3 string 250–1100 VDC, 40 A/string</span></li>
+                                    <li><strong>Bảo vệ AC:</strong> <span>MCCB 3P 100 A, contactor ATS 4P</span></li>
+                                    <li><strong>Giám sát:</strong> <span>SCADA mini, đồng hồ đa năng 3 pha</span></li>
+                                    <li><strong>Kết nối:</strong> <span>WiFi/LAN/4G, hỗ trợ Modbus TCP</span></li>
+                                    <li><strong>Tiện ích:</strong> <span>Busbar đồng đúc, quạt thông gió, đèn bảo dưỡng</span></li>
+                                </ul>
+                            </td>
+                            <td class="product-price">
+                                <div class="price-main">4.850.000₫</div>
+                                <div class="price-unit">4,85 triệu</div>
+                            </td>
+                            <td class="product-actions">
+                                <button class="btn primary" data-product-id="22">🛒 Thêm vào giỏ hàng</button>
+                                <button class="btn secondary">💬 Mua hàng</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <section class="product-features">
+        <div class="container">
+            <h2>Tính năng nổi bật của tủ điện HC Eco System</h2>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Bảo vệ toàn diện</h3>
+                    <p>Trang bị đầy đủ MCB, RCCB, SPD và isolator giúp hệ thống an toàn trước quá áp, quá tải và phóng điện sét.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon">🌧️</div>
+                    <h3>Chuẩn ngoài trời</h3>
+                    <p>Vỏ tủ sơn tĩnh điện, đạt IP54–IP65, chịu được môi trường nắng nóng, bụi và hơi ẩm ven biển.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Giám sát linh hoạt</h3>
+                    <p>Hỗ trợ giao thức Modbus, tích hợp CT đo dòng và cổng WiFi/LAN/4G, theo dõi từ xa qua ứng dụng.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Lắp đặt nhanh chóng</h3>
+                    <p>Tủ đấu nối sẵn, sơ đồ rõ ràng, cho phép kỹ thuật viên triển khai trong vài giờ và dễ bảo trì.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="container">
+            <div class="content">
+                <h2>Cần tư vấn cấu hình tủ điện?</h2>
+                <p>Đội ngũ kỹ thuật HC Eco System luôn sẵn sàng thiết kế và tuỳ chỉnh tủ điện theo yêu cầu thực tế của dự án.</p>
+            </div>
+            <a class="btn primary" href="index.html#contact">Nhận tư vấn miễn phí</a>
+        </div>
+    </section>
+</main>
+<footer id="site-footer" class="footer">
+    <div class="container footer-layout">
+        <div class="footer-left">
+            <a href="../index.html" class="footer-branding">
+                <img class="footer-logo" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                <div class="footer-brand-copy">
+                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
+                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+                </div>
+            </a>
+            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+        </div>
+        <div class="footer-center">
+            <h4>Thông tin liên hệ</h4>
+            <ul class="contact-info">
+                <li><strong>Hotline:</strong> 0977 247 393</li>
+                <li><strong>Zalo:</strong> 0977 247 393</li>
+                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                <li><strong>Website:</strong> hcecosystem.vn</li>
+                <li><strong>Mã số thuế:</strong> 0123456789</li>
+                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+            </ul>
+        </div>
+        <div class="footer-right">
+            <h4>Chính sách &amp; Dịch vụ</h4>
+            <ul class="policy-links">
+                <li><a href="tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
+                <li><a href="dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
+                <li><a href="chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
+                <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                <li><a href="chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
+                <li><a href="tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<a href="gio-hang.html" class="cart-fab" id="cart-fab">
+    🛒
+    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
+</a>
+
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/shopping-cart.js"></script>
+<script>
+function updateAllCartCounters() {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const fabCounter = document.getElementById('fab-cart-count');
+    if (fabCounter) {
+        if (totalItems > 0) {
+            fabCounter.textContent = totalItems;
+            fabCounter.style.display = 'flex';
+        } else {
+            fabCounter.style.display = 'none';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateAllCartCounters();
+    window.addEventListener('storage', updateAllCartCounters);
+});
+</script>
+
+</body>
+</html>

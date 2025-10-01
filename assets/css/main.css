@@ -1,0 +1,95 @@
+﻿@charset "UTF-8";
+/* Main CSS - Import all modules */
+@import url('base.css');
+@import url('layout.css');
+@import url('header.css');
+@import url('hero.css');
+@import url('components.css');
+@import url('sections.css');
+@import url('footer.css');
+@import url('pricing.css');
+@import url('products.css');
+@import url('news.css');
+@import url('responsive.css');
+
+:root {
+    --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --font-heading: 'Sora', 'Inter', 'Segoe UI', Arial, sans-serif;
+    /* Solar Green Palette - Năng Lượng Mặt Trời */
+    --color-green: #3FA34D;        /* Primary green - Xanh lá tươi sáng (button, menu) */
+    --color-green-dark: #1E5631;   /* Dark green - Xanh lá công nghệ đậm (header, text nổi bật) */
+    --color-green-light: #77DD77;  /* Light green - Xanh lá sáng nhẹ (background, hover) */
+    --color-yellow: #C5E384;       /* Yellow-green pastel - Vàng xanh pastel (CTA, highlight) */
+    --color-white: #ffffff;
+    --color-bg: #F4F9E9;           /* Off-white green - Trắng ngả xanh (nền tổng thể) */
+    --color-text: #1E5631;         /* Dark green for text */
+    --color-muted: #3FA34D;        /* Primary green for muted text */
+    --max-width: 1120px;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+/* Cart icons */
+.cart-cta-inline {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.cart-fab {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--color-green), var(--color-green-dark));
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 8px 25px rgba(63, 163, 77, 0.35);
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 999;
+    text-decoration: none;
+}
+
+.cart-fab:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 12px 35px rgba(63, 163, 77, 0.45);
+}
+
+.cart-fab .fab-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+}
+
+@media (max-width: 768px) {
+    .cart-fab {
+        bottom: 70px;
+        right: 15px;
+        width: 55px;
+        height: 55px;
+        font-size: 1.3rem;
+    }
+}
+
+

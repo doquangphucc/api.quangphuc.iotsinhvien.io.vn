@@ -1,0 +1,385 @@
+
+document.addEventListener('DOMContentLoaded', () => {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const selectAllCheckbox = document.getElementById('select-all');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const summarySection = document.querySelector('.cart-summary');
+    const headerRow = document.querySelector('.cart-header');
+    const selectAllWrapper = document.querySelector('.select-all');
+
+    if (!cartItemsContainer || !selectAllCheckbox || !checkoutBtn) {
+        return;
+    }
+
+    let cartItems = [];
+    let selectedItemIds = new Set();
+
+    function formatPrice(price) {
+        const value = Number(price) || 0;
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+    }
+
+    function syncCartIndicator() {
+        if (typeof updateAllCartCounters === 'function') {
+            const totalItems = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+            updateAllCartCounters(totalItems);
+        }
+    }
+
+    function toggleCartSections(isVisible) {
+        const displayValue = isVisible ? '' : 'none';
+        if (summarySection) summarySection.style.display = displayValue;
+        if (headerRow) headerRow.style.display = displayValue;
+        if (selectAllWrapper) selectAllWrapper.style.display = displayValue;
+
+        if (!isVisible) {
+            if (selectAllCheckbox) selectAllCheckbox.checked = false;
+            const selectedCountEl = document.getElementById('selected-count');
+            const subtotalEl = document.getElementById('subtotal');
+            const totalEl = document.getElementById('total-amount');
+
+            if (selectedCountEl) selectedCountEl.textContent = '0';
+            if (subtotalEl) subtotalEl.textContent = formatPrice(0);
+            if (totalEl) totalEl.textContent = formatPrice(0);
+
+            checkoutBtn.disabled = true;
+            checkoutBtn.style.opacity = '0.5';
+        }
+    }
+
+    function renderEmptyCart() {
+        cartItems = [];
+        selectedItemIds = new Set();
+        toggleCartSections(false);
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart">
+                <div class="icon">&#128722;</div>
+                <h3>Gio hang cua ban dang trong</h3>
+                <p>Hay kham pha cac san pham cua chung toi va them vao gio nhe!</p>
+                <a href="pricing.html" class="btn primary" style="margin-top: 1rem;">Bang gia san pham</a>
+            </div>
+        `;
+        syncCartIndicator();
+    }
+
+    function renderNotLoggedIn() {
+        cartItems = [];
+        selectedItemIds = new Set();
+        toggleCartSections(false);
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart">
+                <div class="icon">&#128274;</div>
+                <h3>Vui long dang nhap</h3>
+                <p>Ban can dang nhap de xem gio hang va mua sam.</p>
+                <a href="login.html" class="btn primary" style="margin-top: 1rem;">Dang nhap ngay</a>
+            </div>
+        `;
+        syncCartIndicator();
+    }
+
+    function renderCartItems() {
+        if (!cartItems.length) {
+            renderEmptyCart();
+            return;
+        }
+
+        toggleCartSections(true);
+
+        const wasSelectAllChecked = selectAllCheckbox.checked;
+        const previousSelection = new Set(selectedItemIds);
+
+        cartItemsContainer.innerHTML = cartItems.map(item => `
+            <div class="cart-item" data-id="${item.id}">
+                <input type="checkbox" class="item-checkbox">
+                <div class="item-info">
+                    <img src="${item.image_url}" alt="${item.name}" class="item-image">
+                    <div class="item-details">
+                        <h4>${item.name}</h4>
+                        <p>${item.specifications || ''}</p>
+                    </div>
+                </div>
+                <div class="item-price">${formatPrice(item.price)}</div>
+                <div class="item-quantity">
+                    <button class="qty-btn" data-id="${item.id}" data-change="-1" type="button">-</button>
+                    <input type="number" class="qty-input" value="${item.quantity}" min="1" data-id="${item.id}">
+                    <button class="qty-btn" data-id="${item.id}" data-change="1" type="button">+</button>
+                </div>
+                <div class="item-total">${formatPrice(item.price * item.quantity)}</div>
+                <button class="remove-btn" type="button" data-id="${item.id}" title="Xoa san pham">&times;</button>
+            </div>
+        `).join('');
+
+        selectedItemIds = new Set();
+
+        const checkboxes = cartItemsContainer.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(checkbox => {
+            const id = checkbox.closest('.cart-item').dataset.id;
+            const shouldCheck = previousSelection.size > 0 ? previousSelection.has(id) : false;
+            if (shouldCheck) {
+                checkbox.checked = true;
+                selectedItemIds.add(id);
+            }
+        });
+
+        if (wasSelectAllChecked && cartItems.length > 0 && selectedItemIds.size < cartItems.length) {
+            selectedItemIds = new Set(cartItems.map(item => item.id));
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+
+        updateCartSummary();
+        syncCartIndicator();
+    }
+
+    async function updateQuantity(cartItemId, newQuantity) {
+        const parsedQuantity = Number(newQuantity);
+        if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
+            return;
+        }
+
+        const targetItem = cartItems.find(item => item.id === cartItemId);
+        if (!targetItem || targetItem.quantity === parsedQuantity) {
+            return;
+        }
+
+        const previousCartItems = cartItems.map(item => ({ ...item }));
+        const previousSelection = new Set(selectedItemIds);
+
+        if (parsedQuantity === 0) {
+            cartItems = cartItems.filter(item => item.id !== cartItemId);
+            selectedItemIds.delete(cartItemId);
+        } else {
+            cartItems = cartItems.map(item =>
+                item.id === cartItemId ? { ...item, quantity: parsedQuantity } : item
+            );
+        }
+
+        renderCartItems();
+
+        try {
+            const response = await fetch('api/update_cart_item.php', {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cart_item_id: cartItemId,
+                    quantity: parsedQuantity
+                })
+            });
+
+            if (response.status === 401) {
+                if (window.authUtils) {
+                    authUtils.clearUser();
+                }
+                renderNotLoggedIn();
+                return;
+            }
+
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.message || 'Cap nhat that bai');
+            }
+        } catch (error) {
+            console.error('Failed to update quantity:', error);
+            cartItems = previousCartItems;
+            selectedItemIds = previousSelection;
+            renderCartItems();
+            alert('Loi: Khong the cap nhat so luong.');
+        }
+    }
+
+    async function removeItem(cartItemId) {
+        const previousCartItems = cartItems.map(item => ({ ...item }));
+        const previousSelection = new Set(selectedItemIds);
+
+        cartItems = cartItems.filter(item => item.id !== cartItemId);
+        selectedItemIds.delete(cartItemId);
+        renderCartItems();
+
+        try {
+            const response = await fetch('api/remove_from_cart.php', {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cart_item_id: cartItemId })
+            });
+
+            if (response.status === 401) {
+                if (window.authUtils) {
+                    authUtils.clearUser();
+                }
+                renderNotLoggedIn();
+                return;
+            }
+
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.message || 'Xoa that bai');
+            }
+        } catch (error) {
+            console.error('Failed to remove item:', error);
+            cartItems = previousCartItems;
+            selectedItemIds = previousSelection;
+            renderCartItems();
+            alert('Loi: Khong the xoa san pham.');
+        }
+    }
+
+    function updateCartSummary() {
+        const selectedCheckboxes = cartItemsContainer.querySelectorAll('.item-checkbox:checked');
+        const selectedItems = Array.from(selectedCheckboxes)
+            .map(cb => {
+                const id = cb.closest('.cart-item').dataset.id;
+                return cartItems.find(item => item.id === id);
+            })
+            .filter(Boolean);
+
+        selectedItemIds = new Set(selectedItems.map(item => item.id));
+
+        const subtotal = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+
+        const selectedCountEl = document.getElementById('selected-count');
+        const subtotalEl = document.getElementById('subtotal');
+        const totalEl = document.getElementById('total-amount');
+
+        if (selectedCountEl) selectedCountEl.textContent = String(totalQuantity);
+        if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal);
+        if (totalEl) totalEl.textContent = formatPrice(subtotal);
+
+        const hasSelection = selectedItems.length > 0;
+        checkoutBtn.disabled = !hasSelection;
+        checkoutBtn.style.opacity = hasSelection ? '1' : '0.5';
+
+        if (selectAllCheckbox) {
+            const allCheckboxes = cartItemsContainer.querySelectorAll('.item-checkbox');
+            if (!allCheckboxes.length) {
+                selectAllCheckbox.checked = false;
+            } else {
+                const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+            }
+        }
+    }
+
+    function proceedToCheckout() {
+        if (!selectedItemIds.size) {
+            alert('Vui long chon san pham de thanh toan.');
+            return;
+        }
+
+        const checkoutItems = cartItems.filter(item => selectedItemIds.has(item.id));
+        if (!checkoutItems.length) {
+            alert('Vui long chon san pham de thanh toan.');
+            return;
+        }
+
+        localStorage.setItem('checkoutItems', JSON.stringify(checkoutItems));
+        window.location.href = 'dat-hang.html';
+    }
+
+    async function fetchCart() {
+        try {
+            const response = await fetch('api/get_cart.php', { credentials: 'include' });
+
+            if (response.status === 401) {
+                if (window.authUtils) {
+                    authUtils.clearUser();
+                }
+                renderNotLoggedIn();
+                return;
+            }
+
+            const result = await response.json();
+            if (result.success && result.data && Array.isArray(result.data.cart)) {
+                const previousSelection = new Set(selectedItemIds);
+                cartItems = result.data.cart.map(item => ({
+                    ...item,
+                    id: String(item.id),
+                    quantity: Math.max(1, Number(item.quantity) || 1),
+                    price: Number(item.price) || 0,
+                    image_url: item.image_url || '',
+                    specifications: item.specifications || ''
+                }));
+                selectedItemIds = new Set(cartItems.filter(item => previousSelection.has(item.id)).map(item => item.id));
+                renderCartItems();
+            } else {
+                renderEmptyCart();
+            }
+        } catch (error) {
+            console.error('Failed to fetch cart:', error);
+            cartItems = [];
+            selectedItemIds = new Set();
+            toggleCartSections(false);
+            cartItemsContainer.innerHTML = `
+                <div class="empty-cart">
+                    <p>Khong the tai gio hang. Vui long thu lai.</p>
+                </div>
+            `;
+            syncCartIndicator();
+        }
+    }
+
+    selectAllCheckbox.addEventListener('change', () => {
+        const shouldSelectAll = selectAllCheckbox.checked;
+        const allCheckboxes = cartItemsContainer.querySelectorAll('.item-checkbox');
+        allCheckboxes.forEach(checkbox => {
+            checkbox.checked = shouldSelectAll;
+        });
+        updateCartSummary();
+    });
+
+    checkoutBtn.addEventListener('click', proceedToCheckout);
+
+    cartItemsContainer.addEventListener('click', (event) => {
+        const target = event.target;
+        const cartItem = target.closest('.cart-item');
+        if (!cartItem) {
+            return;
+        }
+        const cartItemId = cartItem.dataset.id;
+
+        if (target.matches('.qty-btn')) {
+            const change = Number(target.dataset.change);
+            if (Number.isInteger(change)) {
+                const item = cartItems.find(i => i.id === cartItemId);
+                if (item) {
+                    const nextQuantity = item.quantity + change;
+                    if (nextQuantity > 0) {
+                        updateQuantity(cartItemId, nextQuantity);
+                    }
+                }
+            }
+        }
+
+        if (target.matches('.remove-btn')) {
+            if (confirm('Ban chac muon xoa san pham nay?')) {
+                removeItem(cartItemId);
+            }
+        }
+    });
+
+    cartItemsContainer.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target.matches('.item-checkbox')) {
+            updateCartSummary();
+            return;
+        }
+
+        if (target.matches('.qty-input')) {
+            const cartItemId = target.closest('.cart-item').dataset.id;
+            const newQuantity = Number(target.value);
+            if (!Number.isNaN(newQuantity) && newQuantity > 0) {
+                updateQuantity(cartItemId, newQuantity);
+            } else {
+                const item = cartItems.find(i => i.id === cartItemId);
+                if (item) {
+                    target.value = item.quantity;
+                }
+            }
+        }
+    });
+
+    fetchCart();
+});

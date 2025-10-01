@@ -1,0 +1,414 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Giải pháp lắp đặt pin năng lượng mặt trời cho hộ gia đình và doanh nghiệp." />
+    <title>HC Eco System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=vietnamese" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" type="image/jpeg" href="assets/img/logo.jpg" />
+    <style>
+    /* Floating Action Button for Cart */
+    .cart-fab {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #3FA34D, #1E5631);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+        cursor: pointer;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 999;
+        text-decoration: none;
+    }
+
+    .cart-fab:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 12px 35px rgba(63, 163, 77, 0.4);
+    }
+
+    .cart-fab .fab-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+    }
+
+    @media (max-width: 768px) {
+        .cart-fab {
+            bottom: 70px;
+            right: 15px;
+            width: 55px;
+            height: 55px;
+            font-size: 1.3rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    
+<header class="topbar">
+    <div class="container topbar-layout">
+        <a href="index.html" class="branding">
+            <img class="logo-image" src="assets/img/logo.jpg" alt="Logo HC Eco System" />
+            <div class="brand-copy">
+                <div class="logo">HC<span>ECO SYSTEM</span></div>
+                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+            </div>
+        </a>
+        <div class="topbar-actions">
+                <nav class="nav">
+                    <div class="nav-item nav-item--dropdown">
+                        <a href="html/pricing.html" class="nav-link">Bảng giá sản phẩm</a>
+                        <div class="nav-dropdown" role="menu">
+                            <a href="html/product-solar-panels.html">Tấm pin Jinko Solar</a>
+                            <a href="html/product-luxpower-hybrid.html">Inverter LuxPower Hybrid</a>
+                            <a href="html/product-luxpower-1pha.html">LuxPower Hybrid 1 Pha</a>
+                            <a href="html/product-luxpower-3phase.html">LuxPower Hybrid 3 Pha</a>
+                            <a href="html/product-luxpower-3phase-high.html">LuxPower 3 Pha Áp Cao</a>
+                            <a href="html/product-growatt-110kw.html">Growatt MAX 110kW</a>
+                            <a href="html/product-battery-storage.html">Pin lưu trữ A-Cornex</a>
+                            <a href="html/product-battery-byd.html">Pin lưu trữ BYD</a>
+                            <a href="html/product-electrical-cabinet.html">Tủ điện Hybrid</a>
+                            <a href="html/product-cables.html">Phụ kiện &amp; Cáp</a>
+                        </div>
+                    </div>
+                    <a href="index.html#solutions" class="nav-link">Giải pháp</a>
+                    <a href="index.html#process" class="nav-link">Quy trình</a>
+                    <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
+                    <a href="html/tin-tuc.html" class="nav-link">Tin tức</a>
+                    <a href="#site-footer" class="nav-link">Liên hệ</a>
+                </nav>
+            <a class="cta" href="html/khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+        </div>
+    </div>
+</header>
+<div class="auth-floating" id="auth-floating">
+    <div class="auth-buttons" id="auth-buttons">
+        <a class="auth-btn auth-btn--login" href="html/login.html">Đăng nhập</a>
+        <a class="auth-btn auth-btn--register" href="html/register.html">Đăng ký</a>
+    </div>
+    
+</div>
+
+
+
+    
+<aside class="quick-contact" aria-label="Liên hệ nhanh">
+    <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hc.ecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Fanpage</strong>
+            <span>HC Eco System</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--zalo" href="https://zalo.me/0977247393" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Zalo</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>TikTok</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>YouTube</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--phone" href="tel:0977247393">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Hotline</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&query=790+Ng%C3%B4+Quy%E1%BB%81n,+Ph%C6%B0%E1%BB%9Dng+An+H%E1%BA%A3i,+Th%C3%A0nh+Ph%E1%BB%91+%C4%90%C3%A0+N%E1%BA%B5ng" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Văn phòng</strong>
+            <span>790 Ngô Quyền, Đà Nẵng</span>
+        </span>
+    </a>
+</aside>
+
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <span class="eyebrow">Lắp đặt nhanh chóng · Hiệu suất tối ưu</span>
+                    <h1>Tiết kiệm chi phí điện với hệ thống pin năng lượng mặt trời chuẩn quốc tế</h1>
+                    <p>Chúng tôi thiết kế và thi công trọn gói hệ thống NLMT phù hợp cho mái nhà hộ gia đình, nhà xưởng và tòa nhà thương mại, đảm bảo giảm tới 60% hóa đơn tiền điện.</p>
+                    <div class="hero-actions">
+                        <a class="btn primary" href="html/khao-sat-dien-mat-troi.html">Khảo sát miễn phí</a>
+                        <a class="btn secondary" href="#solutions">Xem gói giải pháp</a>
+                    </div>
+                </div>
+                <div class="hero-card">
+                    <div class="stats">
+                        <article>
+                            <h3>250+</h3>
+                            <p>Dự án đã triển khai</p>
+                        </article>
+                        <article>
+                            <h3>98%</h3>
+                            <p>Khách hàng hài lòng</p>
+                        </article>
+                    </div>
+                    <ul class="highlights">
+                        <li>Thiết kế tối ưu theo mái nhà</li>
+                        <li>Bảo hành hệ thống đến 12 năm</li>
+                        <li>Theo dõi sản lượng trực tuyến 24/7</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="solutions" class="solutions">
+            <div class="container">
+                <header>
+                    <h2>Giải pháp phù hợp cho mọi nhu cầu</h2>
+                    <p>Chọn gói lắp đặt đáp ứng nhu cầu sử dụng điện và diện tích mái của bạn.</p>
+                </header>
+                <div class="grid">
+                    <article class="card">
+                        <h3>Gói Gia Đình</h3>
+                        <p>Hệ thống 3-5 kWp, phù hợp nhà phố, biệt thự. Thiết bị quốc tế, bảo hiểm sản lượng.</p>
+                        <ul>
+                            <li>Bộ inverter hybrid</li>
+                            <li>Giám sát qua ứng dụng di động</li>
+                            <li>Bảo hành vật tư 12 năm</li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Gói Doanh Nghiệp</h3>
+                        <p>Lắp đặt 20-200 kWp, tối ưu cho nhà xưởng, trang trại. Hỗ trợ thủ tục đấu nối.</p>
+                        <ul>
+                            <li>Phân tích ROI chi tiết</li>
+                            <li>Hệ khung nhôm định hình cao cấp</li>
+                            <li>Chăm sóc vận hành định kỳ</li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Gói Tiết Kiệm</h3>
+                        <p>Giải pháp NLMT hòa lưới bán phần, phù hợp ngân sách tối ưu nhưng vẫn hiệu quả.</p>
+                        <ul>
+                            <li>Linh kiện đạt tiêu chuẩn IEC</li>
+                            <li>Lắp đặt trong 3 ngày</li>
+                            <li>Hỗ trợ trả góp 0%</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="benefits" class="benefits">
+            <div class="container">
+                <h2>Vì sao chọn HC Eco System?</h2>
+                <div class="grid">
+                    <article>
+                        <h3>Kỹ thuật viên chứng nhận</h3>
+                        <p>Đội ngũ được đào tạo bởi các hãng dẫn đầu như Longi, Sungrow, đảm bảo thi công chuẩn quốc tế.</p>
+                    </article>
+                    <article>
+                        <h3>Giải pháp tùy chỉnh</h3>
+                        <p>Phân tích nhu cầu điện năng, thiết kế theo không gian mái để tối ưu sản lượng.</p>
+                    </article>
+                    <article>
+                        <h3>Hỗ trợ vận hành 24/7</h3>
+                        <p>Đội ngũ kỹ thuật trực hotline, hỗ trợ từ xa và bảo trì định kỳ trong suốt vòng đời hệ thống.</p>
+                    </article>
+                    <article>
+                        <h3>Đảm bảo tài chính</h3>
+                        <p>Cung cấp giải pháp trả góp linh hoạt, hỗ trợ vay vốn xanh lãi suất thấp từ ngân hàng đối tác.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="process" class="process">
+            <div class="container">
+                <h2>Quy trình triển khai trong 5 bước</h2>
+                <div class="steps">
+                    <article>
+                        <span class="step-number">01</span>
+                        <h3>Khảo sát &amp; đo đạc</h3>
+                        <p>Kỹ sư đến trực tiếp để khảo sát mái, đo bức xạ và đánh giá hạ tầng điện.</p>
+                    </article>
+                    <article>
+                        <span class="step-number">02</span>
+                        <h3>Thiết kế mô phỏng</h3>
+                        <p>Đưa ra sơ đồ lắp đặt 3D và dự báo sản lượng, thời gian hoàn vốn.</p>
+                    </article>
+                    <article>
+                        <span class="step-number">03</span>
+                        <h3>Ký kết &amp; thi công</h3>
+                        <p>Chuẩn hóa hợp đồng, triển khai thi công an toàn, hoàn tất trong 3-7 ngày.</p>
+                    </article>
+                    <article>
+                        <span class="step-number">04</span>
+                        <h3>Nghiệm thu &amp; đấu nối</h3>
+                        <p>Kết nối hệ thống với lưới điện, bàn giao tài liệu hướng dẫn vận hành.</p>
+                    </article>
+                    <article>
+                        <span class="step-number">05</span>
+                        <h3>Theo dõi &amp; bảo trì</h3>
+                        <p>Giám sát sản lượng từ xa, vệ sinh tấm pin định kỳ, phản hồi sự cố trong 4h.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-banner">
+            <div class="container">
+                <div class="content">
+                    <h2>Tối ưu hóa chi phí điện ngay hôm nay</h2>
+                    <p>Đăng ký khảo sát miễn phí để được tư vấn giải pháp phù hợp nhất cho mái nhà của bạn.</p>
+                </div>
+                <a class="btn primary" href="html/khao-sat-dien-mat-troi.html">Đặt lịch khảo sát</a>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <div class="info">
+                    <h2>Liên hệ HC Eco System</h2>
+                    <p>Gọi ngay cho chúng tôi hoặc điền thông tin để được chuyên gia liên hệ trong vòng 24h.</p>
+                    <ul>
+                        <li><strong>Hotline:</strong> 0977247393</li>
+                        <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                        <li><strong>Địa chỉ:</strong> 790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                    </ul>
+                </div>
+                <form class="form">
+                    <label>Họ và tên
+                        <input type="text" name="name" placeholder="Nguyễn Văn A" required />
+                    </label>
+                    <label>Số điện thoại
+                        <input type="tel" name="phone" placeholder="090x xxx xxx" required />
+                    </label>
+                    <label>Nhu cầu lắp đặt
+                        <select name="service" required>
+                            <option value="">Chọn nhu cầu của bạn</option>
+                            <option value="home">Gia đình</option>
+                            <option value="business">Doanh nghiệp</option>
+                            <option value="farm">Trang trại</option>
+                        </select>
+                    </label>
+                    <label>Ghi chú
+                        <textarea name="message" rows="3" placeholder="Diện tích mái, thời gian thuận tiện..."></textarea>
+                    </label>
+                    <button type="submit" class="btn primary">Gửi thông tin</button>
+                </form>
+            </div>
+        </section></main>
+
+    
+<footer id="site-footer" class="footer">
+    <div class="container footer-layout">
+        <div class="footer-left">
+            <a href="index.html" class="footer-branding">
+                <img class="footer-logo" src="assets/img/logo.jpg" alt="Logo HC Eco System" />
+                <div class="footer-brand-copy">
+                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
+                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+                </div>
+            </a>
+            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+        </div>
+        <div class="footer-center">
+            <h4>Thông tin liên hệ</h4>
+            <ul class="contact-info">
+                <li><strong>Hotline:</strong> 0977 247 393</li>
+                <li><strong>Zalo:</strong> 0977 247 393</li>
+                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                <li><strong>Website:</strong> hcecosystem.vn</li>
+                <li><strong>Mã số thuế:</strong> 0123456789</li>
+                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+            </ul>
+        </div>
+        <div class="footer-right">
+            <h4>Chính sách &amp; Dịch vụ</h4>
+            <ul class="policy-links">
+                    <li><a href="html/tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
+                    <li><a href="html/dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
+                    <li><a href="html/chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
+                    <li><a href="html/chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                    <li><a href="html/chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                    <li><a href="html/chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
+                    <li><a href="html/tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
+                </ul>
+        </div>
+    </div>
+</footer>
+
+<!-- Floating Action Button for Cart -->
+<a href="html/gio-hang.html" class="cart-fab" id="cart-fab">
+    🛒
+    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
+</a>
+
+<script src="assets/js/shopping-cart.js"></script>
+<script src="assets/js/auth.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+

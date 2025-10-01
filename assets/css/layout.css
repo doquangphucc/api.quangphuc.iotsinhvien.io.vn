@@ -1,0 +1,39 @@
+﻿/* Layout & Container Styles */
+.container {
+    width: min(92%, var(--max-width));
+    margin: 0 auto;
+}
+
+/* Grid Systems */
+.grid {
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.solutions .grid,
+.benefits .grid {
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* Section Base Styles */
+section {
+    padding: 4.5rem 0;
+}
+
+section header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+section header h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+section header p {
+    margin-top: 1rem;
+    color: var(--color-muted);
+}

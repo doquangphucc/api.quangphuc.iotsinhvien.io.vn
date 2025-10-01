@@ -1,0 +1,474 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="Điều Khoản &amp; Điều Kiện - HC Eco System" name="description"/>
+  <title>
+   Điều Khoản &amp; Điều Kiện - HC Eco System
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap&amp;subset=vietnamese" rel="stylesheet"/>
+  <link href="../assets/css/main.css" rel="stylesheet">
+   <link href="../assets/img/logo.jpg" rel="icon" type="image/jpeg">
+   </link>
+  </link>
+   <style>
+    /* Floating Action Button for Cart */
+    .cart-fab {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #3FA34D, #1E5631);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+        cursor: pointer;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 999;
+        text-decoration: none;
+    }
+
+    .cart-fab:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 12px 35px rgba(63, 163, 77, 0.4);
+    }
+
+    .cart-fab .fab-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+    }
+
+    @media (max-width: 768px) {
+        .cart-fab {
+            bottom: 70px;
+            right: 15px;
+            width: 55px;
+            height: 55px;
+            font-size: 1.3rem;
+        }
+    }
+    </style>
+ </head>
+ <body>
+  <header class="topbar">
+   <div class="container topbar-layout">
+    <a class="branding" href="../index.html">
+     <img alt="Logo HC Eco System" class="logo-image" src="../assets/img/logo.jpg"/>
+     <div class="brand-copy">
+      <div class="logo">
+       HC
+       <span>
+        ECO SYSTEM
+       </span>
+      </div>
+      <p>
+       Giải pháp bền vững cho năng lượng tương lai
+      </p>
+     </div>
+    </a>
+    <div class="topbar-actions">
+                     <nav class="nav">
+                         <div class="nav-item nav-item--dropdown">
+                             <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
+                             <div class="nav-dropdown" role="menu">
+                                 <a href="product-solar-panels.html>Tấm pin Jinko Solar</a>
+                                 <a href="product-luxpower-hybrid.html>Inverter LuxPower Hybrid</a>
+                                 <a href="product-luxpower-1pha.html>LuxPower Hybrid 1 Pha</a>
+                                 <a href="product-luxpower-3phase.html>LuxPower Hybrid 3 Pha</a>
+                                 <a href="product-luxpower-3phase-high.html>LuxPower 3 Pha Áp Cao</a>
+                                 <a href="product-growatt-110kw.html>Growatt MAX 110kW</a>
+                                 <a href="product-battery-storage.html>Pin lưu trữ A-Cornex</a>
+                                 <a href="product-battery-byd.html>Pin lưu trữ BYD</a>
+                                 <a href="product-electrical-cabinet.html>Tủ điện Hybrid</a>
+                                 <a href="product-cables.html>Phụ kiện &amp; Cáp</a>
+                             </div>
+                         </div>
+                         <a href="index.html#solutions" class="nav-link">Giải pháp</a>
+                         <a href="index.html#process" class="nav-link">Quy trình</a>
+                         <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
+                         <a href="tin-tuc.html" class="nav-link">Tin tức</a>
+                         <a href="#site-footer" class="nav-link">Liên hệ</a>
+                     </nav>
+     <a class="cta" href="index.html#contact">
+      Nhận tư vấn
+     </a>
+    </div>
+   </div>
+  </header>
+<div class="auth-floating" id="auth-floating">
+    <div class="auth-buttons" id="auth-buttons">
+        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+    </div>
+    
+</div>
+
+  <aside aria-label="Liên hệ nhanh" class="quick-contact">
+   <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hc.ecosystem" rel="noopener" target="_blank">
+    <span aria-hidden="true" class="icon">
+     <svg focusable="false" role="img" viewbox="0 0 24 24">
+      <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor">
+      </path>
+     </svg>
+    </span>
+    <span class="label">
+     <strong>
+      Fanpage
+     </strong>
+     <span>
+      HC Eco System
+     </span>
+    </span>
+   </a>
+   <a class="contact-item contact-item--zalo" href="https://zalo.me/0977247393" rel="noopener" target="_blank">
+    <span aria-hidden="true" class="icon">
+     <svg focusable="false" role="img" viewbox="0 0 24 24">
+      <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor">
+      </path>
+     </svg>
+    </span>
+    <span class="label">
+     <strong>
+      Zalo
+     </strong>
+     <span>
+      0977 247 393
+     </span>
+    </span>
+   </a>
+   <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hcecosystem" rel="noopener" target="_blank">
+    <span aria-hidden="true" class="icon">
+     <svg focusable="false" role="img" viewbox="0 0 24 24">
+      <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor">
+      </path>
+     </svg>
+    </span>
+    <span class="label">
+     <strong>
+      TikTok
+     </strong>
+     <span>
+      @hcecosystem
+     </span>
+    </span>
+   </a>
+   <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" rel="noopener" target="_blank">
+    <span aria-hidden="true" class="icon">
+     <svg focusable="false" role="img" viewbox="0 0 24 24">
+      <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor">
+      </path>
+     </svg>
+    </span>
+    <span class="label">
+     <strong>
+      YouTube
+     </strong>
+     <span>
+      @hcecosystem
+     </span>
+    </span>
+   </a>
+   <a class="contact-item contact-item--phone" href="tel:0977247393">
+    <span aria-hidden="true" class="icon">
+     <svg focusable="false" role="img" viewbox="0 0 24 24">
+      <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor">
+      </path>
+     </svg>
+    </span>
+    <span class="label">
+     <strong>
+      Hotline
+     </strong>
+     <span>
+      0977 247 393
+     </span>
+    </span>
+   </a>
+   <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&amp;query=790+Ng%C3%B4+Quy%E1%BB%81n,+Ph%C6%B0%E1%BB%9Dng+An+H%E1%BA%A3i,+Th%C3%A0nh+Ph%E1%BB%91+%C4%90%C3%A0+N%E1%BA%B5ng" rel="noopener" target="_blank">
+    <span aria-hidden="true" class="icon">
+     <svg focusable="false" role="img" viewbox="0 0 24 24">
+      <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor">
+      </path>
+     </svg>
+    </span>
+    <span class="label">
+     <strong>
+      Văn phòng
+     </strong>
+     <span>
+      790 Ngô Quyền, Đà Nẵng
+     </span>
+    </span>
+   </a>
+  </aside>
+  <main class="policy-page">
+   <section class="policy-hero">
+    <div class="container">
+     <span class="eyebrow">
+      Chính sách &amp; dịch vụ
+     </span>
+     <h1>
+      Điều Khoản &amp; Điều Kiện
+     </h1>
+     <p>
+      Điều khoản và điều kiện sử dụng website dưới đây áp dụng cho việc truy cập và sử dụng trang web hcecosystem.com của quý khách. Vui lòng đọc kỹ; nếu quý khách không đồng ý với bất kỳ phần nào của các điều khoản này thì nên ngừng sử dụng website.
+     </p>
+     <div class="policy-meta">
+      <span>
+       Cập nhật: Tháng 09/2025
+      </span>
+      <span>
+       Nguồn: hcecosystem.com
+      </span>
+     </div>
+    </div>
+   </section>
+   <section class="policy-content">
+    <div class="container">
+     <section class="policy-section">
+      <h2>
+       Thông tin
+      </h2>
+      <p>
+       Điều khoản và điều kiện sử dụng website dưới đây áp dụng cho việc truy cập và sử dụng trang web hcecosystem.com của quý khách. Vui lòng đọc kỹ, nếu quý khách không đồng ý với bất kỳ phần nào của các điều khoản này thì nên ngừng sử dụng website.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       1. Chấp Thuận Điều Khoản
+      </h2>
+      <p>
+       Khi truy cập và sử dụng website hcecosystem.com, bạn đồng ý tuân thủ mọi điều khoản và điều kiện được nêu ra. Những điều khoản này có thể được cập nhật định kỳ, và việc bạn tiếp tục sử dụng website sau khi có thay đổi đồng nghĩa với việc bạn chấp nhận các điều khoản mới.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       2. Trách Nhiệm của Người Dùng
+      </h2>
+      <p>
+       Người dùng cam kết sử dụng trang web cho các mục đích hợp pháp và tuân thủ các quy định pháp luật hiện hành. Bạn không được phép thực hiện bất kỳ hành vi nào gây ảnh hưởng đến an ninh, tính toàn vẹn của website hoặc sử dụng website để truyền bá thông tin sai lệch, vi phạm thuần phong mỹ tục hay xâm phạm quyền và lợi ích hợp pháp của tổ chức, cá nhân khác. Mọi hành vi cố ý can thiệp, truy cập trái phép, hoặc gây hại đến hệ thống của HC Eco System đều bị nghiêm cấm và có thể dẫn đến việc tước bỏ quyền sử dụng trang web cũng như truy tố trước pháp luật nếu cần thiết.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       3. Quyền Sở Hữu Nội Dung
+      </h2>
+      <p>
+       Tất cả nội dung trên website (bao gồm nhưng không giới hạn ở văn bản, hình ảnh, đồ họa, logo, biểu tượng, video, âm thanh và các tài liệu khác) đều là tài sản của HC Eco System hoặc các đối tác cung cấp, và được bảo vệ bởi các quy định pháp luật về sở hữu trí tuệ. HC Eco System sở hữu bản quyền hoặc được cấp phép sử dụng đối với toàn bộ nội dung này. Nghiêm cấm mọi hành vi sao chép, chỉnh sửa, phân phối, truyền tải hoặc sử dụng trái phép nội dung của website nếu chưa được sự đồng ý bằng văn bản của HC ECO SYSTEM.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       4. Giới Hạn Trách Nhiệm
+      </h2>
+      <p>
+       Website hcecosystem.com không chịu trách nhiệm đối với bất kỳ thiệt hại hoặc tổn thất nào phát sinh từ việc sử dụng hoặc không thể sử dụng trang web. Điều này bao gồm nhưng không giới hạn ở các thiệt hại trực tiếp, gián tiếp, ngẫu nhiên, đặc biệt hoặc hệ quả do việc sử dụng trang web, kể cả khi HC ECO SYSTEM đã được cảnh báo về khả năng xảy ra những thiệt hại đó. Nội dung trên trang web được cung cấp “nguyên trạng” theo thông tin hiện có, HC Eco System không đảm bảo rằng các thông tin này luôn chính xác, đầy đủ hoặc cập nhật tại mọi thời điểm. Người dùng tự chịu trách nhiệm khi tin tưởng và sử dụng các thông tin trên website. Ngoài ra, HC Eco System không chịu trách nhiệm trong trường hợp website bị gián đoạn, gặp lỗi kỹ thuật, virus, hoặc các sự cố khách quan khác nằm ngoài khả năng kiểm soát.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       5. Thay Đổi Điều Khoản
+      </h2>
+      <p>
+       HC Eco System có quyền chỉnh sửa, bổ sung hoặc thay đổi các điều khoản sử dụng này bất kỳ lúc nào. Những thay đổi sẽ được cập nhật trực tiếp trên website. Việc bạn tiếp tục sử dụng website sau khi các thay đổi về điều khoản được công bố đồng nghĩa với việc bạn đã chấp nhận và đồng ý tuân theo các điều khoản sửa đổi.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       6. Liên Hệ
+      </h2>
+      <p>
+       Nếu bạn có bất kỳ câu hỏi hoặc yêu cầu nào liên quan đến Điều Khoản &amp; Điều Kiện sử dụng website, vui lòng liên hệ với chúng tôi để được hỗ trợ.
+      </p>
+     </section>
+     <section class="policy-section">
+      <h2>
+       Thông tin liên hệ
+      </h2>
+      <ul>
+       <li>
+        <strong>
+         Hotline:
+        </strong>
+        0977 247 393
+       </li>
+       <li>
+        <strong>
+         Zalo:
+        </strong>
+        0977 247 393
+       </li>
+       <li>
+        <strong>
+         Email:
+        </strong>
+        hcecosystem@gmail.com
+       </li>
+       <li>
+        <strong>
+         Website:
+        </strong>
+        hcecosystem.vn
+       </li>
+       <li>
+        <strong>
+         Mã số thuế:
+        </strong>
+        0123456789
+       </li>
+       <li>
+        <strong>
+         Địa chỉ Văn phòng:
+        </strong>
+        790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng
+       </li>
+      </ul>
+     </section>
+    </div>
+   </section></main>
+  <footer id="site-footer" class="footer">
+   <div class="container footer-layout">
+    <div class="footer-left">
+     <a class="footer-branding" href="../index.html">
+      <img alt="Logo HC Eco System" class="footer-logo" src="../assets/img/logo.jpg"/>
+      <div class="footer-brand-copy">
+       <div class="footer-brand-name">
+        HC
+        <span>
+         ECO SYSTEM
+        </span>
+       </div>
+       <p>
+        Giải pháp bền vững cho năng lượng tương lai
+       </p>
+      </div>
+     </a>
+     <p class="copyright">
+      © 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.
+     </p>
+    </div>
+    <div class="footer-center">
+     <h4>
+      Thông tin liên hệ
+     </h4>
+     <ul class="contact-info">
+      <li>
+       <strong>
+        Hotline:
+       </strong>
+       0977 247 393
+      </li>
+      <li>
+       <strong>
+        Zalo:
+       </strong>
+       0977 247 393
+      </li>
+      <li>
+       <strong>
+        Email:
+       </strong>
+       hcecosystem@gmail.com
+      </li>
+      <li>
+       <strong>
+        Website:
+       </strong>
+       hcecosystem.vn
+      </li>
+      <li>
+       <strong>
+        Mã số thuế:
+       </strong>
+       0123456789
+      </li>
+      <li>
+       <strong>
+        Địa chỉ Văn phòng:
+       </strong>
+       <br/>
+       790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng
+      </li>
+     </ul>
+    </div>
+    <div class="footer-right">
+     <h4>
+      Chính sách &amp; Dịch vụ
+     </h4>
+     <ul class="policy-links">
+      <li>
+       <a href="tam-nhin-su-menh.html">
+        Tầm Nhìn &amp; Sứ Mệnh
+       </a>
+      </li>
+      <li>
+       <a href="dieu-khoan-dieu-kien.html">
+        Điều Khoản &amp; Điều Kiện
+       </a>
+      </li>
+      <li>
+       <a href="chinh-sach-doi-tra.html">
+        Chính Sách Đổi Trả
+       </a>
+      </li>
+      <li>
+       <a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html">
+        Chính Sách Bảo Mật Thông Tin Cá Nhân
+       </a>
+      </li>
+      <li>
+       <a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html">
+        Chính Sách Bảo Mật Thông Tin Thanh Toán
+       </a>
+      </li>
+      <li>
+       <a href="chinh-sach-bao-hanh.html">
+        Chính Sách Bảo Hành
+       </a>
+      </li>
+      <li>
+       <a href="tro-thanh-nha-phan-phoi.html">
+        Trở Thành Nhà Phân Phối
+       </a>
+      </li>
+     </ul>
+    </div>
+   </div>
+  </footer>
+<!-- Floating Action Button for Cart -->
+<a href="gio-hang.html" class="cart-fab" id="cart-fab">
+    🛒
+    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
+</a>
+
+<script src="../assets/js/shopping-cart.js"></script>
+<script src="../assets/js/auth.js"></script>
+</body>
+</html>
+
+
+
+
+
+

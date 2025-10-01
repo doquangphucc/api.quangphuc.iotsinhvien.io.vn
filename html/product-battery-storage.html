@@ -1,0 +1,906 @@
+﻿
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Pin lưu trữ 16,3kWh LiFePO4 mới 100% dành cho hệ thống năng lượng mặt trời, độ bền cao, bảo hành dài hạn." />
+    <title>Pin Lưu Trữ 16,3kWh LiFePO4 - HC Eco System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    <style>
+        /* Modern Product Table Styles */
+        .product-details-table {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f6f9f2 0%, #e8f5e8 50%, #f0f8f0 100%);
+        }
+
+        .products-table {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products-table table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 2rem;
+        }
+
+        .products-table thead {
+            display: none; /* Hide traditional header */
+        }
+
+        .products-table tbody tr {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(63, 163, 77, 0.08);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .products-table tbody tr:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(63, 163, 77, 0.15);
+        }
+
+        .products-table tbody tr::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384, #3FA34D);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .products-table tbody tr:hover::before {
+            opacity: 1;
+        }
+
+        .product-image {
+            width: 220px;
+            min-width: 220px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2rem;
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fdf8 100%);
+        }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 12px;
+            height: 12px;
+            background: #3FA34D;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(63, 163, 77, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+            max-width: 180px;
+            object-fit: contain;
+            border-radius: 16px;
+            padding: 12px;
+            background: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover img {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .product-specs {
+            width: 45%;
+            padding: 2rem 2.5rem;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .product-specs h4 {
+            color: #3FA34D;
+            margin: 0 0 1.5rem 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .product-specs h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384);
+            border-radius: 2px;
+        }
+        .product-specs ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .product-specs ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            border-left: 3px solid #C5E384;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-specs ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(135deg, rgba(63, 163, 77, 0.1), rgba(197, 227, 132, 0.1));
+            transition: width 0.3s ease;
+        }
+
+        .product-specs ul li:hover::before {
+            width: 100%;
+        }
+
+        .product-specs ul li:hover {
+            transform: translateX(5px);
+            border-left-color: #3FA34D;
+        }
+
+        .product-specs ul li strong {
+            color: #3FA34D;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-specs ul li span {
+            color: #2d4a2d;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-price {
+            width: 200px;
+            min-width: 200px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2rem;
+            position: relative;
+            background: white;
+            color: #3FA34D;
+        }
+
+        .product-price .price-main {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #3FA34D;
+            background: rgba(63, 163, 77, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid rgba(63, 163, 77, 0.3);
+            text-shadow: 0 2px 4px rgba(63, 163, 77, 0.2);
+        }
+
+        .product-price .price-unit {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 500;
+            color: #3FA34D;
+        }
+
+        .product-actions {
+            width: 160px;
+            min-width: 160px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .product-actions .btn {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-actions .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .product-actions .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .product-actions .btn.primary {
+            background: linear-gradient(135deg, #3FA34D, #0a7d20);
+            color: white;
+            box-shadow: 0 6px 20px rgba(63, 163, 77, 0.3);
+        }
+
+        .product-actions .btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(63, 163, 77, 0.4);
+        }
+
+        .product-actions .btn.secondary {
+            background: white;
+            color: #3FA34D;
+            border: 2px solid #3FA34D;
+        }
+
+        .product-actions .btn.secondary:hover {
+            background: #3FA34D;
+            color: white;
+            transform: translateY(-3px);
+        }
+        /* ENHANCED DESIGN IMPROVEMENTS */
+        .product-hero {
+            background: linear-gradient(135deg,
+                rgba(63, 163, 77, 0.08) 0%,
+                rgba(197, 227, 132, 0.12) 30%,
+                rgba(63, 163, 77, 0.06) 70%,
+                rgba(255, 255, 255, 0.95) 100%) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(63, 163, 77, 0.04) 0%, transparent 60%);
+            animation: gentleRotate 30s linear infinite;
+        }
+
+        @keyframes gentleRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .product-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-info h1 {
+            background: linear-gradient(135deg, #3FA34D, #22c55e, #C5E384) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            text-shadow: none !important;
+        }
+
+        .eyebrow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .eyebrow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .eyebrow:hover::before {
+            left: 100%;
+        }
+
+        .product-highlights {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .product-highlights .highlight-item {
+            min-width: 140px;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(63, 163, 77, 0.12);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-highlights .highlight-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384, #22c55e);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+        }
+
+        .product-highlights .highlight-item strong {
+            display: block;
+            font-size: 1.6rem;
+            color: #3FA34D;
+            text-shadow: 0 2px 8px rgba(63, 163, 77, 0.3);
+        }
+
+        .product-highlights .highlight-item span {
+            font-weight: 600;
+            color: #2d4a2d;
+        }
+
+        .product-highlights .highlight-item:hover {
+            transform: translateY(-8px) scale(1.05) !important;
+            box-shadow: 0 25px 60px rgba(63, 163, 77, 0.2) !important;
+        }
+
+        .product-highlights .highlight-item:hover::before {
+            transform: translateX(0);
+        }
+
+        .product-details-table h2 {
+            text-align: center;
+            color: #3FA34D;
+            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .product-details-table h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384);
+            border-radius: 2px;
+        }
+
+        .product-features h2 {
+            text-align: center;
+            color: #3FA34D;
+            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .product-features h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(63, 163, 77, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3FA34D, #C5E384, #22c55e);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(63, 163, 77, 0.15);
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 8px rgba(63, 163, 77, 0.2));
+        }
+
+        .feature-card h3 {
+            color: #3FA34D;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .cta-banner {
+            background: linear-gradient(135deg, #3FA34D, #1E5631);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .cta-banner .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-banner h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-banner p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-banner .btn {
+            background: white;
+            color: #3FA34D;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-banner .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            background: #f8f9fa;
+        }
+
+        /* Floating Action Button for Cart */
+        .cart-fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3FA34D, #1E5631);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 999;
+            text-decoration: none;
+        }
+
+        .cart-fab:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 12px 35px rgba(63, 163, 77, 0.4);
+        }
+
+        .cart-fab .fab-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        @media (max-width: 768px) {
+            .cart-fab {
+                bottom: 70px;
+                right: 15px;
+                width: 55px;
+                height: 55px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-layout">
+        <a href="../index.html" class="branding">
+            <img class="logo-image" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+            <div class="brand-copy">
+                <div class="logo">HC<span>ECO SYSTEM</span></div>
+                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+            </div>
+        </a>
+        <div class="topbar-actions">
+            <nav class="nav">
+                <div class="nav-item nav-item--dropdown">
+                    <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
+                    <div class="nav-dropdown" role="menu">
+                        <a href="product-solar-panels.html>Tấm pin Jinko Solar</a>
+                        <a href="product-luxpower-hybrid.html>Inverter LuxPower Hybrid</a>
+                        <a href="product-luxpower-1pha.html>LuxPower Hybrid 1 Pha</a>
+                        <a href="product-luxpower-3phase.html>LuxPower Hybrid 3 Pha</a>
+                        <a href="product-luxpower-3phase-high.html>LuxPower 3 Pha Áp Cao</a>
+                        <a href="product-growatt-110kw.html>Growatt MAX 110kW</a>
+                        <a href="product-battery-storage.html>Pin lưu trữ A-Cornex</a>
+                        <a href="product-battery-byd.html>Pin lưu trữ BYD</a>
+                        <a href="product-electrical-cabinet.html>Tủ điện Hybrid</a>
+                        <a href="product-cables.html>Phụ kiện &amp; Cáp</a>
+                    </div>
+                </div>
+                <a href="index.html#solutions" class="nav-link">Giải pháp</a>
+                <a href="index.html#process" class="nav-link">Quy trình</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
+                <a href="tin-tuc.html" class="nav-link">Tin tức</a>
+                <a href="#site-footer" class="nav-link">Liên hệ</a>
+            </nav>
+            <a class="cta" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+        </div>
+    </div>
+</header>
+<div class="auth-floating" id="auth-floating">
+    <div class="auth-buttons" id="auth-buttons">
+        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+    </div>
+</div>
+
+<aside class="quick-contact" aria-label="Liên hệ nhanh">
+    <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hc.ecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Fanpage</strong>
+            <span>HC Eco System</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--zalo" href="https://zalo.me/0977247393" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Zalo</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>TikTok</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>YouTube</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--phone" href="tel:0977247393">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Hotline</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&query=790+Ngô+Quyền,+Phường+An+Hải,+Thành+Phố+Đà+Nẵng" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Văn phòng</strong>
+            <span>790 Ngô Quyền, Đà Nẵng</span>
+        </span>
+    </a>
+</aside>
+<main>
+    <section class="product-hero">
+        <div class="container">
+            <div class="product-hero-content">
+                <div class="product-info">
+                    <span class="eyebrow">PIN LƯU TRỮ · 16,3KWH · LIFEPO4 · PIN MỚI 100%</span>
+                    <h1>Pin Lưu Trữ LiFePO4 16,3kWh</h1>
+                    <p>Giải pháp lưu trữ năng lượng LiFePO4 16,3kWh A-Cornex: hiệu suất cao, an toàn tuyệt đối, tuổi thọ lên đến 6000 chu kỳ.</p>
+                    <div class="product-highlights">
+                        <div class="highlight-item">
+                            <strong>16,3kWh</strong>
+                            <span>Dung lượng lưu trữ</span>
+                        </div>
+                        <div class="highlight-item">
+                            <strong>6000+</strong>
+                            <span>Chu kỳ sạc</span>
+                        </div>
+                        <div class="highlight-item">
+                            <strong>52V</strong>
+                            <span>Điện áp hệ thống</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="product-details-table">
+        <div class="container">
+            <h2>Chi tiết Cell A-Cornex LiFePO4 16 Cell</h2>
+            <div class="products-table">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="product-image">
+                                <img src="../assets/img/products/cell-a-cornex-lifepo4-16cell.png" alt="Cell A-Cornex LiFePO4 16 Cell" />
+                            </td>
+                            <td class="product-specs">
+                                <h4>Cell A-Cornex LiFePO4 16 Cell</h4>
+                                <ul>
+                                    <li><strong>Model:</strong> <span>A-Cornex LiFePO4 16 Cell</span></li>
+                                    <li><strong>Cấu hình:</strong> <span>16 cell nối tiếp</span></li>
+                                    <li><strong>Dung lượng danh định:</strong> <span>16,3 kWh (315Ah @ 52V)</span></li>
+                                    <li><strong>Điện áp hệ thống:</strong> <span>52V danh định</span></li>
+                                    <li><strong>Công nghệ:</strong> <span>LiFePO4 (Lithium Iron Phosphate)</span></li>
+                                    <li><strong>Chu kỳ sạc:</strong> <span>6000+ lần @ 80% DOD</span></li>
+                                    <li><strong>Độ sâu xả (DOD):</strong> <span>Tối đa 90%</span></li>
+                                    <li><strong>Hiệu suất chuyển đổi:</strong> <span>95%</span></li>
+                                    <li><strong>Nhiệt độ hoạt động:</strong> <span>-10°C đến +55°C</span></li>
+                                    <li><strong>Bảo hành:</strong> <span>10 năm hoặc 6000 chu kỳ</span></li>
+                                </ul>
+                            </td>
+                            <td class="product-price">
+                                <div class="price-main">50.000.000₫</div>
+                                <div class="price-unit">50 triệu/bộ</div>
+                            </td>
+                            <td class="product-actions">
+                                <button class="btn primary" data-product-id="17">🛒 Thêm vào giỏ hàng</button>
+                                <button class="btn secondary">💬 Mua hàng</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <section class="product-features">
+        <div class="container">
+            <h2>Tính năng nổi bật Cell A-Cornex LiFePO4</h2>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">🔋</div>
+                    <h3>LiFePO4 An Toàn</h3>
+                    <p>Hóa học LiFePO4 ổn định, chống cháy nổ và thân thiện với môi trường hơn so với pin lithium truyền thống.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Tuổi Thọ Vượt Trội</h3>
+                    <p>Độ bền 6000+ chu kỳ sạc-xả, đảm bảo vận hành ổn định cho hệ thống lưu trữ năng lượng nhiều năm.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Hiệu Suất Cao</h3>
+                    <p>Hiệu suất chuyển đổi lên tới 95%, giảm tổn thất năng lượng và tối ưu chi phí đầu tư.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Bảo Vệ Đa Lớp</h3>
+                    <p>Tích hợp hệ thống BMS thông minh: bảo vệ quá áp, quá nhiệt, quá dòng và cân bằng cell tự động.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="container">
+            <div class="content">
+                <h2>Cần tư vấn Cell A-Cornex LiFePO4?</h2>
+                <p>Liên hệ đội ngũ HC Eco System để được tư vấn lắp đặt, thiết kế và tối ưu hệ thống lưu trữ năng lượng cho công trình của bạn.</p>
+            </div>
+            <a class="btn primary" href="index.html#contact">Nhận tư vấn miễn phí</a>
+        </div>
+    </section>
+</main>
+<footer id="site-footer" class="footer">
+    <div class="container footer-layout">
+        <div class="footer-left">
+            <a href="../index.html" class="footer-branding">
+                <img class="footer-logo" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                <div class="footer-brand-copy">
+                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
+                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+                </div>
+            </a>
+            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+        </div>
+        <div class="footer-center">
+            <h4>Thông tin liên hệ</h4>
+            <ul class="contact-info">
+                <li><strong>Hotline:</strong> 0977 247 393</li>
+                <li><strong>Zalo:</strong> 0977 247 393</li>
+                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                <li><strong>Website:</strong> hcecosystem.vn</li>
+                <li><strong>Mã số thuế:</strong> 0123456789</li>
+                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+            </ul>
+        </div>
+        <div class="footer-right">
+            <h4>Chính sách &amp; Dịch vụ</h4>
+            <ul class="policy-links">
+                <li><a href="tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
+                <li><a href="dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
+                <li><a href="chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
+                <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                <li><a href="chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
+                <li><a href="tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<!-- Floating Action Button for Cart -->
+<a href="gio-hang.html" class="cart-fab" id="cart-fab">
+    🛒
+    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
+</a>
+
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/shopping-cart.js"></script>
+<script>
+// Update all cart counters on this page
+function updateAllCartCounters() {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const fabCounter = document.getElementById('fab-cart-count');
+    if (fabCounter) {
+        if (totalItems > 0) {
+            fabCounter.textContent = totalItems;
+            fabCounter.style.display = 'flex';
+        } else {
+            fabCounter.style.display = 'none';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateAllCartCounters();
+    window.addEventListener('storage', updateAllCartCounters);
+});
+</script>
+
+</body>
+</html>

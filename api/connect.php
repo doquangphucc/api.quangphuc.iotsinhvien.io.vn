@@ -1,0 +1,201 @@
+﻿<?php
+// Enable error reporting for development (remove in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Set content type and CORS headers
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Include config
+require_once 'config.php';
+
+class Database {
+    private $connection;
+    private static $instance = null;
+    
+    private function __construct() {
+        try {
+            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+            
+            $this->connection = new PDO($dsn, DB_USER, DB_PASS, $options);
+        } catch (PDOException $e) {
+            error_log("Database connection failed: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Không thể kết nối cơ sở dữ liệu'
+            ]);
+            exit();
+        }
+    }
+    
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
+    }
+    
+    public function getConnection() {
+        return $this->connection;
+    }
+    
+    public function query($sql, $params = []) {
+        try {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->execute($params);
+            return $stmt;
+        } catch (PDOException $e) {
+            error_log("Query failed: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    public function insert($table, $data) {
+        $fields = array_keys($data);
+        $fieldList = implode(',', $fields);
+        $paramList = ':' . implode(', :', $fields);
+        
+        $sql = "INSERT INTO {$table} ({$fieldList}) VALUES ({$paramList})";
+        
+        try {
+            $stmt = $this->query($sql, $data);
+            return $this->connection->lastInsertId();
+        } catch (PDOException $e) {
+            error_log("Insert failed: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    public function update($table, $data, $conditions) {
+        $dataFields = [];
+        foreach ($data as $key => $value) {
+            $dataFields[] = "{$key} = :data_{$key}";
+        }
+        $dataList = implode(', ', $dataFields);
+
+        $whereClause = [];
+        foreach ($conditions as $key => $value) {
+            $whereClause[] = "{$key} = :cond_{$key}";
+        }
+        $whereList = implode(' AND ', $whereClause);
+
+        $sql = "UPDATE {$table} SET {$dataList} WHERE {$whereList}";
+
+        $params = [];
+        foreach ($data as $key => $value) {
+            $params[":data_{$key}"] = $value;
+        }
+        foreach ($conditions as $key => $value) {
+            $params[":cond_{$key}"] = $value;
+        }
+
+        try {
+            $stmt = $this->query($sql, $params);
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            error_log("Update failed: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    public function select($table, $conditions = [], $fields = '*', $orderBy = '') {
+        $sql = "SELECT {$fields} FROM {$table}";
+        
+        if (!empty($conditions)) {
+            $whereClause = [];
+            foreach ($conditions as $field => $value) {
+                $whereClause[] = "{$field} = :{$field}";
+            }
+            $sql .= " WHERE " . implode(' AND ', $whereClause);
+        }
+
+        if (!empty($orderBy)) {
+            $sql .= " " . $orderBy;
+        }
+        
+        try {
+            $stmt = $this->query($sql, $conditions);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Select failed: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    public function selectOne($table, $conditions = [], $fields = '*') {
+        $sql = "SELECT {$fields} FROM {$table}";
+        
+        if (!empty($conditions)) {
+            $whereClause = [];
+            foreach ($conditions as $field => $value) {
+                $whereClause[] = "{$field} = :{$field}";
+            }
+            $sql .= " WHERE " . implode(' AND ', $whereClause);
+        }
+        
+        $sql .= " LIMIT 1";
+        
+        try {
+            $stmt = $this->query($sql, $conditions);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("SelectOne failed: " . $e->getMessage());
+            throw $e;
+        }
+    }
+}
+
+// Utility functions
+function sendJsonResponse($data, $statusCode = 200) {
+    http_response_code($statusCode);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit();
+}
+
+function sendError($message, $statusCode = 400) {
+    sendJsonResponse([
+        'success' => false,
+        'message' => $message
+    ], $statusCode);
+}
+
+function sendSuccess($data = [], $message = '') {
+    $response = ['success' => true];
+    if (!empty($message)) {
+        $response['message'] = $message;
+    }
+    if (!empty($data)) {
+        $response['data'] = $data;
+    }
+    sendJsonResponse($response);
+}
+
+function validateRequired($data, $fields) {
+    $missing = [];
+    foreach ($fields as $field) {
+        if (!isset($data[$field]) || trim($data[$field]) === '') {
+            $missing[] = $field;
+        }
+    }
+    return $missing;
+}
+
+function sanitizeInput($input) {
+    return trim(htmlspecialchars($input, ENT_QUOTES, 'UTF-8'));
+}
+?>

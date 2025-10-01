@@ -1,0 +1,233 @@
+﻿/* Components - Buttons, Cards, Forms */
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn.primary {
+    background: var(--color-green);
+    color: var(--color-white);
+    box-shadow: 0 10px 22px rgba(6, 102, 26, 0.24);
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px);
+}
+
+.btn.secondary {
+    background: var(--color-white);
+    color: var(--color-green);
+    border: 1px solid rgba(6, 102, 26, 0.3);
+}
+
+.full-width {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Cards */
+.card {
+    background: var(--color-white);
+    border-radius: 18px;
+    padding: 2rem;
+    box-shadow: 0 15px 30px rgba(8, 48, 16, 0.08);
+    border: 1px solid rgba(63, 163, 77, 0.12);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--color-green);
+}
+
+.card ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--color-muted);
+}
+
+.card ul li::before {
+    content: '✓';
+    color: var(--color-yellow);
+    margin-right: 0.5rem;
+}
+
+/* Forms */
+.form {
+    display: grid;
+    gap: 1.2rem;
+}
+
+.form label {
+    display: grid;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.form input,
+.form select,
+.form textarea {
+    padding: 0.75rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid rgba(95, 125, 90, 0.4);
+    background: rgba(246, 249, 242, 0.8);
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--color-text);
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+    outline: 2px solid rgba(63, 163, 77, 0.3);
+}
+
+/* CTA Banner */
+.cta-banner {
+    background: var(--color-green);
+    color: var(--color-white);
+    padding: 3.2rem 0;
+}
+
+.cta-banner .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+}
+
+.breadcrumb a {
+    color: var(--color-green);
+}
+
+.breadcrumb span {
+    margin: 0 0.5rem;
+}
+
+/* Auth Floating Buttons */
+.auth-floating {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 998;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.auth-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 110px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.auth-btn--login {
+    background: var(--color-white);
+    color: var(--color-green);
+    border: 2px solid var(--color-green);
+}
+
+.auth-btn--login:hover {
+    background: var(--color-green);
+    color: var(--color-white);
+    transform: translateY(-2px);
+}
+
+.auth-btn--register {
+    background: var(--color-green);
+    color: var(--color-white);
+}
+
+.auth-btn--register:hover {
+    background: #0a7020;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(63, 163, 77, 0.3);
+}
+
+.auth-btn--logout {
+    background: #ef4444;
+    color: var(--color-white);
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+}
+
+.auth-btn--logout:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+.auth-user-card {
+    background: var(--color-white);
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 8px 25px rgba(63, 163, 77, 0.15);
+    border: 2px solid rgba(63, 163, 77, 0.2);
+    min-width: 180px;
+}
+
+.auth-user-greeting {
+    color: var(--color-green);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .auth-floating {
+        top: 60px;
+        right: 10px;
+    }
+    
+    .auth-btn {
+        padding: 0.55rem 1rem;
+        font-size: 0.85rem;
+        min-width: 90px;
+    }
+    
+    .auth-user-card {
+        min-width: 150px;
+        padding: 0.75rem;
+    }
+    
+    .auth-user-greeting {
+        font-size: 0.85rem;
+    }
+}

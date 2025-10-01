@@ -1,0 +1,842 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Đặt hàng - HC Eco System" />
+    <title>Đặt hàng - HC Eco System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    <style>
+        .checkout-page {
+            background: linear-gradient(135deg, #f6f9f2 0%, #e8f5e8 50%, #f0f8f0 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .checkout-hero {
+            background: linear-gradient(135deg, rgba(63, 163, 77, 0.08) 0%, rgba(197, 227, 132, 0.12) 50%, rgba(63, 163, 77, 0.06) 100%);
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .checkout-hero h1 {
+            color: var(--color-green);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .checkout-hero p {
+            text-align: center;
+            color: var(--color-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .checkout-form {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(63, 163, 77, 0.1);
+            padding: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            color: var(--color-green);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(63, 163, 77, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--color-text);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group label.required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 3px rgba(63, 163, 77, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .order-summary {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(63, 163, 77, 0.1);
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .order-summary h3 {
+            color: var(--color-green);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(63, 163, 77, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: rgba(63, 163, 77, 0.02);
+        }
+
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid rgba(63, 163, 77, 0.1);
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-info h4 {
+            color: var(--color-green);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+            line-height: 1.3;
+        }
+
+        .order-item-info p {
+            color: var(--color-muted);
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        .order-item-quantity {
+            color: var(--color-green);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .order-item-price {
+            color: var(--color-green);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .price-breakdown {
+            border-top: 2px solid rgba(63, 163, 77, 0.1);
+            padding-top: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .price-row.total {
+            border-top: 2px solid var(--color-green);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--color-green);
+        }
+
+        .payment-notice {
+            background: linear-gradient(135deg, rgba(197, 227, 132, 0.1), rgba(63, 163, 77, 0.05));
+            border: 2px solid rgba(197, 227, 132, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .payment-notice .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-notice p {
+            color: var(--color-text);
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--color-green), #1E5631);
+            color: white;
+            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+        }
+
+        .btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(63, 163, 77, 0.4);
+        }
+
+        .btn.secondary {
+            background: white;
+            color: var(--color-green);
+            border: 2px solid var(--color-green);
+            margin-bottom: 1rem;
+        }
+
+        .btn.secondary:hover {
+            background: var(--color-green);
+            color: white;
+        }
+
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .success-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .success-modal.show .success-modal-content {
+            transform: scale(1);
+        }
+
+        .success-modal .icon {
+            font-size: 4rem;
+            color: var(--color-green);
+            margin-bottom: 1rem;
+        }
+
+        .success-modal h3 {
+            color: var(--color-green);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .success-modal p {
+            color: var(--color-muted);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-summary {
+                position: static;
+            }
+            
+            .cart-fab {
+                display: none; /* Ẩn FAB trên trang đặt hàng */
+            }
+        }
+        
+        /* Floating Action Button for Cart */
+        .cart-fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3FA34D, #1E5631);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 999;
+            text-decoration: none;
+        }
+
+        .cart-fab:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 12px 35px rgba(63, 163, 77, 0.4);
+        }
+
+        .cart-fab .fab-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    
+<header class="topbar">
+    <div class="container topbar-layout">
+        <a href="../index.html" class="branding">
+            <img class="logo-image" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+            <div class="brand-copy">
+                <div class="logo">HC<span>ECO SYSTEM</span></div>
+                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+            </div>
+        </a>
+        <div class="topbar-actions">
+            <nav class="nav">
+                <div class="nav-item nav-item--dropdown">
+                    <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
+                    <div class="nav-dropdown" role="menu">
+                        <a href="product-solar-panels.html>Tấm pin Jinko Solar</a>
+                        <a href="product-luxpower-hybrid.html>Inverter LuxPower Hybrid</a>
+                        <a href="product-luxpower-1pha.html>LuxPower Hybrid 1 Pha</a>
+                        <a href="product-luxpower-3phase.html>LuxPower Hybrid 3 Pha</a>
+                        <a href="product-luxpower-3phase-high.html>LuxPower 3 Pha Áp Cao</a>
+                        <a href="product-growatt-110kw.html>Growatt MAX 110kW</a>
+                        <a href="product-battery-storage.html>Pin lưu trữ A-Cornex</a>
+                        <a href="product-battery-byd.html>Pin lưu trữ BYD</a>
+                        <a href="product-electrical-cabinet.html>Tủ điện Hybrid</a>
+                        <a href="product-cables.html>Phụ kiện &amp; Cáp</a>
+                    </div>
+                </div>
+                <a href="index.html#solutions" class="nav-link">Giải pháp</a>
+                <a href="index.html#process" class="nav-link">Quy trình</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
+                <a href="tin-tuc.html" class="nav-link">Tin tức</a>
+                <a href="#site-footer" class="nav-link">Liên hệ</a>
+            </nav>
+            <a class="cta" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+        </div>
+    </div>
+</header>
+<div class="auth-floating" id="auth-floating">
+    <div class="auth-buttons" id="auth-buttons">
+        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+    </div>
+    
+</div>
+
+
+<aside class="quick-contact" aria-label="Liên hệ nhanh">
+    <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hc.ecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Fanpage</strong>
+            <span>HC Eco System</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--zalo" href="https://zalo.me/0977247393" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>Zalo</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>TikTok</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor" />
+            </svg>
+        </span>
+        <span class="label">
+            <strong>YouTube</strong>
+            <span>@hcecosystem</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--phone" href="tel:0977247393">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
+        </span>
+        <span class="label">
+            <strong>Hotline</strong>
+            <span>0977 247 393</span>
+        </span>
+    </a>
+    <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&query=790+Ngô+Quyền,+Phường+An+Hải,+Thành+Phố+Đà+Nẵng" target="_blank" rel="noopener">
+        <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor" />
+        </span>
+        <span class="label">
+            <strong>Văn phòng</strong>
+            <span>790 Ngô Quyền, Đà Nẵng</span>
+        </span>
+    </a>
+</aside>
+<main class="checkout-page">
+    <section class="checkout-hero">
+        <div class="container">
+            <h1>📋 Đặt hàng</h1>
+            <p>Điền thông tin để hoàn tất đơn hàng</p>
+        </div>
+    </section>
+
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <form id="checkout-form">
+                <div class="form-section">
+                    <h3>📞 Thông tin liên hệ</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullname" class="required">Họ và tên</label>
+                            <input type="text" id="fullname" name="fullname" required placeholder="Nguyễn Văn A">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="required">Số điện thoại</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="090x xxx xxx">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="email@example.com">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📍 Địa chỉ giao hàng</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city" class="required">Tỉnh/Thành phố</label>
+                            <select id="city" name="city" required>
+                                <option value="">Chọn tỉnh/thành</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="district" class="required">Phường/Xã</label>
+                            <select id="district" name="district" required>
+                                <option value="">Vui lòng chọn tỉnh/thành phố trước</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="required">Địa chỉ chi tiết</label>
+                        <input type="text" id="address" name="address" required placeholder="Số nhà, tên đường, phường/xã">
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Ghi chú đơn hàng</label>
+                        <textarea id="notes" name="notes" placeholder="Thời gian giao hàng, yêu cầu đặc biệt..."></textarea>
+                    </div>
+                </div>
+
+                <div class="payment-notice">
+                    <div class="icon">📞</div>
+                    <p><strong>Lưu ý quan trọng:</strong> Sau khi xác nhận đơn hàng, thông tin sẽ được chuyển đến bộ phận kinh doanh để gọi điện xác nhận lại với bạn về hình thức giao hàng và thanh toán.</p>
+                </div>
+
+                <button type="submit" class="btn primary">
+                    ✅ Xác nhận đặt hàng
+                </button>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h3>📦 Đơn hàng của bạn</h3>
+            
+            <div id="order-items">
+                <!-- Order items will be loaded here -->
+            </div>
+
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>Tạm tính:</span>
+                    <span id="subtotal">0₫</span>
+                </div>
+                <div class="price-row">
+                    <span>Phí vận chuyển:</span>
+                    <span>Liên hệ</span>
+                </div>
+                <div class="price-row">
+                    <span>Thuế VAT:</span>
+                    <span>Đã bao gồm</span>
+                </div>
+                <div class="price-row total">
+                    <span>Tổng cộng:</span>
+                    <span id="total">0₫</span>
+                </div>
+            </div>
+
+            <a href="gio-hang.html" class="btn secondary">
+                ⬅️ Quay lại giỏ hàng
+            </a>
+        </div>
+    </div>
+</main>
+
+<!-- Success Modal -->
+<div id="success-modal" class="success-modal">
+    <div class="success-modal-content">
+        <div class="icon">✅</div>
+        <h3>Đặt hàng thành công!</h3>
+        <p>Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận đơn hàng và thỏa thuận về hình thức giao hàng, thanh toán.</p>
+        <button class="btn primary" onclick="closeSuccessModal()">Đóng</button>
+    </div>
+</div>
+
+<footer id="site-footer" class="footer">
+    <div class="container footer-layout">
+        <div class="footer-left">
+            <a href="../index.html" class="footer-branding">
+                <img class="footer-logo" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                <div class="footer-brand-copy">
+                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
+                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+                </div>
+            </a>
+            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+        </div>
+        <div class="footer-center">
+            <h4>Thông tin liên hệ</h4>
+            <ul class="contact-info">
+                <li><strong>Hotline:</strong> 0977 247 393</li>
+                <li><strong>Zalo:</strong> 0977 247 393</li>
+                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                <li><strong>Website:</strong> hcecosystem.vn</li>
+                <li><strong>Mã số thuế:</strong> 0123456789</li>
+                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+            </ul>
+        </div>
+        <div class="footer-right">
+            <h4>Chính sách &amp; Dịch vụ</h4>
+            <ul class="policy-links">
+                <li><a href="tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
+                <li><a href="dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
+                <li><a href="chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
+                <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                <li><a href="chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
+                <li><a href="tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script>
+    let orderItems = [];
+    let currentUser = null;
+
+    function formatPrice(price) {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    }
+
+    function loadOrderItems() {
+        const checkoutItems = localStorage.getItem('checkoutItems');
+        if (checkoutItems) {
+            orderItems = JSON.parse(checkoutItems);
+        } else {
+            window.location.href = 'gio-hang.html';
+            return;
+        }
+        renderOrderItems();
+        updateOrderSummary();
+    }
+
+    function renderOrderItems() {
+        const orderItemsContainer = document.getElementById('order-items');
+        orderItemsContainer.innerHTML = orderItems.map(item => `
+            <div class="order-item">
+                <img src="${item.image_url}" alt="${item.name}" class="order-item-image">
+                <div class="order-item-info">
+                    <h4>${item.name}</h4>
+                    <p>${item.specs || ''}</p>
+                </div>
+                <div class="order-item-quantity">x${item.quantity}</div>
+                <div class="order-item-price">${formatPrice(item.price * item.quantity)}</div>
+            </div>
+        `).join('');
+    }
+
+    function updateOrderSummary() {
+        const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('subtotal').textContent = formatPrice(subtotal);
+        document.getElementById('total').textContent = formatPrice(subtotal);
+    }
+
+    function showSuccessModal() {
+        const modal = document.getElementById('success-modal');
+        modal.classList.add('show');
+    }
+
+    function closeSuccessModal() {
+        const modal = document.getElementById('success-modal');
+        modal.classList.remove('show');
+        localStorage.removeItem('checkoutItems');
+        // Redirect to the pricing page as requested
+        window.location.href = 'pricing.html';
+    }
+
+    async function prefillUserInfo() {
+        if (window.authUtils && authUtils.getUser()) {
+            currentUser = authUtils.getUser();
+            if (currentUser && currentUser.id) {
+                try {
+                    const response = await fetch(`api/get_user_info.php?user_id=${currentUser.id}`);
+                    const data = await response.json();
+                    if (data.success && data.data.user) {
+                        document.getElementById('fullname').value = data.data.user.full_name || '';
+                        document.getElementById('phone').value = data.data.user.phone || '';
+                    }
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadOrderItems();
+        prefillUserInfo();
+
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+
+        fetch('api/get_tinh.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data.tinh) {
+                    citySelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
+                    data.data.tinh.forEach(tinh => {
+                        const option = document.createElement('option');
+                        option.value = tinh.id;
+                        option.textContent = tinh.ten_tinh;
+                        citySelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching provinces:', error));
+
+        citySelect.addEventListener('change', function() {
+            const selectedTinhId = this.value;
+            districtSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            districtSelect.disabled = true;
+            if (selectedTinhId) {
+                districtSelect.disabled = false;
+                fetch(`api/get_phuong.php?id_tinh=${selectedTinhId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        districtSelect.innerHTML = '<option value="">Chọn phường/xã</option>'; // Reset
+                        if (data.success && data.data.phuong && data.data.phuong.length > 0) {
+                            data.data.phuong.forEach(phuong => {
+                                const option = document.createElement('option');
+                                option.value = phuong.id;
+                                option.textContent = phuong.ten_phuong;
+                                districtSelect.appendChild(option);
+                            });
+                        } else {
+                            districtSelect.innerHTML = '<option value="">Không có dữ liệu</option>';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+            } else {
+                districtSelect.innerHTML = '<option value="">Vui lòng chọn tỉnh/thành phố trước</option>';
+            }
+        });
+
+        const form = document.getElementById('checkout-form');
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentUser || !currentUser.id) {
+                alert('Vui lòng đăng nhập để đặt hàng.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const formData = new FormData(form);
+            const customerData = Object.fromEntries(formData);
+            
+            const cityOption = citySelect.options[citySelect.selectedIndex];
+            customerData.city_name = cityOption ? cityOption.text : '';
+            
+            const districtOption = districtSelect.options[districtSelect.selectedIndex];
+            customerData.district_name = districtOption ? districtOption.text : '';
+
+            const totalAmount = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const orderPayload = {
+                user_id: currentUser.id,
+                customer: customerData,
+                items: orderItems,
+                total: totalAmount
+            };
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '⏳ Đang xử lý...';
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('api/create_order.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Đặt hàng thất bại.');
+                }
+                
+                showSuccessModal();
+
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            } finally {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            }
+        });
+    });
+
+    document.getElementById('success-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSuccessModal();
+        }
+    });
+</script>
+
+<!-- Floating Action Button for Cart (hidden on order page) -->
+<a href="gio-hang.html" class="cart-fab" id="cart-fab">
+    🛒
+    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
+</a>
+
+<script src="../assets/js/shopping-cart.js"></script>
+
+<script src="../assets/js/auth.js"></script>
+</body>
+</html>

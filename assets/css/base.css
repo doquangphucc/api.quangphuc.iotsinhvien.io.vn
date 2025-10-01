@@ -1,0 +1,46 @@
+﻿/* Base Styles & Variables */
+:root {
+    /* Solar Green Palette - Năng Lượng Mặt Trời */
+    --color-green: #3FA34D;        /* Primary green - Xanh lá tươi sáng (button, menu) */
+    --color-green-dark: #1E5631;   /* Dark green - Xanh lá công nghệ đậm (header, text nổi bật) */
+    --color-green-light: #77DD77;  /* Light green - Xanh lá sáng nhẹ (background, hover) */
+    --color-yellow: #C5E384;       /* Yellow-green pastel - Vàng xanh pastel (CTA, highlight) */
+    --color-white: #ffffff;
+    --color-bg: #F4F9E9;           /* Off-white green - Trắng ngả xanh (nền tổng thể) */
+    --color-text: #1E5631;         /* Dark green for text */
+    --color-muted: #3FA34D;        /* Primary green for muted text */
+    --max-width: 1120px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

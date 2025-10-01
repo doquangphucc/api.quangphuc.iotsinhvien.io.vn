@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký - HC Eco System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1.5rem;
+            background: linear-gradient(135deg, #f6f9f2 0%, #e8f5e8 50%, #f0f8f0 100%);
+        }
+        .auth-card {
+            width: min(480px, 100%);
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 60px rgba(63, 163, 77, 0.18);
+        }
+        .auth-card h1 {
+            margin: 0 0 1.5rem 0;
+            font-size: 2rem;
+            color: var(--color-green);
+            text-align: center;
+        }
+        .auth-form {
+            display: grid;
+            gap: 1.1rem;
+        }
+        .auth-form label {
+            font-weight: 600;
+            color: var(--color-dark, #1b4332);
+        }
+        .auth-form input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(63, 163, 77, 0.25);
+            font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .auth-form input:focus {
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 3px rgba(63, 163, 77, 0.15);
+            outline: none;
+        }
+        .auth-submit {
+            margin-top: 0.5rem;
+            padding: 0.9rem 1.4rem;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, var(--color-green), #1E5631);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .auth-submit:hover,
+        .auth-submit:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 32px rgba(63, 163, 77, 0.25);
+            outline: none;
+        }
+        .auth-note {
+            margin-top: 1.2rem;
+            text-align: center;
+            color: var(--color-muted, #6b7280);
+        }
+        .auth-note a {
+            color: var(--color-green);
+            font-weight: 600;
+        }
+        .form-message {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .form-message.is-error {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            color: #b91c1c;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .form-message.is-success {
+            display: block;
+            background: rgba(63, 163, 77, 0.1);
+            color: var(--color-green);
+            border: 1px solid rgba(63, 163, 77, 0.3);
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-layout">
+        <a href="../index.html" class="branding">
+            <img class="logo-image" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+            <div class="brand-copy">
+                <div class="logo">HC<span>ECO SYSTEM</span></div>
+                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+            </div>
+        </a>
+        <div class="topbar-actions">
+            <nav class="nav">
+                <div class="nav-item nav-item--dropdown">
+                    <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
+                    <div class="nav-dropdown" role="menu">
+                        <a href="product-solar-panels.html>Tấm pin Jinko Solar</a>
+                        <a href="product-luxpower-hybrid.html>Inverter LuxPower Hybrid</a>
+                        <a href="product-luxpower-1pha.html>LuxPower Hybrid 1 Pha</a>
+                        <a href="product-luxpower-3phase.html>LuxPower Hybrid 3 Pha</a>
+                        <a href="product-luxpower-3phase-high.html>LuxPower 3 Pha Áp Cao</a>
+                        <a href="product-growatt-110kw.html>Growatt MAX 110kW</a>
+                        <a href="product-battery-storage.html>Pin lưu trữ A-Cornex</a>
+                        <a href="product-battery-byd.html>Pin lưu trữ BYD</a>
+                        <a href="product-electrical-cabinet.html>Tủ điện Hybrid</a>
+                        <a href="product-cables.html>Phụ kiện &amp; Cáp</a>
+                    </div>
+                </div>
+                <a href="index.html#solutions" class="nav-link">Giải pháp</a>
+                <a href="index.html#process" class="nav-link">Quy trình</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
+                <a href="tin-tuc.html" class="nav-link">Tin tức</a>
+                <a href="#site-footer" class="nav-link">Liên hệ</a>
+            </nav>
+            <a class="cta" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+        </div>
+    </div>
+</header>
+<div class="auth-floating" id="auth-floating">
+    <div class="auth-buttons" id="auth-buttons">
+        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+    </div>
+    
+</div>
+
+
+<main class="auth-page">
+    <section class="auth-card">
+        <h1>Đăng ký tài khoản</h1>
+        <form id="register-form" class="auth-form" autocomplete="on">
+            <div>
+                <label for="register-fullname">Họ và tên</label>
+                <input type="text" id="register-fullname" name="full_name" required autocomplete="name" />
+            </div>
+            <div>
+                <label for="register-username">Tên đăng nhập</label>
+                <input type="text" id="register-username" name="username" required autocomplete="username" />
+            </div>
+            <div>
+                <label for="register-phone">Số điện thoại</label>
+                <input type="tel" id="register-phone" name="phone" required autocomplete="tel" pattern="[0-9]{9,12}" />
+            </div>
+            <div>
+                <label for="register-password">Mật khẩu</label>
+                <input type="password" id="register-password" name="password" required autocomplete="new-password" minlength="6" />
+            </div>
+            <div>
+                <label for="register-confirm">Nhập lại mật khẩu</label>
+                <input type="password" id="register-confirm" name="confirm_password" required autocomplete="new-password" minlength="6" />
+            </div>
+            <div id="register-message" class="form-message"></div>
+            <button type="submit" class="auth-submit">Tạo tài khoản</button>
+        </form>
+        <p class="auth-note">Đã có tài khoản? <a href="login.html">Đăng nhập ngay</a></p>
+    </section>
+</main>
+
+<script src="../assets/js/auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('register-form');
+        const messageBox = document.getElementById('register-message');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            messageBox.classList.remove('is-error', 'is-success');
+            messageBox.style.display = 'none';
+
+            const formData = {
+                full_name: form.full_name.value.trim(),
+                username: form.username.value.trim(),
+                phone: form.phone.value.trim(),
+                password: form.password.value,
+                confirm_password: form.confirm_password.value
+            };
+
+            if (!formData.full_name || !formData.username || !formData.phone || !formData.password || !formData.confirm_password) {
+                messageBox.textContent = 'Vui lòng nhập đầy đủ thông tin.';
+                messageBox.classList.add('is-error');
+                messageBox.style.display = 'block';
+                return;
+            }
+
+            if (formData.password !== formData.confirm_password) {
+                messageBox.textContent = 'Mật khẩu nhập lại không khớp.';
+                messageBox.classList.add('is-error');
+                messageBox.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('api/register.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Đăng ký thất bại, vui lòng thử lại.');
+                }
+
+                messageBox.textContent = 'Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...';
+                messageBox.classList.add('is-success');
+                messageBox.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1200);
+            } catch (error) {
+                console.error(error);
+                messageBox.textContent = error.message || 'Không thể đăng ký. Vui lòng thử lại sau.';
+                messageBox.classList.add('is-error');
+                messageBox.style.display = 'block';
+            }
+        });
+    });
+</script>
+</body>
+</html>
