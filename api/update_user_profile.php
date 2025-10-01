@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 require_once 'connect.php';
 
-session_start();
+requireAuth();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Phương thức không được hỗ trợ', 405);
@@ -12,11 +12,9 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     sendError('Dữ liệu JSON không hợp lệ');
 }
 
-if (!isset($_SESSION['user_id'])) {
-    sendError('Bạn cần đăng nhập.', 401);
-}
 
-$userId = (int)$_SESSION['user_id'];
+
+$userId = getCurrentUserId();
 
 $fullName = sanitizeInput($input['full_name'] ?? '');
 $phone = sanitizeInput($input['phone'] ?? '');

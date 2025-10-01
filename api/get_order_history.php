@@ -1,13 +1,11 @@
-<?php
+﻿<?php
 require_once 'connect.php';
 
-session_start();
+requireAuth();
 
-if (!isset($_SESSION['user_id'])) {
-    sendError('Bạn cần đăng nhập để xem lịch sử đơn hàng.', 401);
-}
 
-$userId = (int)$_SESSION['user_id'];
+
+$userId = getCurrentUserId();
 
 try {
     $db = Database::getInstance();

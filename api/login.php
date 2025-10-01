@@ -49,12 +49,14 @@ try {
         sendError('Tên đăng nhập hoặc mật khẩu không đúng');
     }
     
+    // Set session for logged in user
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    
     // Remove password from response
     unset($user['password']);
     
-    // Optional: You can implement JWT tokens here for better security
-    // For now, we'll return user data
-    
+    // Return user data
     sendSuccess(['user' => $user], 'Đăng nhập thành công');
     
 } catch (PDOException $e) {

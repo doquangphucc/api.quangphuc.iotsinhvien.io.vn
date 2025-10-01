@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 require_once 'connect.php';
-session_start(); // Start session to access logged-in user data
+// Session is already started in connect.php via session.php
 
 /* ================== ĐOẠN 1: HÀM GỬI MAIL (đơn giản, không cần SMTP) ================== */
 
@@ -98,10 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // User must be logged in to create an order
-if (!isset($_SESSION['user_id'])) {
-    sendError('Bạn cần đăng nhập để đặt hàng.', 401); // 401 Unauthorized
-}
-$userId = $_SESSION['user_id'];
+
+$userId = getCurrentUserId();
 
 $input = json_decode(file_get_contents('php://input'), true);
 

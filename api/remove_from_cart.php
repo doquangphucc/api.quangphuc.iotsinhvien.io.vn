@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 require_once 'connect.php';
 
-session_start();
+requireAuth();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Phương thức không được hỗ trợ', 405);
@@ -9,11 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-if (!isset($_SESSION['user_id'])) {
-    sendError('Bạn cần đăng nhập để thao tác giỏ hàng.', 401);
-}
 
-$userId = (int)$_SESSION['user_id'];
+
+$userId = getCurrentUserId();
 $cartItemId = $input['cart_item_id'] ?? 0;
 
 if ($cartItemId <= 0) {

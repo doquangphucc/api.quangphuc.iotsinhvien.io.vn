@@ -1,11 +1,29 @@
 ﻿<?php
+// Include config first
+require_once 'config.php';
+
+// Start session before any output
+require_once 'session.php';
+
 // Enable error reporting for development (remove in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Set content type and CORS headers
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+
+// Get the origin of the request
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+// Allow credentials from the same origin or localhost
+if (preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|api\.quangphuc\.iotsinhvien\.io\.vn)(:\d+)?$/', $origin)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+} else {
+    // For other origins, allow without credentials
+    header('Access-Control-Allow-Origin: *');
+}
+
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
@@ -15,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Include config
-require_once 'config.php';
+// Include config (removed from below since it's now at the top)
+// require_once 'config.php';
 
 class Database {
     private $connection;
