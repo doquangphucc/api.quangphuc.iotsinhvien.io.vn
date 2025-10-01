@@ -164,6 +164,13 @@ function updateAllCartCounters(totalItems) {
 }
 
 async function fetchCartCount() {
+    // Check if user is logged in first
+    const currentUser = window.authUtils?.getUser();
+    if (!currentUser) {
+        updateAllCartCounters(0);
+        return;
+    }
+    
     try {
         const response = await fetch('../api/get_cart.php', { credentials: 'include' });
 
