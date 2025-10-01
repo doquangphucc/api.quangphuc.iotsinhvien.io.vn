@@ -87,7 +87,10 @@ function showLoginRequiredNotification() {
     }, 100);
 
     notification.addEventListener('click', () => {
-        window.location.href = 'login.html';
+        // Determine correct path based on current location
+        const isInHtmlFolder = window.location.pathname.includes('/html/');
+        const loginPath = isInHtmlFolder ? 'login.html' : 'html/login.html';
+        window.location.href = loginPath;
     });
 }
 

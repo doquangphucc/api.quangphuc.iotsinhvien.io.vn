@@ -58,16 +58,21 @@
         } else {
             // --- LOGGED OUT STATE ---
 
+            // Determine the correct path based on current location
+            const isInHtmlFolder = window.location.pathname.includes('/html/');
+            const loginPath = isInHtmlFolder ? 'login.html' : 'html/login.html';
+            const registerPath = isInHtmlFolder ? 'register.html' : 'html/register.html';
+
             // 1. Create Login Button
             const loginBtn = document.createElement('a');
             loginBtn.className = 'auth-btn auth-btn--login';
-            loginBtn.href = 'login.html';
+            loginBtn.href = loginPath;
             loginBtn.textContent = 'Đăng nhập';
 
             // 2. Create Register Button
             const registerBtn = document.createElement('a');
             registerBtn.className = 'auth-btn auth-btn--register';
-            registerBtn.href = 'register.html';
+            registerBtn.href = registerPath;
             registerBtn.textContent = 'Đăng ký';
 
             buttonsContainer.appendChild(loginBtn);
