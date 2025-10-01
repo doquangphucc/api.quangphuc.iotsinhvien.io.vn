@@ -101,7 +101,7 @@ async function addToCart(productId, productName) {
     }
 
     try {
-        const response = await fetch('api/add_to_cart.php', {
+        const response = await fetch('../api/add_to_cart.php', {
             credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -152,7 +152,7 @@ function updateAllCartCounters(totalItems) {
 
 async function fetchCartCount() {
     try {
-        const response = await fetch('api/get_cart.php', { credentials: 'include' });
+        const response = await fetch('../api/get_cart.php', { credentials: 'include' });
 
         if (response.status === 401) {
             updateAllCartCounters(0);

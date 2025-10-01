@@ -704,7 +704,7 @@
             currentUser = authUtils.getUser();
             if (currentUser && currentUser.id) {
                 try {
-                    const response = await fetch(`api/get_user_info.php?user_id=${currentUser.id}`);
+                    const response = await fetch(`../api/get_user_info.php?user_id=${currentUser.id}`);
                     const data = await response.json();
                     if (data.success && data.data.user) {
                         document.getElementById('fullname').value = data.data.user.full_name || '';
@@ -724,7 +724,7 @@
         const citySelect = document.getElementById('city');
         const districtSelect = document.getElementById('district');
 
-        fetch('api/get_tinh.php')
+        fetch('../api/get_tinh.php')
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.data.tinh) {
@@ -745,7 +745,7 @@
             districtSelect.disabled = true;
             if (selectedTinhId) {
                 districtSelect.disabled = false;
-                fetch(`api/get_phuong.php?id_tinh=${selectedTinhId}`)
+                fetch(`../api/get_phuong.php?id_tinh=${selectedTinhId}`)
                     .then(response => response.json())
                     .then(data => {
                         districtSelect.innerHTML = '<option value="">Chọn phường/xã</option>'; // Reset
@@ -800,7 +800,7 @@
             submitButton.disabled = true;
 
             try {
-                const response = await fetch('api/create_order.php', {
+                const response = await fetch('../api/create_order.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderPayload)

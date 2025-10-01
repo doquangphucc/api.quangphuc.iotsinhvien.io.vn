@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartItems();
 
         try {
-            const response = await fetch('api/update_cart_item.php', {
+            const response = await fetch('../api/update_cart_item.php', {
                 credentials: 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartItems();
 
         try {
-            const response = await fetch('api/remove_from_cart.php', {
+            const response = await fetch('../api/remove_from_cart.php', {
                 credentials: 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchCart() {
         try {
-            const response = await fetch('api/get_cart.php', { credentials: 'include' });
+            const response = await fetch('../api/get_cart.php', { credentials: 'include' });
 
             if (response.status === 401) {
                 if (window.authUtils) {

@@ -342,7 +342,7 @@
             }
 
             try {
-                const response = await fetch('api/update_user_profile.php', {
+                const response = await fetch('../api/update_user_profile.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

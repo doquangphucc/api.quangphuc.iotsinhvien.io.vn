@@ -268,7 +268,7 @@
         container.innerHTML = '<p>Đang tải lịch sử đơn hàng...</p>';
 
         try {
-            const response = await fetch(`api/get_order_history.php?user_id=${currentUser.id}`);
+            const response = await fetch(`../api/get_order_history.php?user_id=${currentUser.id}`);
             const result = await response.json();
 
             if (!response.ok || !result.success) {
