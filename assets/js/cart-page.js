@@ -289,10 +289,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchCart() {
+        // First check if user is logged in via authUtils
+        const currentUser = window.authUtils?.getUser();
+        if (!currentUser) {
+            // Clear cart localStorage immediately if no user
+            localStorage.removeItem('cartItems');
+            renderNotLoggedIn();
+            return;
+        }
+        
         try {
             const response = await fetch('../api/get_cart.php', { credentials: 'include' });
 
             if (!response.ok) {
+                localStorage.removeItem('cartItems');
                 renderNotLoggedIn();
                 return;
             }
@@ -301,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Check if user is not logged in
             if (result.success && result.data.logged_in === false) {
+                localStorage.removeItem('cartItems');
                 renderNotLoggedIn();
                 return;
             }
