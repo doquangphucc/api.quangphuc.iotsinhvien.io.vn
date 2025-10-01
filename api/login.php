@@ -78,3 +78,4 @@ try {
     error_log("Unexpected login error: " . $e->getMessage());
     sendError('Lỗi không xác định', 500);
 }
+?>
