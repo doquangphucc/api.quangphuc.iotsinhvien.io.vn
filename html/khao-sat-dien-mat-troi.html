@@ -1190,10 +1190,10 @@
                 }
                 const text = toVietnamese(digits);
                 const pretty = text.charAt(0).toUpperCase() + text.slice(1);
-                spell.textContent = ( );
+                spell.textContent = `(${pretty})`;
                 if (usageVisible) {
                     const kWh = calculateUsage(Number(digits));
-                    usage.textContent = ≈  kWh/tháng;
+                    usage.textContent = `≈ ${kWh} kWh/tháng`;
                 } else {
                     usage.textContent = '';
                 }
@@ -1339,24 +1339,24 @@
                 let recommendedPackage = '';
                 
                 if (data.totalCapacity <= 5) {
-                    recommendedPackage = 
+                    recommendedPackage = `
                         <div class="package-name">📦 Gói Tiết Kiệm</div>
                         <div class="package-price">💰 45-65 triệu VNĐ</div>
-                        <div class="package-features">✅ Phù hợp cho hệ thống  kWp - Tấm pin Mono PERC 550W - Inverter On-Grid - Bảo hành 10 năm</div>
-                    ;
+                        <div class="package-features">✅ Phù hợp cho hệ thống ${data.totalCapacity} kWp - Tấm pin Mono PERC 550W - Inverter On-Grid - Bảo hành 10 năm</div>
+                    `;
                 } else if (data.totalCapacity <= 8) {
-                    recommendedPackage = 
+                    recommendedPackage = `
                         <div class="package-name">🏠 Gói Gia Đình</div>
                         <div class="package-price">💰 75-110 triệu VNĐ</div>
-                        <div class="package-features">✅ Phù hợp cho hệ thống  kWp - Tấm pin Tier 1 Longi 580W - Inverter Hybrid + Pin lưu trữ - Bảo hành 12 năm</div>
-                    ;
+                        <div class="package-features">✅ Phù hợp cho hệ thống ${data.totalCapacity} kWp - Tấm pin Tier 1 Longi 580W - Inverter Hybrid + Pin lưu trữ - Bảo hành 12 năm</div>
+                    `;
                 } else {
                     const priceRange = Math.round(data.totalCapacity * 12) + '-' + Math.round(data.totalCapacity * 15);
-                    recommendedPackage = 
+                    recommendedPackage = `
                         <div class="package-name">🏢 Gói Doanh Nghiệp</div>
-                        <div class="package-price">💰  triệu VNĐ</div>
-                        <div class="package-features">✅ Phù hợp cho hệ thống  kWp - Tấm pin công nghiệp Tier 1 - Inverter trung tâm 3 pha - Bảo hành 15 năm</div>
-                    ;
+                        <div class="package-price">💰 ${priceRange} triệu VNĐ</div>
+                        <div class="package-features">✅ Phù hợp cho hệ thống ${data.totalCapacity} kWp - Tấm pin công nghiệp Tier 1 - Inverter trung tâm 3 pha - Bảo hành 15 năm</div>
+                    `;
                 }
                 
                 packageElement.innerHTML = recommendedPackage;
