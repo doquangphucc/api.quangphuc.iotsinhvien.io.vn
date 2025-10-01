@@ -54,6 +54,9 @@
                 e.preventDefault();
                 storeUser(null); // Clear user from storage
                 
+                // Clear cart from localStorage
+                localStorage.removeItem('cartItems');
+                
                 // Clear cart counter before reload
                 const fabCounter = document.getElementById('fab-cart-count');
                 if (fabCounter) {
