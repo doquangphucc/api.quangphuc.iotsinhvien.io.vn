@@ -34,12 +34,16 @@
         if (user && user.full_name) {
             // --- LOGGED IN STATE ---
 
+            // Determine the correct path based on current location
+            const isInHtmlFolder = window.location.pathname.includes('/html/');
+            const profilePath = isInHtmlFolder ? 'user_profile.html' : 'html/user_profile.html';
+
             // 1. Create User Profile Link
             const userLink = document.createElement('a');
             userLink.className = 'auth-btn auth-user-name'; // Use this class for styling
             userLink.textContent = user.full_name;
             userLink.title = 'Quản lý tài khoản';
-            userLink.href = 'user_profile.html';
+            userLink.href = profilePath;
 
             // 2. Create Logout Button
             const logoutBtn = document.createElement('a');
