@@ -88,11 +88,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const wasSelectAllChecked = selectAllCheckbox.checked;
         const previousSelection = new Set(selectedItemIds);
 
-        cartItemsContainer.innerHTML = cartItems.map(item => `
+        cartItemsContainer.innerHTML = cartItems.map(item => {
+            // Fix image URL path - ensure it works from html/ folder
+            let imageUrl = item.image_url || '';
+            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('../')) {
+                // If it's a relative path without ../, add ../
+                imageUrl = '../' + imageUrl;
+            }
+            
+            return `
             <div class="cart-item" data-id="${item.id}">
                 <input type="checkbox" class="item-checkbox">
                 <div class="item-info">
-                    <img src="${item.image_url}" alt="${item.name}" class="item-image">
+                    <img src="${imageUrl}" alt="${item.name}" class="item-image" onerror="this.src='../assets/img/logo.jpg'">
                     <div class="item-details">
                         <h4>${item.name}</h4>
                         <p>${item.specifications || ''}</p>
@@ -107,7 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="item-total">${formatPrice(item.price * item.quantity)}</div>
                 <button class="remove-btn" type="button" data-id="${item.id}" title="Xoa san pham">&times;</button>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         selectedItemIds = new Set();
 
