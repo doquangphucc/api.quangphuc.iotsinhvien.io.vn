@@ -54,9 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.innerHTML = `
             <div class="empty-cart">
                 <div class="icon">&#128722;</div>
-                <h3>Gio hang cua ban dang trong</h3>
-                <p>Hay kham pha cac san pham cua chung toi va them vao gio nhe!</p>
-                <a href="pricing.html" class="btn primary" style="margin-top: 1rem;">Bang gia san pham</a>
+                <h3>Giỏ hàng của bạn đang trống</h3>
+                <p>Hãy khám phá các sản phẩm của chúng tôi và thêm vào giỏ nhé!</p>
+                <a href="pricing.html" class="btn primary" style="margin-top: 1rem;">Bảng giá sản phẩm</a>
             </div>
         `;
         syncCartIndicator();
@@ -69,9 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.innerHTML = `
             <div class="empty-cart">
                 <div class="icon">&#128274;</div>
-                <h3>Vui long dang nhap</h3>
-                <p>Ban can dang nhap de xem gio hang va mua sam.</p>
-                <a href="login.html" class="btn primary" style="margin-top: 1rem;">Dang nhap ngay</a>
+                <h3>Vui lòng đăng nhập</h3>
+                <p>Bạn cần đăng nhập để xem giỏ hàng và mua sắm.</p>
+                <a href="login.html" class="btn primary" style="margin-top: 1rem;">Đăng nhập ngay</a>
             </div>
         `;
         syncCartIndicator();
@@ -178,14 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const result = await response.json();
             if (!result.success) {
-                throw new Error(result.message || 'Cap nhat that bai');
+                throw new Error(result.message || 'Cập nhật thất bại');
             }
         } catch (error) {
             console.error('Failed to update quantity:', error);
             cartItems = previousCartItems;
             selectedItemIds = previousSelection;
             renderCartItems();
-            alert('Loi: Khong the cap nhat so luong.');
+            alert('Lỗi: Không thể cập nhật số lượng.');
         }
     }
 
@@ -215,14 +215,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const result = await response.json();
             if (!result.success) {
-                throw new Error(result.message || 'Xoa that bai');
+                throw new Error(result.message || 'Xóa thất bại');
             }
         } catch (error) {
             console.error('Failed to remove item:', error);
             cartItems = previousCartItems;
             selectedItemIds = previousSelection;
             renderCartItems();
-            alert('Loi: Khong the xoa san pham.');
+            alert('Lỗi: Không thể xóa sản phẩm.');
         }
     }
 
@@ -265,13 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function proceedToCheckout() {
         if (!selectedItemIds.size) {
-            alert('Vui long chon san pham de thanh toan.');
+            alert('Vui lòng chọn sản phẩm để thanh toán.');
             return;
         }
 
         const checkoutItems = cartItems.filter(item => selectedItemIds.has(item.id));
         if (!checkoutItems.length) {
-            alert('Vui long chon san pham de thanh toan.');
+            alert('Vui lòng chọn sản phẩm để thanh toán.');
             return;
         }
 
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleCartSections(false);
             cartItemsContainer.innerHTML = `
                 <div class="empty-cart">
-                    <p>Khong the tai gio hang. Vui long thu lai.</p>
+                    <p>Không thể tải giỏ hàng. Vui lòng thử lại.</p>
                 </div>
             `;
             syncCartIndicator();
