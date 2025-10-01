@@ -294,6 +294,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentUser) {
             // Clear cart localStorage immediately if no user
             localStorage.removeItem('cartItems');
+            // Update cart counter to 0
+            if (typeof updateAllCartCounters === 'function') {
+                updateAllCartCounters(0);
+            }
             renderNotLoggedIn();
             return;
         }
@@ -303,6 +307,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 localStorage.removeItem('cartItems');
+                if (typeof updateAllCartCounters === 'function') {
+                    updateAllCartCounters(0);
+                }
                 renderNotLoggedIn();
                 return;
             }
@@ -312,6 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if user is not logged in
             if (result.success && result.data.logged_in === false) {
                 localStorage.removeItem('cartItems');
+                if (typeof updateAllCartCounters === 'function') {
+                    updateAllCartCounters(0);
+                }
                 renderNotLoggedIn();
                 return;
             }

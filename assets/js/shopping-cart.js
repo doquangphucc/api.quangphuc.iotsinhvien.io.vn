@@ -229,6 +229,9 @@ function initializeProductActionButtons() {
     });
 }
 
+// Expose updateAllCartCounters globally for use in cart-page.js
+window.updateAllCartCounters = updateAllCartCounters;
+
 // --- SCRIPT EXECUTION ---
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -236,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUser = window.authUtils?.getUser();
     if (!currentUser) {
         localStorage.removeItem('cartItems');
+        updateAllCartCounters(0); // Reset counter immediately
     }
     
     initializeProductActionButtons();
