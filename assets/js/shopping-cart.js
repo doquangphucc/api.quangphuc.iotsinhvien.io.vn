@@ -157,11 +157,8 @@ async function fetchCartCount() {
     try {
         const response = await fetch('../api/get_cart.php', { credentials: 'include' });
 
-        if (response.status === 401) {
+        if (!response.ok) {
             updateAllCartCounters(0);
-            if (window.authUtils) {
-                authUtils.clearUser();
-            }
             return;
         }
 

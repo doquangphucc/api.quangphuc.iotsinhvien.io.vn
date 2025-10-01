@@ -6,8 +6,12 @@ error_log("Get Cart Debug - Session ID: " . session_id());
 error_log("Get Cart Debug - Session Data: " . print_r($_SESSION, true));
 error_log("Get Cart Debug - Cookie Data: " . print_r($_COOKIE, true));
 
-// Check if user is logged in
-requireAuth();
+// Check if user is logged in - if not, return empty cart
+if (!isLoggedIn()) {
+    error_log("Get Cart Debug - User not logged in, returning empty cart");
+    sendSuccess(['cart' => [], 'logged_in' => false]);
+    exit;
+}
 
 $userId = getCurrentUserId();
 error_log("Get Cart Debug - User ID: " . $userId);
@@ -22,7 +26,7 @@ try {
     $stmt->execute([$userId]);
     $cartItems = $stmt->fetchAll();
 
-    sendSuccess(['cart' => $cartItems]);
+    sendSuccess(['cart' => $cartItems, 'logged_in' => true]);
 
 } catch (Exception $e) {
     error_log("Get cart error: " . $e->getMessage());

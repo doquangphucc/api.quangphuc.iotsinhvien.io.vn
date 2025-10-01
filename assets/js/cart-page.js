@@ -283,15 +283,19 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('../api/get_cart.php', { credentials: 'include' });
 
-            if (response.status === 401) {
-                if (window.authUtils) {
-                    authUtils.clearUser();
-                }
+            if (!response.ok) {
                 renderNotLoggedIn();
                 return;
             }
 
             const result = await response.json();
+            
+            // Check if user is not logged in
+            if (result.success && result.data.logged_in === false) {
+                renderNotLoggedIn();
+                return;
+            }
+            
             if (result.success && result.data && Array.isArray(result.data.cart)) {
                 const previousSelection = new Set(selectedItemIds);
                 cartItems = result.data.cart.map(item => ({
