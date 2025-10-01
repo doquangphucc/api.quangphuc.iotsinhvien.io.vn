@@ -19,6 +19,116 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     }
 
+    function showConfirmModal(message) {
+        return new Promise((resolve) => {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                animation: fadeIn 0.2s ease;
+            `;
+
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: white;
+                border-radius: 16px;
+                padding: 2rem;
+                max-width: 400px;
+                width: 90%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                animation: slideUp 0.3s ease;
+            `;
+
+            dialog.innerHTML = `
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes slideUp {
+                        from { transform: translateY(20px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                </style>
+                <h3 style="color: #3FA34D; margin: 0 0 1rem 0; font-size: 1.3rem;">Xác nhận</h3>
+                <p style="color: #666; margin-bottom: 2rem; line-height: 1.6;">${message}</p>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button id="modal-cancel" style="
+                        padding: 0.75rem 1.5rem;
+                        border: 2px solid #ddd;
+                        background: white;
+                        color: #666;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    ">Hủy</button>
+                    <button id="modal-confirm" style="
+                        padding: 0.75rem 1.5rem;
+                        border: none;
+                        background: linear-gradient(135deg, #ef4444, #dc2626);
+                        color: white;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+                    ">Xóa</button>
+                </div>
+            `;
+
+            modal.appendChild(dialog);
+            document.body.appendChild(modal);
+
+            const cancelBtn = dialog.querySelector('#modal-cancel');
+            const confirmBtn = dialog.querySelector('#modal-confirm');
+
+            // Hover effects
+            cancelBtn.addEventListener('mouseenter', () => {
+                cancelBtn.style.borderColor = '#3FA34D';
+                cancelBtn.style.color = '#3FA34D';
+            });
+            cancelBtn.addEventListener('mouseleave', () => {
+                cancelBtn.style.borderColor = '#ddd';
+                cancelBtn.style.color = '#666';
+            });
+            confirmBtn.addEventListener('mouseenter', () => {
+                confirmBtn.style.transform = 'translateY(-2px)';
+                confirmBtn.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.4)';
+            });
+            confirmBtn.addEventListener('mouseleave', () => {
+                confirmBtn.style.transform = 'translateY(0)';
+                confirmBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                modal.remove();
+                resolve(false);
+            });
+
+            confirmBtn.addEventListener('click', () => {
+                modal.remove();
+                resolve(true);
+            });
+
+            // Close on backdrop click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                    resolve(false);
+                }
+            });
+        });
+    }
+
     function syncCartIndicator() {
         if (typeof updateAllCartCounters === 'function') {
             const totalItems = cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
@@ -388,9 +498,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (target.matches('.remove-btn')) {
-            if (confirm('Ban chac muon xoa san pham nay?')) {
-                removeItem(cartItemId);
-            }
+            showConfirmModal('Bạn chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?').then(confirmed => {
+                if (confirmed) {
+                    removeItem(cartItemId);
+                }
+            });
         }
     });
 
