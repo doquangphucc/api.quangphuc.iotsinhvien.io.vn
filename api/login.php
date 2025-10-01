@@ -3,14 +3,14 @@ require_once 'connect.php';
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendError('PhÆ°Æ¡ng thá»©c khÃ´ng Ä‘Æ°á»£c há»— trá»£', 405);
+    sendError('Phương thức không được hỗ trợ', 405);
 }
 
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (json_last_error() !== JSON_ERROR_NONE) {
-    sendError('Dá»¯ liá»‡u JSON khÃ´ng há»£p lá»‡');
+    sendError('Dữ liệu JSON không hợp lệ');
 }
 
 // Validate required fields
@@ -18,7 +18,7 @@ $requiredFields = ['username', 'password'];
 $missingFields = validateRequired($input, $requiredFields);
 
 if (!empty($missingFields)) {
-    sendError('Thiáº¿u cÃ¡c trÆ°á»ng báº¯t buá»™c: ' . implode(', ', $missingFields));
+    sendError('Thiếu các trường bắt buộc: ' . implode(', ', $missingFields));
 }
 
 // Sanitize input
@@ -27,11 +27,11 @@ $password = $input['password'];
 
 // Validate input
 if (strlen($username) < 3) {
-    sendError('TÃªn Ä‘Äƒng nháº­p khÃ´ng há»£p lá»‡');
+    sendError('Tên đăng nhập không hợp lệ');
 }
 
 if (strlen($password) < 6) {
-    sendError('Máº­t kháº©u khÃ´ng há»£p lá»‡');
+    sendError('Mật khẩu không hợp lệ');
 }
 
 try {
@@ -41,12 +41,12 @@ try {
     $user = $db->selectOne('users', ['username' => $username]);
     
     if (!$user) {
-        sendError('TÃªn Ä‘Äƒng nháº­p hoáº·c máº­t kháº©u khÃ´ng Ä‘Ãºng');
+        sendError('Tên đăng nhập hoặc mật khẩu không đúng');
     }
     
     // Verify password
     if (!password_verify($password, $user['password'])) {
-        sendError('TÃªn Ä‘Äƒng nháº­p hoáº·c máº­t kháº©u khÃ´ng Ä‘Ãºng');
+        sendError('Tên đăng nhập hoặc mật khẩu không đúng');
     }
     
     // Set session for logged in user
@@ -69,13 +69,12 @@ try {
             'session_name' => session_name(),
             'cookie_params' => session_get_cookie_params()
         ]
-    ], 'ÄÄƒng nháº­p thÃ nh cÃ´ng');
+    ], 'Đăng nhập thành công');
     
 } catch (PDOException $e) {
     error_log("Login error: " . $e->getMessage());
-    sendError('Lá»—i há»‡ thá»‘ng, vui lÃ²ng thá»­ láº¡i sau', 500);
+    sendError('Lỗi hệ thống, vui lòng thử lại sau', 500);
 } catch (Exception $e) {
     error_log("Unexpected login error: " . $e->getMessage());
-    sendError('Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh', 500);
+    sendError('Lỗi không xác định', 500);
 }
-?>
