@@ -332,7 +332,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const result = await response.json();
+            // Get response text first to debug
+            const responseText = await response.text();
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                console.error('Response text:', responseText);
+                throw new Error('Server returned invalid JSON. Check console for details.');
+            }
+
             if (!result.success) {
                 throw new Error(result.message || 'Xóa thất bại');
             }
@@ -341,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cartItems = previousCartItems;
             selectedItemIds = previousSelection;
             renderCartItems();
-            alert('Lỗi: Không thể xóa sản phẩm.');
+            alert('Lỗi: Không thể xóa sản phẩm. ' + error.message);
         }
     }
 
