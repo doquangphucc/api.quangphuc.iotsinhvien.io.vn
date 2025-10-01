@@ -594,7 +594,17 @@
             const monthlyKWh = calculateKWhFromBill(data.monthlyBill);
             
             // 2. Giờ nắng theo khu vực
-            const sunHours = data.region === 'mien-bac' ? 3 : (data.region === 'mien-trung' ? 3.5 : 4);
+            let sunHours, regionName;
+            if (data.region === 'mien-bac') {
+                sunHours = 3;
+                regionName = 'Miền Bắc';
+            } else if (data.region === 'mien-trung') {
+                sunHours = 3.5;
+                regionName = 'Miền Trung';
+            } else {
+                sunHours = 4;
+                regionName = 'Miền Nam';
+            }
             
             // 3. Thông tin tấm pin
             const panelInfo = PRODUCTS.panels[data.solarPanel];
@@ -685,6 +695,7 @@
                 data,
                 monthlyKWh,
                 sunHours,
+                regionName,
                 panelInfo,
                 panelsNeeded,
                 totalCapacity,
@@ -726,7 +737,7 @@
                     </div>
                     <div class="result-item">
                         <span class="result-label">Giờ nắng:</span>
-                        <span class="result-value">${results.sunHours} giờ/ngày</span>
+                        <span class="result-value">${results.sunHours} giờ/ngày (Trung bình ${results.regionName})</span>
                     </div>
                 </div>
 
