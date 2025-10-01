@@ -154,41 +154,48 @@ async function buyNow(productId, productName) {
     }
 
     try {
-        // First, add product to cart
-        const response = await fetch('../api/add_to_cart.php', {
-            credentials: 'include',
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                product_id: productId,
-                quantity: 1
-            })
-        });
-
-        if (response.status === 401) {
-            if (window.authUtils) {
-                authUtils.clearUser();
-            }
-            showLoginRequiredNotification();
-            return;
+        // Get product information from the current page DOM
+        const productRow = document.querySelector(`[data-product-id="${productId}"]`)?.closest('tr');
+        if (!productRow) {
+            throw new Error('Không tìm thấy thông tin sản phẩm.');
         }
 
-        const result = await response.json();
+        // Extract product details from DOM
+        const imageEl = productRow.querySelector('.product-image img');
+        const specsEl = productRow.querySelector('.product-specs ul');
+        const priceEl = productRow.querySelector('.product-price .price-main');
 
-        if (result.success) {
-            // Update cart counter
-            updateAllCartCounters(result.data.total_items);
-            
-            // Show notification
-            showNotification(`Đã thêm "${productName}" vào giỏ hàng.`);
-            
-            // Redirect to checkout page after a short delay
-            setTimeout(() => {
-                window.location.href = 'dat-hang.html';
-            }, 500);
-        } else {
-            throw new Error(result.message || 'Có lỗi xảy ra.');
+        // Parse price (remove ₫ and dots, convert to number)
+        const priceText = priceEl?.textContent.trim() || '0';
+        const price = Number(priceText.replace(/[₫,.]/g, ''));
+
+        // Get specifications text
+        let specifications = '';
+        if (specsEl) {
+            const specItems = Array.from(specsEl.querySelectorAll('li'));
+            specifications = specItems.slice(0, 3).map(li => li.textContent.trim()).join(', ');
         }
+
+        // Create checkout item object
+        const checkoutItem = {
+            id: productId,
+            name: productName,
+            price: price,
+            quantity: 1,
+            image_url: imageEl?.src || '',
+            specifications: specifications
+        };
+
+        // Save to localStorage for checkout page
+        localStorage.setItem('checkoutItems', JSON.stringify([checkoutItem]));
+
+        // Show notification and redirect
+        showNotification(`Chuyển đến trang đặt hàng: "${productName}"`);
+        
+        setTimeout(() => {
+            window.location.href = 'dat-hang.html';
+        }, 300);
+
     } catch (error) {
         console.error('Buy now error:', error);
         showNotification(error.message || 'Không thể mua hàng.', true);
