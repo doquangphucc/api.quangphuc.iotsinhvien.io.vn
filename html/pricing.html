@@ -11,21 +11,69 @@
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
     <style>
-        /* Enhanced product card styling - no icons, text only */
-        .product-card {
-            padding: 2rem 1.5rem;
+        body {
+            background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+            min-height: 100vh;
+        }
+
+        .products-grid-section {
+            padding: 60px 0;
+        }
+
+        .products-grid-section header {
             text-align: center;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fdf8 100%);
-            border: 2px solid rgba(63, 163, 77, 0.1);
-            border-radius: 16px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 50px;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(63, 163, 77, 0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 50px;
+            border-top: 4px solid #3FA34D;
+        }
+
+        .products-grid-section h2 {
+            color: #2c5530;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3FA34D, #2E7D32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .products-grid-section p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
             position: relative;
             overflow: hidden;
             display: block;
             text-decoration: none;
             color: inherit;
+            border-left: 5px solid #3FA34D;
         }
-        
+
         .product-card::before {
             content: '';
             position: absolute;
@@ -33,77 +81,48 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #3FA34D, #C5E384, #22c55e);
-            transform: translateX(-100%);
-            transition: transform 0.4s ease;
+            background: linear-gradient(90deg, #3FA34D, #4CAF50);
         }
-        
-        .product-card:hover::before {
-            transform: translateX(0);
-        }
-        
+
         .product-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(63, 163, 77, 0.15);
-            border-color: rgba(63, 163, 77, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(63, 163, 77, 0.2);
+            border-color: #3FA34D;
+            border-left-color: #2E7D32;
         }
-        
+
         .product-card h3 {
-            color: #3FA34D;
-            font-size: 1.4rem;
+            color: #2c5530;
+            font-size: 1.3rem;
             font-weight: 700;
-            margin: 0 0 1rem 0;
-            line-height: 1.3;
-            text-shadow: 0 2px 8px rgba(63, 163, 77, 0.1);
-            background: linear-gradient(135deg, #3FA34D, #22c55e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
+            margin: 0 0 15px 0;
+            line-height: 1.4;
         }
-        
-        .product-card h3::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, #3FA34D, #C5E384);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-        
-        .product-card:hover h3::after {
-            width: 80px;
-        }
-        
+
         .product-card p {
-            color: #2d4a2d;
-            font-size: 1rem;
-            font-weight: 500;
-            margin: 1.5rem 0 1rem 0;
+            color: #666;
+            font-size: 0.95rem;
+            margin: 15px 0 20px 0;
             line-height: 1.5;
         }
-        
+
         .product-badge {
-            background: linear-gradient(135deg, #3FA34D, #22c55e);
+            background: linear-gradient(135deg, #3FA34D, #4CAF50);
             color: white;
-            padding: 0.5rem 1.2rem;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 25px;
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
             display: inline-block;
             box-shadow: 0 4px 15px rgba(63, 163, 77, 0.3);
-            text-shadow: none;
         }
-        
+
         .product-card:hover .product-badge {
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(63, 163, 77, 0.4);
+            background: linear-gradient(135deg, #2E7D32, #388E3C);
         }
-        
+
         /* Floating Action Button for Cart */
         .cart-fab {
             position: fixed;
@@ -111,7 +130,7 @@
             right: 20px;
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #3FA34D, #1E5631);
+            background: linear-gradient(135deg, #3FA34D, #2E7D32);
             color: white;
             border: none;
             border-radius: 50%;
@@ -129,6 +148,7 @@
         .cart-fab:hover {
             transform: translateY(-3px) scale(1.1);
             box-shadow: 0 12px 35px rgba(63, 163, 77, 0.4);
+            background: linear-gradient(135deg, #2E7D32, #1B5E20);
         }
 
         .cart-fab .fab-badge {
@@ -149,12 +169,26 @@
         }
 
         @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
+            }
+            
+            .products-grid-section h2 {
+                font-size: 2rem;
+            }
+            
             .cart-fab {
                 bottom: 70px;
                 right: 15px;
                 width: 55px;
                 height: 55px;
                 font-size: 1.3rem;
+            }
+
+            .products-grid-section header {
+                margin: 0 10px 40px 10px;
+                padding: 30px 20px;
             }
         }
     </style>
@@ -175,16 +209,16 @@
                 <div class="nav-item nav-item--dropdown">
                     <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
                     <div class="nav-dropdown" role="menu">
-                        <a href="product-solar-panels.html>Tấm pin Jinko Solar</a>
-                        <a href="product-luxpower-hybrid.html>Inverter LuxPower Hybrid</a>
-                        <a href="product-luxpower-1pha.html>LuxPower Hybrid 1 Pha</a>
-                        <a href="product-luxpower-3phase.html>LuxPower Hybrid 3 Pha</a>
-                        <a href="product-luxpower-3phase-high.html>LuxPower 3 Pha Áp Cao</a>
-                        <a href="product-growatt-110kw.html>Growatt MAX 110kW</a>
-                        <a href="product-battery-storage.html>Pin lưu trữ A-Cornex</a>
-                        <a href="product-battery-byd.html>Pin lưu trữ BYD</a>
-                        <a href="product-electrical-cabinet.html>Tủ điện Hybrid</a>
-                        <a href="product-cables.html>Phụ kiện & Cáp</a>
+                        <a href="product-solar-panels.html">Tấm pin Jinko Solar</a>
+                        <a href="product-luxpower-hybrid.html">Inverter LuxPower Hybrid</a>
+                        <a href="product-luxpower-1pha.html">LuxPower Hybrid 1 Pha</a>
+                        <a href="product-luxpower-3phase.html">LuxPower Hybrid 3 Pha</a>
+                        <a href="product-luxpower-3phase-high.html">LuxPower 3 Pha Áp Cao</a>
+                        <a href="product-growatt-110kw.html">Growatt MAX 110kW</a>
+                        <a href="product-battery-storage.html">Pin lưu trữ A-Cornex</a>
+                        <a href="product-battery-byd.html">Pin lưu trữ BYD</a>
+                        <a href="product-electrical-cabinet.html">Tủ điện Hybrid</a>
+                        <a href="product-cables.html">Phụ kiện &amp; Cáp</a>
                     </div>
                 </div>
                 <a href="index.html#solutions" class="nav-link">Giải pháp</a>
@@ -280,63 +314,63 @@
             </header>
             
             <div class="products-grid">
-                <a href="product-luxpower-hybrid.html class="product-card">
+                <a href="product-luxpower-hybrid.html" class="product-card">
                     <h3>LUXPOWER Hybrid Phổ Thông 1 Pha</h3>
                     <p>Có thể ghép song song từ 3 máy thành 3 pha</p>
                     <div class="product-badge">4 sản phẩm</div>
                 </a>
                 
-                <a href="product-luxpower-1pha.html class="product-card">
+                <a href="product-luxpower-1pha.html" class="product-card">
                     <h3>LUXPOWER HYBRID 1 PHA THẾ HỆ MỚI</h3>
                     <p>GEN 6-8-10K - Nâng cấp toàn diện cấu hình cao</p>
                     <div class="product-badge">4 sản phẩm</div>
                 </a>
                 
-                <a href="product-luxpower-3phase.html class="product-card">
+                <a href="product-luxpower-3phase.html" class="product-card">
                     <h3>LUXPOWER HYBRID 3 PHA ÁP THẤP</h3>
                     <p>TriP2-LB-3P 6K-20K - BẢN CAO CẤP</p>
                     <div class="product-badge">2 sản phẩm</div>
                 </a>
                 
-                <a href="product-luxpower-3phase-high.html class="product-card">
+                <a href="product-luxpower-3phase-high.html" class="product-card">
                     <h3>LUXPOWER HYBRID 3 PHA ÁP CAO</h3>
                     <p>TRIP 6-20K BẢN CAO CẤP - Công suất cao</p>
                     <div class="product-badge">4 sản phẩm</div>
                 </a>
                 
-                <a href="product-growatt-110kw.html class="product-card">
+                <a href="product-growatt-110kw.html" class="product-card">
                     <h3>Inverter Growatt 110kW MAX</h3>
                     <p>MAX 110KTL3-LV - Áp Cao Nhà Xưởng - Khu Công Nghiệp</p>
                     <div class="product-badge">1 sản phẩm</div>
                 </a>
                 
-                <a href="product-cables.html class="product-card">
+                <a href="product-cables.html" class="product-card">
                     <h3>Cáp & Phụ Kiện</h3>
                     <p>DC, AC, MC4 Connector</p>
                     <div class="product-badge">3 sản phẩm</div>
                 </a>
                 
-                <a href="product-battery-storage.html class="product-card">
-                    <h3>PIN LƯU TRỮ</h3>
-                    <p>16,3kW - Pin mới 100%</p>
+                <a href="product-battery-storage.html" class="product-card">
+                    <h3>PIN LƯU TRỮ A-CORNEX</h3>
+                    <p>16,3kW - Pin mới 100% LiFePO4</p>
                     <div class="product-badge">1 sản phẩm</div>
                 </a>
                 
-                <a href="product-battery-byd.html class="product-card">
-                    <h3>PIN LƯU TRỮ</h3>
-                    <p>8,8 kW - Pin tháo khối BYD</p>
+                <a href="product-battery-byd.html" class="product-card">
+                    <h3>PIN LƯU TRỮ BYD</h3>
+                    <p>8,8 kW - Pin tháo khối BYD chất lượng cao</p>
                     <div class="product-badge">1 sản phẩm</div>
                 </a>
                 
-                <a href="product-solar-panels.html class="product-card">
+                <a href="product-solar-panels.html" class="product-card">
                     <h3>TẤM PIN NĂNG LƯỢNG MẶT TRỜI</h3>
                     <p>THƯƠNG HIỆU JINKO (Số 1 thế giới)</p>
                     <div class="product-badge">1 sản phẩm</div>
                 </a>
                 
-                <a href="product-electrical-cabinet.html class="product-card">
-                    <h3>TỦ ĐIỆN</h3>
-                    <p>Tủ điện cho hệ thống năng lượng mặt trời</p>
+                <a href="product-electrical-cabinet.html" class="product-card">
+                    <h3>TỦ ĐIỆN HYBRID</h3>
+                    <p>Tủ điện chuyên dụng cho hệ thống năng lượng mặt trời</p>
                     <div class="product-badge">4 sản phẩm</div>
                 </a>
             </div>
