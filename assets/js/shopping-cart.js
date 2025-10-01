@@ -232,6 +232,12 @@ function initializeProductActionButtons() {
 // --- SCRIPT EXECUTION ---
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Clear cart if no user is logged in (prevent data leak between sessions)
+    const currentUser = window.authUtils?.getUser();
+    if (!currentUser) {
+        localStorage.removeItem('cartItems');
+    }
+    
     initializeProductActionButtons();
     fetchCartCount(); // Fetch initial cart count when page loads
 });
