@@ -146,6 +146,55 @@ async function addToCart(productId, productName) {
     }
 }
 
+async function buyNow(productId, productName) {
+    const user = window.authUtils.getUser();
+    if (!user || !user.id) {
+        showLoginRequiredNotification();
+        return;
+    }
+
+    try {
+        // First, add product to cart
+        const response = await fetch('../api/add_to_cart.php', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        });
+
+        if (response.status === 401) {
+            if (window.authUtils) {
+                authUtils.clearUser();
+            }
+            showLoginRequiredNotification();
+            return;
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Update cart counter
+            updateAllCartCounters(result.data.total_items);
+            
+            // Show notification
+            showNotification(`Đã thêm "${productName}" vào giỏ hàng.`);
+            
+            // Redirect to checkout page after a short delay
+            setTimeout(() => {
+                window.location.href = 'dat-hang.html';
+            }, 500);
+        } else {
+            throw new Error(result.message || 'Có lỗi xảy ra.');
+        }
+    } catch (error) {
+        console.error('Buy now error:', error);
+        showNotification(error.message || 'Không thể mua hàng.', true);
+    }
+}
+
 function updateAllCartCounters(totalItems) {
     const fabBadge = document.getElementById('fab-cart-count');
 
@@ -218,19 +267,12 @@ function initializeProductActionButtons() {
             });
         }
 
-        // Note: The "Buy Now" functionality is not yet defined for database integration.
-        // It currently uses localStorage and redirects. This can be updated later.
+        // "Buy Now" button - Add to cart and redirect to checkout
         if (buyButton && !buyButton.dataset.buyBound) {
              buyButton.dataset.buyBound = 'true';
              buyButton.addEventListener('click', (event) => {
                 event.preventDefault();
-                const user = window.authUtils.getUser();
-                if (!user || !user.id) {
-                    showLoginRequiredNotification();
-                } else {
-                    // Placeholder for future Buy Now logic with database
-                    alert('Chức năng "Mua Ngay" sẽ được phát triển sau.');
-                }
+                buyNow(productId, productName);
              });
         }
     });
