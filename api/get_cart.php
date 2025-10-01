@@ -1,10 +1,16 @@
 <?php
 require_once 'connect.php';
 
+// Debug logging
+error_log("Get Cart Debug - Session ID: " . session_id());
+error_log("Get Cart Debug - Session Data: " . print_r($_SESSION, true));
+error_log("Get Cart Debug - Cookie Data: " . print_r($_COOKIE, true));
+
 // Check if user is logged in
 requireAuth();
 
 $userId = getCurrentUserId();
+error_log("Get Cart Debug - User ID: " . $userId);
 
 try {
     $db = Database::getInstance();

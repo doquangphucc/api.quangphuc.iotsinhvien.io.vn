@@ -15,9 +15,28 @@ header('Content-Type: application/json; charset=utf-8');
 // Get the origin of the request
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
-// Allow credentials from the same origin or localhost
-if (preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|api\.quangphuc\.iotsinhvien\.io\.vn)(:\d+)?$/', $origin)) {
+// List of allowed origins
+$allowedOrigins = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'https://api.quangphuc.iotsinhvien.io.vn',
+    'http://api.quangphuc.iotsinhvien.io.vn'
+];
+
+// Check if the origin is allowed or matches the allowed pattern
+$originAllowed = false;
+foreach ($allowedOrigins as $allowedOrigin) {
+    if (strpos($origin, $allowedOrigin) === 0) {
+        $originAllowed = true;
+        break;
+    }
+}
+
+if ($originAllowed) {
     header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+} else if (empty($origin)) {
+    // Same-origin requests (no CORS needed)
     header('Access-Control-Allow-Credentials: true');
 } else {
     // For other origins, allow without credentials
