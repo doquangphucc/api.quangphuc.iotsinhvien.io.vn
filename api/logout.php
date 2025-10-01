@@ -14,5 +14,6 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-sendSuccess([], 'Đăng xuất thành công');
+sendSuccess([], 'ÄÄƒng xuáº¥t thÃ nh cÃ´ng');
 ?>
+

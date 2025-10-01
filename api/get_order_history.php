@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'connect.php';
 
 requireAuth();
@@ -43,6 +43,6 @@ try {
 
 } catch (Exception $e) {
     error_log("Get Order History error: " . $e->getMessage());
-    sendError('Lỗi hệ thống, không thể lấy lịch sử đơn hàng.', 500);
+    sendError('Lá»—i há»‡ thá»‘ng, khÃ´ng thá»ƒ láº¥y lá»‹ch sá»­ Ä‘Æ¡n hÃ ng.', 500);
 }
 ?>

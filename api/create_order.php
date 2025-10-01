@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'connect.php';
 // Session is already started in connect.php via session.php
 

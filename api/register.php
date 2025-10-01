@@ -3,14 +3,14 @@ require_once 'connect.php';
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendError('Phương thức không được hỗ trợ', 405);
+    sendError('PhÆ°Æ¡ng thá»©c khÃ´ng Ä‘Æ°á»£c há»— trá»£', 405);
 }
 
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (json_last_error() !== JSON_ERROR_NONE) {
-    sendError('Dữ liệu JSON không hợp lệ');
+    sendError('Dá»¯ liá»‡u JSON khÃ´ng há»£p lá»‡');
 }
 
 // Validate required fields
@@ -18,7 +18,7 @@ $requiredFields = ['full_name', 'username', 'phone', 'password', 'confirm_passwo
 $missingFields = validateRequired($input, $requiredFields);
 
 if (!empty($missingFields)) {
-    sendError('Thiếu các trường bắt buộc: ' . implode(', ', $missingFields));
+    sendError('Thiáº¿u cÃ¡c trÆ°á»ng báº¯t buá»™c: ' . implode(', ', $missingFields));
 }
 
 // Sanitize input
@@ -30,27 +30,27 @@ $confirmPassword = $input['confirm_password'];
 
 // Validate input
 if (strlen($fullName) < 2) {
-    sendError('Họ và tên phải có ít nhất 2 ký tự');
+    sendError('Há» vÃ  tÃªn pháº£i cÃ³ Ã­t nháº¥t 2 kÃ½ tá»±');
 }
 
 if (strlen($username) < 3) {
-    sendError('Tên đăng nhập phải có ít nhất 3 ký tự');
+    sendError('TÃªn Ä‘Äƒng nháº­p pháº£i cÃ³ Ã­t nháº¥t 3 kÃ½ tá»±');
 }
 
 if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-    sendError('Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới');
+    sendError('TÃªn Ä‘Äƒng nháº­p chá»‰ Ä‘Æ°á»£c chá»©a chá»¯ cÃ¡i, sá»‘ vÃ  dáº¥u gáº¡ch dÆ°á»›i');
 }
 
 if (!preg_match('/^[0-9]{9,12}$/', $phone)) {
-    sendError('Số điện thoại phải từ 9-12 chữ số');
+    sendError('Sá»‘ Ä‘iá»‡n thoáº¡i pháº£i tá»« 9-12 chá»¯ sá»‘');
 }
 
 if (strlen($password) < 6) {
-    sendError('Mật khẩu phải có ít nhất 6 ký tự');
+    sendError('Máº­t kháº©u pháº£i cÃ³ Ã­t nháº¥t 6 kÃ½ tá»±');
 }
 
 if ($password !== $confirmPassword) {
-    sendError('Mật khẩu xác nhận không khớp');
+    sendError('Máº­t kháº©u xÃ¡c nháº­n khÃ´ng khá»›p');
 }
 
 try {
@@ -59,13 +59,13 @@ try {
     // Check if username already exists
     $existingUser = $db->selectOne('users', ['username' => $username]);
     if ($existingUser) {
-        sendError('Tên đăng nhập đã tồn tại');
+        sendError('TÃªn Ä‘Äƒng nháº­p Ä‘Ã£ tá»“n táº¡i');
     }
     
     // Check if phone already exists
     $existingPhone = $db->selectOne('users', ['phone' => $phone]);
     if ($existingPhone) {
-        sendError('Số điện thoại đã được sử dụng');
+        sendError('Sá»‘ Ä‘iá»‡n thoáº¡i Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng');
     }
     
     // Hash password
@@ -90,9 +90,9 @@ try {
             'phone' => $phone
         ];
         
-        sendSuccess(['user' => $newUser], 'Đăng ký thành công');
+        sendSuccess(['user' => $newUser], 'ÄÄƒng kÃ½ thÃ nh cÃ´ng');
     } else {
-        sendError('Không thể tạo tài khoản', 500);
+        sendError('KhÃ´ng thá»ƒ táº¡o tÃ i khoáº£n', 500);
     }
     
 } catch (PDOException $e) {
@@ -101,15 +101,15 @@ try {
     // Check for specific database errors
     if ($e->getCode() == 23000) {
         if (strpos($e->getMessage(), 'username') !== false) {
-            sendError('Tên đăng nhập đã tồn tại');
+            sendError('TÃªn Ä‘Äƒng nháº­p Ä‘Ã£ tá»“n táº¡i');
         } elseif (strpos($e->getMessage(), 'phone') !== false) {
-            sendError('Số điện thoại đã được sử dụng');
+            sendError('Sá»‘ Ä‘iá»‡n thoáº¡i Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng');
         }
     }
     
-    sendError('Lỗi hệ thống, vui lòng thử lại sau', 500);
+    sendError('Lá»—i há»‡ thá»‘ng, vui lÃ²ng thá»­ láº¡i sau', 500);
 } catch (Exception $e) {
     error_log("Unexpected registration error: " . $e->getMessage());
-    sendError('Lỗi không xác định', 500);
+    sendError('Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh', 500);
 }
 ?>

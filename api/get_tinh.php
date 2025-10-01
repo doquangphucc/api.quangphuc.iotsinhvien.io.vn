@@ -7,6 +7,6 @@ try {
     sendSuccess(['tinh' => $tinh_data]);
 } catch (Exception $e) {
     error_log("Get Tinh error: " . $e->getMessage());
-    sendError('Lỗi hệ thống, không thể lấy danh sách tỉnh thành.', 500);
+    sendError('Lá»—i há»‡ thá»‘ng, khÃ´ng thá»ƒ láº¥y danh sÃ¡ch tá»‰nh thÃ nh.', 500);
 }
 ?>

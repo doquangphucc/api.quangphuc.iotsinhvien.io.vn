@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Include config first
 require_once 'config.php';
 

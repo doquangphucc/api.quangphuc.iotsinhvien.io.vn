@@ -30,6 +30,6 @@ try {
 
 } catch (Exception $e) {
     error_log("Get cart error: " . $e->getMessage());
-    sendError('Không thể lấy thông tin giỏ hàng: ' . $e->getMessage(), 500);
+    sendError('KhÃ´ng thá»ƒ láº¥y thÃ´ng tin giá» hÃ ng: ' . $e->getMessage(), 500);
 }
 ?>

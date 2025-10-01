@@ -69,7 +69,8 @@ function getCurrentUserId() {
 // Helper function to require authentication
 function requireAuth() {
     if (!isLoggedIn()) {
-        sendError('Bạn cần đăng nhập để thực hiện hành động này.', 401);
+        sendError('Báº¡n cáº§n Ä‘Äƒng nháº­p Ä‘á»ƒ thá»±c hiá»‡n hÃ nh Ä‘á»™ng nÃ y.', 401);
     }
 }
 ?>
+

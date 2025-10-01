@@ -2,7 +2,7 @@
 require_once 'connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendError('Phương thức không được hỗ trợ', 405);
+    sendError('PhÆ°Æ¡ng thá»©c khÃ´ng Ä‘Æ°á»£c há»— trá»£', 405);
 }
 
 requireAuth();
@@ -14,7 +14,7 @@ $productId = isset($input['product_id']) ? (int)$input['product_id'] : 0;
 $quantity = isset($input['quantity']) ? (int)$input['quantity'] : 1;
 
 if ($productId <= 0 || $quantity <= 0) {
-    sendError('Dữ liệu không hợp lệ.');
+    sendError('Dá»¯ liá»‡u khÃ´ng há»£p lá»‡.');
 }
 
 try {
@@ -31,10 +31,10 @@ try {
     $countStmt = $db->query("SELECT SUM(quantity) as total FROM cart_items WHERE user_id = ?", [$userId]);
     $totalItems = $countStmt->fetchColumn();
 
-    sendSuccess(['total_items' => (int)$totalItems], 'Sản phẩm đã được thêm/cập nhật trong giỏ hàng.');
+    sendSuccess(['total_items' => (int)$totalItems], 'Sáº£n pháº©m Ä‘Ã£ Ä‘Æ°á»£c thÃªm/cáº­p nháº­t trong giá» hÃ ng.');
 
 } catch (Exception $e) {
     error_log("Add to cart error: " . $e->getMessage());
-    sendError('Không thể thêm vào giỏ hàng.', 500);
+    sendError('KhÃ´ng thá»ƒ thÃªm vÃ o giá» hÃ ng.', 500);
 }
 ?>

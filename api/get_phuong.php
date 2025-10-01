@@ -16,6 +16,6 @@ try {
     sendSuccess(['phuong' => $phuong_data]);
 } catch (Exception $e) {
     error_log("Get Phuong error: " . $e->getMessage());
-    sendError('Lỗi hệ thống, không thể lấy danh sách phường xã.', 500);
+    sendError('Lá»—i há»‡ thá»‘ng, khÃ´ng thá»ƒ láº¥y danh sÃ¡ch phÆ°á»ng xÃ£.', 500);
 }
 ?>

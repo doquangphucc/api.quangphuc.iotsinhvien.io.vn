@@ -24,3 +24,4 @@ $response = [
 
 sendSuccess($response, 'Session test');
 ?>
+
