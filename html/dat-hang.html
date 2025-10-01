@@ -667,9 +667,17 @@
 
     function renderOrderItems() {
         const orderItemsContainer = document.getElementById('order-items');
-        orderItemsContainer.innerHTML = orderItems.map(item => `
+        orderItemsContainer.innerHTML = orderItems.map(item => {
+            // Fix image URL path - ensure it works from html/ folder
+            let imageUrl = item.image_url || '';
+            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('../')) {
+                // If it's a relative path without ../, add ../
+                imageUrl = '../' + imageUrl;
+            }
+            
+            return `
             <div class="order-item">
-                <img src="${item.image_url}" alt="${item.name}" class="order-item-image">
+                <img src="${imageUrl}" alt="${item.name}" class="order-item-image" onerror="this.src='../assets/img/logo.jpg'">
                 <div class="order-item-info">
                     <h4>${item.name}</h4>
                     <p>${item.specs || ''}</p>
@@ -677,7 +685,8 @@
                 <div class="order-item-quantity">x${item.quantity}</div>
                 <div class="order-item-price">${formatPrice(item.price * item.quantity)}</div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function updateOrderSummary() {
