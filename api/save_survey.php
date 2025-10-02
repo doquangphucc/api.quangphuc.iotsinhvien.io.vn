@@ -1,4 +1,12 @@
 <?php
+// Tắt hiển thị lỗi để không làm hỏng JSON response
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Bắt đầu output buffering để kiểm soát output
+ob_start();
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -9,8 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once 'config.php';
-require_once 'session.php';
+try {
+    require_once 'config.php';
+    require_once 'session.php';
+} catch (Exception $e) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Lỗi kết nối: ' . $e->getMessage()]);
+    exit();
+}
 
 // Kiểm tra method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -143,6 +158,9 @@ try {
     }
 
     $conn->commit();
+    
+    // Clear any output buffer before sending JSON
+    ob_end_clean();
 
     echo json_encode([
         'success' => true,
@@ -152,6 +170,10 @@ try {
 
 } catch (Exception $e) {
     $conn->rollback();
+    
+    // Clear any output buffer before sending JSON
+    ob_end_clean();
+    
     http_response_code(500);
     echo json_encode([
         'success' => false,
