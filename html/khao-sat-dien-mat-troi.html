@@ -430,16 +430,6 @@
                         </select>
                     </div>
 
-                    <!-- Loại pin lưu trữ -->
-                    <div class="form-group">
-                        <label>Chọn Loại Pin Lưu Trữ *</label>
-                        <select name="batteryType" required>
-                            <option value="">-- Chọn loại pin lưu trữ --</option>
-                            <option value="8">Pin LiFePO4 8 Cell (8.8kW) - 15.500.000đ</option>
-                            <option value="16">Pin LiFePO4 16 Cell (16kW) - 50.000.000đ</option>
-                        </select>
-                    </div>
-
                     <button type="submit" class="btn-calculate">🔍 Tính Toán Báo Giá</button>
                 </form>
             </div>
@@ -580,6 +570,27 @@
             return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
         }
 
+        // Hàm cập nhật tổng tiền khi chọn loại pin khác
+        function updateTotalCost(totalCostWithoutBattery, batteryTotalCost, radioElement) {
+            const newTotalCost = totalCostWithoutBattery + batteryTotalCost;
+            const totalPriceElement = document.getElementById('totalPrice');
+            if (totalPriceElement) {
+                totalPriceElement.textContent = formatPrice(newTotalCost);
+            }
+            
+            // Cập nhật border cho các option
+            const batteryOptions = document.querySelectorAll('.battery-option');
+            batteryOptions.forEach((option, index) => {
+                if (radioElement.value == index) {
+                    option.style.border = '2px solid #3FA34D';
+                    option.style.backgroundColor = '#f0f9f1';
+                } else {
+                    option.style.border = '2px solid #ddd';
+                    option.style.backgroundColor = 'transparent';
+                }
+            });
+        }
+
         // Format input tiền điện
         const monthlyBillInput = document.getElementById('monthlyBillInput');
         if (monthlyBillInput) {
@@ -615,8 +626,7 @@
                 phase: parseInt(formData.get('phase')),
                 solarPanel: formData.get('solarPanel'),
                 monthlyBill: parseInt(formData.get('monthlyBill').replace(/\D/g, '')),
-                usageTime: formData.get('usageTime'),
-                batteryType: formData.get('batteryType')
+                usageTime: formData.get('usageTime')
             };
 
             // Tính toán
@@ -671,16 +681,24 @@
             }
             const batteryNeeded = totalEnergyPerDay * batteryRatio;
             
-            // Chọn loại pin theo lựa chọn của người dùng
-            let batteries = [];
-            const selectedBatteryIndex = data.batteryType === '8' ? 0 : 1; // 0: 8 Cell, 1: 16 Cell
-            const selectedBattery = PRODUCTS.batteries[selectedBatteryIndex];
+            // Tính số lượng cả 2 loại pin
+            const battery8 = PRODUCTS.batteries[0]; // 8 Cell
+            const battery16 = PRODUCTS.batteries[1]; // 16 Cell
             
-            // Tính số lượng pin cần thiết
-            const batteryQty = Math.ceil(batteryNeeded / selectedBattery.capacity);
-            if (batteryQty > 0) {
-                batteries.push({ ...selectedBattery, quantity: batteryQty });
-            }
+            const battery8Qty = Math.ceil(batteryNeeded / battery8.capacity);
+            const battery16Qty = Math.ceil(batteryNeeded / battery16.capacity);
+            
+            const battery8TotalCost = battery8Qty * battery8.price;
+            const battery16TotalCost = battery16Qty * battery16.price;
+            
+            // Tạo object chứa thông tin 2 loại pin
+            const batteryOptions = [
+                { ...battery8, quantity: battery8Qty, totalCost: battery8TotalCost },
+                { ...battery16, quantity: battery16Qty, totalCost: battery16TotalCost }
+            ];
+            
+            // Pin mặc định (chọn loại rẻ hơn)
+            const defaultBattery = battery8TotalCost <= battery16TotalCost ? 0 : 1;
             
             // 8. Phụ kiện
             const bachZQty = panelsNeeded * 6;
@@ -694,32 +712,31 @@
             const dcCableLength = panelsNeeded * 20;
             const dcCableCost = dcCableLength * ACCESSORIES.dcCable;
             
-            // 11. Tổng chi phí
-            let totalCost = 0;
+            // 11. Tổng chi phí (không tính pin, sẽ tính động khi chọn)
+            let totalCostWithoutBattery = 0;
             
             // Tấm pin
             const panelCost = panelsNeeded * panelInfo.price;
-            totalCost += panelCost;
+            totalCostWithoutBattery += panelCost;
             
             // Biến tần
-            totalCost += inverter.price;
+            totalCostWithoutBattery += inverter.price;
             
             // Tủ điện
-            totalCost += cabinet.price;
-            
-            // Pin lưu trữ
-            const batteryCost = batteries.reduce((sum, b) => sum + (b.price * b.quantity), 0);
-            totalCost += batteryCost;
+            totalCostWithoutBattery += cabinet.price;
             
             // Phụ kiện
             const accessoriesCost = (bachZQty * ACCESSORIES.bachZ) + (clipQty * ACCESSORIES.clip) + (jackMC4Qty * ACCESSORIES.jackMC4);
-            totalCost += accessoriesCost;
+            totalCostWithoutBattery += accessoriesCost;
             
             // Công thợ
-            totalCost += laborCost;
+            totalCostWithoutBattery += laborCost;
             
             // Dây DC
-            totalCost += dcCableCost;
+            totalCostWithoutBattery += dcCableCost;
+            
+            // Tổng tiền với pin mặc định (loại rẻ hơn)
+            const totalCost = totalCostWithoutBattery + batteryOptions[defaultBattery].totalCost;
             
             return {
                 data,
@@ -733,8 +750,10 @@
                 totalCapacity,
                 inverter,
                 cabinet,
-                batteries,
+                batteryOptions,
+                defaultBattery,
                 batteryNeeded,
+                totalCostWithoutBattery,
                 accessories: {
                     bachZ: { qty: bachZQty, cost: bachZQty * ACCESSORIES.bachZ },
                     clip: { qty: clipQty, cost: clipQty * ACCESSORIES.clip },
@@ -743,7 +762,6 @@
                 dcCable: { length: dcCableLength, cost: dcCableCost },
                 laborCost,
                 panelCost,
-                batteryCost,
                 accessoriesCost,
                 totalCost
             };
@@ -827,18 +845,29 @@
                         <span class="result-label">Dung lượng cần:</span>
                         <span class="result-value">${results.batteryNeeded.toFixed(2)} kWh</span>
                     </div>
-                    ${results.batteries.map(b => `
-                        <div class="product-image-wrapper">
-                            <img src="${b.image}" alt="${b.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
-                            <div>
-                                <div class="product-name">${b.name}</div>
-                                <div style="margin-top: 0.5rem; color: #3FA34D; font-weight: 600;">Số lượng: ${b.quantity} bộ</div>
+                    <div style="margin-top: 1rem;">
+                        <p style="margin-bottom: 1rem; font-weight: 600;">Chọn loại pin phù hợp:</p>
+                        ${results.batteryOptions.map((battery, index) => `
+                            <div class="battery-option" style="border: 2px solid ${index === results.defaultBattery ? '#3FA34D' : '#ddd'}; background-color: ${index === results.defaultBattery ? '#f0f9f1' : 'transparent'}; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
+                                <label style="display: flex; align-items: start; gap: 1rem; cursor: pointer;">
+                                    <input type="radio" name="battery_choice" value="${index}" ${index === results.defaultBattery ? 'checked' : ''} onchange="updateTotalCost(${results.totalCostWithoutBattery}, ${battery.totalCost}, this)" style="margin-top: 0.25rem; width: 20px; height: 20px; cursor: pointer;" />
+                                    <div style="flex: 1;">
+                                        <div class="product-image-wrapper" style="margin-bottom: 0.5rem;">
+                                            <img src="${battery.image}" alt="${battery.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
+                                            <div>
+                                                <div class="product-name">${battery.name}</div>
+                                                <div style="margin-top: 0.5rem; color: #666;">
+                                                    <strong>Số lượng:</strong> ${battery.quantity} bộ
+                                                </div>
+                                                <div style="margin-top: 0.25rem; color: #3FA34D; font-weight: 700; font-size: 1.1rem;">
+                                                    Tổng tiền: ${formatPrice(battery.totalCost)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
                             </div>
-                        </div>
-                    `).join('')}
-                    <div class="result-item">
-                        <span class="result-label">Tổng tiền pin:</span>
-                        <span class="result-value">${formatPrice(results.batteryCost)}</span>
+                        `).join('')}
                     </div>
                 </div>
 
@@ -868,7 +897,7 @@
 
                 <div class="total-section">
                     <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
-                    <div class="total-price">${formatPrice(results.totalCost)}</div>
+                    <div class="total-price" id="totalPrice">${formatPrice(results.totalCost)}</div>
                     <p style="opacity: 0.9;">Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
                 </div>
             `;
