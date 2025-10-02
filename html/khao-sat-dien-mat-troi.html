@@ -161,6 +161,32 @@
             border-bottom: none;
         }
         
+        /* Product image in results */
+        .product-image-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(63,163,77,0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(63,163,77,0.1);
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            background: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .product-name {
+            font-weight: 700;
+            color: #3FA34D;
+            font-size: 1.1rem;
+        }
+        
         /* Floating Action Button for Cart */
         .cart-fab {
             position: fixed;
@@ -464,37 +490,37 @@
         // Cấu hình sản phẩm
         const PRODUCTS = {
             panels: {
-                590: { id: 1, name: 'Tấm Pin Jinko Solar 590W', power: 0.59, price: 2300000 },
-                630: { id: 2, name: 'Tấm Pin Jinko Solar 630W', power: 0.63, price: 2600000 }
+                590: { id: 1, name: 'Tấm Pin Jinko Solar 590W', power: 0.59, price: 2300000, image: '../assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.png' },
+                630: { id: 2, name: 'Tấm Pin Jinko Solar 630W', power: 0.63, price: 2600000, image: '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png' }
             },
             inverters_1phase: [
-                { id: 3, name: 'ECO Hybrid 5kW', capacity: 5, price: 16500000 },
-                { id: 4, name: 'ECO Hybrid 6kW', capacity: 6, price: 17500000 },
-                { id: 7, name: 'Hybrid GEN-LB-EU 6K', capacity: 6, price: 28900000 },
-                { id: 8, name: 'Hybrid GEN-LB-EU 8K', capacity: 8, price: 48000000 },
-                { id: 9, name: 'Hybrid GEN-LB-EU 10K', capacity: 10, price: 54000000 },
-                { id: 10, name: 'Hybrid LXP-12K 12kW', capacity: 12, price: 59000000 },
-                { id: 5, name: 'ECO Hybrid 12kW', capacity: 12, price: 35500000 },
-                { id: 6, name: 'ECO Hybrid 14kW', capacity: 14, price: 39000000 }
+                { id: 3, name: 'ECO Hybrid 5kW', capacity: 5, price: 16500000, image: '../assets/img/products/eco-hybrid-5kw-sna5000wpv.png' },
+                { id: 4, name: 'ECO Hybrid 6kW', capacity: 6, price: 17500000, image: '../assets/img/products/eco-hybrid-6kw-sna6000wpv.png' },
+                { id: 7, name: 'Hybrid GEN-LB-EU 6K', capacity: 6, price: 28900000, image: '../assets/img/products/hybrid-gen-lb-eu-6k.png' },
+                { id: 8, name: 'Hybrid GEN-LB-EU 8K', capacity: 8, price: 48000000, image: '../assets/img/products/hybrid-gen-lb-eu-8k.png' },
+                { id: 9, name: 'Hybrid GEN-LB-EU 10K', capacity: 10, price: 54000000, image: '../assets/img/products/hybrid-gen-lb-eu-10k.png' },
+                { id: 10, name: 'Hybrid LXP-12K 12kW', capacity: 12, price: 59000000, image: '../assets/img/products/hybrid-lxp-12k.png' },
+                { id: 5, name: 'ECO Hybrid 12kW', capacity: 12, price: 35500000, image: '../assets/img/products/eco-hybrid-12kw-sna12k.png' },
+                { id: 6, name: 'ECO Hybrid 14kW', capacity: 14, price: 39000000, image: '../assets/img/products/eco-hybrid-14kw-sna-eu-14k.png' }
             ],
             inverters_3phase: [
-                { id: 13, name: 'LUXPOWER Hybrid TRIP 10K', capacity: 10, price: 69000000 },
-                { id: 11, name: 'Hybrid TriP2-LB-3P 12K', capacity: 12, price: 59000000 },
-                { id: 14, name: 'LUXPOWER Hybrid TRIP 15K', capacity: 15, price: 89000000 },
-                { id: 12, name: 'Hybrid TriP2-LB-3P 15K', capacity: 15, price: 63000000 },
-                { id: 15, name: 'LUXPOWER Hybrid TRIP 20K', capacity: 20, price: 109000000 }
+                { id: 13, name: 'LUXPOWER Hybrid TRIP 10K', capacity: 10, price: 69000000, image: '../assets/img/products/hybrid-trip-10k.png' },
+                { id: 11, name: 'Hybrid TriP2-LB-3P 12K', capacity: 12, price: 59000000, image: '../assets/img/products/hybrid-trip2-lb-3p-12k.png' },
+                { id: 14, name: 'LUXPOWER Hybrid TRIP 15K', capacity: 15, price: 89000000, image: '../assets/img/products/hybrid-trip-15k.png' },
+                { id: 12, name: 'Hybrid TriP2-LB-3P 15K', capacity: 15, price: 63000000, image: '../assets/img/products/hybrid-trip2-lb-3p-15k.png' },
+                { id: 15, name: 'LUXPOWER Hybrid TRIP 20K', capacity: 20, price: 109000000, image: '../assets/img/products/hybrid-trip-20k.png' }
             ],
             cabinets_1phase: [
-                { id: 19, name: 'Tủ điện Hybrid 1 pha 6kW', capacity: 6, price: 1850000 },
-                { id: 20, name: 'Tủ điện Hybrid 1 pha 12kW', capacity: 12, price: 2850000 },
-                { id: 21, name: 'Tủ điện Hybrid 1 pha 15kW', capacity: 15, price: 3800000 }
+                { id: 19, name: 'Tủ điện Hybrid 1 pha 6kW', capacity: 6, price: 1850000, image: '../assets/img/products/electrical-cabinet.jpg' },
+                { id: 20, name: 'Tủ điện Hybrid 1 pha 12kW', capacity: 12, price: 2850000, image: '../assets/img/products/electrical-cabinet.jpg' },
+                { id: 21, name: 'Tủ điện Hybrid 1 pha 15kW', capacity: 15, price: 3800000, image: '../assets/img/products/electrical-cabinet.jpg' }
             ],
             cabinets_3phase: [
-                { id: 22, name: 'Tủ điện Hybrid 3 pha 15kW', capacity: 15, price: 4850000 }
+                { id: 22, name: 'Tủ điện Hybrid 3 pha 15kW', capacity: 15, price: 4850000, image: '../assets/img/products/electrical-cabinet.jpg' }
             ],
             batteries: [
-                { id: 18, name: 'Cell BYD 173ah LiFePO4', capacity: 8.8, price: 15500000 },
-                { id: 17, name: 'Cell A-Cornex LiFePO4 16 Cell', capacity: 16, price: 50000000 }
+                { id: 18, name: 'Cell BYD 173ah LiFePO4', capacity: 8.8, price: 15500000, image: '../assets/img/products/cell-byd-173ah-lifepo4.png' },
+                { id: 17, name: 'Cell A-Cornex LiFePO4 16 Cell', capacity: 16, price: 50000000, image: '../assets/img/products/cell-a-cornex-lifepo4-16cell.png' }
             ]
         };
 
@@ -743,9 +769,9 @@
 
                 <div class="result-section">
                     <h3>⚡ Tấm Pin Năng Lượng</h3>
-                    <div class="result-item">
-                        <span class="result-label">Loại tấm (đã chọn):</span>
-                        <span class="result-value">${results.panelInfo.name}</span>
+                    <div class="product-image-wrapper">
+                        <img src="${results.panelInfo.image}" alt="${results.panelInfo.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
+                        <div class="product-name">${results.panelInfo.name}</div>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Số lượng:</span>
@@ -763,17 +789,17 @@
 
                 <div class="result-section">
                     <h3>🔌 Biến Tần & Tủ Điện</h3>
-                    <div class="result-item">
-                        <span class="result-label">Biến tần:</span>
-                        <span class="result-value">${results.inverter.name}</span>
+                    <div class="product-image-wrapper">
+                        <img src="${results.inverter.image}" alt="${results.inverter.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
+                        <div class="product-name">${results.inverter.name}</div>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Giá biến tần:</span>
                         <span class="result-value">${formatPrice(results.inverter.price)}</span>
                     </div>
-                    <div class="result-item">
-                        <span class="result-label">Tủ điện:</span>
-                        <span class="result-value">${results.cabinet.name}</span>
+                    <div class="product-image-wrapper">
+                        <img src="${results.cabinet.image}" alt="${results.cabinet.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
+                        <div class="product-name">${results.cabinet.name}</div>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Giá tủ điện:</span>
@@ -788,9 +814,12 @@
                         <span class="result-value">${results.batteryNeeded.toFixed(2)} kWh</span>
                     </div>
                     ${results.batteries.map(b => `
-                        <div class="result-item">
-                            <span class="result-label">${b.name}:</span>
-                            <span class="result-value">${b.quantity} bộ</span>
+                        <div class="product-image-wrapper">
+                            <img src="${b.image}" alt="${b.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
+                            <div>
+                                <div class="product-name">${b.name}</div>
+                                <div style="margin-top: 0.5rem; color: #3FA34D; font-weight: 600;">Số lượng: ${b.quantity} bộ</div>
+                            </div>
                         </div>
                     `).join('')}
                     <div class="result-item">
