@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Khảo Sát - HC Eco System</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .history-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .history-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .history-header h1 {
+            color: #2d3748;
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+        }
+        
+        .history-header p {
+            color: #718096;
+            margin: 0;
+        }
+        
+        .survey-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .survey-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .survey-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .survey-summary {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .survey-info {
+            flex: 1;
+        }
+        
+        .survey-date {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .survey-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .survey-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .survey-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        
+        .survey-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #3FA34D;
+            text-align: right;
+        }
+        
+        .expand-icon {
+            font-size: 1.5rem;
+            color: #cbd5e0;
+            transition: transform 0.3s;
+        }
+        
+        .survey-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .survey-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .survey-card.expanded .survey-details {
+            max-height: 2000px;
+        }
+        
+        .survey-details-content {
+            padding: 0 1.5rem 1.5rem;
+            border-top: 2px solid #f7fafc;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .detail-item {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.3rem;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .empty-state {
+            background: white;
+            padding: 4rem 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-text {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(86, 171, 47, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="container topbar-container">
+            <a href="../index.html" class="brand">
+                <img src="../assets/img/logo.jpg" alt="Logo" class="logo" />
+                <div class="brand-text">
+                    <div class="brand-name">HC<span>ECO SYSTEM</span></div>
+                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+                </div>
+            </a>
+            <div class="topbar-actions">
+                <nav class="nav">
+                    <a href="../index.html" class="nav-link">Trang chủ</a>
+                    <a href="khao-sat-dien-mat-troi.html" class="nav-link">Khảo sát</a>
+                    <a href="user_profile.html" class="nav-link">Tài khoản</a>
+                </nav>
+                <a class="cta" href="khao-sat-dien-mat-troi.html">Khảo sát mới</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="auth-floating" id="auth-floating">
+        <div class="auth-buttons" id="auth-buttons">
+            <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
+            <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+        </div>
+    </div>
+
+    <div class="history-container">
+        <div class="history-header">
+            <h1>📋 Lịch Sử Khảo Sát</h1>
+            <p>Xem lại các báo giá điện mặt trời bạn đã tính toán</p>
+        </div>
+
+        <div id="loading" class="loading">
+            ⏳ Đang tải dữ liệu...
+        </div>
+
+        <div id="surveyList" class="survey-list" style="display: none;">
+            <!-- Surveys will be loaded here -->
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">📭</div>
+            <p class="empty-text">Bạn chưa có khảo sát nào</p>
+            <a href="khao-sat-dien-mat-troi.html" class="btn-primary">Tạo khảo sát mới</a>
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Format giá tiền
+        function formatPrice(price) {
+            if (!price) return '0đ';
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + 'đ';
+        }
+
+        // Format ngày tháng
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+
+        // Tên region
+        function getRegionName(region) {
+            const names = {
+                'mien-bac': 'Miền Bắc',
+                'mien-trung': 'Miền Trung',
+                'mien-nam': 'Miền Nam'
+            };
+            return names[region] || region;
+        }
+
+        // Load lịch sử khảo sát
+        async function loadSurveyHistory() {
+            try {
+                const response = await fetch('../api/get_survey_history.php');
+                const data = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (data.success && data.surveys && data.surveys.length > 0) {
+                    displaySurveys(data.surveys);
+                } else {
+                    document.getElementById('emptyState').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('loading').innerHTML = '<p style="color: #ff6b6b;">❌ Lỗi khi tải dữ liệu</p>';
+            }
+        }
+
+        // Hiển thị danh sách khảo sát
+        function displaySurveys(surveys) {
+            const listEl = document.getElementById('surveyList');
+            listEl.style.display = 'flex';
+
+            listEl.innerHTML = surveys.map((survey, index) => `
+                <div class="survey-card" data-index="${index}">
+                    <div class="survey-summary" onclick="toggleSurvey(${index})">
+                        <div class="survey-info">
+                            <div class="survey-date">📅 ${formatDate(survey.createdAt)}</div>
+                            <div class="survey-title">Báo giá hệ thống ${survey.phase} pha - ${getRegionName(survey.region)}</div>
+                            <div class="survey-meta">
+                                <div class="survey-meta-item">
+                                    <span>⚡</span>
+                                    <span>Hóa đơn: ${formatPrice(survey.monthlyBill)}/tháng</span>
+                                </div>
+                                <div class="survey-meta-item">
+                                    <span>☀️</span>
+                                    <span>Panel ${survey.solarPanelType}W</span>
+                                </div>
+                                ${survey.results ? `
+                                <div class="survey-meta-item">
+                                    <span>🔋</span>
+                                    <span>${survey.results.panelsNeeded} tấm pin</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+                            ${survey.results ? `<div class="survey-price">${formatPrice(survey.results.totalCost)}</div>` : '<div style="color: #a0aec0;">Chưa có kết quả</div>'}
+                            <div class="expand-icon">▼</div>
+                        </div>
+                    </div>
+                    <div class="survey-details">
+                        <div class="survey-details-content">
+                            ${survey.results ? `
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">Điện năng hàng tháng</div>
+                                    <div class="detail-value">${survey.results.monthlyKWh} kWh</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Số lượng tấm pin</div>
+                                    <div class="detail-value">${survey.results.panelsNeeded} tấm</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Inverter</div>
+                                    <div class="detail-value">${survey.results.inverterName || 'N/A'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Pin lưu trữ</div>
+                                    <div class="detail-value">${survey.results.batteryType === '8cell' ? 'BYD 8 Cell' : 'A-Cornex 16 Cell'} x${survey.results.batteryQuantity || 0}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Tổng chi phí</div>
+                                    <div class="detail-value" style="color: #3FA34D; font-size: 1.3rem;">${formatPrice(survey.results.totalCost)}</div>
+                                </div>
+                            </div>
+                            ` : '<p style="color: #a0aec0; text-align: center; padding: 2rem;">Khảo sát chưa có kết quả tính toán</p>'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle mở/đóng chi tiết
+        function toggleSurvey(index) {
+            const card = document.querySelector(`.survey-card[data-index="${index}"]`);
+            card.classList.toggle('expanded');
+        }
+
+        // Load dữ liệu khi trang load
+        window.addEventListener('DOMContentLoaded', loadSurveyHistory);
+    </script>
+</body>
+</html>
