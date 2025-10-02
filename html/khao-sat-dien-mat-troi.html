@@ -783,7 +783,7 @@
                     </div>
                     <div class="result-item">
                         <span class="result-label">Tiêu thụ điện:</span>
-                        <span class="result-value">${results.monthlyKWh} kWh/tháng (Tính từ ${formatPrice(results.data.monthlyBill)} theo bảng giá EVN)</span>
+                        <span class="result-value">${results.monthlyKWh} kWh/tháng (Tính từ <span style="text-decoration: underline;">${formatPrice(results.data.monthlyBill)}</span> theo bảng giá EVN)</span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Giờ nắng:</span>
@@ -811,7 +811,7 @@
                     </div>
                     <div class="result-item">
                         <span class="result-label">Thành tiền:</span>
-                        <span class="result-value">${formatPrice(results.panelCost)} (${results.panelsNeeded} tấm × ${formatPrice(results.panelInfo.price)})</span>
+                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.panelCost)}</span> (${results.panelsNeeded} tấm × ${formatPrice(results.panelInfo.price)})</span>
                     </div>
                 </div>
 
@@ -823,7 +823,7 @@
                     </div>
                     <div class="result-item">
                         <span class="result-label">Giá biến tần:</span>
-                        <span class="result-value">${formatPrice(results.inverter.price)}</span>
+                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.inverter.price)}</span></span>
                     </div>
                 </div>
 
@@ -835,7 +835,7 @@
                     </div>
                     <div class="result-item">
                         <span class="result-label">Giá tủ điện:</span>
-                        <span class="result-value">${formatPrice(results.cabinet.price)}</span>
+                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.cabinet.price)}</span></span>
                     </div>
                 </div>
 
@@ -860,7 +860,7 @@
                                                     <strong>Số lượng:</strong> ${battery.quantity} bộ
                                                 </div>
                                                 <div style="margin-top: 0.25rem; color: #3FA34D; font-weight: 700; font-size: 1.1rem;">
-                                                    Tổng tiền: ${formatPrice(battery.totalCost)}
+                                                    Tổng tiền: <span style="text-decoration: underline;">${formatPrice(battery.totalCost)}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -875,23 +875,23 @@
                     <h3>🔧 Phụ Kiện & Lắp Đặt</h3>
                     <div class="result-item">
                         <span class="result-label">Bach Z:</span>
-                        <span class="result-value">${results.accessories.bachZ.qty} cái - ${formatPrice(results.accessories.bachZ.cost)}</span>
+                        <span class="result-value">${results.accessories.bachZ.qty} cái - <span style="text-decoration: underline;">${formatPrice(results.accessories.bachZ.cost)}</span></span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Kẹp biên:</span>
-                        <span class="result-value">${results.accessories.clip.qty} cái - ${formatPrice(results.accessories.clip.cost)}</span>
+                        <span class="result-value">${results.accessories.clip.qty} cái - <span style="text-decoration: underline;">${formatPrice(results.accessories.clip.cost)}</span></span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Jack MC4:</span>
-                        <span class="result-value">${results.accessories.jackMC4.qty} bộ - ${formatPrice(results.accessories.jackMC4.cost)}</span>
+                        <span class="result-value">${results.accessories.jackMC4.qty} bộ - <span style="text-decoration: underline;">${formatPrice(results.accessories.jackMC4.cost)}</span></span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Dây DC:</span>
-                        <span class="result-value">${results.dcCable.length}m - ${formatPrice(results.dcCable.cost)}</span>
+                        <span class="result-value">${results.dcCable.length}m - <span style="text-decoration: underline;">${formatPrice(results.dcCable.cost)}</span></span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Công thợ:</span>
-                        <span class="result-value">${formatPrice(results.laborCost)}</span>
+                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.laborCost)}</span></span>
                     </div>
                 </div>
 
