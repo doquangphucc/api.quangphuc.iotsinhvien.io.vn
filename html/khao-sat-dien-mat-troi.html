@@ -430,6 +430,16 @@
                         </select>
                     </div>
 
+                    <!-- Loại pin lưu trữ -->
+                    <div class="form-group">
+                        <label>Chọn Loại Pin Lưu Trữ *</label>
+                        <select name="batteryType" required>
+                            <option value="">-- Chọn loại pin lưu trữ --</option>
+                            <option value="8">Pin LiFePO4 8 Cell (8.8kW) - 15.500.000đ</option>
+                            <option value="16">Pin LiFePO4 16 Cell (16kW) - 50.000.000đ</option>
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn-calculate">🔍 Tính Toán Báo Giá</button>
                 </form>
             </div>
@@ -605,7 +615,8 @@
                 phase: parseInt(formData.get('phase')),
                 solarPanel: formData.get('solarPanel'),
                 monthlyBill: parseInt(formData.get('monthlyBill').replace(/\D/g, '')),
-                usageTime: formData.get('usageTime')
+                usageTime: formData.get('usageTime'),
+                batteryType: formData.get('batteryType')
             };
 
             // Tính toán
@@ -660,23 +671,15 @@
             }
             const batteryNeeded = totalEnergyPerDay * batteryRatio;
             
-            // Chọn loại pin phù hợp
+            // Chọn loại pin theo lựa chọn của người dùng
             let batteries = [];
-            let remainingBattery = batteryNeeded;
+            const selectedBatteryIndex = data.batteryType === '8' ? 0 : 1; // 0: 8 Cell, 1: 16 Cell
+            const selectedBattery = PRODUCTS.batteries[selectedBatteryIndex];
             
-            // Ưu tiên dùng pin 16 Cell trước
-            const battery16 = PRODUCTS.batteries[1]; // 16 Cell
-            const battery8 = PRODUCTS.batteries[0]; // 8 Cell
-            
-            const count16 = Math.floor(remainingBattery / battery16.capacity);
-            if (count16 > 0) {
-                batteries.push({ ...battery16, quantity: count16 });
-                remainingBattery -= count16 * battery16.capacity;
-            }
-            
-            const count8 = Math.ceil(remainingBattery / battery8.capacity);
-            if (count8 > 0) {
-                batteries.push({ ...battery8, quantity: count8 });
+            // Tính số lượng pin cần thiết
+            const batteryQty = Math.ceil(batteryNeeded / selectedBattery.capacity);
+            if (batteryQty > 0) {
+                batteries.push({ ...selectedBattery, quantity: batteryQty });
             }
             
             // 8. Phụ kiện
