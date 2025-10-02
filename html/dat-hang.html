@@ -657,6 +657,11 @@
         const checkoutItems = localStorage.getItem('checkoutItems');
         if (checkoutItems) {
             orderItems = JSON.parse(checkoutItems);
+            // Ensure each item has cart_item_id field for API validation
+            orderItems = orderItems.map(item => ({
+                ...item,
+                cart_item_id: item.id || item.cart_item_id
+            }));
         } else {
             window.location.href = 'gio-hang.html';
             return;
