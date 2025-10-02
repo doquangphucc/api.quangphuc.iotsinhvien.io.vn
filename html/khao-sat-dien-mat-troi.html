@@ -697,6 +697,31 @@
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script>
+        // Biến lưu kết quả tính toán để có thể lưu vào database
+        let currentResults = null;
+
+        // Auto-fill thông tin người dùng nếu đã đăng nhập
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            if (userData.full_name && userData.phone) {
+                // Điền tên và số điện thoại
+                const fullnameInput = document.querySelector('input[name="fullname"]');
+                const phoneInput = document.querySelector('input[name="phone"]');
+                
+                if (fullnameInput) {
+                    fullnameInput.value = userData.full_name;
+                    fullnameInput.readOnly = true;
+                    fullnameInput.style.backgroundColor = '#f0f9f1';
+                }
+                
+                if (phoneInput) {
+                    phoneInput.value = userData.phone;
+                    phoneInput.readOnly = true;
+                    phoneInput.style.backgroundColor = '#f0f9f1';
+                }
+            }
+        });
+
         // Cấu hình sản phẩm
         const PRODUCTS = {
             panels: {
@@ -1107,12 +1132,91 @@
                     <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
                     <div class="total-price" id="totalPrice">${formatPrice(results.totalCost)}</div>
                     <p style="opacity: 0.9;">Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
+                    <button id="saveSurveyBtn" onclick="saveSurvey()" style="background: white; color: #3FA34D; border: 2px solid white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 1.5rem; transition: all 0.3s;">
+                        💾 Lưu Báo Giá Này
+                    </button>
                 </div>
             `;
+            
+            // Lưu kết quả vào biến global để có thể lưu sau
+            currentResults = results;
             
             document.getElementById('results').innerHTML = html;
             document.getElementById('results').classList.add('show');
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hàm lưu khảo sát vào database
+        async function saveSurvey() {
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!userData.id) {
+                alert('Bạn cần đăng nhập để lưu báo giá. Vui lòng đăng nhập!');
+                window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+
+            if (!currentResults) {
+                alert('Không có kết quả để lưu!');
+                return;
+            }
+
+            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
+            saveSurveyBtn.disabled = true;
+            saveSurveyBtn.textContent = '⏳ Đang lưu...';
+
+            try {
+                // Lấy loại pin được chọn
+                const selectedBatteryRadio = document.querySelector('input[name="battery_choice"]:checked');
+                const selectedBatteryIndex = selectedBatteryRadio ? parseInt(selectedBatteryRadio.value) : currentResults.defaultBattery;
+
+                const surveyData = {
+                    region: currentResults.data.region,
+                    phase: currentResults.data.phase,
+                    solarPanel: currentResults.data.solarPanel,
+                    monthlyBill: currentResults.data.monthlyBill,
+                    usageTime: currentResults.data.usageTime,
+                    selectedBattery: selectedBatteryIndex === 0 ? '8cell' : '16cell',
+                    results: {
+                        monthlyKWh: currentResults.monthlyKWh,
+                        sunHours: currentResults.sunHours,
+                        panelsNeeded: currentResults.panelsNeeded,
+                        panelCost: currentResults.panelCost,
+                        inverter: currentResults.inverter,
+                        cabinet: currentResults.cabinet,
+                        batteryNeeded: currentResults.batteryNeeded,
+                        batteryOptions: currentResults.batteryOptions,
+                        accessoriesCost: currentResults.accessoriesCost,
+                        laborCost: currentResults.laborCost,
+                        dcCable: currentResults.dcCable,
+                        totalCost: currentResults.totalCost
+                    }
+                };
+
+                const response = await fetch('../api/save_survey.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(surveyData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    saveSurveyBtn.textContent = '✅ Đã lưu thành công!';
+                    saveSurveyBtn.style.background = '#3FA34D';
+                    saveSurveyBtn.style.color = 'white';
+                    alert('Đã lưu báo giá thành công! Bạn có thể xem lại trong lịch sử khảo sát.');
+                } else {
+                    throw new Error(result.message || 'Lỗi khi lưu khảo sát');
+                }
+            } catch (error) {
+                console.error('Error saving survey:', error);
+                alert('Lỗi khi lưu báo giá: ' + error.message);
+                saveSurveyBtn.disabled = false;
+                saveSurveyBtn.textContent = '💾 Lưu Báo Giá Này';
+            }
         }
     </script>
 </body>
