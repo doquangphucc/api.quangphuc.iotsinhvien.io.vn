@@ -96,10 +96,28 @@ try {
         exit();
     }
     
-    // 6. Try to bind params
+    // 6. Get user info from database
     $user_id = $_SESSION['user_id'];
-    $full_name = $_SESSION['full_name'];
-    $phone = $_SESSION['phone'];
+    
+    $user_stmt = $conn->prepare("SELECT full_name, phone FROM users WHERE id = ?");
+    $user_stmt->bind_param("i", $user_id);
+    $user_stmt->execute();
+    $user_result = $user_stmt->get_result();
+    $user_data = $user_result->fetch_assoc();
+    $user_stmt->close();
+    
+    if (!$user_data) {
+        $debug['user_query_error'] = 'User not found';
+        echo json_encode([
+            'success' => false,
+            'message' => 'User not found in database',
+            'debug' => $debug
+        ]);
+        exit();
+    }
+    
+    $full_name = $user_data['full_name'];
+    $phone = $user_data['phone'];
     $region = $data['region'];
     $phase = (int)$data['phase'];
     $solar_panel = (int)$data['solarPanel'];

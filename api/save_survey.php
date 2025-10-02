@@ -77,8 +77,21 @@ try {
     $conn->begin_transaction();
 
     $user_id = $_SESSION['user_id'];
-    $full_name = $_SESSION['full_name'];
-    $phone = $_SESSION['phone'];
+    
+    // Lấy thông tin user từ database vì session không có full_name và phone
+    $user_stmt = $conn->prepare("SELECT full_name, phone FROM users WHERE id = ?");
+    $user_stmt->bind_param("i", $user_id);
+    $user_stmt->execute();
+    $user_result = $user_stmt->get_result();
+    $user_data = $user_result->fetch_assoc();
+    $user_stmt->close();
+    
+    if (!$user_data) {
+        throw new Exception('Không tìm thấy thông tin người dùng');
+    }
+    
+    $full_name = $user_data['full_name'];
+    $phone = $user_data['phone'];
 
     // Insert vào bảng solar_surveys
     $stmt = $conn->prepare("
