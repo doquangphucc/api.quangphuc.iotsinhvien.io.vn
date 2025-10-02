@@ -702,7 +702,11 @@
 
         // Auto-fill thông tin người dùng nếu đã đăng nhập
         window.addEventListener('DOMContentLoaded', function() {
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            // Đúng key trong localStorage là 'authUser' (theo auth.js)
+            const userData = JSON.parse(localStorage.getItem('authUser') || '{}');
+            
+            console.log('User data from localStorage:', userData); // Debug
+            
             if (userData.full_name && userData.phone) {
                 // Điền tên và số điện thoại
                 const fullnameInput = document.querySelector('input[name="fullname"]');
@@ -712,13 +716,19 @@
                     fullnameInput.value = userData.full_name;
                     fullnameInput.readOnly = true;
                     fullnameInput.style.backgroundColor = '#f0f9f1';
+                    fullnameInput.style.cursor = 'not-allowed';
                 }
                 
                 if (phoneInput) {
                     phoneInput.value = userData.phone;
                     phoneInput.readOnly = true;
                     phoneInput.style.backgroundColor = '#f0f9f1';
+                    phoneInput.style.cursor = 'not-allowed';
                 }
+                
+                console.log('Auto-filled:', userData.full_name, userData.phone); // Debug
+            } else {
+                console.log('No user data to auto-fill'); // Debug
             }
         });
 
@@ -1148,7 +1158,8 @@
 
         // Hàm lưu khảo sát vào database
         async function saveSurvey() {
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            // Đúng key trong localStorage là 'authUser'
+            const userData = JSON.parse(localStorage.getItem('authUser') || '{}');
             
             if (!userData.id) {
                 alert('Bạn cần đăng nhập để lưu báo giá. Vui lòng đăng nhập!');
