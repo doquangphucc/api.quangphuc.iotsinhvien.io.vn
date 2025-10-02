@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
 try {
-    require_once 'config.php';
+    require_once 'connect.php'; // Đổi từ config.php sang connect.php để có $conn
     require_once 'session.php';
     
     // 1. Check session

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    require_once 'config.php';
+    require_once 'connect.php'; // Đổi từ config.php sang connect.php để có $conn
     require_once 'session.php';
 } catch (Exception $e) {
     ob_end_clean();
