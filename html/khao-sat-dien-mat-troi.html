@@ -732,20 +732,6 @@
             }
         });
 
-        // Gắn sự kiện click cho nút "Lưu ngay báo giá"
-        document.addEventListener('DOMContentLoaded', function() {
-            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
-            if (saveSurveyBtn) {
-                saveSurveyBtn.addEventListener('click', function() {
-                    console.log('Save Survey button clicked'); // Debug
-                    saveSurvey();
-                });
-                console.log('Save Survey button event listener attached'); // Debug
-            } else {
-                console.error('Save Survey button not found!'); // Debug
-            }
-        });
-
         // Cấu hình sản phẩm
         const PRODUCTS = {
             panels: {
@@ -1156,7 +1142,7 @@
                     <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
                     <div class="total-price" id="totalPrice">${formatPrice(results.totalCost)}</div>
                     <p style="opacity: 0.9;">Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
-                    <button id="saveSurveyBtn" onclick="saveSurvey()" style="background: white; color: #3FA34D; border: 2px solid white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 1.5rem; transition: all 0.3s;">
+                    <button id="saveSurveyBtn" style="background: white; color: #3FA34D; border: 2px solid white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 1.5rem; transition: all 0.3s;">
                         💾 Lưu Báo Giá Này
                     </button>
                 </div>
@@ -1168,6 +1154,16 @@
             document.getElementById('results').innerHTML = html;
             document.getElementById('results').classList.add('show');
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            
+            // Gắn sự kiện click cho nút "Lưu ngay báo giá" sau khi tạo button
+            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
+            if (saveSurveyBtn) {
+                saveSurveyBtn.addEventListener('click', function() {
+                    console.log('Save Survey button clicked'); // Debug
+                    saveSurvey();
+                });
+                console.log('Save Survey button event listener attached'); // Debug
+            }
         }
 
         // Hàm lưu khảo sát vào database
