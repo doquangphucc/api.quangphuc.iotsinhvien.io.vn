@@ -634,6 +634,7 @@
             
             // 3. Thông tin tấm pin
             const panelInfo = PRODUCTS.panels[data.solarPanel];
+            const energyPerPanelPerDay = panelInfo.power * sunHours; // kWh/ngày
             const energyPerPanel = panelInfo.power * sunHours * 30; // kWh/tháng
             
             // 4. Số tấm pin cần thiết
@@ -723,6 +724,8 @@
                 sunHours,
                 regionName,
                 panelInfo,
+                energyPerPanelPerDay,
+                energyPerPanel,
                 panelsNeeded,
                 totalCapacity,
                 inverter,
@@ -774,12 +777,20 @@
                         <div class="product-name">${results.panelInfo.name}</div>
                     </div>
                     <div class="result-item">
+                        <span class="result-label">Công suất 1 tấm/ngày:</span>
+                        <span class="result-value">${results.energyPerPanelPerDay.toFixed(2)} kWh (${results.sunHours} giờ nắng ${results.regionName})</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Công suất 1 tấm/tháng:</span>
+                        <span class="result-value">${results.energyPerPanel.toFixed(2)} kWh (30 ngày)</span>
+                    </div>
+                    <div class="result-item">
                         <span class="result-label">Số lượng:</span>
                         <span class="result-value">${results.panelsNeeded} tấm (Suy ra từ mức tiêu thụ ${results.monthlyKWh} kWh/tháng)</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">Tổng công suất:</span>
-                        <span class="result-value">${results.totalCapacity.toFixed(2)} kWp (Của ${results.panelsNeeded} tấm)</span>
+                        <span class="result-label">Tổng công suất hệ thống:</span>
+                        <span class="result-value">${results.totalCapacity.toFixed(2)} kWp (${results.panelsNeeded} tấm × ${results.panelInfo.power} kWp)</span>
                     </div>
                     <div class="result-item">
                         <span class="result-label">Thành tiền:</span>
