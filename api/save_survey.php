@@ -141,26 +141,26 @@ try {
         ");
 
         $stmt2->bind_param(
-            "iddddisdiisdsidddd",
-            $survey_id,
-            $results['monthlyKWh'],
-            $results['sunHours'],
-            $results['panelsNeeded'],
-            $results['panelCost'],
-            $results['inverter']['id'],
-            $results['inverter']['name'],
-            $results['inverter']['price'],
-            $results['cabinet']['id'],
-            $results['cabinet']['name'],
-            $results['cabinet']['price'],
-            $results['batteryNeeded'],
-            $battery_type,
-            $battery_quantity,
-            $battery_cost,
-            $results['accessoriesCost'],
-            $results['laborCost'],
-            $results['dcCable']['cost'],
-            $results['totalCost']
+            "iddddisdisddsiddddd",
+            $survey_id,                      // i - integer
+            $results['monthlyKWh'],          // d - double
+            $results['sunHours'],            // d - double
+            $results['panelsNeeded'],        // d - double
+            $results['panelCost'],           // d - double
+            $results['inverter']['id'],      // i - integer
+            $results['inverter']['name'],    // s - string
+            $results['inverter']['price'],   // d - double
+            $results['cabinet']['id'],       // i - integer
+            $results['cabinet']['name'],     // s - string (ĐÃ SỬA từ i)
+            $results['cabinet']['price'],    // d - double (ĐÃ SỬA từ s)
+            $results['batteryNeeded'],       // d - double (ĐÃ SỬA từ s)
+            $battery_type,                   // s - string (ĐÃ SỬA từ d)
+            $battery_quantity,               // i - integer
+            $battery_cost,                   // d - double
+            $results['accessoriesCost'],     // d - double
+            $results['laborCost'],           // d - double
+            $results['dcCable']['cost'],     // d - double
+            $results['totalCost']            // d - double
         );
 
         if (!$stmt2->execute()) {
