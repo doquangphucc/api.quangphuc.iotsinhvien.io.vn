@@ -12,139 +12,252 @@
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
     <style>
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
         .survey-container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 3rem auto;
             padding: 0 2rem;
+            position: relative;
+            z-index: 1;
         }
         .survey-card {
-            background: white;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
             padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.15), 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.8);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .survey-card h2 {
-            color: #3FA34D;
+            color: #667eea;
             margin-bottom: 2rem;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .form-group {
             margin-bottom: 2rem;
         }
         .form-group label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 0.8rem;
-            color: #2d4a2d;
+            color: #2d3748;
+            font-size: 1.05rem;
         }
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            padding: 1.1rem 1.3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
             font-size: 1rem;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            background: white;
         }
         .form-group input:focus,
         .form-group select:focus {
-            border-color: #3FA34D;
+            border-color: #667eea;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(63,163,77,0.1);
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+            transform: translateY(-2px);
         }
         .radio-group {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             flex-wrap: wrap;
         }
         .radio-option {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 1.5rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            gap: 0.6rem;
+            padding: 1rem 1.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            background: white;
+            flex: 1;
+            min-width: 140px;
         }
         .radio-option:hover {
-            border-color: #3FA34D;
-            background: rgba(63,163,77,0.05);
+            border-color: #667eea;
+            background: rgba(102,126,234,0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.15);
         }
         .radio-option input {
-            width: auto;
+            width: 20px;
+            height: 20px;
             margin: 0;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        .radio-option span {
+            font-weight: 600;
+            color: #2d3748;
         }
         .btn-calculate {
-            background: linear-gradient(135deg, #3FA34D, #2d4a2d);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 1.2rem 3rem;
+            padding: 1.3rem 3rem;
             border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.15rem;
+            font-weight: 800;
             cursor: pointer;
             width: 100%;
             margin-top: 2rem;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-calculate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+        .btn-calculate:hover::before {
+            left: 100%;
         }
         .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(63,163,77,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102,126,234,0.5);
+        }
+        .btn-calculate:active {
+            transform: translateY(-1px);
         }
         .results {
             display: none;
         }
         .results.show {
             display: block;
+            animation: fadeInUp 0.6s ease-out;
         }
         .result-section {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
             margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+        .result-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
         }
         .result-section h3 {
-            color: #3FA34D;
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
+            color: #667eea;
+            margin-bottom: 1.8rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #f093fb;
         }
         .result-item {
             display: flex;
             justify-content: space-between;
-            padding: 1rem 0;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            align-items: center;
+            gap: 1rem;
         }
         .result-item:last-child {
             border-bottom: none;
         }
         .result-label {
             font-weight: 600;
-            color: #555;
+            color: #4a5568;
+            font-size: 1.05rem;
         }
         .result-value {
             font-weight: 700;
-            color: #3FA34D;
+            color: #667eea;
+            text-align: right;
+            font-size: 1.05rem;
         }
         .total-section {
-            background: linear-gradient(135deg, #3FA34D, #2d4a2d);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             color: white;
-            padding: 2rem;
-            border-radius: 16px;
+            padding: 3rem;
+            border-radius: 24px;
             text-align: center;
+            box-shadow: 0 20px 60px rgba(102,126,234,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .total-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .total-section h3 {
             margin-bottom: 1rem;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            color: white;
+            border: none;
+            padding: 0;
         }
         .total-price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 1rem 0;
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 1.5rem 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .product-list {
             background: rgba(255,255,255,0.1);
@@ -165,26 +278,32 @@
         .product-image-wrapper {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-bottom: 1rem;
-            padding: 1rem;
-            background: rgba(63,163,77,0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(63,163,77,0.1);
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(240,147,251,0.08) 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(102,126,234,0.15);
+            transition: all 0.3s ease;
+        }
+        .product-image-wrapper:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.15);
         }
         .product-image {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             object-fit: contain;
             background: white;
-            border-radius: 8px;
-            padding: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 0.8rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .product-name {
-            font-weight: 700;
-            color: #3FA34D;
-            font-size: 1.1rem;
+            font-weight: 800;
+            color: #667eea;
+            font-size: 1.15rem;
+            line-height: 1.4;
         }
         
         /* Floating Action Button for Cart */
@@ -192,15 +311,15 @@
             position: fixed;
             bottom: 80px;
             right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3FA34D, #1E5631);
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
             border-radius: 50%;
-            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
             cursor: pointer;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -210,15 +329,131 @@
         }
 
         .cart-fab:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 12px 35px rgba(63, 163, 77, 0.4);
+            transform: translateY(-5px) scale(1.15);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.5);
         }
 
         .cart-fab .fab-badge {
             position: absolute;
             top: -5px;
             right: -5px;
-            background: #ef4444;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .cart-fab {
+                bottom: 75px;
+                right: 20px;
+                width: 58px;
+                height: 58px;
+                font-size: 1.4rem;
+            }
+            .survey-container {
+                padding: 0 1rem;
+                margin: 2rem auto;
+            }
+            .survey-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+            .survey-card h2 {
+                font-size: 1.6rem;
+            }
+            .result-section {
+                padding: 1.8rem;
+            }
+            .result-section h3 {
+                font-size: 1.3rem;
+            }
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .result-value {
+                text-align: left;
+            }
+            .total-price {
+                font-size: 2.2rem;
+            }
+            .product-image-wrapper {
+                flex-direction: column;
+                text-align: center;
+            }
+            .product-image {
+                width: 90px;
+                height: 90px;
+            }
+            .radio-option {
+                min-width: 100%;
+            }
+        }
+        
+        /* Battery Selection Options */
+        .battery-option {
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .battery-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.2);
+        }
+        .battery-option.selected {
+            border: 3px solid #667eea !important;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(240,147,251,0.1) 100%) !important;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.25);
+        }
+        .battery-option label {
+            display: flex;
+            align-items: start;
+            gap: 1.5rem;
+            cursor: pointer;
+            margin: 0;
+        }
+        .battery-option input[type="radio"] {
+            margin-top: 0.5rem;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        .battery-option .battery-info {
+            flex: 1;
+        }
+        .battery-option .battery-quantity {
+            margin-top: 0.8rem;
+            color: #4a5568;
+            font-size: 1.05rem;
+        }
+        .battery-option .battery-price {
+            margin-top: 0.5rem;
+            color: #667eea;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+        .battery-selection-title {
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2d3748;
+        }
+    </style>
             color: white;
             border-radius: 50%;
             width: 24px;
@@ -578,15 +813,13 @@
                 totalPriceElement.textContent = formatPrice(newTotalCost);
             }
             
-            // Cập nhật border cho các option
+            // Cập nhật class selected cho các option
             const batteryOptions = document.querySelectorAll('.battery-option');
             batteryOptions.forEach((option, index) => {
                 if (radioElement.value == index) {
-                    option.style.border = '2px solid #3FA34D';
-                    option.style.backgroundColor = '#f0f9f1';
+                    option.classList.add('selected');
                 } else {
-                    option.style.border = '2px solid #ddd';
-                    option.style.backgroundColor = 'transparent';
+                    option.classList.remove('selected');
                 }
             });
         }
@@ -845,22 +1078,22 @@
                         <span class="result-label">Dung lượng cần:</span>
                         <span class="result-value">${results.batteryNeeded.toFixed(2)} kWh</span>
                     </div>
-                    <div style="margin-top: 1rem;">
-                        <p style="margin-bottom: 1rem; font-weight: 600;">Chọn loại pin phù hợp:</p>
+                    <div style="margin-top: 1.5rem;">
+                        <p class="battery-selection-title">💡 Chọn loại pin phù hợp với nhu cầu của bạn:</p>
                         ${results.batteryOptions.map((battery, index) => `
-                            <div class="battery-option" style="border: 2px solid ${index === results.defaultBattery ? '#3FA34D' : '#ddd'}; background-color: ${index === results.defaultBattery ? '#f0f9f1' : 'transparent'}; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;">
-                                <label style="display: flex; align-items: start; gap: 1rem; cursor: pointer;">
-                                    <input type="radio" name="battery_choice" value="${index}" ${index === results.defaultBattery ? 'checked' : ''} onchange="updateTotalCost(${results.totalCostWithoutBattery}, ${battery.totalCost}, this)" style="margin-top: 0.25rem; width: 20px; height: 20px; cursor: pointer;" />
-                                    <div style="flex: 1;">
-                                        <div class="product-image-wrapper" style="margin-bottom: 0.5rem;">
+                            <div class="battery-option ${index === results.defaultBattery ? 'selected' : ''}" data-index="${index}">
+                                <label>
+                                    <input type="radio" name="battery_choice" value="${index}" ${index === results.defaultBattery ? 'checked' : ''} onchange="updateTotalCost(${results.totalCostWithoutBattery}, ${battery.totalCost}, this)" />
+                                    <div class="battery-info">
+                                        <div class="product-image-wrapper">
                                             <img src="${battery.image}" alt="${battery.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
                                             <div>
                                                 <div class="product-name">${battery.name}</div>
-                                                <div style="margin-top: 0.5rem; color: #666;">
-                                                    <strong>Số lượng:</strong> ${battery.quantity} bộ
+                                                <div class="battery-quantity">
+                                                    <strong>📦 Số lượng:</strong> ${battery.quantity} bộ
                                                 </div>
-                                                <div style="margin-top: 0.25rem; color: #3FA34D; font-weight: 700; font-size: 1.1rem;">
-                                                    Tổng tiền: <span style="text-decoration: underline;">${formatPrice(battery.totalCost)}</span>
+                                                <div class="battery-price">
+                                                    💰 Tổng tiền: <span style="text-decoration: underline;">${formatPrice(battery.totalCost)}</span>
                                                 </div>
                                             </div>
                                         </div>
