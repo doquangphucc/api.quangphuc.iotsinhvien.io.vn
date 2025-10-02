@@ -732,6 +732,20 @@
             }
         });
 
+        // Gắn sự kiện click cho nút "Lưu ngay báo giá"
+        document.addEventListener('DOMContentLoaded', function() {
+            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
+            if (saveSurveyBtn) {
+                saveSurveyBtn.addEventListener('click', function() {
+                    console.log('Save Survey button clicked'); // Debug
+                    saveSurvey();
+                });
+                console.log('Save Survey button event listener attached'); // Debug
+            } else {
+                console.error('Save Survey button not found!'); // Debug
+            }
+        });
+
         // Cấu hình sản phẩm
         const PRODUCTS = {
             panels: {
