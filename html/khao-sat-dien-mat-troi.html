@@ -649,8 +649,8 @@
             const cabinetList = data.phase === 1 ? PRODUCTS.cabinets_1phase : PRODUCTS.cabinets_3phase;
             const cabinet = cabinetList.find(cab => cab.capacity >= inverter.capacity) || cabinetList[cabinetList.length - 1];
             
-            // 7. Tính pin lưu trữ
-            const totalEnergy = panelsNeeded * energyPerPanel;
+            // 7. Tính pin lưu trữ (dựa trên tổng điện năng 1 NGÀY của hệ thống)
+            const totalEnergyPerDay = panelsNeeded * energyPerPanelPerDay; // kWh/ngày
             let batteryRatio;
             switch(data.usageTime) {
                 case 'day': batteryRatio = 1/3; break;
@@ -658,7 +658,7 @@
                 case 'night': batteryRatio = 3/5; break;
                 default: batteryRatio = 1/2;
             }
-            const batteryNeeded = totalEnergy * batteryRatio;
+            const batteryNeeded = totalEnergyPerDay * batteryRatio;
             
             // Chọn loại pin phù hợp
             let batteries = [];
