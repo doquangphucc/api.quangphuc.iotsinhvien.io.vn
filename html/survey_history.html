@@ -538,7 +538,8 @@
             const emptyStateEl = document.getElementById('emptyState');
             
             try {
-                const response = await fetch(`../api/get_survey_history.php?user_id=${currentUser.id}`);
+                // API sử dụng session để xác định user, không cần truyền user_id
+                const response = await fetch('../api/get_survey_history.php');
                 const data = await response.json();
 
                 loadingEl.style.display = 'none';
