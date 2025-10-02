@@ -501,7 +501,9 @@
         // Format giá tiền
         function formatPrice(price) {
             if (!price) return '0đ';
-            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + 'đ';
+            // Chuyển sang số nguyên để bỏ phần thập phân .00
+            const intPrice = Math.round(parseFloat(price));
+            return intPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + 'đ';
         }
 
         // Format ngày tháng
