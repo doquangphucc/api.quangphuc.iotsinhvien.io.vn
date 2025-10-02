@@ -1403,7 +1403,19 @@
                     body: JSON.stringify(surveyData)
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                // Kiểm tra content type
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Response is not JSON:', text);
+                    throw new Error('Server trả về không phải JSON. Có thể là lỗi PHP hoặc cấu hình server.');
+                }
+
                 const result = await response.json();
+                console.log('API response:', result);
 
                 if (result.success) {
                     saveSurveyBtn.textContent = '✅ Đã lưu thành công!';
