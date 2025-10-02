@@ -456,6 +456,23 @@
             font-size: 1.1rem;
             color: #2d3748;
         }
+        
+        /* Style cho nút Lưu Báo Giá */
+        #saveSurveyBtn {
+            position: relative !important;
+            z-index: 10 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+        #saveSurveyBtn:hover {
+            background: #3FA34D !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(63, 163, 77, 0.3);
+        }
+        #saveSurveyBtn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -1142,7 +1159,7 @@
                     <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
                     <div class="total-price" id="totalPrice">${formatPrice(results.totalCost)}</div>
                     <p style="opacity: 0.9;">Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
-                    <button id="saveSurveyBtn" style="background: white; color: #3FA34D; border: 2px solid white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 1.5rem; transition: all 0.3s;">
+                    <button id="saveSurveyBtn" style="background: white; color: #3FA34D; border: 2px solid white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer !important; margin-top: 1.5rem; transition: all 0.3s; position: relative; z-index: 10; pointer-events: auto;">
                         💾 Lưu Báo Giá Này
                     </button>
                 </div>
