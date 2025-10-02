@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // User must be logged in to create an order
-
+requireAuth();
 $userId = getCurrentUserId();
 
 $input = json_decode(file_get_contents('php://input'), true);
