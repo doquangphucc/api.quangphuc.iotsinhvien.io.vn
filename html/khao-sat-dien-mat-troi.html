@@ -1395,7 +1395,8 @@
                     }
                 };
 
-                const response = await fetch('../api/save_survey.php', {
+                // Sử dụng debug endpoint để xem lỗi chi tiết
+                const response = await fetch('../api/debug_save.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
