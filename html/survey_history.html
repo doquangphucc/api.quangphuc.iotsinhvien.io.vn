@@ -581,45 +581,97 @@
                     <div class="survey-body">
                         <div class="survey-meta">
                             <div class="meta-item">
-                                <div class="meta-label">Hóa đơn điện tháng</div>
+                                <div class="meta-label">👤 Họ tên</div>
+                                <div class="meta-value">${survey.fullName}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">📱 Số điện thoại</div>
+                                <div class="meta-value">${survey.phone}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">💰 Hóa đơn điện tháng</div>
                                 <div class="meta-value">${formatPrice(survey.monthlyBill)}</div>
                             </div>
                             <div class="meta-item">
-                                <div class="meta-label">Loại điện</div>
+                                <div class="meta-label">⚡ Loại điện</div>
                                 <div class="meta-value">${survey.phase} pha</div>
                             </div>
                             <div class="meta-item">
-                                <div class="meta-label">Khu vực</div>
+                                <div class="meta-label">📍 Khu vực</div>
                                 <div class="meta-value">${getRegionName(survey.region)}</div>
                             </div>
                             <div class="meta-item">
-                                <div class="meta-label">Thời gian sử dụng</div>
+                                <div class="meta-label">🕐 Thời gian sử dụng</div>
                                 <div class="meta-value">${survey.usageTime === 'day' ? 'Ban ngày' : survey.usageTime === 'night' ? 'Ban đêm' : 'Cân bằng'}</div>
                             </div>
                         </div>
                         ${survey.results ? `
                         <div class="results-table">
-                            <h4>📊 Kết quả tính toán</h4>
+                            <h4>📊 Kết quả tính toán chi tiết</h4>
                             <div class="results-grid">
                                 <div class="result-item">
-                                    <div class="result-label">Điện năng/tháng</div>
+                                    <div class="result-label">⚡ Điện năng/tháng</div>
                                     <div class="result-value">${survey.results.monthlyKWh} kWh</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">Số tấm pin</div>
+                                    <div class="result-label">☀️ Giờ nắng/ngày</div>
+                                    <div class="result-value">${survey.results.sunHours} giờ</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔆 Số tấm pin</div>
                                     <div class="result-value">${survey.results.panelsNeeded} tấm</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">Inverter</div>
+                                    <div class="result-label">💵 Giá tấm pin</div>
+                                    <div class="result-value">${formatPrice(survey.results.panelCost)}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔌 Biến tần</div>
                                     <div class="result-value">${survey.results.inverterName || 'N/A'}</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">Pin lưu trữ</div>
-                                    <div class="result-value">${survey.results.batteryType === '8cell' ? 'BYD 8 Cell' : 'A-Cornex 16 Cell'} (${survey.results.batteryQuantity || 0} bộ)</div>
+                                    <div class="result-label">💵 Giá biến tần</div>
+                                    <div class="result-value">${formatPrice(survey.results.inverterPrice)}</div>
                                 </div>
-                                <div class="result-item" style="border-left-color: var(--color-green); border-left-width: 4px;">
-                                    <div class="result-label">💰 Tổng chi phí</div>
-                                    <div class="result-value" style="color: var(--color-green); font-size: 1.3rem;">${formatPrice(survey.results.totalCost)}</div>
+                                <div class="result-item">
+                                    <div class="result-label">📦 Tủ điện</div>
+                                    <div class="result-value">${survey.results.cabinetName || 'N/A'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">💵 Giá tủ điện</div>
+                                    <div class="result-value">${formatPrice(survey.results.cabinetPrice)}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔋 Dung lượng pin cần</div>
+                                    <div class="result-value">${survey.results.batteryNeeded} kWh</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔋 Loại pin</div>
+                                    <div class="result-value">${survey.results.batteryType === '8cell' ? 'BYD 8 Cell' : 'A-Cornex 16 Cell'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">📦 Số lượng pin</div>
+                                    <div class="result-value">${survey.results.batteryQuantity || 0} bộ</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">💵 Giá pin</div>
+                                    <div class="result-value">${formatPrice(survey.results.batteryCost)}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔧 Phụ kiện</div>
+                                    <div class="result-value">${formatPrice(survey.results.accessoriesCost)}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">👷 Công thợ</div>
+                                    <div class="result-value">${formatPrice(survey.results.laborCost)}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔌 Dây DC</div>
+                                    <div class="result-value">${formatPrice(survey.results.dcCableCost)}</div>
+                                </div>
+                                <div class="result-item" style="border-left-color: var(--color-green); border-left-width: 4px; grid-column: span 2;">
+                                    <div class="result-label">💰 TỔNG CHI PHÍ DỰ ÁN</div>
+                                    <div class="result-value" style="color: var(--color-green); font-size: 1.5rem; font-weight: 800;">${formatPrice(survey.results.totalCost)}</div>
                                 </div>
                             </div>
                         </div>

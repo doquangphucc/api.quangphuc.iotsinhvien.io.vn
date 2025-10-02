@@ -33,10 +33,12 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $user_id = $_SESSION['user_id'];
 
-    // Lấy danh sách khảo sát của user
+    // Lấy danh sách khảo sát của user với đầy đủ thông tin
     $stmt = $conn->prepare("
         SELECT 
             s.id,
+            s.full_name,
+            s.phone,
             s.region,
             s.phase,
             s.solar_panel_type,
@@ -44,11 +46,23 @@ try {
             s.usage_time,
             s.created_at,
             r.monthly_kwh,
+            r.sun_hours,
             r.panels_needed,
-            r.total_cost,
+            r.panel_cost,
+            r.inverter_id,
             r.inverter_name,
+            r.inverter_price,
+            r.cabinet_id,
+            r.cabinet_name,
+            r.cabinet_price,
+            r.battery_needed,
             r.battery_type,
-            r.battery_quantity
+            r.battery_quantity,
+            r.battery_cost,
+            r.accessories_cost,
+            r.labor_cost,
+            r.dc_cable_cost,
+            r.total_cost
         FROM solar_surveys s
         LEFT JOIN survey_results r ON s.id = r.survey_id
         WHERE s.user_id = ?
@@ -63,6 +77,8 @@ try {
     while ($row = $result->fetch_assoc()) {
         $surveys[] = [
             'id' => $row['id'],
+            'fullName' => $row['full_name'],
+            'phone' => $row['phone'],
             'region' => $row['region'],
             'phase' => $row['phase'],
             'solarPanelType' => $row['solar_panel_type'],
@@ -71,11 +87,23 @@ try {
             'createdAt' => $row['created_at'],
             'results' => $row['monthly_kwh'] ? [
                 'monthlyKWh' => $row['monthly_kwh'],
+                'sunHours' => $row['sun_hours'],
                 'panelsNeeded' => $row['panels_needed'],
-                'totalCost' => $row['total_cost'],
+                'panelCost' => $row['panel_cost'],
+                'inverterId' => $row['inverter_id'],
                 'inverterName' => $row['inverter_name'],
+                'inverterPrice' => $row['inverter_price'],
+                'cabinetId' => $row['cabinet_id'],
+                'cabinetName' => $row['cabinet_name'],
+                'cabinetPrice' => $row['cabinet_price'],
+                'batteryNeeded' => $row['battery_needed'],
                 'batteryType' => $row['battery_type'],
-                'batteryQuantity' => $row['battery_quantity']
+                'batteryQuantity' => $row['battery_quantity'],
+                'batteryCost' => $row['battery_cost'],
+                'accessoriesCost' => $row['accessories_cost'],
+                'laborCost' => $row['labor_cost'],
+                'dcCableCost' => $row['dc_cable_cost'],
+                'totalCost' => $row['total_cost']
             ] : null
         ];
     }
