@@ -473,6 +473,115 @@
         #saveSurveyBtn:active {
             transform: translateY(0);
         }
+        
+        /* Custom Modal/Alert Style */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        .custom-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .modal-icon.success {
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            box-shadow: 0 10px 30px rgba(168, 224, 99, 0.4);
+        }
+        .modal-icon.error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+        .modal-icon.warning {
+            background: linear-gradient(135deg, #f9ca24 0%, #f39c12 100%);
+            box-shadow: 0 10px 30px rgba(249, 202, 36, 0.4);
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .modal-message {
+            font-size: 1.05rem;
+            color: #4a5568;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+        }
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);
+        }
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.4);
+        }
+        .modal-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        .modal-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -517,6 +626,18 @@
         <div class="auth-buttons" id="auth-buttons">
             <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
             <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">✓</div>
+            <h3 class="modal-title" id="modalTitle">Thành công!</h3>
+            <p class="modal-message" id="modalMessage">Thao tác đã được thực hiện thành công.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" id="modalOkBtn">OK</button>
+            </div>
         </div>
     </div>
 
@@ -714,6 +835,48 @@
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script>
+        // Custom Modal Function
+        function showModal(message, type = 'success', onConfirm = null) {
+            const modal = document.getElementById('customModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalOkBtn = document.getElementById('modalOkBtn');
+            
+            // Set icon and title based on type
+            modalIcon.className = 'modal-icon ' + type;
+            switch(type) {
+                case 'success':
+                    modalIcon.textContent = '✓';
+                    modalTitle.textContent = 'Thành công!';
+                    break;
+                case 'error':
+                    modalIcon.textContent = '✕';
+                    modalTitle.textContent = 'Lỗi!';
+                    break;
+                case 'warning':
+                    modalIcon.textContent = '⚠';
+                    modalTitle.textContent = 'Thông báo';
+                    break;
+            }
+            
+            modalMessage.textContent = message;
+            modal.classList.add('show');
+            
+            // Handle OK button click
+            modalOkBtn.onclick = function() {
+                modal.classList.remove('show');
+                if (onConfirm) onConfirm();
+            };
+            
+            // Close modal when clicking outside
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            };
+        }
+
         // Biến lưu kết quả tính toán để có thể lưu vào database
         let currentResults = null;
 
@@ -1189,13 +1352,14 @@
             const userData = JSON.parse(localStorage.getItem('authUser') || '{}');
             
             if (!userData.id) {
-                alert('Bạn cần đăng nhập để lưu báo giá. Vui lòng đăng nhập!');
-                window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                showModal('Bạn cần đăng nhập để lưu báo giá. Vui lòng đăng nhập!', 'warning', function() {
+                    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                });
                 return;
             }
 
             if (!currentResults) {
-                alert('Không có kết quả để lưu!');
+                showModal('Không có kết quả để lưu! Vui lòng tính toán hệ thống trước.', 'warning');
                 return;
             }
 
@@ -1245,13 +1409,13 @@
                     saveSurveyBtn.textContent = '✅ Đã lưu thành công!';
                     saveSurveyBtn.style.background = '#3FA34D';
                     saveSurveyBtn.style.color = 'white';
-                    alert('Đã lưu báo giá thành công! Bạn có thể xem lại trong lịch sử khảo sát.');
+                    showModal('Đã lưu báo giá thành công! Bạn có thể xem lại trong lịch sử khảo sát.', 'success');
                 } else {
                     throw new Error(result.message || 'Lỗi khi lưu khảo sát');
                 }
             } catch (error) {
                 console.error('Error saving survey:', error);
-                alert('Lỗi khi lưu báo giá: ' + error.message);
+                showModal('Lỗi khi lưu báo giá: ' + error.message, 'error');
                 saveSurveyBtn.disabled = false;
                 saveSurveyBtn.textContent = '💾 Lưu Báo Giá Này';
             }
