@@ -29,36 +29,60 @@
             z-index: 0;
         }
         .survey-container {
-            max-width: 1100px;
-            margin: 3rem auto;
-            padding: 0 2rem;
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 120px 0 100px; /* Padding phải để tránh nút giỏ hàng, trái để tránh contact items */
             position: relative;
             z-index: 1;
         }
-        .survey-card {
+        
+        /* Form bên trên - chia 2 cột như quyển vở */
+        .survey-form-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Form columns */
+        .form-column {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 3rem;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.15), 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,255,255,0.8);
-            animation: fadeInUp 0.6s ease-out;
         }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        /* Results bên dưới - cũng chia 2 cột */
+        .results-wrapper {
+            margin-right: 0; /* Đã có padding từ container */
+            padding-bottom: 100px; /* Tránh FAB button ở dưới */
         }
+        
+        /* Grid 2 cột cho kết quả */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .results-column {
+            min-height: 200px;
+        }
+        
+        .survey-card {
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            margin-bottom: 0;
+            border: none;
+        }
+        
         .survey-card h2 {
             color: #3FA34D;
-            margin-bottom: 2rem;
-            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 800;
             text-align: center;
             background: linear-gradient(135deg, #56ab2f 0%, #3FA34D 100%);
@@ -66,23 +90,24 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: 0.9rem;
         }
         .form-group label {
             display: block;
-            font-weight: 700;
-            margin-bottom: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
             color: #2d3748;
-            font-size: 1.05rem;
+            font-size: 0.9rem;
         }
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 1.1rem 1.3rem;
+            padding: 0.65rem 0.9rem;
             border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             background: white;
         }
@@ -95,21 +120,21 @@
         }
         .radio-group {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
         .radio-option {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 1rem 1.8rem;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
             border: 2px solid #e2e8f0;
-            border-radius: 14px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             background: white;
             flex: 1;
-            min-width: 140px;
+            min-width: 100px;
         }
         .radio-option:hover {
             border-color: #3FA34D;
@@ -132,15 +157,15 @@
             background: linear-gradient(135deg, #56ab2f 0%, #3FA34D 100%);
             color: white;
             border: none;
-            padding: 1.3rem 3rem;
+            padding: 0.9rem 2rem;
             border-radius: 50px;
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
             width: 100%;
-            margin-top: 2rem;
+            margin-top: 0.8rem;
             transition: all 0.4s ease;
-            box-shadow: 0 8px 25px rgba(63,163,77,0.4);
+            box-shadow: 0 6px 20px rgba(63,163,77,0.4);
             position: relative;
             overflow: hidden;
         }
@@ -171,140 +196,249 @@
             display: block;
             animation: fadeInUp 0.6s ease-out;
         }
-        .result-section {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
-            backdrop-filter: blur(10px);
-            padding: 2.5rem;
-            border-radius: 20px;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.5);
-            transition: all 0.3s ease;
+        
+        /* Placeholder khi chưa có kết quả */
+        .results-placeholder {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 2px dashed #cbd5e0;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
         }
-        .result-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        .results.show + .results-placeholder {
+            display: none;
         }
-        .result-section h3 {
+        .results-placeholder-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+        }
+        .results-placeholder-text {
+            color: #718096;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .results-placeholder-subtext {
+            color: #a0aec0;
+            font-size: 0.95rem;
+        }
+        
+        /* Excel-style Table Results */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .excel-table thead {
+            background: linear-gradient(135deg, #56ab2f 0%, #3FA34D 100%);
+            color: white;
+        }
+        .excel-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-right: 1px solid rgba(255,255,255,0.2);
+        }
+        .excel-table th:last-child {
+            border-right: none;
+        }
+        .excel-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .excel-table td:last-child {
+            border-right: none;
+        }
+        .excel-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .excel-table tbody tr:hover {
+            background: rgba(63,163,77,0.05);
+        }
+        .excel-table .label-col {
+            font-weight: 600;
+            color: #4a5568;
+            width: 30%;
+        }
+        .excel-table .value-col {
+            color: #2d3748;
+        }
+        .excel-table .price-col {
+            font-weight: 700;
             color: #3FA34D;
-            margin-bottom: 1.8rem;
-            font-size: 1.5rem;
+            text-align: right;
+        }
+        .excel-table .product-image-cell {
+            width: 80px;
+            text-align: center;
+        }
+        .excel-table .product-image-small {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+        .section-header {
+            background: linear-gradient(135deg, rgba(63,163,77,0.15) 0%, rgba(168,224,99,0.15) 100%);
+            padding: 1.2rem 1.5rem;
+            margin: 2rem 0 1rem 0;
+            border-radius: 12px;
+            border-left: 5px solid #3FA34D;
+        }
+        .section-header h3 {
+            color: #3FA34D;
+            margin: 0;
+            font-size: 1.3rem;
             font-weight: 800;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 3px solid #a8e063;
         }
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.2rem 0;
-            border-bottom: 1px solid rgba(226,232,240,0.6);
-            align-items: center;
-            gap: 1rem;
-        }
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        .result-label {
-            font-weight: 600;
-            color: #4a5568;
-            font-size: 1.05rem;
-        }
-        .result-value {
-            font-weight: 700;
-            color: #3FA34D;
-            text-align: right;
-            font-size: 1.05rem;
-        }
-        .total-section {
+        .total-summary {
             background: linear-gradient(135deg, #56ab2f 0%, #3FA34D 50%, #2d5016 100%);
             color: white;
-            padding: 3rem;
-            border-radius: 24px;
+            padding: 2rem;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(63,163,77,0.4);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(63,163,77,0.35);
+            margin-top: 2rem;
         }
-        .total-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .total-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
+        .total-summary h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.5rem;
             font-weight: 800;
-            position: relative;
-            z-index: 1;
-            color: white;
-            border: none;
-            padding: 0;
         }
-        .total-price {
-            font-size: 3rem;
+        .total-summary .total-price {
+            font-size: 2.5rem;
             font-weight: 900;
-            margin: 1.5rem 0;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin: 1rem 0;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
-        .product-list {
-            background: rgba(255,255,255,0.1);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1.5rem;
-            text-align: left;
-        }
-        .product-item {
-            padding: 0.8rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        .product-item:last-child {
-            border-bottom: none;
+        .total-summary .note {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 1rem;
         }
         
-        /* Product image in results */
-        .product-image-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, rgba(63,163,77,0.08) 0%, rgba(168,224,99,0.08) 100%);
-            border-radius: 16px;
-            border: 2px solid rgba(63,163,77,0.15);
-            transition: all 0.3s ease;
+        /* Compact Battery Selection */
+        .battery-compact {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
-        .product-image-wrapper:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 20px rgba(63,163,77,0.15);
-        }
-        .product-image {
-            width: 110px;
-            height: 110px;
-            object-fit: contain;
-            background: white;
+        .battery-compact-item {
+            border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 0.8rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
         }
-        .product-name {
+        .battery-compact-item:hover {
+            border-color: #3FA34D;
+            box-shadow: 0 4px 15px rgba(63,163,77,0.15);
+        }
+        .battery-compact-item.selected {
+            border: 3px solid #3FA34D;
+            background: rgba(63,163,77,0.08);
+        }
+        .battery-compact-item label {
+            display: flex;
+            gap: 1rem;
+            cursor: pointer;
+            margin: 0;
+            align-items: center;
+        }
+        .battery-compact-item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #3FA34D;
+        }
+        .battery-compact-info {
+            flex: 1;
+        }
+        .battery-compact-name {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+        .battery-compact-details {
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+        .battery-compact-price {
+            font-size: 1.1rem;
             font-weight: 800;
             color: #3FA34D;
-            font-size: 1.15rem;
-            line-height: 1.4;
+            margin-top: 0.3rem;
+        }
+        .result-section {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            margin-bottom: 1.5rem;
+            box-shadow: none;
+            border: none;
+            transition: none;
+        }
+        .result-section:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .result-section h3 {
+            display: none;
+        }
+        .result-item {
+            display: none;
+        }
+        .result-label {
+            display: none;
+        }
+        .result-value {
+            display: none;
+        }
+        .total-section {
+            display: none;
+        }
+        .total-section h3 {
+            display: block;
+        }
+        .product-image-wrapper {
+            display: none;
+        }
+        .product-image {
+            display: none;
+        }
+        .product-name {
+            display: none;
+        }
+        
+        /* Style cho nút Lưu Báo Giá */
+        #saveSurveyBtn:hover {
+            background: #2d5016 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(63, 163, 77, 0.4);
+        }
+        #saveSurveyBtn:active {
+            transform: translateY(0);
         }
         
         /* Floating Action Button for Cart */
@@ -353,6 +487,22 @@
         }
 
         @media (max-width: 768px) {
+            .survey-container {
+                padding: 0 1rem;
+                margin: 2rem auto;
+            }
+            .survey-form-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .results-wrapper {
+                margin-right: 0;
+                padding-bottom: 150px;
+            }
             .cart-fab {
                 bottom: 75px;
                 right: 20px;
@@ -360,16 +510,8 @@
                 height: 58px;
                 font-size: 1.4rem;
             }
-            .survey-container {
-                padding: 0 1rem;
-                margin: 2rem auto;
-            }
-            .survey-card {
-                padding: 2rem 1.5rem;
-                border-radius: 20px;
-            }
             .survey-card h2 {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
             }
             .result-section {
                 padding: 1.8rem;
@@ -401,80 +543,7 @@
             }
         }
         
-        /* Battery Selection Options */
-        .battery-option {
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 2px solid #e2e8f0;
-        }
-        .battery-option:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(63,163,77,0.2);
-            border-color: #3FA34D;
-        }
-        .battery-option.selected {
-            border: 3px solid #3FA34D !important;
-            background: linear-gradient(135deg, rgba(63,163,77,0.1) 0%, rgba(168,224,99,0.1) 100%) !important;
-            box-shadow: 0 8px 25px rgba(63,163,77,0.25);
-        }
-        .battery-option label {
-            display: flex;
-            align-items: start;
-            gap: 1.5rem;
-            cursor: pointer;
-            margin: 0;
-        }
-        .battery-option input[type="radio"] {
-            margin-top: 0.5rem;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            accent-color: #3FA34D;
-        }
-        .battery-option .battery-info {
-            flex: 1;
-        }
-        .battery-option .battery-quantity {
-            margin-top: 0.8rem;
-            color: #4a5568;
-            font-size: 1.05rem;
-        }
-        .battery-option .battery-price {
-            margin-top: 0.5rem;
-            color: #3FA34D;
-            font-weight: 800;
-            font-size: 1.3rem;
-        }
-        .battery-selection-title {
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #2d3748;
-        }
-        
-        /* Style cho nút Lưu Báo Giá */
-        #saveSurveyBtn {
-            position: relative !important;
-            z-index: 10 !important;
-            pointer-events: auto !important;
-            cursor: pointer !important;
-        }
-        #saveSurveyBtn:hover {
-            background: #3FA34D !important;
-            color: white !important;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(63, 163, 77, 0.3);
-        }
-        #saveSurveyBtn:active {
-            transform: translateY(0);
-        }
-        
-        /* Custom Modal/Alert Style */
+        /* Floating Action Button for Cart */
         .custom-modal {
             display: none;
             position: fixed;
@@ -713,84 +782,146 @@
         <div class="survey-container">
             <div class="survey-card">
                 <h2>📋 Khảo Sát Chi Tiết Hệ Thống Điện Mặt Trời</h2>
-                
-                <form id="surveyForm">
-                    <!-- Thông tin cơ bản -->
-                    <div class="form-group">
-                        <label>Họ và Tên *</label>
-                        <input type="text" name="fullname" required placeholder="Nguyễn Văn A" />
-                    </div>
+            </div>
+            
+            <!-- Form nhập liệu chia 2 cột như quyển vở -->
+            <form id="surveyForm">
+                <div class="survey-form-wrapper">
+                    <!-- Cột trái của form -->
+                    <div class="form-column">
+                        <!-- Thông tin cơ bản -->
+                        <div class="form-group">
+                            <label>Họ và Tên *</label>
+                            <input type="text" name="fullname" required placeholder="Nguyễn Văn A" />
+                        </div>
 
-                    <div class="form-group">
-                        <label>Số Điện Thoại *</label>
-                        <input type="tel" name="phone" required placeholder="0988919868" />
-                    </div>
+                        <div class="form-group">
+                            <label>Số Điện Thoại *</label>
+                            <input type="tel" name="phone" required placeholder="0988919868" />
+                        </div>
 
-                    <div class="form-group">
-                        <label>Khu Vực *</label>
-                        <select name="region" required>
-                            <option value="">-- Chọn khu vực --</option>
-                            <option value="mien-bac">Miền Bắc</option>
-                            <option value="mien-trung">Miền Trung</option>
-                            <option value="mien-nam">Miền Nam</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label>Khu Vực *</label>
+                            <select name="region" required>
+                                <option value="">-- Chọn khu vực --</option>
+                                <option value="mien-bac">Miền Bắc</option>
+                                <option value="mien-trung">Miền Trung</option>
+                                <option value="mien-nam">Miền Nam</option>
+                            </select>
+                        </div>
 
-                    <!-- Loại điện -->
-                    <div class="form-group">
-                        <label>Loại Điện *</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="phase" value="1" required />
-                                <span>1 Pha</span>
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="phase" value="3" />
-                                <span>3 Pha</span>
-                            </label>
+                        <!-- Loại điện -->
+                        <div class="form-group">
+                            <label>Loại Điện *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="phase" value="1" required />
+                                    <span>1 Pha</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="phase" value="3" />
+                                    <span>3 Pha</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Loại tấm pin -->
+                        <div class="form-group">
+                            <label>Chọn Loại Tấm Pin *</label>
+                            <select name="solarPanel" required>
+                                <option value="">-- Chọn loại tấm pin --</option>
+                                <option value="590" data-price="2300000">Jinko Solar 590W Tiger Neo - 2.300.000đ</option>
+                                <option value="630" data-price="2600000">Jinko Solar 630W Tiger Neo - 2.600.000đ</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Loại tấm pin -->
-                    <div class="form-group">
-                        <label>Chọn Loại Tấm Pin *</label>
-                        <select name="solarPanel" required>
-                            <option value="">-- Chọn loại tấm pin --</option>
-                            <option value="590" data-price="2300000">Jinko Solar 590W Tiger Neo - 2.300.000đ</option>
-                            <option value="630" data-price="2600000">Jinko Solar 630W Tiger Neo - 2.600.000đ</option>
-                        </select>
-                    </div>
+                    <!-- Cột phải của form -->
+                    <div class="form-column">
+                        <!-- Tiền điện hàng tháng -->
+                        <div class="form-group">
+                            <label>Tiền Điện Trung Bình/Tháng (VNĐ) *</label>
+                            <input type="text" id="monthlyBillInput" name="monthlyBill" required placeholder="VD: 1.500.000đ" />
+                        </div>
+                        
+                        <!-- Bảng giá điện EVN -->
+                        <div class="form-group">
+                            <div style="background: linear-gradient(135deg, rgba(63,163,77,0.08) 0%, rgba(168,224,99,0.08) 100%); border-radius: 12px; padding: 1rem; border: 2px solid rgba(63,163,77,0.2);">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem;">
+                                    <span style="font-size: 1.2rem;">⚡</span>
+                                    <strong style="color: #3FA34D; font-size: 0.95rem;">Bảng Giá Điện Sinh Hoạt EVN</strong>
+                                </div>
+                                <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid rgba(226,232,240,0.5);">
+                                            <td style="padding: 0.4rem 0; color: #4a5568;">Bậc 1: 0-50 kWh</td>
+                                            <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: #3FA34D;">1.984đ/kWh</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(226,232,240,0.5);">
+                                            <td style="padding: 0.4rem 0; color: #4a5568;">Bậc 2: 51-100 kWh</td>
+                                            <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: #3FA34D;">2.050đ/kWh</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(226,232,240,0.5);">
+                                            <td style="padding: 0.4rem 0; color: #4a5568;">Bậc 3: 101-200 kWh</td>
+                                            <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: #3FA34D;">2.380đ/kWh</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(226,232,240,0.5);">
+                                            <td style="padding: 0.4rem 0; color: #4a5568;">Bậc 4: 201-300 kWh</td>
+                                            <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: #3FA34D;">2.998đ/kWh</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(226,232,240,0.5);">
+                                            <td style="padding: 0.4rem 0; color: #4a5568;">Bậc 5: 301-400 kWh</td>
+                                            <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: #3FA34D;">3.350đ/kWh</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 0.4rem 0; color: #4a5568;">Bậc 6: Từ 401 kWh</td>
+                                            <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: #3FA34D;">3.460đ/kWh</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px solid rgba(226,232,240,0.5);">
+                                    <div style="font-size: 0.8rem; color: #718096; display: flex; align-items: start; gap: 0.3rem;">
+                                        <span>💡</span>
+                                        <span>Hệ thống sẽ tự động tính toán mức tiêu thụ kWh dựa trên số tiền điện bạn nhập</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Tiền điện hàng tháng -->
-                    <div class="form-group">
-                        <label>Tiền Điện Trung Bình/Tháng (VNĐ) *</label>
-                        <input type="text" id="monthlyBillInput" name="monthlyBill" required placeholder="VD: 1.500.000đ" />
+                        <!-- Thời gian sử dụng -->
+                        <div class="form-group">
+                            <label>Thời Gian Sử Dụng Điện Chủ Yếu *</label>
+                            <select name="usageTime" required>
+                                <option value="">-- Chọn thời gian --</option>
+                                <option value="day">Ban ngày nhiều (pin = 1/3 điện tạo ra)</option>
+                                <option value="balanced">Cả ngày đều (pin = 1/2 điện tạo ra)</option>
+                                <option value="night">Ban đêm nhiều (pin = 3/5 điện tạo ra)</option>
+                            </select>
+                        </div>
                     </div>
-
-                    <!-- Thời gian sử dụng -->
-                    <div class="form-group">
-                        <label>Thời Gian Sử Dụng Điện Chủ Yếu *</label>
-                        <select name="usageTime" required>
-                            <option value="">-- Chọn thời gian --</option>
-                            <option value="day">Ban ngày nhiều (pin = 1/3 điện tạo ra)</option>
-                            <option value="balanced">Cả ngày đều (pin = 1/2 điện tạo ra)</option>
-                            <option value="night">Ban đêm nhiều (pin = 3/5 điện tạo ra)</option>
-                        </select>
-                    </div>
-
+                </div>
+                
+                <!-- Nút tính toán và xem lịch sử -->
+                <div style="text-align: center; margin-top: 1.5rem;">
                     <button type="submit" class="btn-calculate">🔍 Tính Toán Báo Giá</button>
-                </form>
-            </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="survey_history.html" style="display: inline-block; background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); color: white; padding: 0.8rem 1.8rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(86, 171, 47, 0.4)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(86, 171, 47, 0.3)';">
+                            📋 Xem Lịch Sử Khảo Sát
+                        </a>
+                    </div>
+                </div>
+            </form>
 
-            <div id="results" class="results survey-card">
-                <!-- Kết quả sẽ được hiển thị ở đây -->
-            </div>
-            
-            <!-- Nút xem lịch sử khảo sát -->
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="survey_history.html" style="display: inline-block; background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); color: white; padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(86, 171, 47, 0.4)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(86, 171, 47, 0.3)';">
-                    📋 Xem Lịch Sử Khảo Sát
-                </a>
+            <!-- Kết quả - cũng chia 2 cột bên dưới -->
+            <div class="results-wrapper">
+                <div id="results" class="results">
+                    <!-- Kết quả sẽ được hiển thị ở đây dạng 2 cột -->
+                </div>
+                <div class="results-placeholder">
+                    <div class="results-placeholder-icon">📊</div>
+                    <div class="results-placeholder-text">Kết quả báo giá sẽ hiển thị tại đây</div>
+                    <div class="results-placeholder-subtext">Vui lòng điền đầy đủ thông tin và nhấn "Tính Toán Báo Giá"</div>
+                </div>
             </div>
         </div>
     </main>
@@ -960,36 +1091,73 @@
             laborBase: 6000000   // 6 triệu/công
         };
 
-        // Bảng giá điện EVN
+        // Bảng giá điện EVN (cập nhật mới nhất)
         const TIER_CONFIG = [
-            { limit: 50, price: 2182 },
-            { limit: 50, price: 2255 },
-            { limit: 100, price: 2618 },
-            { limit: 100, price: 3298 },
-            { limit: 100, price: 3685 },
-            { limit: Infinity, price: 3806 }
+            { limit: 50, price: 1984, label: 'Bậc 1: 0-50 kWh' },
+            { limit: 50, price: 2050, label: 'Bậc 2: 51-100 kWh' },
+            { limit: 100, price: 2380, label: 'Bậc 3: 101-200 kWh' },
+            { limit: 100, price: 2998, label: 'Bậc 4: 201-300 kWh' },
+            { limit: 100, price: 3350, label: 'Bậc 5: 301-400 kWh' },
+            { limit: Infinity, price: 3460, label: 'Bậc 6: Từ 401 kWh trở lên' }
         ];
 
-        // Hàm tính kWh từ tiền điện
+        // Hàm tính kWh từ tiền điện và trả về breakdown
         function calculateKWhFromBill(amount) {
             let remaining = amount;
             let total = 0;
-            for (const tier of TIER_CONFIG) {
-                const { limit, price } = tier;
+            let breakdown = [];
+            let cumulativeKWh = 0;
+            
+            for (let i = 0; i < TIER_CONFIG.length; i++) {
+                const tier = TIER_CONFIG[i];
+                const { limit, price, label } = tier;
+                
                 if (!Number.isFinite(limit)) {
-                    total += remaining / price;
+                    const kwhInTier = remaining / price;
+                    total += kwhInTier;
+                    breakdown.push({
+                        tier: i + 1,
+                        label: label,
+                        kwhUsed: Math.round(kwhInTier * 10) / 10,
+                        price: price,
+                        cost: remaining,
+                        range: `Từ ${cumulativeKWh + 1} kWh`
+                    });
                     break;
                 }
+                
                 const tierCost = price * limit;
                 if (remaining >= tierCost) {
                     total += limit;
+                    breakdown.push({
+                        tier: i + 1,
+                        label: label,
+                        kwhUsed: limit,
+                        price: price,
+                        cost: tierCost,
+                        range: `${cumulativeKWh + 1}-${cumulativeKWh + limit} kWh`
+                    });
                     remaining -= tierCost;
+                    cumulativeKWh += limit;
                 } else {
-                    total += remaining / price;
+                    const kwhInTier = remaining / price;
+                    total += kwhInTier;
+                    breakdown.push({
+                        tier: i + 1,
+                        label: label,
+                        kwhUsed: Math.round(kwhInTier * 10) / 10,
+                        price: price,
+                        cost: remaining,
+                        range: `${cumulativeKWh + 1}-${cumulativeKWh + Math.ceil(kwhInTier)} kWh`
+                    });
                     break;
                 }
             }
-            return Math.round(total);
+            
+            return {
+                totalKWh: Math.round(total),
+                breakdown: breakdown
+            };
         }
 
         // Hàm format số tiền
@@ -1006,12 +1174,12 @@
             }
             
             // Cập nhật class selected cho các option
-            const batteryOptions = document.querySelectorAll('.battery-option');
-            batteryOptions.forEach((option, index) => {
+            const batteryItems = document.querySelectorAll('.battery-compact-item');
+            batteryItems.forEach((item, index) => {
                 if (radioElement.value == index) {
-                    option.classList.add('selected');
+                    item.classList.add('selected');
                 } else {
-                    option.classList.remove('selected');
+                    item.classList.remove('selected');
                 }
             });
         }
@@ -1062,8 +1230,10 @@
         });
 
         function calculateSystem(data) {
-            // 1. Tính kWh tiêu thụ
-            const monthlyKWh = calculateKWhFromBill(data.monthlyBill);
+            // 1. Tính kWh tiêu thụ và breakdown
+            const billResult = calculateKWhFromBill(data.monthlyBill);
+            const monthlyKWh = billResult.totalKWh;
+            const billBreakdown = billResult.breakdown;
             
             // 2. Giờ nắng theo khu vực
             let sunHours, regionName;
@@ -1166,6 +1336,7 @@
             return {
                 data,
                 monthlyKWh,
+                billBreakdown,
                 sunHours,
                 regionName,
                 panelInfo,
@@ -1196,99 +1367,136 @@
             const html = `
                 <h2>✅ Kết Quả Báo Giá Chi Tiết</h2>
                 
-                <div class="result-section">
-                    <h3>📊 Thông Tin Khách Hàng</h3>
-                    <div class="result-item">
-                        <span class="result-label">Họ tên:</span>
-                        <span class="result-value">${results.data.fullname}</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Số điện thoại:</span>
-                        <span class="result-value">${results.data.phone}</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Tiêu thụ điện:</span>
-                        <span class="result-value">${results.monthlyKWh} kWh/tháng (Tính từ <span style="text-decoration: underline;">${formatPrice(results.data.monthlyBill)}</span> theo bảng giá EVN)</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Giờ nắng:</span>
-                        <span class="result-value">${results.sunHours} giờ/ngày (Trung bình ${results.regionName})</span>
-                    </div>
-                </div>
+                <div class="results-grid">
+                    <!-- Cột trái kết quả -->
+                    <div class="results-column">
+                        <!-- Thông tin khách hàng -->
+                        <div class="section-header">
+                            <h3>📊 Thông Tin Khách Hàng</h3>
+                        </div>
+                        <table class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th>Thông tin</th>
+                                    <th>Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="label-col">Họ tên</td>
+                                    <td class="value-col">${results.data.fullname}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-col">Số điện thoại</td>
+                                    <td class="value-col">${results.data.phone}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-col">Khu vực</td>
+                                    <td class="value-col">${results.regionName} - ${results.sunHours} giờ nắng/ngày</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                <div class="result-section">
-                    <h3>⚡ Tấm Pin Năng Lượng</h3>
-                    <div class="product-image-wrapper">
-                        <img src="${results.panelInfo.image}" alt="${results.panelInfo.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
-                        <div class="product-name">${results.panelInfo.name}</div>
+                        <!-- Chi tiết tiền điện -->
+                        <div class="section-header">
+                            <h3>⚡ Phân Tích Hóa Đơn Điện</h3>
+                        </div>
+                        <table class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th>Bậc giá</th>
+                                    <th style="text-align: center;">kWh</th>
+                                    <th style="text-align: right;">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${results.billBreakdown.map((tier, index) => `
+                                    <tr ${index === results.billBreakdown.length - 1 ? 'style="background: rgba(63,163,77,0.05);"' : ''}>
+                                        <td class="value-col" style="font-size: 0.85rem;">${tier.label}</td>
+                                        <td style="text-align: center; font-weight: 600;">${tier.kwhUsed}</td>
+                                        <td class="price-col">${formatPrice(tier.cost)}</td>
+                                    </tr>
+                                `).join('')}
+                                <tr style="background: linear-gradient(135deg, rgba(63,163,77,0.15) 0%, rgba(168,224,99,0.15) 100%); font-weight: 700;">
+                                    <td class="label-col">TỔNG</td>
+                                    <td style="text-align: center; color: #3FA34D;">${results.monthlyKWh} kWh</td>
+                                    <td class="price-col" style="font-size: 1.05rem;">${formatPrice(results.data.monthlyBill)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="result-item">
-                        <span class="result-label">Công suất 1 tấm/ngày:</span>
-                        <span class="result-value">${results.energyPerPanelPerDay.toFixed(2)} kWh (${results.sunHours} giờ nắng ${results.regionName})</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Công suất 1 tấm/tháng:</span>
-                        <span class="result-value">${results.energyPerPanel.toFixed(2)} kWh (30 ngày)</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Số lượng:</span>
-                        <span class="result-value">${results.panelsNeeded} tấm (Suy ra từ mức tiêu thụ ${results.monthlyKWh} kWh/tháng)</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Thành tiền:</span>
-                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.panelCost)}</span> (${results.panelsNeeded} tấm × ${formatPrice(results.panelInfo.price)})</span>
-                    </div>
-                </div>
+                    
+                    <!-- Cột phải kết quả -->
+                    <div class="results-column">
+                        <!-- Bảng sản phẩm chính -->
+                        <div class="section-header">
+                            <h3>🛒 Danh Sách Sản Phẩm & Giá</h3>
+                        </div>
+                <table class="excel-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Ảnh</th>
+                            <th>Sản phẩm</th>
+                            <th style="width: 100px; text-align: center;">Số lượng</th>
+                            <th style="width: 150px; text-align: right;">Đơn giá</th>
+                            <th style="width: 150px; text-align: right;">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="product-image-cell">
+                                <img src="${results.panelInfo.image}" class="product-image-small" onerror="this.src='../assets/img/logo.jpg'" />
+                            </td>
+                            <td class="value-col">
+                                <strong>${results.panelInfo.name}</strong><br>
+                                <small style="color: #718096;">Công suất: ${results.energyPerPanelPerDay.toFixed(2)} kWh/ngày</small>
+                            </td>
+                            <td style="text-align: center; font-weight: 600;">${results.panelsNeeded} tấm</td>
+                            <td class="price-col">${formatPrice(results.panelInfo.price)}</td>
+                            <td class="price-col" style="font-size: 1.05rem;">${formatPrice(results.panelCost)}</td>
+                        </tr>
+                        <tr>
+                            <td class="product-image-cell">
+                                <img src="${results.inverter.image}" class="product-image-small" onerror="this.src='../assets/img/logo.jpg'" />
+                            </td>
+                            <td class="value-col">
+                                <strong>${results.inverter.name}</strong><br>
+                                <small style="color: #718096;">Công suất: ${results.inverter.capacity} kW</small>
+                            </td>
+                            <td style="text-align: center; font-weight: 600;">1 bộ</td>
+                            <td class="price-col">${formatPrice(results.inverter.price)}</td>
+                            <td class="price-col" style="font-size: 1.05rem;">${formatPrice(results.inverter.price)}</td>
+                        </tr>
+                        <tr>
+                            <td class="product-image-cell">
+                                <img src="${results.cabinet.image}" class="product-image-small" onerror="this.src='../assets/img/logo.jpg'" />
+                            </td>
+                            <td class="value-col">
+                                <strong>${results.cabinet.name}</strong><br>
+                                <small style="color: #718096;">Dung lượng: ${results.cabinet.capacity} kW</small>
+                            </td>
+                            <td style="text-align: center; font-weight: 600;">1 bộ</td>
+                            <td class="price-col">${formatPrice(results.cabinet.price)}</td>
+                            <td class="price-col" style="font-size: 1.05rem;">${formatPrice(results.cabinet.price)}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <div class="result-section">
-                    <h3>🔌 Biến Tần</h3>
-                    <div class="product-image-wrapper">
-                        <img src="${results.inverter.image}" alt="${results.inverter.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
-                        <div class="product-name">${results.inverter.name}</div>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Giá biến tần:</span>
-                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.inverter.price)}</span></span>
-                    </div>
+                <!-- Pin lưu trữ -->
+                <div class="section-header">
+                    <h3>🔋 Pin Lưu Trữ - Chọn Loại Phù Hợp</h3>
                 </div>
-
-                <div class="result-section">
-                    <h3>📦 Tủ Điện</h3>
-                    <div class="product-image-wrapper">
-                        <img src="${results.cabinet.image}" alt="${results.cabinet.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
-                        <div class="product-name">${results.cabinet.name}</div>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Giá tủ điện:</span>
-                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.cabinet.price)}</span></span>
-                    </div>
-                </div>
-
-                <div class="result-section">
-                    <h3>🔋 Pin Lưu Trữ</h3>
-                    <div class="result-item">
-                        <span class="result-label">Dung lượng cần:</span>
-                        <span class="result-value">${results.batteryNeeded.toFixed(2)} kWh</span>
-                    </div>
-                    <div style="margin-top: 1.5rem;">
-                        <p class="battery-selection-title">💡 Chọn loại pin phù hợp với nhu cầu của bạn:</p>
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 1.5rem;">
+                    <p style="margin: 0 0 1rem 0; color: #4a5568;"><strong>Dung lượng cần:</strong> ${results.batteryNeeded.toFixed(2)} kWh</p>
+                    <div class="battery-compact">
                         ${results.batteryOptions.map((battery, index) => `
-                            <div class="battery-option ${index === results.defaultBattery ? 'selected' : ''}" data-index="${index}">
+                            <div class="battery-compact-item ${index === results.defaultBattery ? 'selected' : ''}" data-index="${index}">
                                 <label>
                                     <input type="radio" name="battery_choice" value="${index}" ${index === results.defaultBattery ? 'checked' : ''} onchange="updateTotalCost(${results.totalCostWithoutBattery}, ${battery.totalCost}, this)" />
-                                    <div class="battery-info">
-                                        <div class="product-image-wrapper">
-                                            <img src="${battery.image}" alt="${battery.name}" class="product-image" onerror="this.src='../assets/img/logo.jpg'" />
-                                            <div>
-                                                <div class="product-name">${battery.name}</div>
-                                                <div class="battery-quantity">
-                                                    <strong>📦 Số lượng:</strong> ${battery.quantity} bộ
-                                                </div>
-                                                <div class="battery-price">
-                                                    💰 Tổng tiền: <span style="text-decoration: underline;">${formatPrice(battery.totalCost)}</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="battery-compact-info">
+                                        <div class="battery-compact-name">${battery.name}</div>
+                                        <div class="battery-compact-details">📦 ${battery.quantity} bộ × ${formatPrice(battery.price)}</div>
+                                        <div class="battery-compact-price">💰 ${formatPrice(battery.totalCost)}</div>
                                     </div>
                                 </label>
                             </div>
@@ -1296,38 +1504,58 @@
                     </div>
                 </div>
 
-                <div class="result-section">
+                <!-- Phụ kiện & Lắp đặt -->
+                <div class="section-header">
                     <h3>🔧 Phụ Kiện & Lắp Đặt</h3>
-                    <div class="result-item">
-                        <span class="result-label">Bach Z:</span>
-                        <span class="result-value">${results.accessories.bachZ.qty} cái - <span style="text-decoration: underline;">${formatPrice(results.accessories.bachZ.cost)}</span></span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Kẹp biên:</span>
-                        <span class="result-value">${results.accessories.clip.qty} cái - <span style="text-decoration: underline;">${formatPrice(results.accessories.clip.cost)}</span></span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Jack MC4:</span>
-                        <span class="result-value">${results.accessories.jackMC4.qty} bộ - <span style="text-decoration: underline;">${formatPrice(results.accessories.jackMC4.cost)}</span></span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Dây DC:</span>
-                        <span class="result-value">${results.dcCable.length}m - <span style="text-decoration: underline;">${formatPrice(results.dcCable.cost)}</span></span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Công thợ:</span>
-                        <span class="result-value"><span style="text-decoration: underline;">${formatPrice(results.laborCost)}</span></span>
-                    </div>
                 </div>
+                <table class="excel-table">
+                    <thead>
+                        <tr>
+                            <th>Hạng mục</th>
+                            <th style="width: 150px; text-align: center;">Số lượng</th>
+                            <th style="width: 150px; text-align: right;">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="label-col">Bach Z</td>
+                            <td style="text-align: center;">${results.accessories.bachZ.qty} cái</td>
+                            <td class="price-col">${formatPrice(results.accessories.bachZ.cost)}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Kẹp biên</td>
+                            <td style="text-align: center;">${results.accessories.clip.qty} cái</td>
+                            <td class="price-col">${formatPrice(results.accessories.clip.cost)}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Jack MC4</td>
+                            <td style="text-align: center;">${results.accessories.jackMC4.qty} bộ</td>
+                            <td class="price-col">${formatPrice(results.accessories.jackMC4.cost)}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-col">Dây DC</td>
+                            <td style="text-align: center;">${results.dcCable.length}m</td>
+                            <td class="price-col">${formatPrice(results.dcCable.cost)}</td>
+                        </tr>
+                        <tr style="background: rgba(63,163,77,0.05);">
+                            <td class="label-col"><strong>Công thợ lắp đặt</strong></td>
+                            <td style="text-align: center;">-</td>
+                            <td class="price-col" style="font-size: 1.05rem;">${formatPrice(results.laborCost)}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <div class="total-section">
+                <!-- Tổng tiền -->
+                <div class="total-summary">
                     <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
                     <div class="total-price" id="totalPrice">${formatPrice(results.totalCost)}</div>
-                    <p style="opacity: 0.9;">Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
-                    <button id="saveSurveyBtn" style="background: white; color: #3FA34D; border: 2px solid white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer !important; margin-top: 1.5rem; transition: all 0.3s; position: relative; z-index: 10; pointer-events: auto;">
-                        💾 Lưu Báo Giá Này
-                    </button>
+                    <p class="note">* Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
+                        <button id="saveSurveyBtn" style="background: white; color: #3FA34D; border: 2px solid white; padding: 0.9rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer !important; margin-top: 1rem; transition: all 0.3s; position: relative; z-index: 10; pointer-events: auto; font-size: 1rem;">
+                            💾 Lưu Báo Giá Này
+                        </button>
+                    </div>
                 </div>
+            </div>
             `;
             
             // Lưu kết quả vào biến global để có thể lưu sau
@@ -1344,9 +1572,7 @@
                     saveSurvey();
                 });
             }
-        }
-
-        // Hàm lưu khảo sát vào database
+        }        // Hàm lưu khảo sát vào database
         async function saveSurvey() {
             // Đúng key trong localStorage là 'authUser'
             const userData = JSON.parse(localStorage.getItem('authUser') || '{}');
