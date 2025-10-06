@@ -892,8 +892,6 @@
             // Đúng key trong localStorage là 'authUser' (theo auth.js)
             const userData = JSON.parse(localStorage.getItem('authUser') || '{}');
             
-            console.log('User data from localStorage:', userData); // Debug
-            
             if (userData.full_name && userData.phone) {
                 // Điền tên và số điện thoại
                 const fullnameInput = document.querySelector('input[name="fullname"]');
@@ -912,10 +910,7 @@
                     phoneInput.style.backgroundColor = '#f0f9f1';
                     phoneInput.style.cursor = 'not-allowed';
                 }
-                
-                console.log('Auto-filled:', userData.full_name, userData.phone); // Debug
             } else {
-                console.log('No user data to auto-fill'); // Debug
             }
         });
 
@@ -1346,10 +1341,8 @@
             const saveSurveyBtn = document.getElementById('saveSurveyBtn');
             if (saveSurveyBtn) {
                 saveSurveyBtn.addEventListener('click', function() {
-                    console.log('Save Survey button clicked'); // Debug
                     saveSurvey();
                 });
-                console.log('Save Survey button event listener attached'); // Debug
             }
         }
 
@@ -1409,8 +1402,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(surveyData)
-        });                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
+        });
 
                 // Kiểm tra content type
                 const contentType = response.headers.get('content-type');
@@ -1421,7 +1413,6 @@
                 }
 
                 const result = await response.json();
-                console.log('API response:', result);
 
                 if (result.success) {
                     saveSurveyBtn.textContent = '✅ Đã lưu thành công!';

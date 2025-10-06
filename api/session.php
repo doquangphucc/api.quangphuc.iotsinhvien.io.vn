@@ -48,12 +48,6 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
     
     session_start();
-    
-    // Debug logging
-    error_log("Session Started - ID: " . session_id());
-    error_log("Session Config - Secure: " . ($isSecure ? 'yes' : 'no'));
-    error_log("Session Config - HTTPS: " . ($isHttps ? 'yes' : 'no'));
-    error_log("Session Config - Localhost: " . ($isLocalhost ? 'yes' : 'no'));
 }
 
 // Helper function to check if user is logged in

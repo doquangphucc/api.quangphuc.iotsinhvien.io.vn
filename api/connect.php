@@ -7,7 +7,7 @@ require_once 'session.php';
 
 // Enable error reporting for development (remove in production)
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 
 // Set content type and CORS headers
 header('Content-Type: application/json; charset=utf-8');
