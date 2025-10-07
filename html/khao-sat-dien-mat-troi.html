@@ -1077,7 +1077,7 @@
             ],
             batteries: [
                 { id: 18, name: 'Cell BYD 173ah LiFePO4', capacity: 8.8, price: 14500000, image: '../assets/img/products/cell-byd-173ah-lifepo4.png' },
-                { id: 17, name: 'Cell A-Cornex LiFePO4 16 Cell', capacity: 16, price: 39250000, image: '../assets/img/products/cell-a-cornex-lifepo4-16cell.png' }
+                { id: 17, name: 'Cell A-Cornex LiFePO4 16 Cell', capacity: 16, price: 25500000, image: '../assets/img/products/cell-a-cornex-lifepo4-16cell.png' }
             ]
         };
 
@@ -1164,23 +1164,70 @@
             return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
         }
 
-        // Hàm cập nhật tổng tiền khi chọn loại pin khác
-        function updateTotalCost(totalCostWithoutBattery, batteryTotalCost, radioElement) {
+        // Hàm cập nhật thông tin pin khi chọn loại pin khác
+        function updateBatterySelection(batteryIndex) {
+            const selectedRadio = document.querySelector(`input[name="battery_choice"][value="${batteryIndex}"]`);
+            if (!selectedRadio) return;
+            
+            // Lấy thông tin từ data attributes
+            const batteryName = selectedRadio.getAttribute('data-name');
+            const batteryImage = selectedRadio.getAttribute('data-image');
+            const batteryCapacity = parseFloat(selectedRadio.getAttribute('data-capacity'));
+            const batteryQuantity = parseInt(selectedRadio.getAttribute('data-quantity'));
+            const batteryPrice = parseInt(selectedRadio.getAttribute('data-price'));
+            const batteryTotalCost = parseInt(selectedRadio.getAttribute('data-totalcost'));
+            const totalCostWithoutBattery = parseInt(selectedRadio.getAttribute('data-totalwithouttprice'));
+            
+            // Cập nhật ảnh
+            const imgElement = document.getElementById('batteryImage');
+            if (imgElement) {
+                imgElement.src = batteryImage;
+                imgElement.alt = batteryName;
+            }
+            
+            // Cập nhật tên và dung lượng
+            const nameElement = document.getElementById('batteryName');
+            if (nameElement) nameElement.textContent = batteryName;
+            
+            const capacityElement = document.getElementById('batteryCapacity');
+            if (capacityElement) capacityElement.textContent = batteryCapacity + ' kWh/cell';
+            
+            // Cập nhật mô tả
+            const qtyTextElement = document.getElementById('batteryQtyText');
+            if (qtyTextElement) qtyTextElement.textContent = batteryQuantity + ' cell';
+            
+            const nameTextElement = document.getElementById('batteryNameText');
+            if (nameTextElement) nameTextElement.textContent = batteryName;
+            
+            const totalCapacityElement = document.getElementById('batteryTotalCapacity');
+            if (totalCapacityElement) totalCapacityElement.textContent = (batteryQuantity * batteryCapacity).toFixed(1) + ' kWh';
+            
+            // Cập nhật số lượng
+            const quantityElement = document.getElementById('batteryQuantity');
+            if (quantityElement) quantityElement.textContent = batteryQuantity + ' cell';
+            
+            // Cập nhật đơn giá
+            const unitPriceElement = document.getElementById('batteryUnitPrice');
+            if (unitPriceElement) unitPriceElement.textContent = formatPrice(batteryPrice);
+            
+            // Cập nhật thành tiền pin
+            const batteryCostElement = document.getElementById('batteryTotalCost');
+            if (batteryCostElement) batteryCostElement.textContent = formatPrice(batteryTotalCost);
+            
+            // Cập nhật tổng tiền (cả trong bảng và phần tổng kết)
             const newTotalCost = totalCostWithoutBattery + batteryTotalCost;
+            
+            // Cập nhật trong bảng
             const totalPriceElement = document.getElementById('totalPrice');
             if (totalPriceElement) {
                 totalPriceElement.textContent = formatPrice(newTotalCost);
             }
             
-            // Cập nhật class selected cho các option
-            const batteryItems = document.querySelectorAll('.battery-compact-item');
-            batteryItems.forEach((item, index) => {
-                if (radioElement.value == index) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
-            });
+            // Cập nhật ở phần tổng chi phí dự án
+            const totalPriceSummary = document.getElementById('totalPriceSummary');
+            if (totalPriceSummary) {
+                totalPriceSummary.textContent = formatPrice(newTotalCost);
+            }
         }
 
         // Format input tiền điện
@@ -1297,13 +1344,23 @@
             // 8. Phụ kiện
             const bachZQty = panelsNeeded * 6;
             const clipQty = panelsNeeded * 6;
-            const jackMC4Qty = panelsNeeded;
+            const jackMC4Qty = panelsNeeded + 2; // Thêm 2 bộ dự phòng
             
-            // 9. Công thợ
-            const laborCost = panelsNeeded <= 9 ? ACCESSORIES.laborBase : Math.ceil(panelsNeeded / 9) * ACCESSORIES.laborBase;
+            // 9. Công thợ (tiến lũy theo tỷ lệ)
+            // Dưới 9 tấm: 6 triệu
+            // Từ 9 tấm trở lên: 6 triệu × (1 + (số_tấm_vượt/9) × 0.25)
+            // Ví dụ: 15 tấm = 9 + 6 vượt → 6tr × (1 + 6/9 × 0.25) = 7tr
+            let laborCost;
+            if (panelsNeeded <= 9) {
+                laborCost = ACCESSORIES.laborBase; // 6 triệu
+            } else {
+                const panelsOver = panelsNeeded - 9; // Số tấm vượt quá 9
+                const rawCost = ACCESSORIES.laborBase * (1 + (panelsOver / 9) * 0.25);
+                laborCost = Math.round(rawCost / 1000) * 1000; // Làm tròn đến đơn vị ngàn
+            }
             
-            // 10. Dây DC (ước tính 20m/tấm)
-            const dcCableLength = panelsNeeded * 20;
+            // 10. Dây DC (trung bình 100m, cụ thể tùy công trình thực tế)
+            const dcCableLength = 100; // Cố định 100m
             const dcCableCost = dcCableLength * ACCESSORIES.dcCable.price;
             
             // 11. Tổng chi phí (không tính pin, sẽ tính động khi chọn)
@@ -1350,11 +1407,11 @@
                 batteryNeeded,
                 totalCostWithoutBattery,
                 accessories: {
-                    bachZ: { qty: bachZQty, cost: bachZQty * ACCESSORIES.bachZ.price, name: ACCESSORIES.bachZ.name, image: ACCESSORIES.bachZ.image },
-                    clip: { qty: clipQty, cost: clipQty * ACCESSORIES.clip.price, name: ACCESSORIES.clip.name, image: ACCESSORIES.clip.image },
-                    jackMC4: { qty: jackMC4Qty, cost: jackMC4Qty * ACCESSORIES.jackMC4.price, name: ACCESSORIES.jackMC4.name, image: ACCESSORIES.jackMC4.image }
+                    bachZ: { qty: bachZQty, cost: bachZQty * ACCESSORIES.bachZ.price, price: ACCESSORIES.bachZ.price, name: ACCESSORIES.bachZ.name, image: ACCESSORIES.bachZ.image },
+                    clip: { qty: clipQty, cost: clipQty * ACCESSORIES.clip.price, price: ACCESSORIES.clip.price, name: ACCESSORIES.clip.name, image: ACCESSORIES.clip.image },
+                    jackMC4: { qty: jackMC4Qty, cost: jackMC4Qty * ACCESSORIES.jackMC4.price, price: ACCESSORIES.jackMC4.price, name: ACCESSORIES.jackMC4.name, image: ACCESSORIES.jackMC4.image }
                 },
-                dcCable: { length: dcCableLength, cost: dcCableCost, name: ACCESSORIES.dcCable.name, image: ACCESSORIES.dcCable.image },
+                dcCable: { length: dcCableLength, cost: dcCableCost, price: ACCESSORIES.dcCable.price, name: ACCESSORIES.dcCable.name, image: ACCESSORIES.dcCable.image },
                 laborCost,
                 panelCost,
                 accessoriesCost,
@@ -1376,6 +1433,47 @@
                         <div><strong>Loại điện:</strong> ${results.data.phase} pha</div>
                         <div><strong>Tiền điện/tháng:</strong> <span style="color: #e53e3e; font-weight: 700;">${formatPrice(results.data.monthlyBill)}</span> (≈${results.monthlyKWh} kWh)</div>
                         <div><strong>Thời gian dùng:</strong> ${results.data.usageTime === 'day' ? 'Chủ yếu ban ngày' : results.data.usageTime === 'night' ? 'Chủ yếu ban đêm' : 'Cả ngày lẫn đêm'}</div>
+                    </div>
+                </div>
+
+                <!-- Bảng phân tích hóa đơn điện EVN -->
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 2rem;">
+                    <h3 style="margin: 0 0 1rem 0; color: #2d3748; font-size: 1.1rem;">⚡ Phân Tích Hóa Đơn Điện Theo Bậc Thang EVN</h3>
+                    <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1rem;">
+                        Từ số tiền điện <strong style="color: #e53e3e;">${formatPrice(results.data.monthlyBill)}</strong>, chúng tôi tính ngược lại số kWh tiêu thụ theo biểu giá điện sinh hoạt của EVN:
+                    </p>
+                    <table class="excel-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;">Bậc</th>
+                                <th>Mức tiêu thụ</th>
+                                <th style="width: 120px; text-align: right;">Đơn giá</th>
+                                <th style="width: 100px; text-align: center;">kWh dùng</th>
+                                <th style="width: 130px; text-align: right;">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${results.billBreakdown.map((tier, index) => `
+                                <tr ${index === results.billBreakdown.length - 1 ? 'style="background: rgba(168,224,99,0.1);"' : ''}>
+                                    <td style="text-align: center; font-weight: 600; color: #3FA34D;">${index + 1}</td>
+                                    <td class="value-col" style="font-size: 0.9rem;">${tier.label}</td>
+                                    <td class="price-col" style="font-size: 0.9rem;">${formatPrice(tier.price)}/kWh</td>
+                                    <td style="text-align: center; font-weight: 600; color: #2d3748;">${tier.kwhUsed} kWh</td>
+                                    <td class="price-col">${formatPrice(tier.cost)}</td>
+                                </tr>
+                            `).join('')}
+                            <tr style="background: linear-gradient(135deg, rgba(63,163,77,0.15) 0%, rgba(168,224,99,0.15) 100%); font-weight: 700;">
+                                <td colspan="3" style="text-align: right; padding-right: 1rem; color: #2d3748;">TỔNG CỘNG:</td>
+                                <td style="text-align: center; font-size: 1.1rem; color: #3FA34D;">${results.monthlyKWh} kWh</td>
+                                <td class="price-col" style="font-size: 1.1rem; color: #e53e3e;">${formatPrice(results.data.monthlyBill)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(59,130,246,0.05); border-left: 4px solid #3b82f6; border-radius: 8px;">
+                        <p style="margin: 0; font-size: 0.9rem; color: #1e40af; line-height: 1.6;">
+                            <strong>💡 Giải thích:</strong> Hóa đơn điện của bạn ${formatPrice(results.data.monthlyBill)} tương ứng với <strong>${results.monthlyKWh} kWh</strong> điện tiêu thụ trong tháng. 
+                            Hệ thống năng lượng mặt trời sẽ giúp bạn sản xuất đủ điện năng này, giảm thiểu hóa đơn điện đến <strong style="color: #16a34a;">≈80%</strong>.
+                        </p>
                     </div>
                 </div>
 
@@ -1455,19 +1553,26 @@
                         ${results.batteryOptions.map((battery, index) => {
                             if (index === results.defaultBattery) {
                                 return `
-                        <tr style="background: rgba(168,224,99,0.08);">
+                        <tr style="background: rgba(168,224,99,0.08);" id="batteryRow">
                             <td class="product-image-cell">
-                                <img src="${battery.image}" alt="${battery.name}" class="product-image-small" onerror="this.src='../assets/img/logo.jpg'" />
+                                <img id="batteryImage" src="${battery.image}" alt="${battery.name}" class="product-image-small" onerror="this.src='../assets/img/logo.jpg'" />
                             </td>
                             <td class="value-col">
-                                <strong style="color: #2d3748;">${battery.name}</strong><br>
-                                <small style="color: #718096;">${battery.capacity} kWh/cell</small>
+                                <strong style="color: #2d3748;" id="batteryName">${battery.name}</strong><br>
+                                <small style="color: #718096;" id="batteryCapacity">${battery.capacity} kWh/cell</small>
                                 <div style="margin-top: 0.6rem;">
                                     ${results.batteryOptions.map((b, i) => `
                                         <label style="display: inline-flex; align-items: center; margin-right: 1rem; cursor: pointer; font-size: 0.82rem;">
                                             <input type="radio" name="battery_choice" value="${i}" ${i === results.defaultBattery ? 'checked' : ''} 
-                                                onchange="updateTotalCost(${results.totalCostWithoutBattery}, ${b.totalCost}, this)" 
-                                                style="margin-right: 0.3rem; accent-color: #3FA34D;" />
+                                                onchange="updateBatterySelection(${i})" 
+                                                style="margin-right: 0.3rem; accent-color: #3FA34D;" 
+                                                data-name="${b.name}" 
+                                                data-image="${b.image}" 
+                                                data-capacity="${b.capacity}" 
+                                                data-quantity="${b.quantity}" 
+                                                data-price="${b.price}" 
+                                                data-totalcost="${b.totalCost}"
+                                                data-totalwithouttprice="${results.totalCostWithoutBattery}" />
                                             <span style="color: #4a5568;">${b.quantity} cell (${(b.quantity * b.capacity).toFixed(1)}kWh) - ${formatPrice(b.totalCost)}</span>
                                         </label>
                                     `).join('')}
@@ -1477,10 +1582,10 @@
                                 <strong style="color: #3FA34D;">🔋 Lưu trữ năng lượng:</strong> Hệ thống ${results.panelsNeeded} tấm sản xuất <strong>${(results.panelsNeeded * results.energyPerPanelPerDay).toFixed(1)} kWh/ngày</strong>.<br>
                                 Thời gian dùng điện: <em>${results.data.usageTime === 'day' ? 'chủ yếu ban ngày (dùng luôn)' : results.data.usageTime === 'night' ? 'chủ yếu ban đêm (cần lưu trữ)' : 'cả ngày lẫn đêm (cần dự phòng)'}</em>.<br>
                                 Dựa vào thói quen dùng điện, cần lưu trữ khoảng <strong>${results.batteryNeeded.toFixed(1)} kWh</strong> cho điện ban đêm & dự phòng.<br>
-                                <strong style="color: #e53e3e;">→ Chọn ${battery.quantity} cell ${battery.name}</strong> = <strong>${(battery.quantity * battery.capacity).toFixed(1)} kWh</strong> để lưu trữ năng lượng dư thừa và cung cấp điện khi mất lưới.
+                                <strong style="color: #e53e3e;" id="batteryDescription">→ Chọn <span id="batteryQtyText">${battery.quantity} cell</span> <span id="batteryNameText">${battery.name}</span></strong> = <strong id="batteryTotalCapacity">${(battery.quantity * battery.capacity).toFixed(1)} kWh</strong> để lưu trữ năng lượng dư thừa và cung cấp điện khi mất lưới.
                             </td>
-                            <td style="text-align: center; font-weight: 700; font-size: 1.05rem; color: #3FA34D;">${battery.quantity} cell</td>
-                            <td class="price-col">${formatPrice(battery.price)}</td>
+                            <td style="text-align: center; font-weight: 700; font-size: 1.05rem; color: #3FA34D;" id="batteryQuantity">${battery.quantity} cell</td>
+                            <td class="price-col" id="batteryUnitPrice">${formatPrice(battery.price)}</td>
                             <td class="price-col" style="font-size: 1.1rem; font-weight: 700;" id="batteryTotalCost">${formatPrice(battery.totalCost)}</td>
                         </tr>`;
                             }
@@ -1524,8 +1629,8 @@
                             </td>
                             <td class="label-col">${results.accessories.jackMC4.name}</td>
                             <td style="font-size: 0.88rem; color: #4a5568; line-height: 1.6; padding: 0.8rem;">
-                                <strong style="color: #3FA34D;">🔌 Kết nối:</strong> Jack nối dây điện DC chống nước chuẩn quốc tế MC4. Định mức: <strong>1 bộ/tấm</strong>.<br>
-                                <strong style="color: #e53e3e;">→ ${results.panelsNeeded} tấm × 1 = ${results.accessories.jackMC4.qty} bộ</strong> jack MC4.
+                                <strong style="color: #3FA34D;">🔌 Kết nối:</strong> Jack nối dây điện DC chống nước chuẩn quốc tế MC4. Định mức: <strong>1 bộ/tấm + 2 bộ dự phòng</strong>.<br>
+                                <strong style="color: #e53e3e;">→ ${results.panelsNeeded} tấm × 1 + 2 (dự phòng) = ${results.accessories.jackMC4.qty} bộ</strong> jack MC4.
                             </td>
                             <td style="text-align: center; font-weight: 600;">${results.accessories.jackMC4.qty} bộ</td>
                             <td class="price-col">${formatPrice(ACCESSORIES.jackMC4.price)}/bộ</td>
@@ -1539,8 +1644,8 @@
                             </td>
                             <td class="label-col">${results.dcCable.name}</td>
                             <td style="font-size: 0.88rem; color: #4a5568; line-height: 1.6; padding: 0.8rem;">
-                                <strong style="color: #3FA34D;">⚡ Truyền tải:</strong> Dây DC chịu nhiệt, chống tia UV nối từ tấm pin xuống biến tần. Định mức: <strong>≈20m/tấm</strong> (tùy chiều cao mái).<br>
-                                <strong style="color: #e53e3e;">→ ${results.panelsNeeded} tấm × 20m = ${results.dcCable.length}m</strong> dây DC cần dùng.
+                                <strong style="color: #3FA34D;">⚡ Truyền tải:</strong> Dây DC chịu nhiệt, chống tia UV nối từ tấm pin xuống biến tần. Định mức: <strong>Trung bình 100m</strong> (cụ thể tùy vào chiều cao mái, khoảng cách và cách bố trí của công trình thực tế).<br>
+                                <strong style="color: #e53e3e;">→ Dự kiến 100m</strong> dây DC cho hệ thống ${results.panelsNeeded} tấm.
                             </td>
                             <td style="text-align: center; font-weight: 600;">${results.dcCable.length}m</td>
                             <td class="price-col">${formatPrice(ACCESSORIES.dcCable.price)}/m</td>
@@ -1555,7 +1660,7 @@
                             <td class="label-col"><strong>Công lắp đặt</strong></td>
                             <td style="font-size: 0.88rem; color: #4a5568; line-height: 1.6; padding: 0.8rem;">
                                 <strong style="color: #3FA34D;">👨‍🔧 Thi công trọn gói:</strong> Bao gồm khảo sát thực tế, lắp giàn kệ, lắp tấm pin, đấu nối hệ thống AC/DC, cài đặt biến tần, vận hành thử nghiệm. Đội thợ chuyên nghiệp ${results.panelsNeeded > 18 ? 'trên 10 năm kinh nghiệm' : 'trên 5 năm kinh nghiệm'}.<br>
-                                <strong style="color: #e53e3e;">→ Định mức:</strong> ${formatPrice(ACCESSORIES.laborBase)}/9 tấm. Hệ thống ${results.panelsNeeded} tấm = <strong>${Math.ceil(results.panelsNeeded / 9)} công</strong> lắp đặt.
+                                <strong style="color: #e53e3e;">→ Định mức:</strong> ${formatPrice(ACCESSORIES.laborBase)} cho 9 tấm đầu${results.panelsNeeded > 9 ? `, số tấm vượt (${results.panelsNeeded - 9} tấm) tính thêm ${((results.panelsNeeded - 9) / 9 * 0.25 * 100).toFixed(1)}% = ${formatPrice(results.laborCost - ACCESSORIES.laborBase)}` : ''}. Tổng công lắp đặt: <strong>${formatPrice(results.laborCost)}</strong>.
                             </td>
                             <td style="text-align: center; font-weight: 600;">-</td>
                             <td class="price-col">-</td>
@@ -1576,16 +1681,63 @@
                 <div class="total-summary">
                     <h3>💰 TỔNG CHI PHÍ DỰ ÁN</h3>
                     <p style="font-size: 0.95rem; opacity: 0.95; margin-bottom: 0.5rem;">⭐ Giá lắp đặt trọn gói - Đã bao gồm công lắp đặt</p>
-                    <div class="total-price">${formatPrice(results.totalCost)}</div>
+                    <div class="total-price" id="totalPriceSummary">${formatPrice(results.totalCost)}</div>
                     <p class="note" style="margin: 0.8rem 0;">* Chưa bao gồm: Vận chuyển, Dây nguồn nối tổng (tùy công trình)</p>
-                    <div style="background: rgba(168,224,99,0.15); padding: 1.2rem; border-radius: 12px; margin-top: 1.5rem; border-left: 4px solid #3FA34D;">
-                        <p style="font-size: 0.95rem; margin: 0 0 0.8rem 0; line-height: 1.6;">
-                            <strong style="color: #2d3748;">📈 Phân tích hoàn vốn:</strong><br>
-                            • Tiền điện hiện tại: <strong style="color: #e53e3e;">${formatPrice(results.data.monthlyBill)}/tháng</strong><br>
-                            • Hệ thống tiết kiệm: <strong style="color: #3FA34D;">≈${Math.round(results.monthlyKWh * 0.8)} kWh/tháng</strong> = <strong>${formatPrice(Math.round(results.data.monthlyBill * 0.8))}/tháng</strong> (≈80%)<br>
-                            • Thời gian hoàn vốn: <strong style="color: #e53e3e; font-size: 1.1rem;">≈${Math.round(results.totalCost / (results.data.monthlyBill * 0.8))} tháng</strong> (≈${(Math.round(results.totalCost / (results.data.monthlyBill * 0.8)) / 12).toFixed(1)} năm)<br>
-                            • Tuổi thọ hệ thống: <strong>25-30 năm</strong> → Lợi nhuận dài hạn rất cao!
-                        </p>
+                    <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 1.8rem; border-radius: 16px; margin-top: 1.5rem; border: 2px solid #3FA34D; box-shadow: 0 4px 20px rgba(63,163,77,0.15);">
+                        <h4 style="color: #166534; margin: 0 0 1.2rem 0; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">📈</span>
+                            <strong>PHÂN TÍCH HOÀN VỐN CHI TIẾT</strong>
+                        </h4>
+                        
+                        <!-- Chi phí hàng tháng -->
+                        <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #dc2626;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="color: #4b5563; font-size: 0.95rem;">💸 Tiền điện hiện tại:</span>
+                                <strong style="color: #dc2626; font-size: 1.2rem;">${formatPrice(results.data.monthlyBill)}/tháng</strong>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #6b7280;">
+                                ≈ ${results.monthlyKWh} kWh/tháng × ${formatPrice(Math.round(results.data.monthlyBill / results.monthlyKWh))}/kWh (trung bình)
+                            </div>
+                        </div>
+                        
+                        <!-- Tiết kiệm -->
+                        <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #16a34a;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="color: #4b5563; font-size: 0.95rem;">⚡ Hệ thống tiết kiệm:</span>
+                                <strong style="color: #16a34a; font-size: 1.2rem;">${formatPrice(Math.round(results.data.monthlyBill * 0.8))}/tháng</strong>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #6b7280;">
+                                ≈ ${Math.round(results.monthlyKWh * 0.8)} kWh/tháng (tiết kiệm <strong style="color: #16a34a;">≈80%</strong> hóa đơn điện)
+                            </div>
+                        </div>
+                        
+                        <!-- Thời gian hoàn vốn -->
+                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 1.2rem; border-radius: 10px; margin-bottom: 1rem; border: 2px solid #f59e0b;">
+                            <div style="text-align: center; margin-bottom: 0.8rem;">
+                                <div style="color: #92400e; font-size: 0.9rem; margin-bottom: 0.3rem;">⏱️ THỜI GIAN HOÀN VỐN</div>
+                                <div style="color: #b45309; font-size: 2rem; font-weight: 800; line-height: 1;">
+                                    ${Math.round(results.totalCost / (results.data.monthlyBill * 0.8))} tháng
+                                </div>
+                                <div style="color: #92400e; font-size: 1.1rem; font-weight: 600; margin-top: 0.3rem;">
+                                    (≈ ${(Math.round(results.totalCost / (results.data.monthlyBill * 0.8)) / 12).toFixed(1)} năm)
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #78350f; text-align: center; line-height: 1.4;">
+                                ${formatPrice(results.totalCost)} ÷ ${formatPrice(Math.round(results.data.monthlyBill * 0.8))}/tháng
+                            </div>
+                        </div>
+                        
+                        <!-- Lợi nhuận dài hạn -->
+                        <div style="background: white; padding: 1rem; border-radius: 10px; border-left: 4px solid #7c3aed;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="color: #4b5563; font-size: 0.95rem;">🔋 Tuổi thọ hệ thống:</span>
+                                <strong style="color: #7c3aed; font-size: 1.15rem;">25-30 năm</strong>
+                            </div>
+                            <div style="font-size: 0.85rem; color: #6b7280; line-height: 1.5;">
+                                Sau khi hoàn vốn, bạn còn <strong style="color: #7c3aed;">${25 - Math.round(results.totalCost / (results.data.monthlyBill * 0.8) / 12)} - ${30 - Math.round(results.totalCost / (results.data.monthlyBill * 0.8) / 12)} năm</strong> sử dụng miễn phí điện!<br>
+                                💰 Tổng lợi nhuận ước tính: <strong style="color: #16a34a; font-size: 1.05rem;">${formatPrice(Math.round(results.data.monthlyBill * 0.8) * 12 * (27 - Math.round(results.totalCost / (results.data.monthlyBill * 0.8) / 12)))}</strong> (27 năm trung bình)
+                            </div>
+                        </div>
                     </div>
                     <button id="saveSurveyBtn" style="background: white; color: #3FA34D; border: 2px solid white; padding: 0.9rem 2rem; border-radius: 50px; font-weight: 700; cursor: pointer !important; margin-top: 1.5rem; transition: all 0.3s; position: relative; z-index: 10; pointer-events: auto; font-size: 1rem;">
                         💾 Lưu Báo Giá Này

@@ -127,40 +127,90 @@ try {
                        ($results['batteryOptions'][0]['totalCost'] <= $results['batteryOptions'][1]['totalCost'] ? '8cell' : '16cell');
         
         $battery_index = ($battery_type === '8cell') ? 0 : 1;
-        $battery_quantity = $results['batteryOptions'][$battery_index]['quantity'];
-        $battery_cost = $results['batteryOptions'][$battery_index]['totalCost'];
+        $selected_battery = $results['batteryOptions'][$battery_index];
+        
+        // Lấy thông tin region name
+        $region_names = [
+            'mien-bac' => 'Miền Bắc',
+            'mien-trung' => 'Miền Trung',
+            'mien-nam' => 'Miền Nam'
+        ];
+        $region_name = $region_names[$data['region']] ?? 'Không xác định';
+        
+        // Lấy thông tin panel
+        $panel_info = $results['panelInfo'];
+        
+        // Tính total_cost_without_battery
+        $total_cost_without_battery = $results['totalCost'] - $selected_battery['totalCost'];
+        
+        // Chuyển billBreakdown thành JSON
+        $bill_breakdown_json = json_encode($results['billBreakdown']);
 
         $stmt2 = $conn->prepare("
             INSERT INTO survey_results 
-            (survey_id, monthly_kwh, sun_hours, panels_needed, panel_cost,
-             inverter_id, inverter_name, inverter_price,
-             cabinet_id, cabinet_name, cabinet_price,
-             battery_needed, battery_type, battery_quantity, battery_cost,
-             accessories_cost, labor_cost, dc_cable_cost, total_cost)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (survey_id, monthly_kwh, sun_hours, region_name,
+             panel_id, panel_name, panel_power, panel_price, panels_needed, panel_cost, 
+             energy_per_panel_per_day, total_capacity,
+             inverter_id, inverter_name, inverter_capacity, inverter_price,
+             cabinet_id, cabinet_name, cabinet_capacity, cabinet_price,
+             battery_needed, battery_type, battery_id, battery_name, battery_capacity, 
+             battery_quantity, battery_unit_price, battery_cost,
+             bach_z_qty, bach_z_price, bach_z_cost,
+             clip_qty, clip_price, clip_cost,
+             jack_mc4_qty, jack_mc4_price, jack_mc4_cost,
+             dc_cable_length, dc_cable_price, dc_cable_cost,
+             accessories_cost, labor_cost, 
+             total_cost_without_battery, total_cost, bill_breakdown)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $stmt2->bind_param(
-            "iddddisdisddsiddddd",
-            $survey_id,                      // i - integer
-            $results['monthlyKWh'],          // d - double
-            $results['sunHours'],            // d - double
-            $results['panelsNeeded'],        // d - double
-            $results['panelCost'],           // d - double
-            $results['inverter']['id'],      // i - integer
-            $results['inverter']['name'],    // s - string
-            $results['inverter']['price'],   // d - double
-            $results['cabinet']['id'],       // i - integer
-            $results['cabinet']['name'],     // s - string (ĐÃ SỬA từ i)
-            $results['cabinet']['price'],    // d - double (ĐÃ SỬA từ s)
-            $results['batteryNeeded'],       // d - double (ĐÃ SỬA từ s)
-            $battery_type,                   // s - string (ĐÃ SỬA từ d)
-            $battery_quantity,               // i - integer
-            $battery_cost,                   // d - double
-            $results['accessoriesCost'],     // d - double
-            $results['laborCost'],           // d - double
-            $results['dcCable']['cost'],     // d - double
-            $results['totalCost']            // d - double
+            "idddssdddddisdddisddddsisdddiidddiiddiidddddds",
+            $survey_id,                                 // i - survey_id
+            $results['monthlyKWh'],                     // d - monthly_kwh
+            $results['sunHours'],                       // d - sun_hours
+            $region_name,                               // s - region_name
+            $panel_info['id'],                          // d - panel_id (FIXED: use panelInfo.id)
+            $panel_info['name'],                        // s - panel_name
+            $panel_info['power'],                       // d - panel_power
+            $panel_info['price'],                       // d - panel_price
+            $results['panelsNeeded'],                   // d - panels_needed
+            $results['panelCost'],                      // d - panel_cost
+            $results['energyPerPanelPerDay'],           // d - energy_per_panel_per_day
+            $results['totalCapacity'],                  // d - total_capacity
+            $results['inverter']['id'],                 // i - inverter_id
+            $results['inverter']['name'],               // s - inverter_name
+            $results['inverter']['capacity'],           // d - inverter_capacity
+            $results['inverter']['price'],              // d - inverter_price
+            $results['cabinet']['id'],                  // i - cabinet_id
+            $results['cabinet']['name'],                // s - cabinet_name
+            $results['cabinet']['capacity'],            // d - cabinet_capacity
+            $results['cabinet']['price'],               // d - cabinet_price
+            $results['batteryNeeded'],                  // d - battery_needed
+            $battery_type,                              // s - battery_type
+            $selected_battery['id'],                    // i - battery_id
+            $selected_battery['name'],                  // s - battery_name
+            $selected_battery['capacity'],              // d - battery_capacity
+            $selected_battery['quantity'],              // d - battery_quantity
+            $selected_battery['price'],                 // d - battery_unit_price
+            $selected_battery['totalCost'],             // d - battery_cost
+            $results['accessories']['bachZ']['qty'],    // i - bach_z_qty
+            $results['accessories']['bachZ']['price'],  // i - bach_z_price (from ACCESSORIES constant)
+            $results['accessories']['bachZ']['cost'],   // d - bach_z_cost
+            $results['accessories']['clip']['qty'],     // d - clip_qty
+            $results['accessories']['clip']['price'],   // i - clip_price
+            $results['accessories']['clip']['cost'],    // i - clip_cost
+            $results['accessories']['jackMC4']['qty'],  // d - jack_mc4_qty
+            $results['accessories']['jackMC4']['price'],// d - jack_mc4_price
+            $results['accessories']['jackMC4']['cost'], // i - jack_mc4_cost
+            $results['dcCable']['length'],              // i - dc_cable_length
+            $results['dcCable']['price'],               // d - dc_cable_price
+            $results['dcCable']['cost'],                // d - dc_cable_cost
+            $results['accessoriesCost'],                // d - accessories_cost
+            $results['laborCost'],                      // d - labor_cost
+            $total_cost_without_battery,                // d - total_cost_without_battery
+            $results['totalCost'],                      // d - total_cost
+            $bill_breakdown_json                        // s - bill_breakdown (JSON)
         );
 
         if (!$stmt2->execute()) {
