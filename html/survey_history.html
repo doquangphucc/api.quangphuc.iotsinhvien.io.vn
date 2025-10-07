@@ -501,12 +501,37 @@
             }
         }
 
+        // Parse billBreakdown nếu là string
+        function parseBillBreakdown(billBreakdown) {
+            if (!billBreakdown) return null;
+            if (typeof billBreakdown === 'string') {
+                try {
+                    const parsed = JSON.parse(billBreakdown);
+                    console.log('Parsed billBreakdown:', parsed);
+                    return parsed;
+                } catch (e) {
+                    console.error('Error parsing billBreakdown:', e, 'Original:', billBreakdown);
+                    return null;
+                }
+            }
+            console.log('billBreakdown already object:', billBreakdown);
+            return billBreakdown;
+        }
+
         // Hiển thị danh sách khảo sát
         function displaySurveys(surveys) {
             const listEl = document.getElementById('surveyList');
             listEl.style.display = 'block';
 
-            listEl.innerHTML = surveys.map((survey, index) => `
+            listEl.innerHTML = surveys.map((survey, index) => {
+                // Parse billBreakdown if needed
+                if (survey.results && survey.results.billBreakdown) {
+                    console.log('Before parse - billBreakdown type:', typeof survey.results.billBreakdown);
+                    survey.results.billBreakdown = parseBillBreakdown(survey.results.billBreakdown);
+                    console.log('After parse - billBreakdown:', survey.results.billBreakdown);
+                }
+                
+                return `
                 <div class="survey-card ${index === 0 ? '' : ''}" data-index="${index}">
                     <div class="survey-header" onclick="toggleSurvey(${index})">
                         <div class="survey-header-left">
@@ -700,7 +725,7 @@
                             </table>
 
                             <!-- Phân tích hóa đơn điện -->
-                            ${survey.results.billBreakdown ? `
+                            ${survey.results.billBreakdown && Array.isArray(survey.results.billBreakdown) && survey.results.billBreakdown.length > 0 ? `
                             <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">📊 Phân Tích Hóa Đơn Điện</h4>
                             <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff; border-radius: 8px; overflow: hidden;">
                                 <thead style="background: #f3f4f6;">
@@ -715,9 +740,9 @@
                                     ${survey.results.billBreakdown.map((tier, i) => `
                                         <tr style="border-bottom: 1px solid #f3f4f6;">
                                             <td style="padding: 0.8rem;">Bậc ${i + 1}</td>
-                                            <td style="padding: 0.8rem; text-align: right;">${tier.kwh} kWh</td>
-                                            <td style="padding: 0.8rem; text-align: right;">${formatPrice(tier.price)}/kWh</td>
-                                            <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(tier.amount)}</td>
+                                            <td style="padding: 0.8rem; text-align: right;">${tier.kwh || 0} kWh</td>
+                                            <td style="padding: 0.8rem; text-align: right;">${formatPrice(tier.price || 0)}/kWh</td>
+                                            <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(tier.amount || 0)}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -753,7 +778,8 @@
                         ` : '<p style="color: #9ca3af; text-align: center; padding: 2rem;">Khảo sát chưa có kết quả tính toán</p>'}
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // Toggle mở/đóng chi tiết
