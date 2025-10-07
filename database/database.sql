@@ -85,9 +85,6 @@ INSERT INTO products (id, name, category, brand, model, price, image_url, specif
 
 -- From: product-luxpower-3phase-high.html (TRIP 25K was missing)
 (30, 'LUXPOWER Hybrid TRIP 25K', 'Inverter', 'LuxPower', 'TRIP 25K', 69000000, 'assets/img/products/luxpower-trip-25k.png', 'Công suất: 25kW, Hỗ trợ pin: Acquy/Lithium 100-700V, 3 MPPT, On-grid/Backup: 50kW');
-(27, 'Kẹp biên, Kẹp giữa tấm Pin', 'Accessories', 'HC Eco', 'Kẹp Pin', 11500, 'assets/img/products/kepbien-tamgiua.png', 'Cố định tấm pin vào khung giá đỡ, hợp kim nhôm'),
-(28, 'Jack Cắm MC4 1500VDC', 'Accessories', 'MC4', 'MC4 1500VDC', 14000, 'assets/img/products/jackcam.png', 'Kết nối dây cáp DC, 30A-40A, IP67'),
-(29, 'Dây điện đấu nối tấm PIN', 'Accessories', 'HC Eco', 'Dây DC', 20000, 'assets/img/products/daydien.png', 'Dây DC chuyên dụng 4-6mm², 1000-1500V DC');
 
 
 -- Create index for better performance
