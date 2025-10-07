@@ -177,7 +177,7 @@ try {
         }
 
         $stmt2->bind_param(
-            "iddsissdddddisdddisddddsisdddidddidddiidddddds",
+            "iddsiisdddddisdddisddddsisdddiddddddddiddddddds",
             $survey_id,                                 // i - survey_id (INT)
             $results['monthlyKWh'],                     // d - monthly_kwh (DECIMAL)
             $results['sunHours'],                       // d - sun_hours (DECIMAL)
@@ -203,18 +203,18 @@ try {
             $selected_battery['id'],                    // i - battery_id (INT)
             $selected_battery['name'],                  // s - battery_name (VARCHAR)
             $selected_battery['capacity'],              // d - battery_capacity (DECIMAL)
-            $selected_battery['quantity'],              // d - battery_quantity (INT - but using d is ok)
+            $selected_battery['quantity'],              // i - battery_quantity (INT - FIXED from d to i)
             $selected_battery['price'],                 // d - battery_unit_price (DECIMAL)
             $selected_battery['totalCost'],             // d - battery_cost (DECIMAL)
             $results['accessories']['bachZ']['qty'],    // i - bach_z_qty (INT)
-            $results['accessories']['bachZ']['price'],  // d - bach_z_price (DECIMAL)
+            $results['accessories']['bachZ']['price'],  // d - bach_z_price (DECIMAL - FIXED from i)
             $results['accessories']['bachZ']['cost'],   // d - bach_z_cost (DECIMAL)
             $results['accessories']['clip']['qty'],     // d - clip_qty (INT - but using d is ok)
-            $results['accessories']['clip']['price'],   // i - clip_price (DECIMAL - but using i is ok)
-            $results['accessories']['clip']['cost'],    // d - clip_cost (DECIMAL)
+            $results['accessories']['clip']['price'],   // d - clip_price (DECIMAL - FIXED from i)
+            $results['accessories']['clip']['cost'],    // d - clip_cost (DECIMAL - FIXED from i)
             $results['accessories']['jackMC4']['qty'],  // d - jack_mc4_qty (INT)
             $results['accessories']['jackMC4']['price'],// d - jack_mc4_price (DECIMAL)
-            $results['accessories']['jackMC4']['cost'], // i - jack_mc4_cost (DECIMAL - but using i is ok)
+            $results['accessories']['jackMC4']['cost'], // d - jack_mc4_cost (DECIMAL - FIXED from i)
             $results['dcCable']['length'],              // i - dc_cable_length (INT)
             $results['dcCable']['price'],               // d - dc_cable_price (DECIMAL)
             $results['dcCable']['cost'],                // d - dc_cable_cost (DECIMAL)
