@@ -1,7 +1,7 @@
 <?php
-// Tắt hiển thị lỗi để không làm hỏng JSON response
+// BẬT hiển thị lỗi tạm thời để debug
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 
 // Bắt đầu output buffering để kiểm soát output
@@ -146,6 +146,14 @@ try {
         // Chuyển billBreakdown thành JSON
         $bill_breakdown_json = json_encode($results['billBreakdown']);
 
+        // DEBUG: Log dữ liệu trước khi insert
+        error_log("=== SAVE SURVEY DEBUG ===");
+        error_log("Survey ID: " . $survey_id);
+        error_log("Battery Index: " . $battery_index);
+        error_log("Panel Info: " . print_r($panel_info, true));
+        error_log("Accessories: " . print_r($results['accessories'], true));
+        error_log("DC Cable: " . print_r($results['dcCable'], true));
+
         $stmt2 = $conn->prepare("
             INSERT INTO survey_results 
             (survey_id, monthly_kwh, sun_hours, region_name,
@@ -163,6 +171,10 @@ try {
              total_cost_without_battery, total_cost, bill_breakdown)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
+        
+        if (!$stmt2) {
+            throw new Exception('Prepare failed: ' . $conn->error);
+        }
 
         $stmt2->bind_param(
             "idddssdddddisdddisddddsisdddiidddiiddiidddddds",

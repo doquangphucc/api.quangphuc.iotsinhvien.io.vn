@@ -1792,21 +1792,27 @@
                     monthlyBill: currentResults.data.monthlyBill,
                     usageTime: currentResults.data.usageTime,
                     selectedBattery: selectedBatteryIndex === 0 ? '8cell' : '16cell',
-            results: {
-                monthlyKWh: currentResults.monthlyKWh,
-                sunHours: currentResults.sunHours,
-                panelsNeeded: currentResults.panelsNeeded,
-                panelCost: currentResults.panelCost,
-                inverter: currentResults.inverter,
-                cabinet: currentResults.cabinet,
-                batteryNeeded: currentResults.batteryNeeded,
-                batteryOptions: currentResults.batteryOptions,
-                accessoriesCost: currentResults.accessoriesCost,
-                laborCost: currentResults.laborCost,
-                dcCable: currentResults.dcCable,
-                totalCost: currentResults.totalCost
-            }
-        };
+                    results: {
+                        monthlyKWh: currentResults.monthlyKWh,
+                        billBreakdown: currentResults.billBreakdown,
+                        sunHours: currentResults.sunHours,
+                        regionName: currentResults.regionName,
+                        panelInfo: currentResults.panelInfo,
+                        energyPerPanelPerDay: currentResults.energyPerPanelPerDay,
+                        panelsNeeded: currentResults.panelsNeeded,
+                        totalCapacity: currentResults.totalCapacity,
+                        panelCost: currentResults.panelCost,
+                        inverter: currentResults.inverter,
+                        cabinet: currentResults.cabinet,
+                        batteryNeeded: currentResults.batteryNeeded,
+                        batteryOptions: currentResults.batteryOptions,
+                        accessories: currentResults.accessories,
+                        dcCable: currentResults.dcCable,
+                        accessoriesCost: currentResults.accessoriesCost,
+                        laborCost: currentResults.laborCost,
+                        totalCost: currentResults.totalCost
+                    }
+                };
 
         // Sử dụng production API để lưu đầy đủ dữ liệu
         const response = await fetch('../api/save_survey.php', {
