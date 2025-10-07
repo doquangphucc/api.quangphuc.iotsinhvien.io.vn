@@ -547,7 +547,8 @@
                         </div>
                         ${survey.results ? `
                         <div class="results-table">
-                            <h4>📊 Kết quả tính toán chi tiết</h4>
+                            <!-- Hệ thống năng lượng mặt trời -->
+                            <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">☀️ Hệ Thống Tấm Pin Năng Lượng Mặt Trời</h4>
                             <div class="results-grid">
                                 <div class="result-item">
                                     <div class="result-label">⚡ Điện năng/tháng</div>
@@ -558,29 +559,72 @@
                                     <div class="result-value">${survey.results.sunHours} giờ</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">🔆 Số tấm pin</div>
+                                    <div class="result-label">📍 Khu vực</div>
+                                    <div class="result-value">${survey.results.regionName || getRegionName(survey.region)}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔆 Tên tấm pin</div>
+                                    <div class="result-value">${survey.results.panelName || 'N/A'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">⚡ Công suất tấm pin</div>
+                                    <div class="result-value">${survey.results.panelPower || 0}W</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">🔆 Số lượng tấm pin</div>
                                     <div class="result-value">${survey.results.panelsNeeded} tấm</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">💵 Giá tấm pin</div>
-                                    <div class="result-value">${formatPrice(survey.results.panelCost)}</div>
+                                    <div class="result-label">🔋 Tổng công suất hệ thống</div>
+                                    <div class="result-value">${survey.results.totalCapacity || 0}kW</div>
                                 </div>
+                                <div class="result-item">
+                                    <div class="result-label">⚡ Năng lượng/tấm/ngày</div>
+                                    <div class="result-value">${survey.results.energyPerPanelPerDay || 0} kWh</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">💵 Đơn giá tấm pin</div>
+                                    <div class="result-value">${formatPrice(survey.results.panelPrice)}</div>
+                                </div>
+                                <div class="result-item" style="border-left-color: #10b981; border-left-width: 3px;">
+                                    <div class="result-label">💰 Tổng chi phí tấm pin</div>
+                                    <div class="result-value" style="color: #10b981; font-weight: 700;">${formatPrice(survey.results.panelCost)}</div>
+                                </div>
+                            </div>
+
+                            <!-- Thiết bị điện -->
+                            <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">🔌 Thiết Bị Điện</h4>
+                            <div class="results-grid">
                                 <div class="result-item">
                                     <div class="result-label">🔌 Biến tần</div>
                                     <div class="result-value">${survey.results.inverterName || 'N/A'}</div>
                                 </div>
                                 <div class="result-item">
+                                    <div class="result-label">⚡ Công suất biến tần</div>
+                                    <div class="result-value">${survey.results.inverterCapacity || 0}kW</div>
+                                </div>
+                                <div class="result-item" style="border-left-color: #10b981; border-left-width: 3px;">
                                     <div class="result-label">💵 Giá biến tần</div>
-                                    <div class="result-value">${formatPrice(survey.results.inverterPrice)}</div>
+                                    <div class="result-value" style="color: #10b981; font-weight: 700;">${formatPrice(survey.results.inverterPrice)}</div>
                                 </div>
                                 <div class="result-item">
                                     <div class="result-label">📦 Tủ điện</div>
                                     <div class="result-value">${survey.results.cabinetName || 'N/A'}</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">💵 Giá tủ điện</div>
-                                    <div class="result-value">${formatPrice(survey.results.cabinetPrice)}</div>
+                                    <div class="result-label">⚡ Công suất tủ điện</div>
+                                    <div class="result-value">${survey.results.cabinetCapacity || 0}kW</div>
                                 </div>
+                                <div class="result-item" style="border-left-color: #10b981; border-left-width: 3px;">
+                                    <div class="result-label">💵 Giá tủ điện</div>
+                                    <div class="result-value" style="color: #10b981; font-weight: 700;">${formatPrice(survey.results.cabinetPrice)}</div>
+                                </div>
+                            </div>
+
+                            <!-- Pin lưu trữ -->
+                            ${survey.results.batteryNeeded > 0 ? `
+                            <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">🔋 Hệ Thống Pin Lưu Trữ</h4>
+                            <div class="results-grid">
                                 <div class="result-item">
                                     <div class="result-label">🔋 Dung lượng pin cần</div>
                                     <div class="result-value">${survey.results.batteryNeeded} kWh</div>
@@ -590,28 +634,119 @@
                                     <div class="result-value">${survey.results.batteryType === '8cell' ? 'BYD 8 Cell' : 'A-Cornex 16 Cell'}</div>
                                 </div>
                                 <div class="result-item">
+                                    <div class="result-label">📦 Tên pin</div>
+                                    <div class="result-value">${survey.results.batteryName || 'N/A'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">⚡ Dung lượng/bộ</div>
+                                    <div class="result-value">${survey.results.batteryCapacity || 0} kWh</div>
+                                </div>
+                                <div class="result-item">
                                     <div class="result-label">📦 Số lượng pin</div>
                                     <div class="result-value">${survey.results.batteryQuantity || 0} bộ</div>
                                 </div>
                                 <div class="result-item">
-                                    <div class="result-label">💵 Giá pin</div>
-                                    <div class="result-value">${formatPrice(survey.results.batteryCost)}</div>
+                                    <div class="result-label">💵 Đơn giá</div>
+                                    <div class="result-value">${formatPrice(survey.results.batteryUnitPrice)}</div>
                                 </div>
-                                <div class="result-item">
-                                    <div class="result-label">🔧 Phụ kiện</div>
-                                    <div class="result-value">${formatPrice(survey.results.accessoriesCost)}</div>
+                                <div class="result-item" style="border-left-color: #10b981; border-left-width: 3px; grid-column: span 2;">
+                                    <div class="result-label">💰 Tổng chi phí pin</div>
+                                    <div class="result-value" style="color: #10b981; font-weight: 700;">${formatPrice(survey.results.batteryCost)}</div>
                                 </div>
-                                <div class="result-item">
-                                    <div class="result-label">👷 Công thợ</div>
-                                    <div class="result-value">${formatPrice(survey.results.laborCost)}</div>
-                                </div>
-                                <div class="result-item">
-                                    <div class="result-label">🔌 Dây DC</div>
-                                    <div class="result-value">${formatPrice(survey.results.dcCableCost)}</div>
-                                </div>
-                                <div class="result-item" style="border-left-color: var(--color-green); border-left-width: 4px; grid-column: span 2;">
-                                    <div class="result-label">💰 TỔNG CHI PHÍ DỰ ÁN</div>
-                                    <div class="result-value" style="color: var(--color-green); font-size: 1.5rem; font-weight: 800;">${formatPrice(survey.results.totalCost)}</div>
+                            </div>
+                            ` : ''}
+
+                            <!-- Phụ kiện chi tiết -->
+                            <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">🔧 Phụ Kiện & Vật Tư</h4>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff; border-radius: 8px; overflow: hidden;">
+                                <thead style="background: #f3f4f6;">
+                                    <tr>
+                                        <th style="padding: 0.8rem; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Tên phụ kiện</th>
+                                        <th style="padding: 0.8rem; text-align: center; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Số lượng</th>
+                                        <th style="padding: 0.8rem; text-align: right; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Đơn giá</th>
+                                        <th style="padding: 0.8rem; text-align: right; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 0.8rem;">Bach Z</td>
+                                        <td style="padding: 0.8rem; text-align: center;">${survey.results.bachZQty || 0}</td>
+                                        <td style="padding: 0.8rem; text-align: right;">${formatPrice(survey.results.bachZPrice)}</td>
+                                        <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(survey.results.bachZCost)}</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 0.8rem;">Clip (Kẹp tấm pin)</td>
+                                        <td style="padding: 0.8rem; text-align: center;">${survey.results.clipQty || 0}</td>
+                                        <td style="padding: 0.8rem; text-align: right;">${formatPrice(survey.results.clipPrice)}</td>
+                                        <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(survey.results.clipCost)}</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 0.8rem;">Jack MC4 (Đầu nối)</td>
+                                        <td style="padding: 0.8rem; text-align: center;">${survey.results.jackMC4Qty || 0}</td>
+                                        <td style="padding: 0.8rem; text-align: right;">${formatPrice(survey.results.jackMC4Price)}</td>
+                                        <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(survey.results.jackMC4Cost)}</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 0.8rem;">Dây cáp DC</td>
+                                        <td style="padding: 0.8rem; text-align: center;">${survey.results.dcCableLength || 0}m</td>
+                                        <td style="padding: 0.8rem; text-align: right;">${formatPrice(survey.results.dcCablePrice)}/m</td>
+                                        <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(survey.results.dcCableCost)}</td>
+                                    </tr>
+                                    <tr style="background: #f9fafb; font-weight: 700;">
+                                        <td colspan="3" style="padding: 0.8rem; text-align: right;">Tổng phụ kiện:</td>
+                                        <td style="padding: 0.8rem; text-align: right; color: var(--color-green); font-size: 1.1rem;">${formatPrice(survey.results.accessoriesCost)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Phân tích hóa đơn điện -->
+                            ${survey.results.billBreakdown ? `
+                            <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">📊 Phân Tích Hóa Đơn Điện</h4>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff; border-radius: 8px; overflow: hidden;">
+                                <thead style="background: #f3f4f6;">
+                                    <tr>
+                                        <th style="padding: 0.8rem; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Bậc thang</th>
+                                        <th style="padding: 0.8rem; text-align: right; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Số kWh</th>
+                                        <th style="padding: 0.8rem; text-align: right; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Đơn giá</th>
+                                        <th style="padding: 0.8rem; text-align: right; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb;">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${survey.results.billBreakdown.map((tier, i) => `
+                                        <tr style="border-bottom: 1px solid #f3f4f6;">
+                                            <td style="padding: 0.8rem;">Bậc ${i + 1}</td>
+                                            <td style="padding: 0.8rem; text-align: right;">${tier.kwh} kWh</td>
+                                            <td style="padding: 0.8rem; text-align: right;">${formatPrice(tier.price)}/kWh</td>
+                                            <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(tier.amount)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                            ` : ''}
+
+                            <!-- Tổng chi phí -->
+                            <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">💰 Tổng Chi Phí Dự Án</h4>
+                            <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 1.5rem; border-radius: 12px; border: 2px solid var(--color-green);">
+                                <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="font-size: 1rem; color: #374151;">Tấm pin + Biến tần + Tủ điện:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice((parseFloat(survey.results.panelCost) + parseFloat(survey.results.inverterPrice) + parseFloat(survey.results.cabinetPrice)))}</div>
+                                    
+                                    <div style="font-size: 1rem; color: #374151;">Pin lưu trữ:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.batteryCost)}</div>
+                                    
+                                    <div style="font-size: 1rem; color: #374151;">Phụ kiện:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.accessoriesCost)}</div>
+                                    
+                                    <div style="font-size: 1rem; color: #374151;">Công lắp đặt:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.laborCost)}</div>
+                                    
+                                    ${survey.results.totalCostWithoutBattery ? `
+                                    <div style="font-size: 1rem; color: #6b7280; font-style: italic; padding-top: 0.5rem; border-top: 1px dashed #d1d5db;">Tổng không bao gồm pin:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right; color: #6b7280; font-style: italic; padding-top: 0.5rem; border-top: 1px dashed #d1d5db;">${formatPrice(survey.results.totalCostWithoutBattery)}</div>
+                                    ` : ''}
+                                    
+                                    <div style="font-size: 1.3rem; font-weight: 800; color: var(--color-green); padding-top: 1rem; border-top: 2px solid var(--color-green);">TỔNG CỘNG:</div>
+                                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-green); text-align: right; padding-top: 1rem; border-top: 2px solid var(--color-green);">${formatPrice(survey.results.totalCost)}</div>
                                 </div>
                             </div>
                         </div>
