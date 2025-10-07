@@ -103,7 +103,7 @@
         }
         
         .survey-card.expanded .survey-body {
-            max-height: 2000px;
+            max-height: 5000px;
         }
         
         .survey-meta {
@@ -479,8 +479,12 @@
             
             try {
                 // API sử dụng session để xác định user, không cần truyền user_id
+                console.log('🔄 Fetching survey history...');
                 const response = await fetch('../api/get_survey_history.php');
+                
+                console.log('📡 Response status:', response.status);
                 const data = await response.json();
+                console.log('📦 API Response:', data);
 
                 loadingEl.style.display = 'none';
 
@@ -489,12 +493,14 @@
                 }
 
                 if (!data.surveys || !Array.isArray(data.surveys) || data.surveys.length === 0) {
+                    console.log('📭 No surveys found');
                     emptyStateEl.style.display = 'block';
                 } else {
+                    console.log(`✅ Found ${data.surveys.length} surveys`);
                     displaySurveys(data.surveys);
                 }
             } catch (error) {
-                console.error('Error loading history:', error);
+                console.error('❌ Error loading history:', error);
                 loadingEl.style.display = 'none';
                 loadingEl.innerHTML = `<p style="color: #ef4444; text-align: center;">❌ Lỗi: ${error.message}</p>`;
                 loadingEl.style.display = 'block';
@@ -503,18 +509,33 @@
 
         // Parse billBreakdown nếu là string
         function parseBillBreakdown(billBreakdown) {
-            if (!billBreakdown) return null;
+            console.log('=== parseBillBreakdown called ===');
+            console.log('Input:', billBreakdown);
+            console.log('Type:', typeof billBreakdown);
+            
+            if (!billBreakdown) {
+                console.log('billBreakdown is null/undefined');
+                return null;
+            }
+            
             if (typeof billBreakdown === 'string') {
                 try {
                     const parsed = JSON.parse(billBreakdown);
-                    console.log('Parsed billBreakdown:', parsed);
+                    console.log('✅ Parsed successfully:', parsed);
                     return parsed;
                 } catch (e) {
-                    console.error('Error parsing billBreakdown:', e, 'Original:', billBreakdown);
+                    console.error('❌ Error parsing billBreakdown:', e);
+                    console.error('Original string:', billBreakdown);
                     return null;
                 }
             }
-            console.log('billBreakdown already object:', billBreakdown);
+            
+            if (Array.isArray(billBreakdown)) {
+                console.log('✅ billBreakdown is already an array:', billBreakdown);
+                return billBreakdown;
+            }
+            
+            console.warn('⚠️ billBreakdown is object (not array):', billBreakdown);
             return billBreakdown;
         }
 
@@ -524,11 +545,28 @@
             listEl.style.display = 'block';
 
             listEl.innerHTML = surveys.map((survey, index) => {
+                console.log('\n=== Survey #' + index + ' ===' );
+                console.log('Survey ID:', survey.id);
+                console.log('Has results:', !!survey.results);
+                
                 // Parse billBreakdown if needed
-                if (survey.results && survey.results.billBreakdown) {
-                    console.log('Before parse - billBreakdown type:', typeof survey.results.billBreakdown);
-                    survey.results.billBreakdown = parseBillBreakdown(survey.results.billBreakdown);
-                    console.log('After parse - billBreakdown:', survey.results.billBreakdown);
+                if (survey.results) {
+                    console.log('Results object:', survey.results);
+                    console.log('billBreakdown raw:', survey.results.billBreakdown);
+                    
+                    if (survey.results.billBreakdown) {
+                        survey.results.billBreakdown = parseBillBreakdown(survey.results.billBreakdown);
+                        console.log('✅ Final billBreakdown:', survey.results.billBreakdown);
+                        
+                        if (Array.isArray(survey.results.billBreakdown)) {
+                            console.log('Array length:', survey.results.billBreakdown.length);
+                            survey.results.billBreakdown.forEach((tier, i) => {
+                                console.log(`Tier ${i}:`, tier);
+                            });
+                        }
+                    } else {
+                        console.log('❌ No billBreakdown data');
+                    }
                 }
                 
                 return `
