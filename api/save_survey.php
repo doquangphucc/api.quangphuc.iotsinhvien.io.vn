@@ -177,52 +177,52 @@ try {
         }
 
         $stmt2->bind_param(
-            "idddssdddddisdddisddddsisdddiidddiiddiidddddds",
-            $survey_id,                                 // i - survey_id
-            $results['monthlyKWh'],                     // d - monthly_kwh
-            $results['sunHours'],                       // d - sun_hours
-            $region_name,                               // s - region_name
-            $panel_info['id'],                          // d - panel_id (FIXED: use panelInfo.id)
-            $panel_info['name'],                        // s - panel_name
-            $panel_info['power'],                       // d - panel_power
-            $panel_info['price'],                       // d - panel_price
-            $results['panelsNeeded'],                   // d - panels_needed
-            $results['panelCost'],                      // d - panel_cost
-            $results['energyPerPanelPerDay'],           // d - energy_per_panel_per_day
-            $results['totalCapacity'],                  // d - total_capacity
-            $results['inverter']['id'],                 // i - inverter_id
-            $results['inverter']['name'],               // s - inverter_name
-            $results['inverter']['capacity'],           // d - inverter_capacity
-            $results['inverter']['price'],              // d - inverter_price
-            $results['cabinet']['id'],                  // i - cabinet_id
-            $results['cabinet']['name'],                // s - cabinet_name
-            $results['cabinet']['capacity'],            // d - cabinet_capacity
-            $results['cabinet']['price'],               // d - cabinet_price
-            $results['batteryNeeded'],                  // d - battery_needed
-            $battery_type,                              // s - battery_type
-            $selected_battery['id'],                    // i - battery_id
-            $selected_battery['name'],                  // s - battery_name
-            $selected_battery['capacity'],              // d - battery_capacity
-            $selected_battery['quantity'],              // d - battery_quantity
-            $selected_battery['price'],                 // d - battery_unit_price
-            $selected_battery['totalCost'],             // d - battery_cost
-            $results['accessories']['bachZ']['qty'],    // i - bach_z_qty
-            $results['accessories']['bachZ']['price'],  // i - bach_z_price (from ACCESSORIES constant)
-            $results['accessories']['bachZ']['cost'],   // d - bach_z_cost
-            $results['accessories']['clip']['qty'],     // d - clip_qty
-            $results['accessories']['clip']['price'],   // i - clip_price
-            $results['accessories']['clip']['cost'],    // i - clip_cost
-            $results['accessories']['jackMC4']['qty'],  // d - jack_mc4_qty
-            $results['accessories']['jackMC4']['price'],// d - jack_mc4_price
-            $results['accessories']['jackMC4']['cost'], // i - jack_mc4_cost
-            $results['dcCable']['length'],              // i - dc_cable_length
-            $results['dcCable']['price'],               // d - dc_cable_price
-            $results['dcCable']['cost'],                // d - dc_cable_cost
-            $results['accessoriesCost'],                // d - accessories_cost
-            $results['laborCost'],                      // d - labor_cost
-            $total_cost_without_battery,                // d - total_cost_without_battery
-            $results['totalCost'],                      // d - total_cost
-            $bill_breakdown_json                        // s - bill_breakdown (JSON)
+            "iddsissdddddisdddisddddsisdddidddidddiidddddds",
+            $survey_id,                                 // i - survey_id (INT)
+            $results['monthlyKWh'],                     // d - monthly_kwh (DECIMAL)
+            $results['sunHours'],                       // d - sun_hours (DECIMAL)
+            $region_name,                               // s - region_name (VARCHAR)
+            $panel_info['id'],                          // i - panel_id (INT - FIXED!)
+            $panel_info['name'],                        // s - panel_name (VARCHAR)
+            $panel_info['power'],                       // d - panel_power (DECIMAL)
+            $panel_info['price'],                       // d - panel_price (DECIMAL)
+            $results['panelsNeeded'],                   // i - panels_needed (INT - FIXED!)
+            $results['panelCost'],                      // d - panel_cost (DECIMAL)
+            $results['energyPerPanelPerDay'],           // d - energy_per_panel_per_day (DECIMAL)
+            $results['totalCapacity'],                  // d - total_capacity (DECIMAL)
+            $results['inverter']['id'],                 // i - inverter_id (INT)
+            $results['inverter']['name'],               // s - inverter_name (VARCHAR)
+            $results['inverter']['capacity'],           // d - inverter_capacity (DECIMAL)
+            $results['inverter']['price'],              // d - inverter_price (DECIMAL)
+            $results['cabinet']['id'],                  // i - cabinet_id (INT)
+            $results['cabinet']['name'],                // s - cabinet_name (VARCHAR)
+            $results['cabinet']['capacity'],            // d - cabinet_capacity (DECIMAL)
+            $results['cabinet']['price'],               // d - cabinet_price (DECIMAL)
+            $results['batteryNeeded'],                  // d - battery_needed (DECIMAL)
+            $battery_type,                              // s - battery_type (VARCHAR)
+            $selected_battery['id'],                    // i - battery_id (INT)
+            $selected_battery['name'],                  // s - battery_name (VARCHAR)
+            $selected_battery['capacity'],              // d - battery_capacity (DECIMAL)
+            $selected_battery['quantity'],              // d - battery_quantity (INT - but using d is ok)
+            $selected_battery['price'],                 // d - battery_unit_price (DECIMAL)
+            $selected_battery['totalCost'],             // d - battery_cost (DECIMAL)
+            $results['accessories']['bachZ']['qty'],    // i - bach_z_qty (INT)
+            $results['accessories']['bachZ']['price'],  // d - bach_z_price (DECIMAL)
+            $results['accessories']['bachZ']['cost'],   // d - bach_z_cost (DECIMAL)
+            $results['accessories']['clip']['qty'],     // d - clip_qty (INT - but using d is ok)
+            $results['accessories']['clip']['price'],   // i - clip_price (DECIMAL - but using i is ok)
+            $results['accessories']['clip']['cost'],    // d - clip_cost (DECIMAL)
+            $results['accessories']['jackMC4']['qty'],  // d - jack_mc4_qty (INT)
+            $results['accessories']['jackMC4']['price'],// d - jack_mc4_price (DECIMAL)
+            $results['accessories']['jackMC4']['cost'], // i - jack_mc4_cost (DECIMAL - but using i is ok)
+            $results['dcCable']['length'],              // i - dc_cable_length (INT)
+            $results['dcCable']['price'],               // d - dc_cable_price (DECIMAL)
+            $results['dcCable']['cost'],                // d - dc_cable_cost (DECIMAL)
+            $results['accessoriesCost'],                // d - accessories_cost (DECIMAL)
+            $results['laborCost'],                      // d - labor_cost (DECIMAL)
+            $total_cost_without_battery,                // d - total_cost_without_battery (DECIMAL)
+            $results['totalCost'],                      // d - total_cost (DECIMAL)
+            $bill_breakdown_json                        // s - bill_breakdown (JSON/TEXT)
         );
 
         if (!$stmt2->execute()) {
