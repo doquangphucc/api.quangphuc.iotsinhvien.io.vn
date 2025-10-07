@@ -791,23 +791,33 @@
                             <h4 style="color: var(--color-green); font-weight: 700; font-size: 1.2rem; margin: 1.5rem 0 1rem 0;">💰 Tổng Chi Phí Dự Án</h4>
                             <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 1.5rem; border-radius: 12px; border: 2px solid var(--color-green);">
                                 <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; margin-bottom: 1rem;">
-                                    <div style="font-size: 1rem; color: #374151;">Tấm pin + Biến tần + Tủ điện:</div>
-                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice((parseFloat(survey.results.panelCost) + parseFloat(survey.results.inverterPrice) + parseFloat(survey.results.cabinetPrice)))}</div>
+                                    <!-- Tấm pin -->
+                                    <div style="font-size: 1rem; color: #374151;">Tấm pin:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.panelCost)}</div>
                                     
+                                    <!-- Biến tần -->
+                                    <div style="font-size: 1rem; color: #374151;">Biến tần:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.inverterPrice)}</div>
+                                    
+                                    <!-- Tủ điện -->
+                                    <div style="font-size: 1rem; color: #374151;">Tủ điện:</div>
+                                    <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.cabinetPrice)}</div>
+                                    
+                                    <!-- Pin lưu trữ -->
+                                    ${survey.results.batteryCost && parseFloat(survey.results.batteryCost) > 0 ? `
                                     <div style="font-size: 1rem; color: #374151;">Pin lưu trữ:</div>
                                     <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.batteryCost)}</div>
+                                    ` : ''}
                                     
+                                    <!-- Phụ kiện -->
                                     <div style="font-size: 1rem; color: #374151;">Phụ kiện:</div>
                                     <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.accessoriesCost)}</div>
                                     
+                                    <!-- Công lắp đặt -->
                                     <div style="font-size: 1rem; color: #374151;">Công lắp đặt:</div>
                                     <div style="font-size: 1rem; font-weight: 600; text-align: right;">${formatPrice(survey.results.laborCost)}</div>
                                     
-                                    ${survey.results.totalCostWithoutBattery ? `
-                                    <div style="font-size: 1rem; color: #6b7280; font-style: italic; padding-top: 0.5rem; border-top: 1px dashed #d1d5db;">Tổng không bao gồm pin:</div>
-                                    <div style="font-size: 1rem; font-weight: 600; text-align: right; color: #6b7280; font-style: italic; padding-top: 0.5rem; border-top: 1px dashed #d1d5db;">${formatPrice(survey.results.totalCostWithoutBattery)}</div>
-                                    ` : ''}
-                                    
+                                    <!-- TỔNG CỘNG -->
                                     <div style="font-size: 1.3rem; font-weight: 800; color: var(--color-green); padding-top: 1rem; border-top: 2px solid var(--color-green);">TỔNG CỘNG:</div>
                                     <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-green); text-align: right; padding-top: 1rem; border-top: 2px solid var(--color-green);">${formatPrice(survey.results.totalCost)}</div>
                                 </div>
