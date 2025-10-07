@@ -178,19 +178,19 @@ try {
         }
 
         $stmt2->bind_param(
-            "iddsiisdddddisdddisddddsisdddiddddddddiddddddds",
-            $survey_id,                                 // i - survey_id (INT)
-            $results['monthlyKWh'],                     // d - monthly_kwh (DECIMAL)
-            $results['sunHours'],                       // d - sun_hours (DECIMAL)
-            $region_name,                               // s - region_name (VARCHAR)
-            $panel_info['id'],                          // i - panel_id (INT - FIXED!)
-            $panel_info['name'],                        // s - panel_name (VARCHAR)
-            $panel_info['power'],                       // d - panel_power (DECIMAL)
-            $panel_info['price'],                       // d - panel_price (DECIMAL)
-            $results['panelsNeeded'],                   // i - panels_needed (INT - FIXED!)
-            $results['panelCost'],                      // d - panel_cost (DECIMAL)
-            $results['energyPerPanelPerDay'],           // d - energy_per_panel_per_day (DECIMAL)
-            $results['totalCapacity'],                  // d - total_capacity (DECIMAL)
+            "iddsisddidddisddisdddsisdiddiddiddiddidddddds",
+            $survey_id,                                 // 1.  i - survey_id (INT)
+            $results['monthlyKWh'],                     // 2.  d - monthly_kwh (DECIMAL)
+            $results['sunHours'],                       // 3.  d - sun_hours (DECIMAL)
+            $region_name,                               // 4.  s - region_name (VARCHAR)
+            $panel_info['id'],                          // 5.  i - panel_id (INT)
+            $panel_info['name'],                        // 6.  s - panel_name (VARCHAR)
+            $panel_info['power'],                       // 7.  d - panel_power (DECIMAL)
+            $panel_info['price'],                       // 8.  d - panel_price (DECIMAL)
+            $results['panelsNeeded'],                   // 9.  d - panels_needed (INT but use d)
+            $results['panelCost'],                      // 10. d - panel_cost (DECIMAL)
+            $results['energyPerPanelPerDay'],           // 11. d - energy_per_panel_per_day (DECIMAL)
+            $results['totalCapacity'],                  // 12. d - total_capacity (DECIMAL)
             $results['inverter']['id'],                 // i - inverter_id (INT)
             $results['inverter']['name'],               // s - inverter_name (VARCHAR)
             $results['inverter']['capacity'],           // d - inverter_capacity (DECIMAL)
