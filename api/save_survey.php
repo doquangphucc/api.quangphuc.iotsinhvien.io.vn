@@ -1,8 +1,9 @@
 <?php
-// BẬT hiển thị lỗi tạm thời để debug
+// Tắt hiển thị lỗi để không làm hỏng JSON response
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
+error_log("=== SAVE SURVEY REQUEST START ===");
 
 // Bắt đầu output buffering để kiểm soát output
 ob_start();
