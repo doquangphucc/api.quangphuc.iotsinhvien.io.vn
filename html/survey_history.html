@@ -777,10 +777,10 @@
                                 <tbody>
                                     ${survey.results.billBreakdown.map((tier, i) => `
                                         <tr style="border-bottom: 1px solid #f3f4f6;">
-                                            <td style="padding: 0.8rem;">Bậc ${i + 1}</td>
-                                            <td style="padding: 0.8rem; text-align: right;">${tier.kwh || 0} kWh</td>
+                                            <td style="padding: 0.8rem;">${tier.label || `Bậc ${tier.tier || i + 1}`}</td>
+                                            <td style="padding: 0.8rem; text-align: right;">${tier.kwhUsed || tier.kwh || 0} kWh</td>
                                             <td style="padding: 0.8rem; text-align: right;">${formatPrice(tier.price || 0)}/kWh</td>
-                                            <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(tier.amount || 0)}</td>
+                                            <td style="padding: 0.8rem; text-align: right; font-weight: 600; color: #10b981;">${formatPrice(tier.cost || tier.amount || 0)}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Survey API</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 2rem;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .section {
+            background: #252526;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #007acc;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .warning { color: #ce9178; }
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Survey API Debugger</h1>
+    
+    <button onclick="fetchAndDebug()">🔄 Fetch Survey Data</button>
+    
+    <div class="section">
+        <h2>📡 API Response</h2>
+        <pre id="apiResponse">Click button to fetch...</pre>
+    </div>
+    
+    <div class="section">
+        <h2>🔍 billBreakdown Analysis</h2>
+        <pre id="billBreakdownAnalysis">-</pre>
+    </div>
+    
+    <div class="section">
+        <h2>📊 Full Survey Data</h2>
+        <pre id="fullData">-</pre>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        async function fetchAndDebug() {
+            const apiEl = document.getElementById('apiResponse');
+            const billEl = document.getElementById('billBreakdownAnalysis');
+            const fullEl = document.getElementById('fullData');
+            
+            try {
+                apiEl.innerHTML = '<span class="warning">⏳ Fetching...</span>';
+                
+                const response = await fetch('../api/get_survey_history.php');
+                const data = await response.json();
+                
+                // API Response
+                apiEl.innerHTML = `<span class="success">✅ Status: ${response.status}</span>\n` +
+                    `Success: ${data.success}\n` +
+                    `Total surveys: ${data.total || 0}\n\n` +
+                    JSON.stringify(data, null, 2);
+                
+                // billBreakdown Analysis
+                if (data.surveys && data.surveys.length > 0) {
+                    const survey = data.surveys[0];
+                    let analysis = '=== SURVEY #0 ANALYSIS ===\n\n';
+                    
+                    if (survey.results) {
+                        analysis += `Has results: ✅ YES\n`;
+                        analysis += `billBreakdown exists: ${survey.results.billBreakdown ? '✅ YES' : '❌ NO'}\n`;
+                        
+                        if (survey.results.billBreakdown) {
+                            const bb = survey.results.billBreakdown;
+                            analysis += `\nType: ${typeof bb}\n`;
+                            analysis += `Is Array: ${Array.isArray(bb) ? '✅ YES' : '❌ NO'}\n`;
+                            
+                            if (typeof bb === 'string') {
+                                analysis += `\n⚠️ WARNING: billBreakdown is a STRING, not parsed!\n`;
+                                analysis += `String value: ${bb}\n`;
+                                
+                                try {
+                                    const parsed = JSON.parse(bb);
+                                    analysis += `\n✅ Can be parsed to:\n`;
+                                    analysis += JSON.stringify(parsed, null, 2);
+                                } catch (e) {
+                                    analysis += `\n❌ Cannot parse: ${e.message}\n`;
+                                }
+                            } else if (Array.isArray(bb)) {
+                                analysis += `\nArray length: ${bb.length}\n`;
+                                analysis += `\nArray content:\n`;
+                                bb.forEach((tier, i) => {
+                                    analysis += `\nTier ${i}:\n`;
+                                    analysis += `  kwh: ${tier.kwh} (${typeof tier.kwh})\n`;
+                                    analysis += `  price: ${tier.price} (${typeof tier.price})\n`;
+                                    analysis += `  amount: ${tier.amount} (${typeof tier.amount})\n`;
+                                });
+                            } else {
+                                analysis += `\n⚠️ Unexpected type: ${typeof bb}\n`;
+                                analysis += JSON.stringify(bb, null, 2);
+                            }
+                        } else {
+                            analysis += `\n❌ billBreakdown is null/undefined\n`;
+                            analysis += `\n🔍 Checking database...\n`;
+                            analysis += `This means the survey was created but bill_breakdown was not saved.\n`;
+                        }
+                    } else {
+                        analysis += `❌ No results data\n`;
+                    }
+                    
+                    billEl.innerHTML = analysis;
+                    
+                    // Full data
+                    fullEl.innerHTML = JSON.stringify(survey, null, 2);
+                } else {
+                    billEl.innerHTML = '<span class="error">❌ No surveys found</span>';
+                    fullEl.innerHTML = '-';
+                }
+                
+            } catch (error) {
+                apiEl.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+                billEl.innerHTML = `<span class="error">${error.stack}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
