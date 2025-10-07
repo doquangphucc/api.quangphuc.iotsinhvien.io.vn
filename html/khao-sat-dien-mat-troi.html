@@ -650,6 +650,28 @@
                 transform: translateY(0);
             }
         }
+        
+        /* Currency input wrapper */
+        .currency-input-wrapper {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+        .currency-input-wrapper input {
+            width: 100%;
+            padding-right: 2.5rem; /* Space for currency symbol */
+        }
+        .currency-symbol {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #718096;
+            font-weight: 600;
+            font-size: 1rem;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -840,7 +862,10 @@
                         <!-- Tiền điện hàng tháng -->
                         <div class="form-group">
                             <label>Tiền Điện Trung Bình/Tháng (VNĐ) *</label>
-                            <input type="text" id="monthlyBillInput" name="monthlyBill" required placeholder="VD: 1.500.000đ" />
+                            <div class="currency-input-wrapper">
+                                <input type="text" id="monthlyBillInput" name="monthlyBill" required placeholder="VD: 1.500.000" />
+                                <span class="currency-symbol">đ</span>
+                            </div>
                         </div>
                         
                         <!-- Bảng giá điện EVN -->
@@ -1236,8 +1261,8 @@
             monthlyBillInput.addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\D/g, ''); // Chỉ giữ số
                 if (value) {
-                    // Format với dấu chấm phân cách hàng nghìn
-                    const formatted = new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+                    // Format với dấu chấm phân cách hàng nghìn (không thêm 'đ' vì đã có span riêng)
+                    const formatted = new Intl.NumberFormat('vi-VN').format(value);
                     e.target.value = formatted;
                 }
             });
@@ -1248,7 +1273,7 @@
                 let pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 let value = pastedText.replace(/\D/g, '');
                 if (value) {
-                    e.target.value = new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+                    e.target.value = new Intl.NumberFormat('vi-VN').format(value);
                 }
             });
         }
