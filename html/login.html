@@ -4,13 +4,113 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập - HC Eco System</title>
+        
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter with Vietnamese subset -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    
+    <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
-        .auth-page {
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Dark Mode styles */
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
+        body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
+        body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
+        body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+
+        .theme-toggle__icon { display: none; }
+        body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
+        body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+
+        /* Styles for dynamically injected auth buttons */
+        .auth-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+            line-height: 1.25rem;
+            text-decoration: none;
+        }
+        /* Login Button */
+        .auth-btn--login {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        .auth-btn--login:hover {
+            background-color: #e5e7eb; /* gray-200 */
+        }
+        /* Register button, also used for logout by auth.js */
+        .auth-btn--register {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+        }
+        .auth-btn--register:hover {
+             background-color: #15803d; /* green-700 */
+        }
+        /* Logged-in state: username and logout button */
+        .auth-user-name {
+            font-weight: 600;
+            padding: 0.6rem 0.25rem;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        /* Specifically target the logout button */
+        .auth-user-name + .auth-btn--register { 
+             background-color: #fee2e2; /* red-100 */
+             color: #b91c1c; /* red-700 */
+        }
+         .auth-user-name + .auth-btn--register:hover {
+             background-color: #fecaca; /* red-200 */
+        }
+
+        /* Dark mode styles for auth buttons */
+        body[data-theme="dark"] .auth-btn--login {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-100 */
+        }
+        body[data-theme="dark"] .auth-btn--login:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        body[data-theme="dark"] .auth-user-name {
+            color: #d1d5db; /* gray-300 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
+             background-color: #450a0a; /* red-900 */
+             color: #fca5a5; /* red-400 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
+             background-color: #7f1d1d; /* red-800 */
+        }
+.auth-page {
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -99,7 +199,7 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 dark:bg-gray-900">
 <header class="topbar">
     <div class="container topbar-layout">
         <a href="../index.html" class="branding">
@@ -220,43 +320,83 @@
     });
 </script>
 
-<footer id="site-footer" class="footer">
-    <div class="container footer-layout">
-        <div class="footer-left">
-            <a href="../index.html" class="footer-branding">
-                <img class="footer-logo" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
-                <div class="footer-brand-copy">
-                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
-                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
-                </div>
-            </a>
-            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
-        </div>
-        <div class="footer-center">
-            <h4>Thông tin liên hệ</h4>
-            <ul class="contact-info">
-                <li><strong>Hotline:</strong> 0988 919 868</li>
-                <li><strong>Zalo:</strong> 0988 919 868</li>
-                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
-                <li><strong>Website:</strong> hcecosystem.vn</li>
-                <li><strong>Mã số thuế:</strong> 0123456789</li>
-                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
-            </ul>
-        </div>
-        <div class="footer-right">
-            <h4>Chính sách &amp; Dịch vụ</h4>
-            <ul class="policy-links">
-                <li><a href="tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
-                <li><a href="dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
-                <li><a href="chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
-                <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
-                <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
-                <li><a href="chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
-                <li><a href="tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
-            </ul>
-        </div>
-    </div>
-</footer>
 
+    <!-- Footer -->
+    <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+                <!-- Branding & Copyright -->
+                <div class="space-y-4">
+                     <a href="../index.html" class="flex items-center gap-3">
+                        <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                        <div>
+                            <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
+                        </div>
+                    </a>
+                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li><strong>Hotline:</strong> 0988 919 868</li>
+                        <li><strong>Zalo:</strong> 0988 919 868</li>
+                        <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                        <li><strong>Website:</strong> hcecosystem.vn</li>
+                        <li><strong>Mã số thuế:</strong> 0123456789</li>
+                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                    </ul>
+                </div>
+
+                <!-- Policies -->
+                <div class="space-y-2">
+                     <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
+                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
+                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
+                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Scripts (IDs preserved) -->
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/shopping-cart.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const header = document.getElementById('header');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close menu when a link is clicked
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        // Hide menu on scroll for better UX
+        let lastScrollTop = 0;
+        window.addEventListener("scroll", function(){ 
+           var st = window.pageYOffset || document.documentElement.scrollTop; 
+           if (st > lastScrollTop){
+              // downscroll
+              mobileMenu.classList.add('hidden');
+           }
+           lastScrollTop = st <= 0 ? 0 : st;
+        }, false);
+    </script>
 </body>
 </html>

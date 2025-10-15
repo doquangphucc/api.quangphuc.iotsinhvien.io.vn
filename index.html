@@ -4,356 +4,576 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Giải pháp lắp đặt pin năng lượng mặt trời cho hộ gia đình và doanh nghiệp." />
-    <title>HC Eco System</title>
+    <title>HC Eco System - Giải Pháp Năng Lượng Mặt Trời</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter with Vietnamese subset -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=vietnamese" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/main.css" />
-    <link rel="icon" type="image/jpeg" href="assets/img/logo.jpg" />
-</head>
-<body>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
     
-<header class="topbar">
-    <div class="container topbar-layout">
-        <a href="index.html" class="branding">
-            <img class="logo-image" src="assets/img/logo.jpg" alt="Logo HC Eco System" />
-            <div class="brand-copy">
-                <div class="logo">HC<span>ECO SYSTEM</span></div>
-                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="assets/img/logo.jpg" />
+
+    <!-- Custom CSS for theme transition and minor adjustments -->
+    <style>
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Dark Mode styles */
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
+        body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
+        body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
+        body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+
+        .theme-toggle__icon { display: none; }
+        body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
+        body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+
+        /* Styles for dynamically injected auth buttons */
+        .auth-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+            line-height: 1.25rem;
+            text-decoration: none;
+        }
+        /* Login Button */
+        .auth-btn--login {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        .auth-btn--login:hover {
+            background-color: #e5e7eb; /* gray-200 */
+        }
+        /* Register button, also used for logout by auth.js */
+        .auth-btn--register {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+        }
+        .auth-btn--register:hover {
+             background-color: #15803d; /* green-700 */
+        }
+        /* Logged-in state: username and logout button */
+        .auth-user-name {
+            font-weight: 600;
+            padding: 0.6rem 0.25rem;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        /* Specifically target the logout button */
+        .auth-user-name + .auth-btn--register { 
+             background-color: #fee2e2; /* red-100 */
+             color: #b91c1c; /* red-700 */
+        }
+         .auth-user-name + .auth-btn--register:hover {
+             background-color: #fecaca; /* red-200 */
+        }
+
+        /* Dark mode styles for auth buttons */
+        body[data-theme="dark"] .auth-btn--login {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-100 */
+        }
+        body[data-theme="dark"] .auth-btn--login:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        body[data-theme="dark"] .auth-user-name {
+            color: #d1d5db; /* gray-300 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
+             background-color: #450a0a; /* red-900 */
+             color: #fca5a5; /* red-400 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
+             background-color: #7f1d1d; /* red-800 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+
+    <!-- Header -->
+    <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <!-- Branding -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <img class="h-12 w-12 rounded-lg object-cover" src="assets/img/logo.jpg" alt="Logo HC Eco System" />
+                    <div>
+                        <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Giải pháp bền vững cho năng lượng tương lai</p>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
+                    <a href="html/gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
+                    <a href="html/pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
+                    <a href="html/du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
+                    <a href="html/tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
+                    <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Xây dựng</a>
+                    <a href="#site-footer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="html/khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+                    
+                    <!-- Auth buttons will appear here, integrated into the header -->
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
             </div>
-        </a>
-        <div class="topbar-actions">
-                <nav class="nav">
-                    <div class="nav-item nav-item--dropdown">
-                        <a href="html/pricing.html" class="nav-link">Bảng giá sản phẩm</a>
-                        <div class="nav-dropdown" role="menu">
-                            <a href="html/product-solar-panels.html">Tấm pin Jinko Solar</a>
-                            <a href="html/product-luxpower-hybrid.html">Inverter LuxPower Hybrid</a>
-                            <a href="html/product-luxpower-1pha.html">LuxPower Hybrid 1 Pha</a>
-                            <a href="html/product-luxpower-3phase.html">LuxPower Hybrid 3 Pha</a>
-                            <a href="html/product-luxpower-3phase-high.html">LuxPower 3 Pha Áp Cao</a>
-                            <a href="html/product-growatt-110kw.html">Growatt MAX 110kW</a>
-                            <a href="html/product-battery-storage.html">Pin lưu trữ A-Cornex</a>
-                            <a href="html/product-battery-byd.html">Pin lưu trữ BYD</a>
-                            <a href="html/product-electrical-cabinet.html">Tủ điện Hybrid</a>
-                            <a href="html/product-cables.html">Phụ kiện &amp; Cáp</a>
+        </div>
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
+            <nav class="flex flex-col gap-2">
+                <a href="html/gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
+                <a href="html/pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Bảng giá</a>
+                <a href="html/du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
+                <a href="html/tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Xây dựng</a>
+                <a href="#site-footer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Floating Cart Button -->
+    <a href="html/gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
+    </a>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section with Video Background -->
+        <section class="relative py-24 sm:py-32 overflow-hidden">
+            <!-- Video Background -->
+            <div class="absolute inset-0 z-0">
+                <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-20 dark:opacity-10">
+                    <source src="Video/8853531-hd_1920_1080_24fps.mp4" type="video/mp4">
+                </video>
+                <div class="absolute inset-0 bg-gradient-to-br from-green-50/90 to-blue-50/90 dark:from-gray-900/95 dark:to-gray-800/95"></div>
+            </div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="text-center lg:text-left">
+                        <span class="text-green-600 font-semibold uppercase tracking-wider">Hiệu suất tối ưu • Lắp đặt nhanh chóng</span>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800 dark:text-white mt-4 mb-6 leading-tight">
+                            Tiết kiệm chi phí điện với năng lượng mặt trời
+                        </h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto lg:mx-0 mb-8">
+                            Thiết kế và thi công trọn gói giải pháp NLMT cho gia đình & doanh nghiệp, cam kết giảm tối thiểu 60% hóa đơn điện.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                            <a class="bg-green-600 text-white font-semibold px-8 py-4 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/30" href="html/khao-sat-dien-mat-troi.html">Tính chi phí & Hoàn vốn</a>
+                            <a class="bg-white dark:bg-gray-700 text-gray-800 dark:text-white font-semibold px-8 py-4 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-300 shadow-lg" href="#solutions">Khám phá giải pháp</a>
                         </div>
                     </div>
-                    <a href="index.html#solutions" class="nav-link">Giải pháp</a>
-                    <a href="index.html#process" class="nav-link">Quy trình</a>
-                    <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
-                    <a href="html/tin-tuc.html" class="nav-link">Tin tức</a>
-                    <a href="#site-footer" class="nav-link">Liên hệ</a>
-                </nav>
-            <a class="cta" href="html/khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
-        </div>
-    </div>
-</header>
-<div class="auth-floating" id="auth-floating">
-    <div class="auth-buttons" id="auth-buttons">
-        <a class="auth-btn auth-btn--login" href="html/login.html">Đăng nhập</a>
-        <a class="auth-btn auth-btn--register" href="html/register.html">Đăng ký</a>
-    </div>
-    
-</div>
-
-
-
-    
-<aside class="quick-contact" aria-label="Liên hệ nhanh">
-    <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hceco.io.vn" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>Fanpage</strong>
-            <span>HC Eco System</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--zalo" href="https://zalo.me/0988919868" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>Zalo</strong>
-            <span>0988 919 868</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hc.channal" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>TikTok</strong>
-            <span>@hcecosystem</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>YouTube</strong>
-            <span>@hcecosystem</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--phone" href="tel:0988919868">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>Hotline</strong>
-            <span>0988 919 868</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&query=790+Ng%C3%B4+Quy%E1%BB%81n,+Ph%C6%B0%E1%BB%9Dng+An+H%E1%BA%A3i,+Th%C3%A0nh+Ph%E1%BB%91+%C4%90%C3%A0+N%E1%BA%B5ng" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>Văn phòng</strong>
-            <span>790 Ngô Quyền, Đà Nẵng</span>
-        </span>
-    </a>
-</aside>
-
-
-    <main>
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <span class="eyebrow">Lắp đặt nhanh chóng · Hiệu suất tối ưu</span>
-                    <h1>Tiết kiệm chi phí điện với hệ thống pin năng lượng mặt trời chuẩn quốc tế</h1>
-                    <p>Chúng tôi thiết kế và thi công trọn gói hệ thống NLMT phù hợp cho mái nhà hộ gia đình, nhà xưởng và tòa nhà thương mại, đảm bảo giảm tới 60% hóa đơn tiền điện.</p>
-                    <div class="hero-actions">
-                        <a class="btn primary" href="html/khao-sat-dien-mat-troi.html">Khảo sát miễn phí</a>
-                        <a class="btn secondary" href="#solutions">Xem gói giải pháp</a>
+                    <div class="relative">
+                        <img src="Photo/hero-banner.png" alt="Hệ thống pin năng lượng mặt trời trên mái nhà" class="rounded-3xl shadow-2xl w-full animate-fade-in">
+                        <div class="absolute -bottom-8 -right-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-6 rounded-2xl shadow-2xl w-64 hidden sm:block">
+                            <div class="flex gap-6">
+                                <div class="text-center">
+                                    <h3 class="text-3xl font-bold text-green-600">250+</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Dự án</p>
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="text-3xl font-bold text-green-600">98%</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Hài lòng</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="hero-card">
-                    <div class="stats">
-                        <article>
-                            <h3>250+</h3>
-                            <p>Dự án đã triển khai</p>
-                        </article>
-                        <article>
-                            <h3>98%</h3>
-                            <p>Khách hàng hài lòng</p>
-                        </article>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+            <div class="container mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 lg:order-1">
+                        <img src="Photo/about-us.png" alt="Về chúng tôi" class="rounded-3xl shadow-2xl w-full">
                     </div>
-                    <ul class="highlights">
-                        <li>Thiết kế tối ưu theo mái nhà</li>
-                        <li>Bảo hành hệ thống đến 12 năm</li>
-                        <li>Theo dõi sản lượng trực tuyến 24/7</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="solutions" class="solutions">
-            <div class="container">
-                <header>
-                    <h2>Giải pháp phù hợp cho mọi nhu cầu</h2>
-                    <p>Chọn gói lắp đặt đáp ứng nhu cầu sử dụng điện và diện tích mái của bạn.</p>
-                </header>
-                <div class="grid">
-                    <article class="card">
-                        <h3>Gói Gia Đình</h3>
-                        <p>Hệ thống 3-5 kWp, phù hợp nhà phố, biệt thự. Thiết bị quốc tế, bảo hiểm sản lượng.</p>
-                        <ul>
-                            <li>Bộ inverter hybrid</li>
-                            <li>Giám sát qua ứng dụng di động</li>
-                            <li>Bảo hành vật tư 12 năm</li>
+                    <div class="order-1 lg:order-2">
+                        <span class="text-green-600 font-semibold uppercase tracking-wider">Về chúng tôi</span>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
+                            Đối tác tin cậy của bạn trong hành trình năng lượng sạch
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            HC Eco System là công ty chuyên cung cấp giải pháp năng lượng mặt trời hàng đầu tại Việt Nam. Với hơn 5 năm kinh nghiệm, chúng tôi đã triển khai thành công hơn 250 dự án cho cả hộ gia đình và doanh nghiệp.
+                        </p>
+                        <ul class="space-y-4">
+                            <li class="flex gap-3">
+                                <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="text-gray-700 dark:text-gray-200">Đội ngũ kỹ sư giàu kinh nghiệm, chứng chỉ quốc tế</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="text-gray-700 dark:text-gray-200">Sản phẩm chính hãng từ các thương hiệu uy tín</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="text-gray-700 dark:text-gray-200">Bảo hành lên đến 25 năm, hỗ trợ 24/7</span>
+                            </li>
                         </ul>
-                    </article>
-                    <article class="card">
-                        <h3>Gói Doanh Nghiệp</h3>
-                        <p>Lắp đặt 20-200 kWp, tối ưu cho nhà xưởng, trang trại. Hỗ trợ thủ tục đấu nối.</p>
-                        <ul>
-                            <li>Phân tích ROI chi tiết</li>
-                            <li>Hệ khung nhôm định hình cao cấp</li>
-                            <li>Chăm sóc vận hành định kỳ</li>
-                        </ul>
-                    </article>
-                    <article class="card">
-                        <h3>Gói Tiết Kiệm</h3>
-                        <p>Giải pháp NLMT hòa lưới bán phần, phù hợp ngân sách tối ưu nhưng vẫn hiệu quả.</p>
-                        <ul>
-                            <li>Linh kiện đạt tiêu chuẩn IEC</li>
-                            <li>Lắp đặt trong 3 ngày</li>
-                            <li>Hỗ trợ trả góp 0%</li>
-                        </ul>
-                    </article>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="benefits" class="benefits">
-            <div class="container">
-                <h2>Vì sao chọn HC Eco System?</h2>
-                <div class="grid">
-                    <article>
-                        <h3>Kỹ thuật viên chứng nhận</h3>
-                        <p>Đội ngũ được đào tạo bởi các hãng dẫn đầu như Longi, Sungrow, đảm bảo thi công chuẩn quốc tế.</p>
-                    </article>
-                    <article>
-                        <h3>Giải pháp tùy chỉnh</h3>
-                        <p>Phân tích nhu cầu điện năng, thiết kế theo không gian mái để tối ưu sản lượng.</p>
-                    </article>
-                    <article>
-                        <h3>Hỗ trợ vận hành 24/7</h3>
-                        <p>Đội ngũ kỹ thuật trực hotline, hỗ trợ từ xa và bảo trì định kỳ trong suốt vòng đời hệ thống.</p>
-                    </article>
-                    <article>
-                        <h3>Đảm bảo tài chính</h3>
-                        <p>Cung cấp giải pháp trả góp linh hoạt, hỗ trợ vay vốn xanh lãi suất thấp từ ngân hàng đối tác.</p>
-                    </article>
+        <!-- Solutions Section -->
+        <section id="solutions" class="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-4">Giải pháp cho mọi nhu cầu</h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Lựa chọn mô hình vận hành linh hoạt từ hộ gia đình đến doanh nghiệp quy mô lớn với lợi nhuận rõ ràng.</p>
+                </div>
+
+                <!-- Residential Solution -->
+                <div class="mb-16">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span class="text-green-600 font-semibold uppercase tracking-wider">Giải pháp gia đình</span>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-6">Gói Gia Đình (3-5 kWp)</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6">Thiết kế gọn cho mái tôn, thi công trong 48 giờ, tích hợp bộ lưu trữ và ứng dụng giám sát. Phù hợp cho hộ gia đình muốn giảm thiểu hóa đơn điện và tự chủ năng lượng.</p>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center gap-3"><svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-gray-700 dark:text-gray-200">Inverter hybrid thế hệ mới</span></li>
+                                <li class="flex items-center gap-3"><svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-gray-700 dark:text-gray-200">Theo dõi sản lượng 24/7</span></li>
+                                <li class="flex items-center gap-3"><svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-gray-700 dark:text-gray-200">Bảo hiểm thiết bị toàn diện</span></li>
+                            </ul>
+                            <a href="html/pricing.html" class="inline-block bg-green-600 text-white font-semibold px-8 py-3 rounded-full hover:bg-green-700 transition-all duration-300">Xem bảng giá</a>
+                        </div>
+                        <div>
+                            <img src="Photo/residential.png" alt="Giải pháp gia đình" class="rounded-3xl shadow-2xl w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Industrial Solution -->
+                <div>
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="order-2 lg:order-1">
+                            <img src="Photo/industrial.png" alt="Giải pháp công nghiệp" class="rounded-3xl shadow-2xl w-full">
+                        </div>
+                        <div class="order-1 lg:order-2">
+                            <span class="text-green-600 font-semibold uppercase tracking-wider">Giải pháp doanh nghiệp</span>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-6">Gói Doanh Nghiệp (20-200 kWp)</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6">Tối ưu tiêu thụ cho nhà xưởng, logistics với báo cáo ROI chi tiết và chương trình vận hành 5 năm. Giảm thiểu chi phí vận hành và tăng lợi nhuận bền vững.</p>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center gap-3"><svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-gray-700 dark:text-gray-200">Khung nhôm chuẩn Eurocode</span></li>
+                                <li class="flex items-center gap-3"><svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-gray-700 dark:text-gray-200">Hỗ trợ thủ tục EVN & vay vốn</span></li>
+                                <li class="flex items-center gap-3"><svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-gray-700 dark:text-gray-200">Hỗ trợ kỹ thuật 24/7</span></li>
+                            </ul>
+                            <a href="html/khao-sat-dien-mat-troi.html" class="inline-block bg-green-600 text-white font-semibold px-8 py-3 rounded-full hover:bg-green-700 transition-all duration-300">Đặt lịch tư vấn</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="process" class="process">
-            <div class="container">
-                <h2>Quy trình triển khai trong 5 bước</h2>
-                <div class="steps">
-                    <article>
-                        <span class="step-number">01</span>
-                        <h3>Khảo sát &amp; đo đạc</h3>
-                        <p>Kỹ sư đến trực tiếp để khảo sát mái, đo bức xạ và đánh giá hạ tầng điện.</p>
-                    </article>
-                    <article>
-                        <span class="step-number">02</span>
-                        <h3>Thiết kế mô phỏng</h3>
-                        <p>Đưa ra sơ đồ lắp đặt 3D và dự báo sản lượng, thời gian hoàn vốn.</p>
-                    </article>
-                    <article>
-                        <span class="step-number">03</span>
-                        <h3>Ký kết &amp; thi công</h3>
-                        <p>Chuẩn hóa hợp đồng, triển khai thi công an toàn, hoàn tất trong 3-7 ngày.</p>
-                    </article>
-                    <article>
-                        <span class="step-number">04</span>
-                        <h3>Nghiệm thu &amp; đấu nối</h3>
-                        <p>Kết nối hệ thống với lưới điện, bàn giao tài liệu hướng dẫn vận hành.</p>
-                    </article>
-                    <article>
-                        <span class="step-number">05</span>
-                        <h3>Theo dõi &amp; bảo trì</h3>
-                        <p>Giám sát sản lượng từ xa, vệ sinh tấm pin định kỳ, phản hồi sự cố trong 4h.</p>
-                    </article>
+        <!-- Benefits/ROI Section -->
+        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+            <div class="container mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-green-600 font-semibold uppercase tracking-wider">Lợi ích đầu tư</span>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
+                            Hoàn vốn nhanh chóng, lợi nhuận bền vững
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-8">
+                            Với mức giá điện tăng liên tục và chi phí lắp đặt giảm dần, đầu tư điện mặt trời hiện nay mang lại ROI hấp dẫn chỉ sau 4-6 năm, với tuổi thọ hệ thống lên đến 25 năm.
+                        </p>
+                        <div class="grid sm:grid-cols-2 gap-6">
+                            <div class="bg-green-50 dark:bg-gray-700 p-6 rounded-2xl">
+                                <div class="text-4xl font-bold text-green-600 mb-2">60%</div>
+                                <div class="text-gray-700 dark:text-gray-200">Giảm hóa đơn điện</div>
+                            </div>
+                            <div class="bg-green-50 dark:bg-gray-700 p-6 rounded-2xl">
+                                <div class="text-4xl font-bold text-green-600 mb-2">4-6</div>
+                                <div class="text-gray-700 dark:text-gray-200">Năm hoàn vốn</div>
+                            </div>
+                            <div class="bg-green-50 dark:bg-gray-700 p-6 rounded-2xl">
+                                <div class="text-4xl font-bold text-green-600 mb-2">25</div>
+                                <div class="text-gray-700 dark:text-gray-200">Năm tuổi thọ</div>
+                            </div>
+                            <div class="bg-green-50 dark:bg-gray-700 p-6 rounded-2xl">
+                                <div class="text-4xl font-bold text-green-600 mb-2">0₫</div>
+                                <div class="text-gray-700 dark:text-gray-200">Chi phí vận hành</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <img src="Photo/benefits-roi.png" alt="Lợi ích ROI" class="rounded-3xl shadow-2xl w-full">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Process Section -->
+        <section id="process" class="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-4">Quy trình triển khai 5 bước</h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Chúng tôi đảm bảo một quy trình chuyên nghiệp, minh bạch và hiệu quả từ đầu đến cuối.</p>
+                </div>
+                <div class="relative">
+                    <div class="hidden md:block absolute top-5 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700"></div>
+                    <div class="grid md:grid-cols-5 gap-8 relative">
+                        <div class="text-center">
+                            <div class="relative mb-4">
+                                <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">1</div>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Khảo sát</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Đo đạc mái, đánh giá bức xạ và hạ tầng điện.</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="relative mb-4">
+                                <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">2</div>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Thiết kế</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Mô phỏng 3D, dự báo sản lượng và thời gian hoàn vốn.</p>
+                        </div>
+                        <div class="text-center">
+                             <div class="relative mb-4">
+                                <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">3</div>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Thi công</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Lắp đặt an toàn, chuyên nghiệp trong 3-7 ngày.</p>
+                        </div>
+                        <div class="text-center">
+                             <div class="relative mb-4">
+                                <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">4</div>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Nghiệm thu</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Kết nối lưới điện, bàn giao và hướng dẫn vận hành.</p>
+                        </div>
+                        <div class="text-center">
+                             <div class="relative mb-4">
+                                <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">5</div>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Bảo trì</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Giám sát từ xa, vệ sinh định kỳ, hỗ trợ 24/7.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="cta-banner">
-            <div class="container">
-                <div class="content">
-                    <h2>Tối ưu hóa chi phí điện ngay hôm nay</h2>
-                    <p>Đăng ký khảo sát miễn phí để được tư vấn giải pháp phù hợp nhất cho mái nhà của bạn.</p>
+        <!-- Portfolio/Projects Section -->
+        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+            <div class="container mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <img src="Photo/portfolio.png" alt="Danh mục dự án" class="rounded-3xl shadow-2xl w-full">
+                    </div>
+                    <div>
+                        <span class="text-green-600 font-semibold uppercase tracking-wider">Dự án đã thực hiện</span>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
+                            Hơn 250+ dự án thành công trên toàn quốc
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            Từ các hộ gia đình nhỏ đến các nhà máy, xưởng sản xuất lớn, chúng tôi tự hào đã mang đến giải pháp năng lượng sạch, tiết kiệm và bền vững cho hàng trăm khách hàng trên khắp Việt Nam.
+                        </p>
+                        <div class="grid grid-cols-3 gap-4 mb-8">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-green-600">250+</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Dự án</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-green-600">50+</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">MW Lắp đặt</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-green-600">98%</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Hài lòng</div>
+                            </div>
+                        </div>
+                        <a href="html/pricing.html" class="inline-block bg-green-600 text-white font-semibold px-8 py-3 rounded-full hover:bg-green-700 transition-all duration-300">Xem dự án mẫu</a>
+                    </div>
                 </div>
-                <a class="btn primary" href="html/khao-sat-dien-mat-troi.html">Đặt lịch khảo sát</a>
             </div>
         </section>
 
-        <section id="contact" class="contact">
-            <div class="container">
-                <div class="info">
-                    <h2>Liên hệ HC Eco System</h2>
-                    <p>Gọi ngay cho chúng tôi hoặc điền thông tin để được chuyên gia liên hệ trong vòng 24h.</p>
-                    <ul>
-                        <li><strong>Hotline:</strong> 0988919868</li>
+        <!-- Testimonials Section -->
+        <section class="py-16 sm:py-24 bg-gradient-to-br from-green-600 to-green-700 text-white">
+            <div class="container mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 lg:order-1">
+                        <span class="text-green-200 font-semibold uppercase tracking-wider">Khách hàng nói gì</span>
+                        <h2 class="text-3xl sm:text-4xl font-bold mt-4 mb-6">
+                            Trải nghiệm thực tế từ khách hàng
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                                <p class="text-white/90 mb-4">"Hệ thống hoạt động rất ổn định, hóa đơn điện giảm gần 70%. Đội ngũ kỹ thuật chuyên nghiệp, hỗ trợ nhiệt tình!"</p>
+                                <div class="font-semibold">Anh Nguyễn Văn A - Đà Nẵng</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                                <p class="text-white/90 mb-4">"Đầu tư xưởng sản xuất 100kWp, sau 1 năm đã thấy hiệu quả rõ rệt. Dự kiến 5 năm hoàn vốn."</p>
+                                <div class="font-semibold">Chị Trần Thị B - TP.HCM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 lg:order-2">
+                        <img src="Photo/testimonial.png" alt="Đánh giá khách hàng" class="rounded-3xl shadow-2xl w-full">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Partners Section -->
+        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+            <div class="container mx-auto px-4 text-center">
+                <span class="text-green-600 font-semibold uppercase tracking-wider">Đối tác công nghệ</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
+                    Hợp tác cùng các thương hiệu hàng đầu
+                </h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-12">
+                    Chúng tôi chỉ sử dụng sản phẩm chính hãng từ các nhà sản xuất uy tín trên thế giới
+                </p>
+                <img src="Photo/partners-tech.png" alt="Đối tác công nghệ" class="rounded-2xl shadow-xl max-w-4xl mx-auto">
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="relative py-20 sm:py-32 overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="Photo/cta-footer.png" alt="CTA Background" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/90"></div>
+            </div>
+            <div class="container mx-auto px-4 relative z-10 text-center text-white">
+                <h2 class="text-3xl sm:text-5xl font-extrabold mb-6">
+                    Sẵn sàng chuyển sang năng lượng sạch?
+                </h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto text-white/90">
+                    Nhận tư vấn miễn phí và báo giá chi tiết ngay hôm nay
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="html/khao-sat-dien-mat-troi.html" class="bg-white text-green-700 font-bold px-10 py-4 rounded-full hover:bg-green-50 transition-all duration-300 shadow-xl">
+                        Đặt lịch khảo sát miễn phí
+                    </a>
+                    <a href="html/pricing.html" class="bg-transparent border-2 border-white text-white font-bold px-10 py-4 rounded-full hover:bg-white/10 transition-all duration-300">
+                        Xem bảng giá
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+                <!-- Branding & Copyright -->
+                <div class="space-y-4">
+                     <a href="index.html" class="flex items-center gap-3">
+                        <img class="h-12 w-12 rounded-lg object-cover" src="assets/img/logo.jpg" alt="Logo HC Eco System" />
+                        <div>
+                            <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
+                        </div>
+                    </a>
+                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li><strong>Hotline:</strong> 0988 919 868</li>
+                        <li><strong>Zalo:</strong> 0988 919 868</li>
                         <li><strong>Email:</strong> hcecosystem@gmail.com</li>
-                        <li><strong>Địa chỉ:</strong> 790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                        <li><strong>Website:</strong> hcecosystem.vn</li>
+                        <li><strong>Mã số thuế:</strong> 0123456789</li>
+                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
                     </ul>
                 </div>
-                <form class="form">
-                    <label>Họ và tên
-                        <input type="text" name="name" placeholder="Nguyễn Văn A" required />
-                    </label>
-                    <label>Số điện thoại
-                        <input type="tel" name="phone" placeholder="090x xxx xxx" required />
-                    </label>
-                    <label>Nhu cầu lắp đặt
-                        <select name="service" required>
-                            <option value="">Chọn nhu cầu của bạn</option>
-                            <option value="home">Gia đình</option>
-                            <option value="business">Doanh nghiệp</option>
-                            <option value="farm">Trang trại</option>
-                        </select>
-                    </label>
-                    <label>Ghi chú
-                        <textarea name="message" rows="3" placeholder="Diện tích mái, thời gian thuận tiện..."></textarea>
-                    </label>
-                    <button type="submit" class="btn primary">Gửi thông tin</button>
-                </form>
-            </div>
-        </section></main>
 
-    
-<footer id="site-footer" class="footer">
-    <div class="container footer-layout">
-        <div class="footer-left">
-            <a href="index.html" class="footer-branding">
-                <img class="footer-logo" src="assets/img/logo.jpg" alt="Logo HC Eco System" />
-                <div class="footer-brand-copy">
-                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
-                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+                <!-- Policies -->
+                <div class="space-y-2">
+                     <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><a href="html/tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
+                        <li><a href="html/dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
+                        <li><a href="html/chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
+                        <li><a href="html/chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                        <li><a href="html/chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                        <li><a href="html/chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
+                        <li><a href="html/tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
+                    </ul>
                 </div>
-            </a>
-            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+            </div>
         </div>
-        <div class="footer-center">
-            <h4>Thông tin liên hệ</h4>
-            <ul class="contact-info">
-                <li><strong>Hotline:</strong> 0988 919 868</li>
-                <li><strong>Zalo:</strong> 0988 919 868</li>
-                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
-                <li><strong>Website:</strong> hcecosystem.vn</li>
-                <li><strong>Mã số thuế:</strong> 0123456789</li>
-                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
-            </ul>
-        </div>
-        <div class="footer-right">
-            <h4>Chính sách &amp; Dịch vụ</h4>
-            <ul class="policy-links">
-                    <li><a href="html/tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
-                    <li><a href="html/dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
-                    <li><a href="html/chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
-                    <li><a href="html/chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
-                    <li><a href="html/chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
-                    <li><a href="html/chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
-                    <li><a href="html/tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
-                </ul>
-        </div>
-    </div>
-</footer>
+    </footer>
+    
+    <!-- Scripts (IDs preserved) -->
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/shopping-cart.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const header = document.getElementById('header');
 
-<!-- Floating Action Button for Cart -->
-<a href="html/gio-hang.html" class="cart-fab" id="cart-fab">
-    🛒
-    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
-</a>
-
-<script src="assets/js/shopping-cart.js"></script>
-<script src="assets/js/auth.js"></script>
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close menu when a link is clicked
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        // Hide menu on scroll for better UX
+        let lastScrollTop = 0;
+        window.addEventListener("scroll", function(){ 
+           var st = window.pageYOffset || document.documentElement.scrollTop; 
+           if (st > lastScrollTop){
+              // downscroll
+              mobileMenu.classList.add('hidden');
+           }
+           lastScrollTop = st <= 0 ? 0 : st;
+        }, false);
+    </script>
 </body>
 </html>
-
-
-
-
-
-
 

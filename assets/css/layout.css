@@ -1,39 +1,129 @@
-﻿/* Layout & Container Styles */
+@charset "UTF-8";
+
+/* Layout primitives */
 .container {
-    width: min(92%, var(--max-width));
+    width: 100%;
+    max-width: var(--container-max);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--container-gutter);
+    padding-right: var(--container-gutter);
+}
+
+section {
+    position: relative;
+    padding: var(--section-space) 0;
+}
+
+section > .container > header {
+    max-width: var(--content-max);
+    margin: 0 auto clamp(3rem, 6vw, 3.5rem);
+    text-align: center;
+    display: grid;
+    gap: 0.85rem;
+}
+
+section > .container > header h2 {
+    margin-bottom: 0;
+}
+
+section > .container > header p {
+    color: var(--color-muted);
     margin: 0 auto;
 }
 
-/* Grid Systems */
+.section-heading {
+    max-width: var(--content-max);
+    margin: 0 auto clamp(3rem, 6vw, 3.5rem);
+    text-align: center;
+}
+
+.section-heading h2 {
+    margin-bottom: 0.65rem;
+}
+
+.section-heading p {
+    color: var(--color-muted);
+    margin: 0;
+}
+
 .grid {
     display: grid;
-    gap: 1.8rem;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(1.6rem, 3vw, 2.2rem);
 }
 
-.solutions .grid,
-.benefits .grid {
+.grid.columns-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid.columns-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid.columns-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stack {
     display: grid;
-    gap: 1.8rem;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(1.5rem, 4vw, 2.5rem);
 }
 
-/* Section Base Styles */
-section {
-    padding: 4.5rem 0;
+.flow > * + * {
+    margin-top: var(--flow-space, 1rem);
 }
 
-section header {
-    text-align: center;
-    margin-bottom: 3rem;
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: rgba(11, 122, 69, 0.08);
+    color: var(--color-primary-dark);
 }
 
-section header h2 {
-    margin: 0;
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
+.surface {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
 }
 
-section header p {
-    margin-top: 1rem;
-    color: var(--color-muted);
+@media (max-width: 1024px) {
+    .grid.columns-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .container {
+        padding-left: clamp(1rem, 4vw, 1.6rem);
+        padding-right: clamp(1rem, 4vw, 1.6rem);
+    }
+
+    .grid.columns-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
+    section {
+        padding: clamp(3.5rem, 12vw, 4.5rem) 0;
+    }
+
+    section > .container > header,
+    .section-heading {
+        margin-bottom: clamp(2.2rem, 8vw, 2.8rem);
+    }
+
+    .grid.columns-2,
+    .grid.columns-3,
+    .grid.columns-4 {
+        grid-template-columns: 1fr;
+    }
 }

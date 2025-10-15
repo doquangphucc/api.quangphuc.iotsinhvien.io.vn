@@ -5,15 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Bảng giá chi tiết các gói lắp đặt pin năng lượng mặt trời cho hộ gia đình và doanh nghiệp." />
     <title>Bảng giá sản phẩm - HC Eco System</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter with Vietnamese subset -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
         body {
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+            color: var(--color-text-dark);
+            transition: background-color 0.3s, color 0.3s;
             min-height: 100vh;
+        }
+        /* Dark Mode styles */
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
+        body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
+        body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
+        body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+
+        .theme-toggle__icon { display: none; }
+        body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
+        body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+
+        /* Styles for dynamically injected auth buttons */
+        .auth-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+            line-height: 1.25rem;
+            text-decoration: none;
+        }
+        /* Login Button */
+        .auth-btn--login {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        .auth-btn--login:hover {
+            background-color: #e5e7eb; /* gray-200 */
+        }
+        /* Register button, also used for logout by auth.js */
+        .auth-btn--register {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+        }
+        .auth-btn--register:hover {
+             background-color: #15803d; /* green-700 */
+        }
+        /* Logged-in state: username and logout button */
+        .auth-user-name {
+            font-weight: 600;
+            padding: 0.6rem 0.25rem;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        /* Specifically target the logout button */
+        .auth-user-name + .auth-btn--register { 
+             background-color: #fee2e2; /* red-100 */
+             color: #b91c1c; /* red-700 */
+        }
+         .auth-user-name + .auth-btn--register:hover {
+             background-color: #fecaca; /* red-200 */
+        }
+
+        /* Dark mode styles for auth buttons */
+        body[data-theme="dark"] .auth-btn--login {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-100 */
+        }
+        body[data-theme="dark"] .auth-btn--login:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        body[data-theme="dark"] .auth-user-name {
+            color: #d1d5db; /* gray-300 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
+             background-color: #450a0a; /* red-900 */
+             color: #fca5a5; /* red-400 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
+             background-color: #7f1d1d; /* red-800 */
         }
 
         .products-grid-section {
@@ -140,118 +236,71 @@
         }
     </style>
 </head>
-<body>
-    
-<header class="topbar">
-    <div class="container topbar-layout">
-        <a href="../index.html" class="branding">
-            <img class="logo-image" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
-            <div class="brand-copy">
-                <div class="logo">HC<span>ECO SYSTEM</span></div>
-                <p>Giải pháp bền vững cho năng lượng tương lai</p>
-            </div>
-        </a>
-        <div class="topbar-actions">
-            <nav class="nav">
-                <div class="nav-item nav-item--dropdown">
-                    <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
-                    <div class="nav-dropdown" role="menu">
-                        <a href="product-solar-panels.html">Tấm pin Jinko Solar</a>
-                        <a href="product-luxpower-hybrid.html">Inverter LuxPower Hybrid</a>
-                        <a href="product-luxpower-1pha.html">LuxPower Hybrid 1 Pha</a>
-                        <a href="product-luxpower-3phase.html">LuxPower Hybrid 3 Pha</a>
-                        <a href="product-luxpower-3phase-high.html">LuxPower 3 Pha Áp Cao</a>
-                        <a href="product-growatt-110kw.html">Growatt MAX 110kW</a>
-                        <a href="product-battery-storage.html">Pin lưu trữ A-Cornex</a>
-                        <a href="product-battery-byd.html">Pin lưu trữ BYD</a>
-                        <a href="product-electrical-cabinet.html">Tủ điện Hybrid</a>
-                        <a href="product-cables.html">Phụ kiện &amp; Cáp</a>
-                    </div>
-                </div>
-                <a href="../index.html#solutions" class="nav-link">Giải pháp</a>
-                <a href="../index.html#process" class="nav-link">Quy trình</a>
-                <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
-                <a href="tin-tuc.html" class="nav-link">Tin tức</a>
-                <a href="#site-footer" class="nav-link">Liên hệ</a>
-            </nav>
-            <a class="cta" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
-        </div>
-    </div>
-</header>
-<div class="auth-floating" id="auth-floating">
-    <div class="auth-buttons" id="auth-buttons">
-        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
-        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
-    </div>
-    
-</div>
+<body class="bg-gray-50 dark:bg-gray-900">
 
-<aside class="quick-contact" aria-label="Liên hệ nhanh">
-    <a class="contact-item contact-item--fanpage" href="https://www.facebook.com/hceco.io.vn" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M15.6 3H18V0h-2.6C11.8 0 10 2.1 10 5.2V8H7v3h3v9h3v-9h3l.5-3H13V5.4c0-1.2.4-2.4 2.6-2.4z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>Fanpage</strong>
-            <span>HC Eco System</span>
-        </span>
+    <!-- Header -->
+    <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <!-- Branding -->
+                <a href="../index.html" class="flex items-center gap-3">
+                    <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                    <div>
+                        <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Giải pháp bền vững cho năng lượng tương lai</p>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
+                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
+                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
+                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
+                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
+                    <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Xây dựng</a>
+                    <a href="../index.html#site-footer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+                    
+                    <!-- Auth buttons will appear here, integrated into the header -->
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
+            <nav class="flex flex-col gap-2">
+                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
+                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Bảng giá</a>
+                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
+                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Xây dựng</a>
+                <a href="../index.html#site-footer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Floating Cart Button -->
+    <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
     </a>
-    <a class="contact-item contact-item--zalo" href="https://zalo.me/0988919868" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M18.5 3H5.5A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17H9v2.8a1 1 0 001.6.8l4.3-3.6h3.6a2.5 2.5 0 002.5-2.5v-9A2.5 2.5 0 0018.5 3z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>Zalo</strong>
-            <span>0988 919 868</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--tiktok" href="https://www.tiktok.com/@hc.channal" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M16.5 2h3a4.5 4.5 0 004.5 4.5v3a7.5 7.5 0 01-4.5-1.5V17a6.5 6.5 0 11-6.5-6.5v3a3.5 3.5 0 103.5 3.5V2z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>TikTok</strong>
-            <span>@hcecosystem</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--youtube" href="https://www.youtube.com/@hcecosystem" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M21.8 8.2a2.5 2.5 0 00-1.8-1.8C18 6 12 6 12 6s-6 0-8 0.4A2.5 2.5 0 002.2 8.2 26.5 26.5 0 002 12a26.5 26.5 0 00.2 3.8 2.5 2.5 0 001.8 1.8C6 18 12 18 12 18s6 0 8-0.4a2.5 2.5 0 001.8-1.8c.2-1.2.2-2.6.2-3.8a26.5 26.5 0 00-.2-3.8zM10 15V9l5 3-5 3z" fill="currentColor" />
-            </svg>
-        </span>
-        <span class="label">
-            <strong>YouTube</strong>
-            <span>@hcecosystem</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--phone" href="tel:0988919868">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M6.2 2A2.2 2.2 0 004 4.3c0 9.1 7.6 16.7 16.7 16.7A2.2 2.2 0 0023 18.8v-3.4a1.1 1.1 0 00-.9-1.1l-4.8-1a1.1 1.1 0 00-1 .4l-1.8 2.2a12.9 12.9 0 01-5.4-5.4l2.2-1.8a1.1 1.1 0 00.4-1l-1-4.8A1.1 1.1 0 009.2 2H6.2z" fill="currentColor" />
-        </span>
-        <span class="label">
-            <strong>Hotline</strong>
-            <span>0988 919 868</span>
-        </span>
-    </a>
-    <a class="contact-item contact-item--maps" href="https://www.google.com/maps/search/?api=1&query=790+Ng%C3%B4+Quy%E1%BB%81n,+Ph%C6%B0%E1%BB%9Dng+An+H%E1%BA%A3i,+Th%C3%A0nh+Ph%E1%BB%91+%C4%90%C3%A0+N%E1%BA%B5ng" target="_blank" rel="noopener">
-        <span class="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" fill="currentColor" />
-        </span>
-        <span class="label">
-            <strong>Văn phòng</strong>
-            <span>790 Ngô Quyền, Đà Nẵng</span>
-        </span>
-    </a>
-</aside>
+
+    <!-- Main Content -->
 <main>
     <section class="products-grid-section">
         <div class="container">
@@ -325,88 +374,82 @@
     </section>
 </main>
 
-<footer id="site-footer" class="footer">
-    <div class="container footer-layout">
-        <div class="footer-left">
-            <a href="../index.html" class="footer-branding">
-                <img class="footer-logo" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
-                <div class="footer-brand-copy">
-                    <div class="footer-brand-name">HC<span>ECO SYSTEM</span></div>
-                    <p>Giải pháp bền vững cho năng lượng tương lai</p>
+    <!-- Footer -->
+    <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+                <!-- Branding & Copyright -->
+                <div class="space-y-4">
+                     <a href="../index.html" class="flex items-center gap-3">
+                        <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                        <div>
+                            <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
+                        </div>
+                    </a>
+                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
                 </div>
-            </a>
-            <p class="copyright">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
-        </div>
-        <div class="footer-center">
-            <h4>Thông tin liên hệ</h4>
-            <ul class="contact-info">
-                <li><strong>Hotline:</strong> 0988 919 868</li>
-                <li><strong>Zalo:</strong> 0988 919 868</li>
-                <li><strong>Email:</strong> hcecosystem@gmail.com</li>
-                <li><strong>Website:</strong> hcecosystem.vn</li>
-                <li><strong>Mã số thuế:</strong> 0123456789</li>
-                <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
-            </ul>
-        </div>
-        <div class="footer-right">
-            <h4>Chính sách &amp; Dịch vụ</h4>
-            <ul class="policy-links">
-                <li><a href="tam-nhin-su-menh.html">Tầm Nhìn &amp; Sứ Mệnh</a></li>
-                <li><a href="dieu-khoan-dieu-kien.html">Điều Khoản &amp; Điều Kiện</a></li>
-                <li><a href="chinh-sach-doi-tra.html">Chính Sách Đổi Trả</a></li>
-                <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
-                <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
-                <li><a href="chinh-sach-bao-hanh.html">Chính Sách Bảo Hành</a></li>
-                <li><a href="tro-thanh-nha-phan-phoi.html">Trở Thành Nhà Phân Phối</a></li>
-            </ul>
-        </div>
-    </div>
-</footer>
 
-<!-- Floating Action Button for Cart -->
-<a href="gio-hang.html" class="cart-fab" id="cart-fab">
-    🛒
-    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
-</a>
+                <!-- Contact Info -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li><strong>Hotline:</strong> 0988 919 868</li>
+                        <li><strong>Zalo:</strong> 0988 919 868</li>
+                        <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                        <li><strong>Website:</strong> hcecosystem.vn</li>
+                        <li><strong>Mã số thuế:</strong> 0123456789</li>
+                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                    </ul>
+                </div>
 
-<script src="../assets/js/shopping-cart.js"></script>
-<script>
-    // Update cart count on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        updateCartCount();
-    });
+                <!-- Policies -->
+                <div class="space-y-2">
+                     <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
+                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
+                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
+                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Scripts (IDs preserved) -->
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/shopping-cart.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const header = document.getElementById('header');
 
-    function updateCartCount() {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
         
-        // Update header cart count
-        const cartCountElement = document.getElementById('cart-count');
-        if (cartCountElement) {
-            if (totalItems > 0) {
-                cartCountElement.textContent = totalItems;
-                cartCountElement.style.display = 'flex';
-            } else {
-                cartCountElement.style.display = 'none';
+        // Close menu when a link is clicked
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                mobileMenu.classList.add('hidden');
             }
-        }
+        });
         
-        // Update FAB counter
-        const fabCounter = document.getElementById('fab-cart-count');
-        if (fabCounter) {
-            if (totalItems > 0) {
-                fabCounter.textContent = totalItems;
-                fabCounter.style.display = 'flex';
-            } else {
-                fabCounter.style.display = 'none';
-            }
-        }
-    }
-
-    // Listen for storage changes to update cart count
-    window.addEventListener('storage', updateCartCount);
-</script>
-
-<script src="../assets/js/auth.js"></script>
+        // Hide menu on scroll for better UX
+        let lastScrollTop = 0;
+        window.addEventListener("scroll", function(){ 
+           var st = window.pageYOffset || document.documentElement.scrollTop; 
+           if (st > lastScrollTop){
+              // downscroll
+              mobileMenu.classList.add('hidden');
+           }
+           lastScrollTop = st <= 0 ? 0 : st;
+        }, false);
+    </script>
 </body>
 </html>

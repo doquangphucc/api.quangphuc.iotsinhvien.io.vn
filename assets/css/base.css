@@ -1,38 +1,187 @@
-﻿/* Base Styles & Variables */
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap');
+
+/* Base tokens and global resets */
 :root {
-    /* Solar Green Palette - Năng Lượng Mặt Trời */
-    --color-green: #3FA34D;        /* Primary green - Xanh lá tươi sáng (button, menu) */
-    --color-green-dark: #1E5631;   /* Dark green - Xanh lá công nghệ đậm (header, text nổi bật) */
-    --color-green-light: #77DD77;  /* Light green - Xanh lá sáng nhẹ (background, hover) */
-    --color-yellow: #C5E384;       /* Yellow-green pastel - Vàng xanh pastel (CTA, highlight) */
-    --color-white: #ffffff;
-    --color-bg: #F4F9E9;           /* Off-white green - Trắng ngả xanh (nền tổng thể) */
-    --color-text: #1E5631;         /* Dark green for text */
-    --color-muted: #3FA34D;        /* Primary green for muted text */
-    --max-width: 1120px;
+    --color-primary: #0d7a6b;
+    --color-primary-dark: #064f44;
+    --color-primary-soft: #dcf3ee;
+    --color-secondary: #2387f4;
+    --color-secondary-soft: #e4efff;
+    --color-surface: #ffffff;
+    --color-surface-elevated: rgba(255, 255, 255, 0.94);
+    --color-surface-subtle: #f5f9f7;
+    --color-surface-muted: #eef3f1;
+    --color-border: rgba(13, 122, 107, 0.14);
+    --color-border-strong: rgba(13, 122, 107, 0.25);
+    --color-heading: #052b24;
+    --color-body: #183c35;
+    --color-muted: #5e746f;
+    --color-info: #2387f4;
+    --color-success: #0f9d58;
+    --color-warning: #f5a623;
+    --color-danger: #db2b39;
+    --shadow-xs: 0 8px 16px rgba(6, 36, 29, 0.06);
+    --shadow-sm: 0 14px 28px rgba(6, 36, 29, 0.08);
+    --shadow-md: 0 26px 42px rgba(8, 52, 42, 0.12);
+    --shadow-lg: 0 38px 62px rgba(8, 52, 42, 0.16);
+    --radius-xs: 8px;
+    --radius-sm: 14px;
+    --radius-md: 22px;
+    --radius-lg: 32px;
+    --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --font-heading: 'Sora', 'Inter', 'Segoe UI', Arial, sans-serif;
+    --font-alt: 'Be Vietnam Pro', 'Inter', 'Segoe UI', Arial, sans-serif;
+    --transition-base: 220ms ease;
+    --transition-snap: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --container-max: 1200px;
+    --container-gutter: clamp(1.2rem, 4.6vw, 2.8rem);
+    --section-space: clamp(4.5rem, 8.5vw, 6.75rem);
+    --content-max: 760px;
+    --header-height: 86px;
+    color-scheme: only light;
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    font-family: var(--font-alt);
+    line-height: 1.7;
+    background: var(--color-surface-subtle);
+    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
-    font-family: 'Inter', Arial, sans-serif;
-    color: var(--color-text);
-    background: var(--color-bg);
+    min-height: 100vh;
+    background:
+        radial-gradient(140% 120% at 10% -20%, rgba(35, 135, 244, 0.18), transparent),
+        radial-gradient(140% 120% at 90% -10%, rgba(13, 122, 107, 0.14), transparent),
+        var(--color-surface-subtle);
+    color: var(--color-body);
+}
+
+main {
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-heading);
+    line-height: 1.12;
+    margin-top: 0;
+    margin-bottom: 0.6em;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 3.4rem); }
+h2 { font-size: clamp(2.1rem, 4.2vw, 2.8rem); }
+h3 { font-size: clamp(1.6rem, 3.4vw, 2rem); }
+h4 { font-size: clamp(1.3rem, 2.6vw, 1.6rem); }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 1rem; }
+
+p {
+    margin-top: 0;
+    margin-bottom: 1.1rem;
+}
+
+strong {
+    font-weight: 600;
+    color: var(--color-heading);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 35% 20%, rgba(35, 135, 244, 0.05), transparent 55%),
+        radial-gradient(circle at 72% 12%, rgba(13, 122, 107, 0.06), transparent 60%);
+    z-index: 0;
 }
 
 a {
-    color: inherit;
+    color: var(--color-primary);
     text-decoration: none;
+    transition: color var(--transition-base), transform var(--transition-base);
 }
 
-a:hover {
-    text-decoration: underline;
+a:hover,
+a:focus {
+    color: var(--color-primary-dark);
+    transform: translateY(-1px);
 }
 
-/* Screen Reader Only */
+ul,
+ol {
+    margin: 0 0 1.2rem 1.2rem;
+    padding: 0;
+}
+
+img,
+svg,
+video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: inherit;
+}
+
+label {
+    font-weight: 600;
+    color: var(--color-heading);
+    letter-spacing: 0.01em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+code,
+pre {
+    font-family: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+::selection {
+    background: rgba(11, 122, 69, 0.18);
+}
+
+:focus-visible {
+    outline: 3px solid rgba(11, 122, 69, 0.45);
+    outline-offset: 2px;
+}
+
+.text-muted {
+    color: var(--color-muted);
+}
+
+.text-accent {
+    color: var(--color-secondary);
+}
+
+/* Screen reader only helper */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -43,4 +192,42 @@ a:hover {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Dark theme */
+body[data-theme="dark"] {
+    background:
+        radial-gradient(160% 160% at 10% -20%, rgba(35, 135, 244, 0.25), transparent),
+        radial-gradient(140% 140% at 90% -10%, rgba(13, 122, 107, 0.35), transparent),
+        #0d1513;
+    color: rgba(236, 245, 242, 0.88);
+}
+
+body[data-theme="dark"]::before {
+    background:
+        radial-gradient(circle at 15% 18%, rgba(35, 135, 244, 0.18), transparent 60%),
+        radial-gradient(circle at 82% 14%, rgba(13, 122, 107, 0.22), transparent 70%);
+}
+
+body[data-theme="dark"] h1,
+body[data-theme="dark"] h2,
+body[data-theme="dark"] h3,
+body[data-theme="dark"] h4,
+body[data-theme="dark"] h5,
+body[data-theme="dark"] h6 {
+    color: #f2f8f6;
+}
+
+body[data-theme="dark"] p,
+body[data-theme="dark"] .text-muted {
+    color: rgba(236, 245, 242, 0.78);
 }
