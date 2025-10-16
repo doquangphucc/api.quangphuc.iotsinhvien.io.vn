@@ -16,6 +16,445 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+
+    <!-- Custom Tailwind styles for news content -->
+    <style>
+        /* Root Variables */
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* Dark Mode Base Styles */
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        
+        /* Theme Toggle Icons */
+        .theme-toggle__icon { 
+            display: none; 
+        }
+        body:not([data-theme="dark"]) .theme-toggle__icon--sun { 
+            display: block; 
+        }
+        body[data-theme="dark"] .theme-toggle__icon--moon { 
+            display: block; 
+        }
+
+        /* Auth Button Styles */
+        .auth-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+            line-height: 1.25rem;
+            text-decoration: none;
+        }
+        .auth-btn--login {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .auth-btn--login:hover {
+            background-color: #e5e7eb;
+        }
+        .auth-btn--register {
+            background-color: #16a34a;
+            color: white;
+        }
+        .auth-btn--register:hover {
+            background-color: #15803d;
+        }
+        .auth-user-name {
+            font-weight: 600;
+            padding: 0.6rem 0.25rem;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .auth-user-name + .auth-btn--register { 
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .auth-user-name + .auth-btn--register:hover {
+            background-color: #fecaca;
+        }
+        body[data-theme="dark"] .auth-btn--login {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+        body[data-theme="dark"] .auth-btn--login:hover {
+            background-color: #4b5563;
+        }
+        body[data-theme="dark"] .auth-user-name {
+            color: #d1d5db;
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register {
+            background-color: #450a0a;
+            color: #fca5a5;
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
+            background-color: #7f1d1d;
+        }
+
+        /* Article blocks */
+        .analysis-block {
+            background-color: #f9fafb;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        @media (min-width: 640px) {
+            .analysis-block { padding: 1.5rem; }
+        }
+        @media (min-width: 1024px) {
+            .analysis-block { padding: 2rem; }
+        }
+        body[data-theme="dark"] .analysis-block {
+            background-color: #111827;
+        }
+        .analysis-block h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        body[data-theme="dark"] .analysis-block h3 {
+            color: #ffffff;
+        }
+        .analysis-block p {
+            color: #374151;
+            margin-bottom: 1.5rem;
+            line-height: 1.75;
+        }
+        body[data-theme="dark"] .analysis-block p {
+            color: #d1d5db;
+        }
+        /* Lists with Icons */
+        .analysis-list {
+            margin-bottom: 1.5rem;
+        }
+        .analysis-list li {
+            display: flex;
+            gap: 0.75rem;
+            color: #374151;
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+        }
+        body[data-theme="dark"] .analysis-list li {
+            color: #d1d5db;
+            background-color: #1f2937;
+        }
+        .analysis-list li::before {
+            content: "✓";
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: #d1fae5;
+            color: #059669;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        body[data-theme="dark"] .analysis-list li::before {
+            background-color: rgba(5, 150, 105, 0.3);
+            color: #34d399;
+        }
+        .analysis-sublist {
+            margin-left: 1.5rem;
+            margin-top: 0.75rem;
+        }
+        .analysis-sublist li {
+            background-color: #f9fafb;
+        }
+        body[data-theme="dark"] .analysis-sublist li {
+            background-color: rgba(55, 65, 81, 0.5);
+        }
+        /* Tables - Enhanced Design */
+        .analysis-table {
+            margin: 2rem 0;
+            overflow-x: auto;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem;
+        }
+        @media (min-width: 640px) {
+            .analysis-table { padding: 1.5rem; }
+        }
+        body[data-theme="dark"] .analysis-table {
+            background-color: #1f2937;
+        }
+        .analysis-table h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        body[data-theme="dark"] .analysis-table h4 {
+            color: #ffffff;
+        }
+        .analysis-table h4::before {
+            content: "📊";
+            font-size: 1.5rem;
+        }
+        .analysis-table table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .analysis-table thead {
+            background: linear-gradient(to right, #059669, #047857);
+            color: #ffffff;
+        }
+        .analysis-table th {
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        @media (min-width: 640px) {
+            .analysis-table th {
+                padding: 1rem 1.5rem;
+                font-size: 0.875rem;
+            }
+        }
+        .analysis-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        @media (min-width: 640px) {
+            .analysis-table td {
+                padding: 1rem 1.5rem;
+            }
+        }
+        body[data-theme="dark"] .analysis-table td {
+            border-top-color: #4b5563;
+            color: #d1d5db;
+        }
+        .analysis-table tbody tr {
+            transition: all 0.2s;
+        }
+        .analysis-table tbody tr:hover {
+            background-color: #ecfdf5;
+            transform: scale(1.01);
+        }
+        body[data-theme="dark"] .analysis-table tbody tr:hover {
+            background-color: rgba(5, 150, 105, 0.2);
+        }
+        .analysis-table .success {
+            font-weight: 700;
+            color: #059669;
+            font-size: 1.125rem;
+        }
+        body[data-theme="dark"] .analysis-table .success {
+            color: #34d399;
+        }
+        /* Callouts - Premium Design */
+        .analysis-callout {
+            background: linear-gradient(to right, #eff6ff, #dbeafe);
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 0 1rem 1rem 0;
+            margin: 2rem 0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        @media (min-width: 640px) {
+            .analysis-callout { 
+                border-left-width: 8px; 
+                padding: 1.5rem; 
+            }
+        }
+        @media (min-width: 1024px) {
+            .analysis-callout { padding: 2rem; }
+        }
+        body[data-theme="dark"] .analysis-callout {
+            background: linear-gradient(to right, rgba(30, 58, 138, 0.2), rgba(30, 64, 175, 0.2));
+        }
+        .analysis-callout::before {
+            content: "💡";
+            position: absolute;
+            left: -1.25rem;
+            top: 2rem;
+            font-size: 2.25rem;
+            background: white;
+            border-radius: 50%;
+            padding: 0.5rem;
+            display: none;
+        }
+        @media (min-width: 640px) {
+            .analysis-callout::before { display: block; }
+        }
+        .callout-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        body[data-theme="dark"] .callout-title {
+            color: #93c5fd;
+        }
+        .callout-title::after {
+            content: "";
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to right, #93c5fd, transparent);
+        }
+        .analysis-callout ol {
+            margin-left: 1.5rem;
+        }
+        .analysis-callout li {
+            color: #374151;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        body[data-theme="dark"] .analysis-callout li {
+            color: #d1d5db;
+            background-color: rgba(31, 41, 55, 0.5);
+        }
+        
+        /* Section headers */
+        .analysis-section {
+            background-color: #ffffff;
+            padding: 4rem 0;
+        }
+        body[data-theme="dark"] .analysis-section {
+            background-color: #1f2937;
+        }
+        .analysis-section:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        body[data-theme="dark"] .analysis-section:nth-child(even) {
+            background-color: #111827;
+        }
+        .container {
+            margin: 0 auto;
+            padding: 0 1rem;
+            max-width: 1280px;
+        }
+        .analysis-section .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .section-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .section-index {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #d1fae5;
+            color: #059669;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            margin-bottom: 1rem;
+        }
+        body[data-theme="dark"] .section-index {
+            background-color: rgba(5, 150, 105, 0.3);
+            color: #34d399;
+        }
+        .section-header h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        @media (min-width: 640px) {
+            .section-header h2 { font-size: 2.25rem; }
+        }
+        body[data-theme="dark"] .section-header h2 {
+            color: #ffffff;
+        }
+        
+        /* Enhanced Image Styles */
+        .visual-enhancement {
+            position: relative;
+            margin: 2rem 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .visual-enhancement:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(1.02);
+        }
+        .visual-enhancement img {
+            width: 100%;
+            height: 16rem;
+            object-fit: cover;
+            transition: all 0.5s;
+        }
+        @media (min-width: 640px) {
+            .visual-enhancement img { height: 20rem; }
+        }
+        .visual-enhancement:hover img {
+            transform: scale(1.05);
+        }
+        .visual-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent, transparent);
+        }
+        .visual-caption {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+        .visual-caption-content {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+        body[data-theme="dark"] .visual-caption-content {
+            background-color: rgba(31, 41, 55, 0.9);
+        }
+        .visual-enhancement:hover .visual-caption-content {
+            background-color: #ffffff;
+            transform: translateY(-4px);
+        }
+        body[data-theme="dark"] .visual-enhancement:hover .visual-caption-content {
+            background-color: #1f2937;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
     
@@ -83,48 +522,71 @@
     </a>
 
     <!-- Main Content -->
-
-
-    <main class="news-page">
-        <section class="news-hero">
-            <div class="container news-hero-layout">
-                <div class="news-hero-copy">
-                    <span class="eyebrow">Báo cáo phân tích chuyên sâu</span>
-                    <h1>Điều hướng chuyển đổi năng lượng Việt Nam: Lộ trình tăng giá của EVN và tính cấp thiết của điện mặt trời áp mái</h1>
-                    <p>Giao điểm giữa áp lực kinh tế và cơ hội công nghệ đang tạo ra thời khắc mang tính chiến lược cho cả hộ gia đình lẫn doanh nghiệp.</p>
-                    <div class="news-hero-tags">
-                        <span class="tag">Giá điện EVN</span>
-                        <span class="tag">Điện mặt trời</span>
-                        <span class="tag">Thị trường</span>
-                        <span class="tag">Khuyến nghị</span>
+    <main>
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-br from-green-600 to-green-700 py-16 sm:py-24">
+            <div class="container mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <div class="text-white">
+                        <span class="inline-block px-4 py-2 bg-white/20 text-white text-sm font-semibold rounded-full mb-4">Báo cáo phân tích chuyên sâu</span>
+                        <h1 class="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight">Điều hướng chuyển đổi năng lượng Việt Nam: Lộ trình tăng giá của EVN và tính cấp thiết của điện mặt trời áp mái</h1>
+                        <p class="text-xl mb-8 text-white/90">Giao điểm giữa áp lực kinh tế và cơ hội công nghệ đang tạo ra thời khắc mang tính chiến lược cho cả hộ gia đình lẫn doanh nghiệp.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Giá điện EVN</span>
+                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Điện mặt trời</span>
+                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Thị trường</span>
+                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Khuyến nghị</span>
+                        </div>
                     </div>
+                    <aside class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Tóm tắt nhanh</h2>
+                        <ul class="space-y-4 text-gray-600 dark:text-gray-300">
+                            <li class="flex gap-3">
+                                <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>2023: EVN tăng giá hai lần (3% và 4,5%), giá bình quân đạt 2.006,79 đ/kWh.</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>10/2024: Tăng thêm 4,8%, giá bình quân chạm 2.103,12 đ/kWh.</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>05/2025: Kịch bản tăng tiếp 4,8%, giá bình quân dự kiến 2.204,07 đ/kWh.</span>
+                            </li>
+                        </ul>
+                        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Cập nhật: Tháng 10/2024
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                Phạm vi: Hộ gia đình & doanh nghiệp
+                            </span>
+                        </div>
+                    </aside>
                 </div>
-                <aside class="news-hero-card">
-                    <h2>Tóm tắt nhanh</h2>
-                    <ul>
-                        <li>2023: EVN tăng giá hai lần (3% và 4,5%), giá bình quân đạt 2.006,79 đ/kWh.</li>
-                        <li>10/2024: Tăng thêm 4,8%, giá bình quân chạm 2.103,12 đ/kWh.</li>
-                        <li>05/2025: Kịch bản tăng tiếp 4,8%, giá bình quân dự kiến 2.204,07 đ/kWh.</li>
-                    </ul>
-                    <div class="hero-meta">
-                        <span>Cập nhật: Tháng 10/2024</span>
-                        <span>Phạm vi: Hộ gia đình & doanh nghiệp</span>
-                    </div>
-                </aside>
             </div>
         </section>
 
-        <section class="news-overview">
-            <div class="container analysis-intro">
-                <p>Bối cảnh năng lượng Việt Nam đang ở một bước ngoặt quan trọng, được định hình bởi hai xu hướng hội tụ: các đợt điều chỉnh giá điện liên tiếp của EVN và sự trưởng thành của công nghệ điện mặt trời áp mái. Đây không chỉ là câu chuyện chi phí tăng; đó là lời nhắc nhở về sự cần thiết phải đa dạng hóa nguồn cung năng lượng.</p>
-                <p>Bài viết này tổng hợp các dữ liệu, chính sách và phân tích tài chính nhằm giúp hộ gia đình, doanh nghiệp chuyển từ thế bị động sang chủ động trong việc đảm bảo an ninh năng lượng.</p>
+        <!-- Overview Section -->
+        <section class="bg-white dark:bg-gray-800 py-12 sm:py-16">
+            <div class="container mx-auto px-4" style="max-width: 1024px;">
+                <div class="prose prose-lg dark:prose-invert max-w-none space-y-6">
+                    <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">Bối cảnh năng lượng Việt Nam đang ở một bước ngoặt quan trọng, được định hình bởi hai xu hướng hội tụ: các đợt điều chỉnh giá điện liên tiếp của EVN và sự trưởng thành của công nghệ điện mặt trời áp mái. Đây không chỉ là câu chuyện chi phí tăng; đó là lời nhắc nhở về sự cần thiết phải đa dạng hóa nguồn cung năng lượng.</p>
+                    <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">Bài viết này tổng hợp các dữ liệu, chính sách và phân tích tài chính nhằm giúp hộ gia đình, doanh nghiệp chuyển từ thế bị động sang chủ động trong việc đảm bảo an ninh năng lượng.</p>
+                </div>
             </div>
-            <div class="container anchor-layout">
-                <nav class="analysis-nav" aria-label="Mục lục báo cáo">
-                    <a href="#phan-1">Giá điện EVN</a>
-                    <a href="#phan-2">Điện mặt trời</a>
-                    <a href="#phan-3">Thị trường</a>
-                    <a href="#phan-4">Khuyến nghị</a>
+        </section>
+
+        <!-- Table of Contents Navigation -->
+        <section class="bg-gray-100 dark:bg-gray-900 py-8 sticky top-20 z-40 border-b border-gray-200 dark:border-gray-700">
+            <div class="container mx-auto px-4">
+                <nav class="flex flex-wrap gap-3 justify-center" aria-label="Mục lục báo cáo">
+                    <a href="#phan-1" class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 shadow-sm">Giá điện EVN</a>
+                    <a href="#phan-2" class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 shadow-sm">Điện mặt trời</a>
+                    <a href="#phan-3" class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 shadow-sm">Thị trường</a>
+                    <a href="#phan-4" class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 shadow-sm">Khuyến nghị</a>
                 </nav>
             </div>
         </section>
@@ -135,15 +597,88 @@
                     <span class="section-index">Phần 1</span>
                     <h2>Thực trạng mới về chi phí điện năng tại Việt Nam</h2>
                 </header>
+
+                <!-- Visual Stats - Price Increase Impact -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-12">
+                    <div class="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-4 sm:p-6 rounded-2xl shadow-lg text-center border-t-4 border-red-500">
+                        <div class="text-3xl sm:text-4xl font-bold text-red-600 dark:text-red-400 mb-2">+12.3%</div>
+                        <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Tổng tăng giá</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">2023-2025</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 sm:p-6 rounded-2xl shadow-lg text-center border-t-4 border-orange-500">
+                        <div class="text-3xl sm:text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">3 lần</div>
+                        <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Đợt tăng giá</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Trong 2 năm</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-4 sm:p-6 rounded-2xl shadow-lg text-center border-t-4 border-yellow-500">
+                        <div class="text-3xl sm:text-4xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">340₫</div>
+                        <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Tăng mỗi kWh</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">So với 2023</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 sm:p-6 rounded-2xl shadow-lg text-center border-t-4 border-blue-500">
+                        <div class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">65K₫</div>
+                        <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Tăng/tháng</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Hộ 500 kWh</div>
+                    </div>
+                </div>
+
                 <article class="analysis-block">
-                    <h3>Lộ trình tăng giá: Chu kỳ điều chỉnh ngày càng dồn dập</h3>
-                    <p>Lịch sử điều chỉnh gần đây của EVN cho thấy tốc độ tăng giá đang ngắn lại. Từ 6 tháng xuống còn 3 tháng, “trạng thái bình thường mới” là rủi ro giá biến động liên tục.</p>
-                    <ul class="analysis-list">
-                        <li><strong>04/05/2023:</strong> Tăng 3%, giá bình quân 1.920,37 đ/kWh.</li>
-                        <li><strong>09/11/2023:</strong> Tăng 4,5%, giá bình quân 2.006,79 đ/kWh.</li>
-                        <li><strong>11/10/2024:</strong> Tăng 4,8%, giá bình quân 2.103,12 đ/kWh.</li>
-                        <li><strong>10/05/2025 (dự kiến):</strong> Tăng 4,8%, giá bình quân khoảng 2.204,07 đ/kWh.</li>
-                    </ul>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        Lộ trình tăng giá: Chu kỳ điều chỉnh ngày càng dồn dập
+                    </h3>
+                    <p>Lịch sử điều chỉnh gần đây của EVN cho thấy tốc độ tăng giá đang ngắn lại. Từ 6 tháng xuống còn 3 tháng, "trạng thái bình thường mới" là rủi ro giá biến động liên tục.</p>
+                    
+                    <!-- Timeline Visual -->
+                    <div class="relative my-8">
+                        <div class="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-green-400 via-yellow-400 to-red-400"></div>
+                        
+                        <div class="space-y-6 ml-4">
+                            <div class="flex gap-4 items-start">
+                                <div class="flex-shrink-0 w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg relative z-10">1</div>
+                                <div class="flex-1 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <strong class="text-lg text-gray-800 dark:text-white">04/05/2023</strong>
+                                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-sm font-bold">+3%</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300">Giá bình quân: <strong>1.920,37 đ/kWh</strong></p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4 items-start">
+                                <div class="flex-shrink-0 w-12 h-12 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg relative z-10">2</div>
+                                <div class="flex-1 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <strong class="text-lg text-gray-800 dark:text-white">09/11/2023</strong>
+                                        <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full text-sm font-bold">+4.5%</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300">Giá bình quân: <strong>2.006,79 đ/kWh</strong></p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4 items-start">
+                                <div class="flex-shrink-0 w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg relative z-10">3</div>
+                                <div class="flex-1 bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <strong class="text-lg text-gray-800 dark:text-white">11/10/2024</strong>
+                                        <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full text-sm font-bold">+4.8%</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300">Giá bình quân: <strong>2.103,12 đ/kWh</strong></p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4 items-start">
+                                <div class="flex-shrink-0 w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg relative z-10">4</div>
+                                <div class="flex-1 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-5 rounded-xl shadow-md border-2 border-red-300 dark:border-red-700">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <strong class="text-lg text-gray-800 dark:text-white">10/05/2025 <span class="text-sm text-red-600 dark:text-red-400">(dự kiến)</span></strong>
+                                        <span class="px-3 py-1 bg-red-200 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-full text-sm font-bold">+4.8%</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300">Giá bình quân: <strong class="text-red-600 dark:text-red-400">2.204,07 đ/kWh</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="analysis-table">
                         <h4>Diễn biến giá bán lẻ điện bình quân của EVN (2023 - 2025)</h4>
                         <table>
@@ -167,22 +702,58 @@
 
 
                 <article class="analysis-block">
-                    <h3>Lý do đằng sau việc tăng giá: Giải mã áp lực tài chính</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Lý do đằng sau việc tăng giá: Giải mã áp lực tài chính
+                    </h3>
                     <p>Việc điều chỉnh không phải quyết định đơn lẻ. Nó phản ánh áp lực cân bằng tài chính, yêu cầu chính sách và biến động chi phí đầu vào.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Thua lỗ tài chính:</strong> EVN báo cáo lỗ do chênh lệch giá mua - bán, lên tới 45.000 tỷ đồng.</li>
-                        <li><strong>Chủ trương Chính phủ:</strong> Nghị quyết 55 định hướng giá năng lượng theo cơ chế thị trường.</li>
-                        <li><strong>Biến động nhiên liệu:</strong> Giá than, khí, tỷ giá ngoại tệ tăng mạnh sau dịch và xung đột địa chính trị.</li>
-                    </ul>
+                    
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 my-6">
+                        <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl border-l-4 border-red-500">
+                            <div class="text-3xl mb-3">💸</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Thua lỗ tài chính</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">EVN báo cáo lỗ do chênh lệch giá mua - bán, lên tới <strong class="text-red-600 dark:text-red-400">45.000 tỷ đồng</strong></p>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border-l-4 border-blue-500">
+                            <div class="text-3xl mb-3">📜</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Chủ trương Chính phủ</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Nghị quyết 55 định hướng giá năng lượng theo <strong>cơ chế thị trường</strong></p>
+                        </div>
+                        <div class="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-xl border-l-4 border-orange-500">
+                            <div class="text-3xl mb-3">⛽</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Biến động nhiên liệu</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Giá than, khí, tỷ giá ngoại tệ <strong class="text-orange-600 dark:text-orange-400">tăng mạnh</strong> sau dịch</p>
+                        </div>
+                    </div>
                 </article>
+
                 <article class="analysis-block">
-                    <h3>Lượng hóa tác động: Từ ví tiền hộ gia đình đến lợi nhuận doanh nghiệp</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Lượng hóa tác động: Từ ví tiền hộ gia đình đến lợi nhuận doanh nghiệp
+                    </h3>
                     <p>Tác động của việc tăng giá điện là đa chiều và lan tỏa ra toàn nền kinh tế.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Hộ gia đình:</strong> Nhóm sử dụng 400 - 500 kWh/tháng có thể tăng thêm 49.000 - 65.000 đ/tháng.</li>
-                        <li><strong>Doanh nghiệp:</strong> Các ngành thâm dụng năng lượng như thép, xi măng chịu áp lực chi phí lớn nhất.</li>
-                        <li><strong>Kinh tế vĩ mô:</strong> Chi phí điện tăng kéo theo nguy cơ lạm phát do doanh nghiệp buộc phải tăng giá bán.</li>
-                    </ul>
+                    
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 my-6">
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl shadow-lg text-center">
+                            <div class="text-4xl mb-3">🏠</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-3">Hộ gia đình</h4>
+                            <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">49-65K₫</div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Tăng thêm mỗi tháng<br/>(400-500 kWh)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-2xl shadow-lg text-center">
+                            <div class="text-4xl mb-3">🏭</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-3">Doanh nghiệp</h4>
+                            <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">Cao nhất</div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Ngành thâm dụng năng lượng<br/>(Thép, xi măng)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-2xl shadow-lg text-center">
+                            <div class="text-4xl mb-3">📈</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-3">Kinh tế vĩ mô</h4>
+                            <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">Lạm phát</div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Chi phí tăng → giá bán tăng</p>
+                        </div>
+                    </div>
                 </article>
             </div>
         </section>
@@ -193,19 +764,70 @@
                     <span class="section-index">Phần 2</span>
                     <h2>Điện mặt trời áp mái: Phân tích toàn diện chi phí - lợi ích</h2>
                 </header>
+
+                <!-- Key Benefits Highlight -->
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-12">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl shadow-2xl text-white text-center transform hover:scale-105 transition-all duration-300">
+                        <div class="text-5xl font-bold mb-2">4-6</div>
+                        <div class="text-lg font-semibold mb-1">năm hoàn vốn</div>
+                        <div class="text-sm opacity-90">ROI hấp dẫn</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl shadow-2xl text-white text-center transform hover:scale-105 transition-all duration-300">
+                        <div class="text-5xl font-bold mb-2">60-90%</div>
+                        <div class="text-lg font-semibold mb-1">Giảm hóa đơn điện</div>
+                        <div class="text-sm opacity-90">Tiết kiệm đáng kể</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-8 rounded-2xl shadow-2xl text-white text-center transform hover:scale-105 transition-all duration-300">
+                        <div class="text-5xl font-bold mb-2">25+</div>
+                        <div class="text-lg font-semibold mb-1">năm tuổi thọ</div>
+                        <div class="text-sm opacity-90">Lợi ích dài hạn</div>
+                    </div>
+                </div>
+
                 <article class="analysis-block">
-                    <h3>Bài toán tài chính: Đầu tư, lợi nhuận và giá trị dài hạn</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Bài toán tài chính: Đầu tư, lợi nhuận và giá trị dài hạn
+                    </h3>
                     <p>Điện mặt trời áp mái nổi bật với thời gian hoàn vốn ngắn và lợi ích kéo dài hàng chục năm.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Chi phí đầu tư hệ 5 kWp:</strong>
-                            <ul class="analysis-sublist">
-                                <li>Hòa lưới / bám tải: 40 - 80 triệu đồng.</li>
-                                <li>Hybrid (có lưu trữ): 80 - 116,6 triệu đồng.</li>
-                            </ul>
-                        </li>
-                        <li><strong>Mức tiết kiệm:</strong> 1,5 - 2,4 triệu đồng/tháng, giảm 50 - 90% hóa đơn điện.</li>
-                        <li><strong>Thời gian hoàn vốn:</strong> Trung bình 4 - 6 năm, sau đó sử dụng điện gần như miễn phí 20 - 25 năm.</li>
-                    </ul>
+                    
+                    <!-- Investment Comparison Cards -->
+                    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 my-8">
+                        <div class="bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20 p-6 rounded-2xl shadow-lg border-2 border-cyan-200 dark:border-cyan-700">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-12 h-12 bg-cyan-500 text-white rounded-xl flex items-center justify-center text-2xl">🔌</div>
+                                <h4 class="text-xl font-bold text-gray-800 dark:text-white">Hòa lưới / Bám tải</h4>
+                            </div>
+                            <div class="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">40-80 triệu</div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Chi phí đầu tư hệ 5 kWp</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 p-6 rounded-2xl shadow-lg border-2 border-indigo-200 dark:border-indigo-700">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-12 h-12 bg-indigo-500 text-white rounded-xl flex items-center justify-center text-2xl">🔋</div>
+                                <h4 class="text-xl font-bold text-gray-800 dark:text-white">Hybrid (có lưu trữ)</h4>
+                            </div>
+                            <div class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">80-116 triệu</div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Chi phí đầu tư hệ 5 kWp + Pin</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Savings Highlight -->
+                    <div class="bg-gradient-to-r from-green-100 via-green-50 to-green-100 dark:from-green-900/30 dark:via-green-900/20 dark:to-green-900/30 p-8 rounded-2xl border-2 border-green-300 dark:border-green-700 my-6">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 bg-green-500 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">💰</div>
+                                <div>
+                                    <div class="text-2xl font-bold text-gray-800 dark:text-white">Mức tiết kiệm</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">Lợi ích tài chính hàng tháng</div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-4xl font-bold text-green-600 dark:text-green-400">1.5-2.4M₫</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-2">Giảm <strong>50-90%</strong> hóa đơn điện</div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="analysis-table">
                         <h4>Phân tích đầu tư và hoàn vốn cho hệ thống điện mặt trời 5 kWp</h4>
                         <table>
@@ -228,24 +850,107 @@
                     </div>
                 </article>
                 <article class="analysis-block">
-                    <h3>Vượt trên bảng cân đối kế toán: Lợi thế chiến lược và môi trường</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        Vượt trên bảng cân đối kế toán: Lợi thế chiến lược và môi trường
+                    </h3>
                     <p>Lợi ích của điện mặt trời vượt xa các phép tính ROI đơn thuần.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Tự chủ năng lượng:</strong> Hệ hybrid duy trì nguồn điện khi lưới gặp sự cố.</li>
-                        <li><strong>Bảo vệ môi trường:</strong> Mỗi kWh sạch giúp giảm phát thải CO₂, phù hợp mục tiêu ESG.</li>
-                        <li><strong>Gia tăng giá trị tài sản:</strong> Nhà có điện mặt trời có thể tăng giá trị 3 - 5%.</li>
-                        <li><strong>Làm mát công trình:</strong> Tấm pin giảm nhiệt mái 5 - 6°C, tiết kiệm chi phí điều hòa.</li>
-                    </ul>
+                    
+                    <!-- Visual Enhancement -->
+                    <div class="visual-enhancement">
+                        <img src="../Photo/pexels-pixabay-356036.jpg" alt="Năng lượng xanh bền vững cho tương lai">
+                        <div class="visual-overlay"></div>
+                        <div class="visual-caption">
+                            <div class="visual-caption-content">
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Lợi ích bền vững</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Đầu tư điện mặt trời không chỉ mang lại lợi ích tài chính mà còn góp phần bảo vệ môi trường và tăng giá trị bất động sản</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Benefits Grid -->
+                    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 my-8">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border-l-4 border-green-500 hover:shadow-xl transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">⚡</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Tự chủ năng lượng</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Hệ hybrid duy trì nguồn điện khi lưới gặp sự cố</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🌱</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Bảo vệ môi trường</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Mỗi kWh sạch giúp giảm phát thải CO₂, phù hợp mục tiêu ESG</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border-l-4 border-purple-500 hover:shadow-xl transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🏡</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Gia tăng giá trị tài sản</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Nhà có điện mặt trời có thể tăng giá trị <strong class="text-purple-600 dark:text-purple-400">3-5%</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border-l-4 border-cyan-500 hover:shadow-xl transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">❄️</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Làm mát công trình</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Tấm pin giảm nhiệt mái <strong class="text-cyan-600 dark:text-cyan-400">5-6°C</strong>, tiết kiệm điều hòa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </article>
+
                 <article class="analysis-block">
-                    <h3>Giải mã hệ thống: Cẩm nang kỹ thuật cơ bản</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        Giải mã hệ thống: Cẩm nang kỹ thuật cơ bản
+                    </h3>
                     <p>Hiểu rõ thành phần hệ thống giúp chủ đầu tư đưa ra quyết định đúng đắn.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Tấm pin:</strong> Lựa chọn theo công suất, hiệu suất, bảo hành.</li>
-                        <li><strong>Biến tần (inverter):</strong> “Bộ não” chuyển đổi DC sang AC, ưu tiên thương hiệu uy tín.</li>
-                        <li><strong>Khung giá đỡ:</strong> Bền, chống ăn mòn, chịu gió bão theo tiêu chuẩn địa phương.</li>
-                        <li><strong>Hệ lưu trữ:</strong> Pin lithium cho giải pháp hybrid, đảm bảo tuổi thọ và an toàn.</li>
-                    </ul>
+                    
+                    <!-- Visual Enhancement -->
+                    <div class="visual-enhancement">
+                        <img src="../Photo/pexels-kelly-2800832.jpg" alt="Công nghệ năng lượng mặt trời hiện đại">
+                        <div class="visual-overlay"></div>
+                        <div class="visual-caption">
+                            <div class="visual-caption-content">
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Công nghệ tiên tiến</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Hệ thống điện mặt trời với công nghệ N-Type, biến tần thông minh và hệ lưu trữ lithium hiện đại</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Components Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 my-8">
+                        <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                            <div class="text-5xl mb-4">☀️</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Tấm pin</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Công suất, hiệu suất, bảo hành</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                            <div class="text-5xl mb-4">⚙️</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Biến tần</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">"Bộ não" DC → AC</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-600/20 p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                            <div class="text-5xl mb-4">🔩</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Khung giá đỡ</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Bền, chống ăn mòn</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300">
+                            <div class="text-5xl mb-4">🔋</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Hệ lưu trữ</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Pin lithium an toàn</p>
+                        </div>
+                    </div>
                 </article>
             </div>
         </section>
@@ -256,18 +961,103 @@
                     <span class="section-index">Phần 3</span>
                     <h2>Thị trường điện mặt trời Việt Nam: Chính sách và thực tiễn</h2>
                 </header>
+
+                <!-- Market Stats -->
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-12">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl shadow-2xl text-white text-center">
+                        <div class="text-5xl mb-2">🏆</div>
+                        <div class="text-4xl font-bold mb-2">103K+</div>
+                        <div class="text-lg font-semibold">Dự án rooftop</div>
+                        <div class="text-sm opacity-90 mt-2">Cuối 2024</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 p-8 rounded-2xl shadow-2xl text-white text-center">
+                        <div class="text-5xl mb-2">⚡</div>
+                        <div class="text-4xl font-bold mb-2">9.5 GW</div>
+                        <div class="text-lg font-semibold">Tổng công suất</div>
+                        <div class="text-sm opacity-90 mt-2">Toàn quốc</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl shadow-2xl text-white text-center">
+                        <div class="text-5xl mb-2">🎯</div>
+                        <div class="text-4xl font-bold mb-2">2.6 GW</div>
+                        <div class="text-lg font-semibold">Mục tiêu 2030</div>
+                        <div class="text-sm opacity-90 mt-2">Quy hoạch VIII</div>
+                    </div>
+                </div>
+
                 <article class="analysis-block">
-                    <h3>Hiện trạng phát triển</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Hiện trạng phát triển
+                    </h3>
                     <p>Việt Nam nằm trong nhóm dẫn đầu Đông Nam Á về công suất điện mặt trời với mức phủ rộng rãi ở cả hộ gia đình và doanh nghiệp.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Độ bao phủ:</strong> Cuối 2024 có khoảng 103.000 dự án rooftop, tổng công suất trên 9.500 MW.</li>
-                        <li><strong>Mục tiêu Quy hoạch điện VIII:</strong> Bổ sung 2.600 MW mái nhà đến năm 2030, 50% công sở và hộ gia đình lắp đặt vào 2050.</li>
-                        <li><strong>Thách thức:</strong> Bùng nổ 2019 - 2020 khiến lưới quá tải, dẫn tới siết mua điện dư thừa.</li>
-                    </ul>
+                    
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 my-6">
+                        <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl border-t-4 border-green-500 text-center">
+                            <div class="text-3xl mb-3">📊</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Độ bao phủ</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">103.000 dự án rooftop, công suất <strong>9.500+ MW</strong></p>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border-t-4 border-blue-500 text-center">
+                            <div class="text-3xl mb-3">🎯</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Quy hoạch điện VIII</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">2.600 MW đến 2030, <strong>50%</strong> hộ gia đình vào 2050</p>
+                        </div>
+                        <div class="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-xl border-t-4 border-orange-500 text-center">
+                            <div class="text-3xl mb-3">⚠️</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Thách thức</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Lưới quá tải, siết mua điện dư</p>
+                        </div>
+                    </div>
                 </article>
                 <article class="analysis-block">
-                    <h3>Mô hình “tự sản, tự tiêu”: Kỷ nguyên mới sau chính sách FIT</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        Mô hình "tự sản, tự tiêu": Kỷ nguyên mới sau chính sách FIT
+                    </h3>
                     <p>Nghị định 135/2024/NĐ-CP dịch chuyển trọng tâm sang tự tiêu thụ, khuyến khích đầu tư lưu trữ và tối ưu hệ thống theo nhu cầu nội bộ.</p>
+                    
+                    <!-- FIT vs Self-Consumption Visual Comparison -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 my-8">
+                        <div class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700/50 dark:to-gray-600/50 p-6 sm:p-8 rounded-2xl shadow-lg relative overflow-hidden">
+                            <div class="absolute top-4 right-4 px-3 py-1 bg-gray-400 text-white text-xs font-bold rounded-full">CŨ</div>
+                            <div class="text-4xl mb-4">📉</div>
+                            <h4 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Mô hình FIT</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                                    <span class="text-gray-700 dark:text-gray-300">Giá mua điện dư</span>
+                                    <strong class="text-gray-800 dark:text-white">~1.943₫</strong>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                                    <span class="text-gray-700 dark:text-gray-300">Giới hạn điện dư</span>
+                                    <strong class="text-gray-800 dark:text-white">Không giới hạn</strong>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                                    <span class="text-gray-700 dark:text-gray-300">Khuyến khích lưu trữ</span>
+                                    <strong class="text-red-600 dark:text-red-400">Thấp</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 p-6 sm:p-8 rounded-2xl shadow-lg relative overflow-hidden border-2 border-green-400">
+                            <div class="absolute top-4 right-4 px-3 py-1 bg-green-600 text-white text-xs font-bold rounded-full">MỚI ✓</div>
+                            <div class="text-4xl mb-4">📈</div>
+                            <h4 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Tự tiêu thụ</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center p-3 bg-white/70 dark:bg-gray-800/70 rounded-lg">
+                                    <span class="text-gray-700 dark:text-gray-300">Giá mua điện dư</span>
+                                    <strong class="text-gray-800 dark:text-white">~671₫</strong>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white/70 dark:bg-gray-800/70 rounded-lg">
+                                    <span class="text-gray-700 dark:text-gray-300">Giới hạn điện dư</span>
+                                    <strong class="text-orange-600 dark:text-orange-400">Tối đa 20%</strong>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white/70 dark:bg-gray-800/70 rounded-lg">
+                                    <span class="text-gray-700 dark:text-gray-300">Khuyến khích lưu trữ</span>
+                                    <strong class="text-green-600 dark:text-green-400">Cao ✓</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="analysis-table">
                         <h4>So sánh chính sách giá FIT và mô hình tự tiêu thụ</h4>
                         <table>
@@ -288,14 +1078,46 @@
                     </div>
                 </article>
                 <article class="analysis-block">
-                    <h3>Từ quyết định đến vận hành: Hướng dẫn thực tế</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        Từ quyết định đến vận hành: Hướng dẫn thực tế
+                    </h3>
                     <p>Một dự án thành công cần quy trình rõ ràng từ khảo sát đến đăng ký đấu nối.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Đánh giá nhu cầu:</strong> Kiểm tra hóa đơn điện, xác định mức tiêu thụ trung bình.</li>
-                        <li><strong>Khảo sát mái:</strong> Diện tích, hướng, độ dốc, bóng che là yếu tố quyết định công suất.</li>
-                        <li><strong>Lựa chọn nhà thầu:</strong> Ưu tiên đơn vị có kinh nghiệm, chứng chỉ và bảo hành rõ ràng.</li>
-                        <li><strong>Thủ tục pháp lý:</strong> Thông báo EVN và Sở Công Thương, kể cả hệ thống tự tiêu thụ.</li>
-                    </ul>
+                    
+                    <!-- Process Steps -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 my-8">
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-5 sm:p-6 rounded-2xl shadow-lg">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">1</div>
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-white">Đánh giá nhu cầu</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 ml-16">Kiểm tra hóa đơn điện, xác định mức tiêu thụ trung bình</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-2xl shadow-lg">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">2</div>
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-white">Khảo sát mái</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 ml-16">Diện tích, hướng, độ dốc, bóng che - yếu tố quyết định công suất</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-2xl shadow-lg">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">3</div>
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-white">Lựa chọn nhà thầu</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 ml-16">Ưu tiên đơn vị có kinh nghiệm, chứng chỉ và bảo hành rõ ràng</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-2xl shadow-lg">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">4</div>
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-white">Thủ tục pháp lý</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 ml-16">Thông báo EVN và Sở Công Thương, kể cả hệ tự tiêu thụ</p>
+                        </div>
+                    </div>
                 </article>
             </div>
         </section>
@@ -306,39 +1128,148 @@
                     <span class="section-index">Phần 4</span>
                     <h2>Tổng hợp và khuyến nghị chiến lược</h2>
                 </header>
+
+                <!-- Comparison: Grid vs Solar -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-12">
+                    <div class="bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900/30 dark:to-orange-900/30 p-6 sm:p-8 rounded-2xl shadow-xl border-2 border-red-300 dark:border-red-700">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-red-500 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">⚠️</div>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white">Phụ thuộc lưới điện</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                                <span class="text-red-500 text-xl">❌</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Chi phí biến động, khó dự đoán</p>
+                            </div>
+                            <div class="flex items-start gap-3 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                                <span class="text-red-500 text-xl">❌</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Rủi ro gián đoạn điện</p>
+                            </div>
+                            <div class="flex items-start gap-3 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                                <span class="text-red-500 text-xl">❌</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Tăng giá liên tục hàng năm</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 p-6 sm:p-8 rounded-2xl shadow-xl border-2 border-green-400 dark:border-green-600">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-green-500 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">✨</div>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white">Đầu tư điện mặt trời</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                                <span class="text-green-500 text-xl">✓</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Chi phí cố định, dễ dự toán</p>
+                            </div>
+                            <div class="flex items-start gap-3 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                                <span class="text-green-500 text-xl">✓</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Lợi ích dài hạn 25+ năm</p>
+                            </div>
+                            <div class="flex items-start gap-3 bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                                <span class="text-green-500 text-xl">✓</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Tăng giá trị tài sản 3-5%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <article class="analysis-block">
-                    <h3>Bài toán so sánh: Phụ thuộc lưới điện hay đầu tư điện mặt trời?</h3>
-                    <p>Đứng trước ngã rẽ, lựa chọn nằm ở việc tiếp tục chịu chi phí leo thang của EVN hay chốt chi phí cố định để sở hữu nguồn điện chủ động.</p>
-                    <ul class="analysis-list">
-                        <li><strong>Phụ thuộc lưới điện:</strong> Chi phí biến động, khó dự đoán, rủi ro gián đoạn.</li>
-                        <li><strong>Đầu tư điện mặt trời:</strong> Chi phí cố định ban đầu, lợi ích dài hạn, gia tăng giá trị tài sản.</li>
-                    </ul>
-                </article>
-                <article class="analysis-block">
-                    <h3>Khuyến nghị hành động</h3>
+                    <h3 class="flex items-center gap-3">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Khuyến nghị hành động
+                    </h3>
+                    
                     <div class="analysis-callout" role="alert">
-                        <p class="callout-title">Lộ trình triển khai đề xuất:</p>
-                        <ol>
-                            <li><strong>Hành động ngay:</strong> Động lực tài chính đang rất mạnh. Không nên chờ chính sách FIT quay lại.</li>
-                            <li><strong>Thiết kế đúng kích cỡ:</strong> Tối ưu hệ thống cho nhu cầu tự tiêu thụ, giảm điện dư.</li>
-                            <li><strong>Chuẩn bị cho hybrid:</strong> Chọn biến tần sẵn sàng lưu trữ để nâng cấp pin trong tương lai.</li>
-                            <li><strong>Ưu tiên chất lượng:</strong> Thiết bị, nhà thầu uy tín giúp đảm bảo hiệu suất và tuân thủ.</li>
-                            <li><strong>Xem điện mặt trời như cải tạo chiến lược:</strong> Gia tăng giá trị bất động sản, củng cố an ninh năng lượng.</li>
+                        <p class="callout-title">🎯 Lộ trình triển khai đề xuất</p>
+                        <ol class="space-y-4">
+                            <li class="flex gap-4 bg-white/70 dark:bg-gray-800/70 p-5 rounded-xl">
+                                <div class="flex-shrink-0 w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg">1</div>
+                                <div>
+                                    <strong class="text-gray-800 dark:text-white block mb-1">Hành động ngay</strong>
+                                    <p class="text-gray-600 dark:text-gray-300 text-sm">Động lực tài chính đang rất mạnh. Không nên chờ chính sách FIT quay lại.</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-4 bg-white/70 dark:bg-gray-800/70 p-5 rounded-xl">
+                                <div class="flex-shrink-0 w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg">2</div>
+                                <div>
+                                    <strong class="text-gray-800 dark:text-white block mb-1">Thiết kế đúng kích cỡ</strong>
+                                    <p class="text-gray-600 dark:text-gray-300 text-sm">Tối ưu hệ thống cho nhu cầu tự tiêu thụ, giảm điện dư.</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-4 bg-white/70 dark:bg-gray-800/70 p-5 rounded-xl">
+                                <div class="flex-shrink-0 w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg">3</div>
+                                <div>
+                                    <strong class="text-gray-800 dark:text-white block mb-1">Chuẩn bị cho hybrid</strong>
+                                    <p class="text-gray-600 dark:text-gray-300 text-sm">Chọn biến tần sẵn sàng lưu trữ để nâng cấp pin trong tương lai.</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-4 bg-white/70 dark:bg-gray-800/70 p-5 rounded-xl">
+                                <div class="flex-shrink-0 w-10 h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg">4</div>
+                                <div>
+                                    <strong class="text-gray-800 dark:text-white block mb-1">Ưu tiên chất lượng</strong>
+                                    <p class="text-gray-600 dark:text-gray-300 text-sm">Thiết bị, nhà thầu uy tín giúp đảm bảo hiệu suất và tuân thủ.</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-4 bg-white/70 dark:bg-gray-800/70 p-5 rounded-xl">
+                                <div class="flex-shrink-0 w-10 h-10 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg">5</div>
+                                <div>
+                                    <strong class="text-gray-800 dark:text-white block mb-1">Xem như cải tạo chiến lược</strong>
+                                    <p class="text-gray-600 dark:text-gray-300 text-sm">Gia tăng giá trị bất động sản, củng cố an ninh năng lượng.</p>
+                                </div>
+                            </li>
                         </ol>
                     </div>
                 </article>
             </div>
         </section>
 
-        <section class="cta-banner">
-            <div class="container">
-                <div class="content">
-                    <h2>Nhận báo giá điện mặt trời phù hợp ngay hôm nay</h2>
-                    <p>Đội ngũ HC Eco System sẵn sàng khảo sát, tính toán ROI và đề xuất giải pháp tối ưu cho mái nhà hoặc nhà xưởng của bạn.</p>
-                </div>
-                <a class="btn primary" href="#contact">Đặt lịch tư vấn</a>
+        <!-- Enhanced CTA Section -->
+        <section class="relative py-16 sm:py-20 bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
             </div>
-        </section></main>
+            <div class="container mx-auto px-4 relative z-10" style="max-width: 896px;">
+                <div class="text-center">
+                    <div class="inline-block mb-6">
+                        <div class="flex items-center gap-3 bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <span class="text-white font-semibold">Giải pháp năng lượng thông minh</span>
+                        </div>
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-6">Nhận báo giá điện mặt trời phù hợp ngay hôm nay</h2>
+                    <p class="text-xl text-white/90 mb-10 max-w-2xl mx-auto">Đội ngũ HC Eco System sẵn sàng khảo sát, tính toán ROI và đề xuất giải pháp tối ưu cho mái nhà hoặc nhà xưởng của bạn.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="khao-sat-dien-mat-troi.html" class="inline-flex items-center gap-2 px-10 py-5 bg-white text-green-700 font-bold rounded-full hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            Đặt lịch tư vấn miễn phí
+                        </a>
+                        <a href="pricing.html" class="inline-flex items-center gap-2 px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                            Xem bảng giá
+                        </a>
+                    </div>
+                    
+                    <!-- Trust Indicators -->
+                    <div class="grid md:grid-cols-3 gap-8 mt-12 pt-12 border-t border-white/20">
+                        <div class="text-center text-white">
+                            <div class="text-4xl font-bold mb-2">250+</div>
+                            <div class="text-sm opacity-90">Dự án hoàn thành</div>
+                        </div>
+                        <div class="text-center text-white">
+                            <div class="text-4xl font-bold mb-2">98%</div>
+                            <div class="text-sm opacity-90">Khách hài lòng</div>
+                        </div>
+                        <div class="text-center text-white">
+                            <div class="text-4xl font-bold mb-2">25 năm</div>
+                            <div class="text-sm opacity-90">Bảo hành sản phẩm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     
 
@@ -421,9 +1352,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
 
