@@ -1,262 +1,149 @@
 <?php
-// Tắt hiển thị lỗi để không làm hỏng JSON response
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-error_log("=== SAVE SURVEY REQUEST START ===");
+require_once 'connect.php';
 
-// Bắt đầu output buffering để kiểm soát output
-ob_start();
-
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-try {
-    require_once 'db_mysqli.php'; // MySQLi connection
-    require_once 'session.php';
-} catch (Exception $e) {
-    ob_end_clean();
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Lỗi kết nối: ' . $e->getMessage()]);
-    exit();
-}
-
-// Kiểm tra method
+// Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-    exit();
+    sendError('Phương thức không được hỗ trợ', 405);
 }
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập để lưu khảo sát']);
-    exit();
+requireAuth();
+
+// Get JSON input
+$input = json_decode(file_get_contents('php://input'), true);
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    sendError('Dữ liệu JSON không hợp lệ');
 }
 
-// Lấy dữ liệu từ request
-$data = json_decode(file_get_contents('php://input'), true);
+// Validate required fields
+$requiredFields = ['region', 'phase', 'solarPanel', 'monthlyBill', 'usageTime'];
+$missingFields = validateRequired($input, $requiredFields);
 
-if (!$data) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-    exit();
+if (!empty($missingFields)) {
+    sendError('Thiếu các trường bắt buộc: ' . implode(', ', $missingFields));
 }
 
-// Validate dữ liệu
-$required_fields = ['region', 'phase', 'solarPanel', 'monthlyBill', 'usageTime'];
-foreach ($required_fields as $field) {
-    if (!isset($data[$field]) || empty($data[$field])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => "Thiếu trường: $field"]);
-        exit();
-    }
-}
-
-// Validate results nếu có
-if (isset($data['results'])) {
-    $required_result_fields = ['monthlyKWh', 'sunHours', 'panelsNeeded', 'panelCost', 
-                                'inverter', 'cabinet', 'batteryNeeded', 'totalCost'];
-    foreach ($required_result_fields as $field) {
-        if (!isset($data['results'][$field])) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => "Thiếu kết quả: $field"]);
-            exit();
+// Validate results if provided
+if (isset($input['results'])) {
+    $requiredResultFields = ['monthlyKWh', 'sunHours', 'panelsNeeded', 'panelCost', 
+                            'inverter', 'cabinet', 'batteryNeeded', 'totalCost'];
+    foreach ($requiredResultFields as $field) {
+        if (!isset($input['results'][$field])) {
+            sendError("Thiếu kết quả: $field");
         }
     }
 }
 
 try {
-    $conn->begin_transaction();
-
-    $user_id = $_SESSION['user_id'];
+    $db = Database::getInstance();
+    $userId = getCurrentUserId();
     
-    // Lấy thông tin user từ database vì session không có full_name và phone
-    $user_stmt = $conn->prepare("SELECT full_name, phone FROM users WHERE id = ?");
-    $user_stmt->bind_param("i", $user_id);
-    $user_stmt->execute();
-    $user_result = $user_stmt->get_result();
-    $user_data = $user_result->fetch_assoc();
-    $user_stmt->close();
-    
-    if (!$user_data) {
-        throw new Exception('Không tìm thấy thông tin người dùng');
+    // Get user info
+    $user = $db->selectOne('users', ['id' => $userId], 'full_name, phone');
+    if (!$user) {
+        sendError('Không tìm thấy thông tin người dùng');
     }
     
-    $full_name = $user_data['full_name'];
-    $phone = $user_data['phone'];
-
-    // Insert vào bảng solar_surveys
-    $stmt = $conn->prepare("
-        INSERT INTO solar_surveys 
-        (user_id, full_name, phone, region, phase, solar_panel_type, monthly_bill, usage_time) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-
-    $stmt->bind_param(
-        "isssiiis",
-        $user_id,
-        $full_name,
-        $phone,
-        $data['region'],
-        $data['phase'],
-        $data['solarPanel'],
-        $data['monthlyBill'],
-        $data['usageTime']
-    );
-
-    if (!$stmt->execute()) {
-        throw new Exception('Lỗi khi lưu thông tin khảo sát: ' . $stmt->error);
-    }
-
-    $survey_id = $conn->insert_id;
-
-    // Nếu có kết quả tính toán, lưu vào survey_results
-    if (isset($data['results'])) {
-        $results = $data['results'];
+    // Begin transaction
+    $pdo = $db->getConnection();
+    $pdo->beginTransaction();
+    
+    // Insert into solar_surveys
+    $surveyData = [
+        'user_id' => $userId,
+        'full_name' => $user['full_name'],
+        'phone' => $user['phone'],
+        'region' => sanitizeInput($input['region']),
+        'phase' => (int)$input['phase'],
+        'solar_panel_type' => (int)$input['solarPanel'],
+        'monthly_bill' => (float)$input['monthlyBill'],
+        'usage_time' => sanitizeInput($input['usageTime'])
+    ];
+    
+    $surveyId = $db->insert('solar_surveys', $surveyData);
+    
+    // If results provided, insert into survey_results
+    if (isset($input['results'])) {
+        $results = $input['results'];
         
-        // Xác định battery type được chọn
-        $battery_type = isset($data['selectedBattery']) ? $data['selectedBattery'] : 
+        // Determine battery type
+        $batteryType = isset($input['selectedBattery']) ? $input['selectedBattery'] : 
                        ($results['batteryOptions'][0]['totalCost'] <= $results['batteryOptions'][1]['totalCost'] ? '8cell' : '16cell');
         
-        $battery_index = ($battery_type === '8cell') ? 0 : 1;
-        $selected_battery = $results['batteryOptions'][$battery_index];
+        $batteryIndex = ($batteryType === '8cell') ? 0 : 1;
+        $selectedBattery = $results['batteryOptions'][$batteryIndex];
         
-        // Lấy thông tin region name
-        $region_names = [
+        // Region names
+        $regionNames = [
             'mien-bac' => 'Miền Bắc',
-            'mien-trung' => 'Miền Trung',
+            'mien-trung' => 'Miền Trung', 
             'mien-nam' => 'Miền Nam'
         ];
-        $region_name = $region_names[$data['region']] ?? 'Không xác định';
+        $regionName = $regionNames[$input['region']] ?? 'Không xác định';
         
-        // Lấy thông tin panel
-        $panel_info = $results['panelInfo'];
+        $panelInfo = $results['panelInfo'];
+        $totalCostWithoutBattery = $results['totalCost'] - $selectedBattery['totalCost'];
+        $billBreakdownJson = json_encode($results['billBreakdown']);
         
-        // Tính total_cost_without_battery
-        $total_cost_without_battery = $results['totalCost'] - $selected_battery['totalCost'];
+        $resultData = [
+            'survey_id' => $surveyId,
+            'monthly_kwh' => (float)$results['monthlyKWh'],
+            'sun_hours' => (float)$results['sunHours'],
+            'region_name' => $regionName,
+            'panel_id' => (int)$panelInfo['id'],
+            'panel_name' => $panelInfo['name'],
+            'panel_power' => (float)$panelInfo['power'],
+            'panel_price' => (float)$panelInfo['price'],
+            'panels_needed' => (int)$results['panelsNeeded'],
+            'panel_cost' => (float)$results['panelCost'],
+            'energy_per_panel_per_day' => (float)$results['energyPerPanelPerDay'],
+            'total_capacity' => (float)$results['totalCapacity'],
+            'inverter_id' => (int)$results['inverter']['id'],
+            'inverter_name' => $results['inverter']['name'],
+            'inverter_capacity' => (float)$results['inverter']['capacity'],
+            'inverter_price' => (float)$results['inverter']['price'],
+            'cabinet_id' => (int)$results['cabinet']['id'],
+            'cabinet_name' => $results['cabinet']['name'],
+            'cabinet_capacity' => (float)$results['cabinet']['capacity'],
+            'cabinet_price' => (float)$results['cabinet']['price'],
+            'battery_needed' => (float)$results['batteryNeeded'],
+            'battery_type' => $batteryType,
+            'battery_id' => (int)$selectedBattery['id'],
+            'battery_name' => $selectedBattery['name'],
+            'battery_capacity' => (float)$selectedBattery['capacity'],
+            'battery_quantity' => (int)$selectedBattery['quantity'],
+            'battery_unit_price' => (float)$selectedBattery['price'],
+            'battery_cost' => (float)$selectedBattery['totalCost'],
+            'bach_z_qty' => (int)$results['accessories']['bachZ']['qty'],
+            'bach_z_price' => (float)$results['accessories']['bachZ']['price'],
+            'bach_z_cost' => (float)$results['accessories']['bachZ']['cost'],
+            'clip_qty' => (int)$results['accessories']['clip']['qty'],
+            'clip_price' => (float)$results['accessories']['clip']['price'],
+            'clip_cost' => (float)$results['accessories']['clip']['cost'],
+            'jack_mc4_qty' => (int)$results['accessories']['jackMC4']['qty'],
+            'jack_mc4_price' => (float)$results['accessories']['jackMC4']['price'],
+            'jack_mc4_cost' => (float)$results['accessories']['jackMC4']['cost'],
+            'dc_cable_length' => (int)$results['dcCable']['length'],
+            'dc_cable_price' => (float)$results['dcCable']['price'],
+            'dc_cable_cost' => (float)$results['dcCable']['cost'],
+            'accessories_cost' => (float)$results['accessoriesCost'],
+            'labor_cost' => (float)$results['laborCost'],
+            'total_cost_without_battery' => $totalCostWithoutBattery,
+            'total_cost' => (float)$results['totalCost'],
+            'bill_breakdown' => $billBreakdownJson
+        ];
         
-        // Chuyển billBreakdown thành JSON
-        $bill_breakdown_json = json_encode($results['billBreakdown']);
-
-        // DEBUG: Log dữ liệu trước khi insert
-        error_log("=== SAVE SURVEY DEBUG ===");
-        error_log("Survey ID: " . $survey_id);
-        error_log("Battery Index: " . $battery_index);
-        error_log("Panel Info: " . print_r($panel_info, true));
-        error_log("Accessories: " . print_r($results['accessories'], true));
-        error_log("DC Cable: " . print_r($results['dcCable'], true));
-
-        $stmt2 = $conn->prepare("
-            INSERT INTO survey_results 
-            (survey_id, monthly_kwh, sun_hours, region_name,
-             panel_id, panel_name, panel_power, panel_price, panels_needed, panel_cost, 
-             energy_per_panel_per_day, total_capacity,
-             inverter_id, inverter_name, inverter_capacity, inverter_price,
-             cabinet_id, cabinet_name, cabinet_capacity, cabinet_price,
-             battery_needed, battery_type, battery_id, battery_name, battery_capacity, 
-             battery_quantity, battery_unit_price, battery_cost,
-             bach_z_qty, bach_z_price, bach_z_cost,
-             clip_qty, clip_price, clip_cost,
-             jack_mc4_qty, jack_mc4_price, jack_mc4_cost,
-             dc_cable_length, dc_cable_price, dc_cable_cost,
-             accessories_cost, labor_cost, 
-             total_cost_without_battery, total_cost, bill_breakdown)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        
-        if (!$stmt2) {
-            throw new Exception('Prepare failed: ' . $conn->error);
-        }
-
-        $stmt2->bind_param(
-            "iddsisddidddisddisdddsisdiddiddiddiddidddddds",
-            $survey_id,                                 // 1.  i - survey_id (INT)
-            $results['monthlyKWh'],                     // 2.  d - monthly_kwh (DECIMAL)
-            $results['sunHours'],                       // 3.  d - sun_hours (DECIMAL)
-            $region_name,                               // 4.  s - region_name (VARCHAR)
-            $panel_info['id'],                          // 5.  i - panel_id (INT)
-            $panel_info['name'],                        // 6.  s - panel_name (VARCHAR)
-            $panel_info['power'],                       // 7.  d - panel_power (DECIMAL)
-            $panel_info['price'],                       // 8.  d - panel_price (DECIMAL)
-            $results['panelsNeeded'],                   // 9.  d - panels_needed (INT but use d)
-            $results['panelCost'],                      // 10. d - panel_cost (DECIMAL)
-            $results['energyPerPanelPerDay'],           // 11. d - energy_per_panel_per_day (DECIMAL)
-            $results['totalCapacity'],                  // 12. d - total_capacity (DECIMAL)
-            $results['inverter']['id'],                 // i - inverter_id (INT)
-            $results['inverter']['name'],               // s - inverter_name (VARCHAR)
-            $results['inverter']['capacity'],           // d - inverter_capacity (DECIMAL)
-            $results['inverter']['price'],              // d - inverter_price (DECIMAL)
-            $results['cabinet']['id'],                  // i - cabinet_id (INT)
-            $results['cabinet']['name'],                // s - cabinet_name (VARCHAR)
-            $results['cabinet']['capacity'],            // d - cabinet_capacity (DECIMAL)
-            $results['cabinet']['price'],               // d - cabinet_price (DECIMAL)
-            $results['batteryNeeded'],                  // d - battery_needed (DECIMAL)
-            $battery_type,                              // s - battery_type (VARCHAR)
-            $selected_battery['id'],                    // i - battery_id (INT)
-            $selected_battery['name'],                  // s - battery_name (VARCHAR)
-            $selected_battery['capacity'],              // d - battery_capacity (DECIMAL)
-            $selected_battery['quantity'],              // i - battery_quantity (INT - FIXED from d to i)
-            $selected_battery['price'],                 // d - battery_unit_price (DECIMAL)
-            $selected_battery['totalCost'],             // d - battery_cost (DECIMAL)
-            $results['accessories']['bachZ']['qty'],    // i - bach_z_qty (INT)
-            $results['accessories']['bachZ']['price'],  // d - bach_z_price (DECIMAL - FIXED from i)
-            $results['accessories']['bachZ']['cost'],   // d - bach_z_cost (DECIMAL)
-            $results['accessories']['clip']['qty'],     // d - clip_qty (INT - but using d is ok)
-            $results['accessories']['clip']['price'],   // d - clip_price (DECIMAL - FIXED from i)
-            $results['accessories']['clip']['cost'],    // d - clip_cost (DECIMAL - FIXED from i)
-            $results['accessories']['jackMC4']['qty'],  // d - jack_mc4_qty (INT)
-            $results['accessories']['jackMC4']['price'],// d - jack_mc4_price (DECIMAL)
-            $results['accessories']['jackMC4']['cost'], // d - jack_mc4_cost (DECIMAL - FIXED from i)
-            $results['dcCable']['length'],              // i - dc_cable_length (INT)
-            $results['dcCable']['price'],               // d - dc_cable_price (DECIMAL)
-            $results['dcCable']['cost'],                // d - dc_cable_cost (DECIMAL)
-            $results['accessoriesCost'],                // d - accessories_cost (DECIMAL)
-            $results['laborCost'],                      // d - labor_cost (DECIMAL)
-            $total_cost_without_battery,                // d - total_cost_without_battery (DECIMAL)
-            $results['totalCost'],                      // d - total_cost (DECIMAL)
-            $bill_breakdown_json                        // s - bill_breakdown (JSON/TEXT)
-        );
-
-        if (!$stmt2->execute()) {
-            throw new Exception('Lỗi khi lưu kết quả khảo sát: ' . $stmt2->error);
-        }
-
-        $stmt2->close();
+        $db->insert('survey_results', $resultData);
     }
-
-    $conn->commit();
     
-    // Clear any output buffer before sending JSON
-    ob_end_clean();
-
-    echo json_encode([
-        'success' => true,
-        'message' => 'Đã lưu thông tin khảo sát thành công',
-        'survey_id' => $survey_id
-    ]);
-
+    $pdo->commit();
+    sendSuccess(['survey_id' => $surveyId], 'Đã lưu thông tin khảo sát thành công');
+    
 } catch (Exception $e) {
-    $conn->rollback();
-    
-    // Clear any output buffer before sending JSON
-    ob_end_clean();
-    
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ]);
-} finally {
-    if (isset($stmt)) $stmt->close();
-    $conn->close();
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log("Save Survey error: " . $e->getMessage());
+    sendError('Không thể lưu khảo sát: ' . $e->getMessage(), 500);
 }
 ?>

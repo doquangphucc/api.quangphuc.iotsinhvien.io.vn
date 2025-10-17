@@ -1,39 +1,15 @@
 ﻿<?php
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
+require_once 'connect.php';
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+requireAuth();
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+$userId = getCurrentUserId();
 
 try {
-    require_once 'db_mysqli.php';
-    require_once 'session.php';
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Lỗi kết nối: ' . $e->getMessage()]);
-    exit();
-}
-
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập để xem lịch sử khảo sát']);
-    exit();
-}
-
-try {
-    $user_id = $_SESSION['user_id'];
+    $db = Database::getInstance();
     
-    // Lấy danh sách khảo sát của user với ĐẦY ĐỦ 50+ trường
-    $stmt = $conn->prepare("
+    // Get surveys with results using JOIN
+    $sql = "
         SELECT 
             s.id,
             s.full_name,
@@ -93,16 +69,15 @@ try {
         LEFT JOIN survey_results r ON s.id = r.survey_id
         WHERE s.user_id = ?
         ORDER BY s.created_at DESC
-    ");
+    ";
     
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt = $db->query($sql, [$userId]);
+    $rows = $stmt->fetchAll();
     
     $surveys = [];
-    while ($row = $result->fetch_assoc()) {
+    foreach ($rows as $row) {
         $survey = [
-            'id' => $row['id'],
+            'id' => (int)$row['id'],
             'fullName' => $row['full_name'],
             'phone' => $row['phone'],
             'region' => $row['region'],
@@ -114,7 +89,7 @@ try {
             'createdAt' => $row['created_at']
         ];
         
-        // Nếu có kết quả tính toán
+        // If results exist, add them
         if ($row['result_id']) {
             $survey['results'] = [
                 'monthlyKWh' => (float)$row['monthly_kwh'],
@@ -183,20 +158,13 @@ try {
         $surveys[] = $survey;
     }
     
-    $stmt->close();
-    $conn->close();
-    
-    echo json_encode([
-        'success' => true,
+    sendSuccess([
         'surveys' => $surveys,
         'total' => count($surveys)
     ]);
 
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Lỗi: ' . $e->getMessage()
-    ]);
+    error_log("Get Survey History error: " . $e->getMessage());
+    sendError('Lỗi hệ thống, không thể lấy lịch sử khảo sát: ' . $e->getMessage(), 500);
 }
 ?>
