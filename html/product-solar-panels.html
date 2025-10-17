@@ -1,31 +1,390 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Tấm pin năng lượng mặt trời chất lượng cao - Giải pháp tối ưu cho hệ thống điện mặt trời" />
+    <meta name="description" content="Tấm pin năng lượng mặt trời Jinko 590W-630W Tiger Neo N-Type - Tier 1, bảo hành 30 năm" />
     <title>Tấm Pin Năng Lượng Mặt Trời - HC Eco System</title>
         
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter with Vietnamese subset -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
-    
-    <!-- Favicon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    
+    <style>
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+        }
+        
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a202c;
+        }
+        
+        body[data-theme="dark"] { background-color: #12181B; color: #f7fafc; }
+        .theme-toggle__icon { display: none; }
+        body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
+        body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+
+        .auth-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .auth-btn--login { background-color: #f3f4f6; color: #1f2937; }
+        .auth-btn--register { background-color: #16a34a; color: white; }
+
+        .product-hero {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+            padding: 80px 20px 60px;
+            text-align: center;
+        }
+
+        .product-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3FA34D, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .product-hero p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.8;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            background: linear-gradient(135deg, #3FA34D, #22c55e);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .product-highlights {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .highlight-item {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-width: 140px;
+        }
+
+        .highlight-item strong {
+            display: block;
+            font-size: 1.8rem;
+            color: #3FA34D;
+            font-weight: 800;
+        }
+
+        .back-to-pricing {
+            text-align: left;
+            padding: 20px 20px 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3FA34D 0%, #4CAF50 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(63, 163, 77, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.4);
+        }
+
+        .products-grid {
+            display: grid;
+            gap: 30px;
+            padding: 60px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .products-grid.grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 1000px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3FA34D, #4CAF50, #66BB6A);
+        }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 60px rgba(63, 163, 77, 0.25);
+        }
+
+        .product-image-container {
+            background: linear-gradient(135deg, #f8fdf8 0%, #ffffff 100%);
+            padding: 40px;
+            text-align: center;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image-container img {
+            max-width: 100%;
+            height: auto;
+            max-height: 220px;
+            object-fit: contain;
+            transition: transform 0.4s;
+        }
+
+        .product-card:hover .product-image-container img {
+            transform: scale(1.08);
+        }
+
+        .product-content { padding: 35px; }
+
+        .product-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c5530;
+            margin-bottom: 20px;
+        }
+
+        .product-specs ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+
+        .product-specs ul li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .product-specs ul li:last-child { border-bottom: none; }
+        .product-specs ul li strong { color: #3FA34D; font-weight: 600; flex: 0 0 45%; }
+        .product-specs ul li span { color: #555; flex: 1; text-align: right; }
+
+        .product-price-section {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .price-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #3FA34D;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .price-main {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #3FA34D;
+            margin-bottom: 5px;
+        }
+
+        .price-package {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 2px dashed #3FA34D;
+        }
+
+        .package-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #2c5530;
+        }
+
+        .product-actions { display: flex; gap: 12px; }
+
+        .product-actions .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .product-actions .btn.primary {
+            background: linear-gradient(135deg, #3FA34D, #2d7a3d);
+            color: white;
+            box-shadow: 0 8px 20px rgba(63, 163, 77, 0.3);
+        }
+
+        .product-actions .btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(63, 163, 77, 0.4);
+        }
+
+        .product-actions .btn.secondary {
+            background: white;
+            color: #3FA34D;
+            border: 2px solid #3FA34D;
+        }
+
+        .product-actions .btn.secondary:hover {
+            background: #3FA34D;
+            color: white;
+        }
+
+        .features-section {
+            background: white;
+            padding: 60px 0;
+        }
+
+        .features-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2c5530;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+            padding: 25px 20px;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #3FA34D;
+        }
+
+        .feature-icon { font-size: 2.2rem; margin-bottom: 12px; }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c5530;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p { color: #666; line-height: 1.5; font-size: 0.9rem; }
+
+        .cta-banner {
+            background: linear-gradient(135deg, #3FA34D 0%, #1E5631 100%);
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-banner h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-banner .btn {
+            background: white;
+            color: #3FA34D;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 1024px) {
+            .products-grid.grid-2 { grid-template-columns: repeat(2, 1fr); max-width: 900px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        }
+
+        @media (max-width: 768px) {
+            .product-hero h1 { font-size: 2.2rem; }
+            .products-grid, .products-grid.grid-2 { 
+                grid-template-columns: 1fr !important; 
+                padding: 40px 15px;
+                max-width: 600px;
+            }
+            .features-grid { grid-template-columns: 1fr; gap: 15px; padding: 0 15px; }
+            .feature-card { padding: 20px 15px; }
+            .product-actions { flex-direction: column; }
+            .back-to-pricing { padding: 15px 15px 0 15px; text-align: center; }
+            .back-btn { font-size: 0.85rem; padding: 8px 16px; }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
-    
 
-    <!-- Header -->
     <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-20">
-                <!-- Branding -->
                 <a href="../index.html" class="flex items-center gap-3">
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
@@ -34,7 +393,6 @@
                     </div>
                 </a>
 
-                <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
                     <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
                     <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
@@ -44,27 +402,19 @@
                     <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
                 </nav>
 
-                <!-- Actions -->
                 <div class="flex items-center gap-2">
                     <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
-                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
                     <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
-                    
-                    <!-- Auth buttons will appear here, integrated into the header -->
-                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2">
-                        <!-- Dynamically populated by auth.js -->
-                    </div>
-
-                    <!-- Mobile Menu Button -->
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2"></div>
                     <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Navigation -->
         <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
             <nav class="flex flex-col gap-2">
                 <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
@@ -77,166 +427,153 @@
         </div>
     </header>
 
-    <!-- Floating Cart Button -->
     <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
     </a>
 
-    <!-- Main Content -->
-<main>
-    <section class="product-hero">
-        <div class="container">
-            <div class="product-hero-content">
-                <div class="product-info">
-                    <span class="eyebrow">TẤM PIN NĂNG LƯỢNG MẶT TRỜI · TIGER NEO 590W-630W · N-TYPE · TIER 1</span>
-                    <h1>Tấm Pin Năng Lượng Mặt Trời Tiger Neo</h1>
-                    <p>Tấm pin năng lượng mặt trời Jinko 590W-630W Tiger Neo với công nghệ N-Type tiên tiến, bảo hành hiệu suất 30 năm từ thương hiệu Tier 1 uy tín Jinko Solar.</p>
-                    <div class="product-highlights">
-                        <div class="highlight-item">
-                            <strong>590W-630W</strong>
-                            <span>Công suất cực đại</span>
+    <main>
+        <section class="product-hero">
+            <div class="container">
+                <span class="eyebrow">TẤM PIN NĂNG LƯỢNG MẶT TRỜI · TIGER NEO 590W-630W · N-TYPE · TIER 1</span>
+                <h1>Tấm Pin Năng Lượng Mặt Trời Tiger Neo</h1>
+                <p>Tấm pin năng lượng mặt trời Jinko 590W-630W Tiger Neo với công nghệ N-Type tiên tiến, bảo hành hiệu suất 30 năm từ thương hiệu Tier 1 uy tín Jinko Solar.</p>
+                <div class="product-highlights">
+                    <div class="highlight-item">
+                        <strong>590W-630W</strong>
+                        <span>Công suất cực đại</span>
+                    </div>
+                    <div class="highlight-item">
+                        <strong>N-Type</strong>
+                        <span>Công nghệ Tiger Neo</span>
+                    </div>
+                    <div class="highlight-item">
+                        <strong>30 năm</strong>
+                        <span>Bảo hành hiệu suất</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="back-to-pricing">
+            <a href="pricing.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Về trang bảng giá
+            </a>
+        </div>
+        
+        <div class="products-grid grid-2">
+            <!-- Product 1: 590W -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="../assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg" alt="Tấm Pin Jinko Solar 590W Tiger Neo" />
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Tấm Pin Jinko Solar 590W Tiger Neo</h3>
+                    <div class="product-specs">
+                        <ul>
+                            <li><strong>Model:</strong> <span>Jinko Tiger Neo 590W N-Type</span></li>
+                            <li><strong>Công suất:</strong> <span>590W</span></li>
+                            <li><strong>Kích thước:</strong> <span>1134 × 2278 × 30mm</span></li>
+                            <li><strong>Diện tích:</strong> <span>2,583m² / 1 tấm pin</span></li>
+                            <li><strong>Công nghệ:</strong> <span>N-Type Tiger Neo</span></li>
+                            <li><strong>Suy hao:</strong> <span>≤1% năm 1, 0,40%/năm</span></li>
+                            <li><strong>Thương hiệu:</strong> <span>Jinko Solar (Tier 1)</span></li>
+                            <li><strong>Bảo hành:</strong> <span>12 năm SP, 30 năm hiệu suất</span></li>
+                        </ul>
+                    </div>
+                    <div class="product-price-section">
+                        <div class="price-label">Giá Niêm Yết</div>
+                        <div class="price-main">2.300.000₫</div>
+                        <div class="price-unit">2.3 triệu/tấm</div>
+                        <div class="price-package">
+                            <div class="package-label">Giá Lắp Đặt Trọn Gói</div>
+                            <div class="package-value">1.800.000 ₫</div>
                         </div>
-                        <div class="highlight-item">
-                            <strong>N-Type</strong>
-                            <span>Công nghệ Tiger Neo</span>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn primary" data-product-id="1">🛒 Thêm vào giỏ hàng</button>
+                        <button class="btn secondary">💬 Mua hàng</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2: 630W -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png" alt="Tấm Pin Jinko Solar 630W Tiger Neo" />
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Tấm Pin Jinko Solar 630W Tiger Neo</h3>
+                    <div class="product-specs">
+                        <ul>
+                            <li><strong>Model:</strong> <span>Jinko Tiger Neo 630W N-Type</span></li>
+                            <li><strong>Công suất:</strong> <span>630W</span></li>
+                            <li><strong>Kích thước:</strong> <span>1134 × 2382 × 35mm</span></li>
+                            <li><strong>Diện tích:</strong> <span>2,702m² / 1 tấm pin</span></li>
+                            <li><strong>Công nghệ:</strong> <span>N-Type Tiger Neo</span></li>
+                            <li><strong>Suy hao:</strong> <span>≤1% năm 1, 0,40%/năm</span></li>
+                            <li><strong>Thương hiệu:</strong> <span>Jinko Solar (Tier 1)</span></li>
+                            <li><strong>Bảo hành:</strong> <span>12 năm SP, 30 năm hiệu suất</span></li>
+                        </ul>
+                    </div>
+                    <div class="product-price-section">
+                        <div class="price-label">Giá Niêm Yết</div>
+                        <div class="price-main">2.600.000₫</div>
+                        <div class="price-unit">2.6 triệu/tấm</div>
+                        <div class="price-package">
+                            <div class="package-label">Giá Lắp Đặt Trọn Gói</div>
+                            <div class="package-value">1.950.000 ₫</div>
                         </div>
-                        <div class="highlight-item">
-                            <strong>30 năm</strong>
-                            <span>Bảo hành hiệu suất</span>
-                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn primary" data-product-id="2">🛒 Thêm vào giỏ hàng</button>
+                        <button class="btn secondary">💬 Mua hàng</button>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <section class="product-details-table">
-        <div class="container">
-            <h2>Chi tiết Tấm Pin Năng Lượng Mặt Trời - Dòng Tiger Neo</h2>
-            <div class="products-table">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td class="product-image">
-                                <img src="../assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg" alt="Tấm Pin Jinko Solar 590W Tiger Neo" />
-                            </td>
-                            <td class="product-specs">
-                                <h4>Tấm Pin Jinko Solar 590W Tiger Neo</h4>
-                                <ul>
-                                    <li><strong>Model:</strong> <span>Jinko Tiger Neo 590W N-Type</span></li>
-                                    <li><strong>Công suất:</strong> <span>590W</span></li>
-                                    <li><strong>Kích thước:</strong> <span>1134 × 2278 × 30mm</span></li>
-                                    <li><strong>Diện tích:</strong> <span>2,583m² / 1 tấm pin</span></li>
-                                    <li><strong>Công nghệ:</strong> <span>N-Type Tiger Neo</span></li>
-                                    <li><strong>Suy hao:</strong> <span>Năm đầu ≤1%, sau đó 0,40%/năm</span></li>
-                                    <li><strong>Thương hiệu:</strong> <span>Jinko Solar (Tier 1)</span></li>
-                                    <li><strong>Bảo hành:</strong> <span>12 năm sản phẩm, 30 năm hiệu suất (≥87,4%)</span></li>
-                                </ul>
-                            </td>
-                            <td class="product-price">
-                                <div class="price-label">Giá Niêm Yết</div>
-                                <div class="price-main">2.300.000₫</div>
-                                <div class="price-unit">2.3 triệu/tấm</div>
-                                <div class="price-package">
-                                    <div class="package-label">Giá Lắp Đặt Trọn Gói</div>
-                                    <div class="package-value">1.800.000 ₫</div>
-                                </div>
-                            </td>
-                            <td class="product-actions">
-                                <button class="btn primary" data-product-id="1">🛒 Thêm vào giỏ hàng</button>
-                                <button class="btn secondary">💬 Mua hàng</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="product-image">
-                                <img src="../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png" alt="Tấm Pin Jinko Solar 630W Tiger Neo" />
-                            </td>
-                            <td class="product-specs">
-                                <h4>Tấm Pin Jinko Solar 630W Tiger Neo</h4>
-                                <ul>
-                                    <li><strong>Model:</strong> <span>Jinko Tiger Neo 630W N-Type</span></li>
-                                    <li><strong>Công suất:</strong> <span>630W</span></li>
-                                    <li><strong>Kích thước:</strong> <span>1134 × 2382 × 35mm</span></li>
-                                    <li><strong>Diện tích:</strong> <span>2,702m² / 1 tấm pin</span></li>
-                                    <li><strong>Công nghệ:</strong> <span>N-Type Tiger Neo</span></li>
-                                    <li><strong>Suy hao:</strong> <span>Năm đầu ≤1%, sau đó 0,40%/năm</span></li>
-                                    <li><strong>Thương hiệu:</strong> <span>Jinko Solar (Tier 1)</span></li>
-                                    <li><strong>Bảo hành:</strong> <span>12 năm sản phẩm, 30 năm hiệu suất (≥87,4%)</span></li>
-                                </ul>
-                            </td>
-                            <td class="product-price">
-                                <div class="price-label">Giá Niêm Yết</div>
-                                <div class="price-main">2.600.000₫</div>
-                                <div class="price-unit">2.6 triệu/tấm</div>
-                                <div class="price-package">
-                                    <div class="package-label">Giá Lắp Đặt Trọn Gói</div>
-                                    <div class="package-value">1.950.000 ₫</div>
-                                </div>
-                            </td>
-                            <td class="product-actions">
-                                <button class="btn primary" data-product-id="2">🛒 Thêm vào giỏ hàng</button>
-                                <button class="btn secondary">💬 Mua hàng</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-    <section class="product-features">
-        <div class="container">
-            <h2>Tính năng nổi bật Tấm Pin Mặt Trời</h2>
-            <div class="features-grid">
-                <article class="feature-card">
-                    <div class="feature-icon">☀️</div>
-                    <h3>Công Nghệ N-Type Tiger Neo</h3>
-                    <p>Công nghệ N-Type Tiger Neo tiên tiến với hiệu suất cao, suy hao thấp chỉ 0,40%/năm sau năm đầu.</p>
-                </article>
-                
-                <article class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Công Suất Cao 590W - 630W</h3>
-                    <p>Công suất cao từ 590W đến 630W, tối ưu hóa không gian lắp đặt và hiệu quả đầu tư cho mọi loại mái nhà.</p>
-                </article>
-                
-                <article class="feature-card">
-                    <div class="feature-icon">🏆</div>
-                    <h3>Thương Hiệu Tier 1</h3>
-                    <p>Sản phẩm từ thương hiệu hàng đầu thế giới Jinko Solar - thương hiệu Tier 1 với chất lượng đã được chứng minh qua nhiều năm.</p>
-                </article>
-                
-                <article class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Bảo Hành Lâu Dài</h3>
-                    <p>Bảo hành 12 năm cho sản phẩm và 30 năm hiệu suất, đảm bảo yên tâm sử dụng lâu dài.</p>
-                </article>
-            </div>
-        </div>
-    </section>
 
-    <section class="cta-banner">
-        <div class="container">
-            <div class="content">
-                <h2>Cần tư vấn Tấm Pin Mặt Trời?</h2>
-                <p>Liên hệ ngay để được tư vấn miễn phí và nhận báo giá tốt nhất cho hệ thống tấm pin năng lượng mặt trời phù hợp với nhu cầu của bạn.</p>
+        <section class="features-section">
+            <div class="container">
+                <h2>Tính năng nổi bật Tấm Pin Mặt Trời</h2>
+                <div class="features-grid">
+                    <article class="feature-card">
+                        <div class="feature-icon">☀️</div>
+                        <h3>Công Nghệ N-Type Tiger Neo</h3>
+                        <p>Công nghệ N-Type Tiger Neo tiên tiến với hiệu suất cao, suy hao thấp chỉ 0,40%/năm sau năm đầu.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Công Suất Cao 590W - 630W</h3>
+                        <p>Công suất cao từ 590W đến 630W, tối ưu hóa không gian lắp đặt và hiệu quả đầu tư cho mọi loại mái nhà.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Bảo Hành 30 Năm Hiệu Suất</h3>
+                        <p>Bảo hành sản phẩm 12 năm, bảo hành hiệu suất 30 năm (≥87,4%), đảm bảo hoạt động ổn định lâu dài.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="feature-icon">🏭</div>
+                        <h3>Thương Hiệu Tier 1 Uy Tín</h3>
+                        <p>Jinko Solar là thương hiệu Tier 1 hàng đầu thế giới, đảm bảo chất lượng và dịch vụ hậu mãi tốt nhất.</p>
+                    </article>
+                </div>
             </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <a class="btn primary" href="index.html#contact">Nhận tư vấn miễn phí</a></div>
-        </div>
-    </section>
-</main>
-<!-- Floating Action Button for Cart -->
-<a href="gio-hang.html" class="cart-fab" id="cart-fab">
-    🛒
-    <span class="fab-badge" id="fab-cart-count" style="display: none;">0</span>
-</a>
+        </section>
 
+        <section class="cta-banner">
+            <div class="container">
+                <h2>Cần tư vấn tấm pin phù hợp?</h2>
+                <p>HC Eco System cung cấp tư vấn, thiết kế và lắp đặt hệ thống điện mặt trời với tấm pin chất lượng cao nhất.</p>
+                <a class="btn" href="index.html#contact">Nhận tư vấn miễn phí</a>
+            </div>
+        </section>
+    </main>
 
-    <!-- Footer -->
     <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
         <div class="container mx-auto px-4 py-12">
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-                <!-- Branding & Copyright -->
                 <div class="space-y-4">
                      <a href="../index.html" class="flex items-center gap-3">
                         <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
@@ -246,8 +583,6 @@
                     </a>
                     <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
                 </div>
-
-                <!-- Contact Info -->
                 <div class="space-y-2">
                     <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
                     <ul class="text-sm text-gray-400 space-y-1">
@@ -255,59 +590,28 @@
                         <li><strong>Zalo:</strong> 0988 919 868</li>
                         <li><strong>Email:</strong> hcecosystem@gmail.com</li>
                         <li><strong>Website:</strong> hcecosystem.vn</li>
-                        <li><strong>Mã số thuế:</strong> 0123456789</li>
-                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
                     </ul>
                 </div>
-
-                <!-- Policies -->
                 <div class="space-y-2">
                      <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
                     <ul class="text-sm space-y-1">
                         <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
                         <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
-                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
-                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
-                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
                         <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
-                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
     
-    <!-- Scripts (IDs preserved) -->
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script>
-        // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        const header = document.getElementById('header');
-
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-        
-        // Close menu when a link is clicked
-        mobileMenu.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                mobileMenu.classList.add('hidden');
-            }
-        });
-        
-        // Hide menu on scroll for better UX
-        let lastScrollTop = 0;
-        window.addEventListener("scroll", function(){ 
-           var st = window.pageYOffset || document.documentElement.scrollTop; 
-           if (st > lastScrollTop){
-              // downscroll
-              mobileMenu.classList.add('hidden');
-           }
-           lastScrollTop = st <= 0 ? 0 : st;
-        }, false);
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        mobileMenu.addEventListener('click', (e) => { if (e.target.tagName === 'A') mobileMenu.classList.add('hidden'); });
     </script>
 </body>
 </html>

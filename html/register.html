@@ -16,7 +16,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
     
-    <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
         :root {
             --color-primary: #1E5631;
@@ -31,11 +30,8 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-dark);
             transition: background-color 0.3s, color 0.3s;
         }
-        /* Dark Mode styles */
         body[data-theme="dark"] {
             background-color: #12181B;
             color: var(--color-text-light);
@@ -50,7 +46,6 @@
         body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
         body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
 
-        /* Styles for dynamically injected auth buttons */
         .auth-btn {
             padding: 0.6rem 1rem;
             border-radius: 9999px;
@@ -60,289 +55,185 @@
             line-height: 1.25rem;
             text-decoration: none;
         }
-        /* Login Button */
         .auth-btn--login {
-            background-color: #f3f4f6; /* gray-100 */
-            color: #1f2937; /* gray-800 */
+            background-color: #f3f4f6;
+            color: #1f2937;
         }
         .auth-btn--login:hover {
-            background-color: #e5e7eb; /* gray-200 */
+            background-color: #e5e7eb;
         }
-        /* Register button, also used for logout by auth.js */
         .auth-btn--register {
-            background-color: #16a34a; /* green-600 */
+            background-color: #16a34a;
             color: white;
         }
         .auth-btn--register:hover {
-             background-color: #15803d; /* green-700 */
+             background-color: #15803d;
         }
-        /* Logged-in state: username and logout button */
         .auth-user-name {
             font-weight: 600;
             padding: 0.6rem 0.25rem;
             white-space: nowrap;
             text-decoration: none;
         }
-        /* Specifically target the logout button */
         .auth-user-name + .auth-btn--register { 
-             background-color: #fee2e2; /* red-100 */
-             color: #b91c1c; /* red-700 */
+             background-color: #fee2e2;
+             color: #b91c1c;
         }
          .auth-user-name + .auth-btn--register:hover {
-             background-color: #fecaca; /* red-200 */
+             background-color: #fecaca;
         }
-
-        /* Dark mode styles for auth buttons */
         body[data-theme="dark"] .auth-btn--login {
-            background-color: #374151; /* gray-700 */
-            color: #f9fafb; /* gray-100 */
+            background-color: #374151;
+            color: #f9fafb;
         }
         body[data-theme="dark"] .auth-btn--login:hover {
-            background-color: #4b5563; /* gray-600 */
+            background-color: #4b5563;
         }
         body[data-theme="dark"] .auth-user-name {
-            color: #d1d5db; /* gray-300 */
+            color: #d1d5db;
         }
-        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
-             background-color: #450a0a; /* red-900 */
-             color: #fca5a5; /* red-400 */
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register {
+             background-color: #450a0a;
+             color: #fca5a5;
         }
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
-             background-color: #7f1d1d; /* red-800 */
-        }
-.auth-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 1.5rem;
-            background: linear-gradient(135deg, #f6f9f2 0%, #e8f5e8 50%, #f0f8f0 100%);
-        }
-        .auth-card {
-            width: min(480px, 100%);
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: 0 25px 60px rgba(63, 163, 77, 0.18);
-        }
-        .auth-card h1 {
-            margin: 0 0 1.5rem 0;
-            font-size: 2rem;
-            color: var(--color-green);
-            text-align: center;
-        }
-        .auth-form {
-            display: grid;
-            gap: 1.1rem;
-        }
-        .auth-form label {
-            font-weight: 600;
-            color: var(--color-dark, #1b4332);
-        }
-        .auth-form input {
-            width: 100%;
-            padding: 0.85rem 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(63, 163, 77, 0.25);
-            font-size: 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .auth-form input:focus {
-            border-color: var(--color-green);
-            box-shadow: 0 0 0 3px rgba(63, 163, 77, 0.15);
-            outline: none;
-        }
-        .auth-submit {
-            margin-top: 0.5rem;
-            padding: 0.9rem 1.4rem;
-            border-radius: 999px;
-            border: none;
-            background: linear-gradient(135deg, var(--color-green), #1E5631);
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .auth-submit:hover,
-        .auth-submit:focus {
-            transform: translateY(-1px);
-            box-shadow: 0 16px 32px rgba(63, 163, 77, 0.25);
-            outline: none;
-        }
-        .auth-note {
-            margin-top: 1.2rem;
-            text-align: center;
-            color: var(--color-muted, #6b7280);
-        }
-        .auth-note a {
-            color: var(--color-green);
-            font-weight: 600;
-        }
-        .form-message {
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            display: none;
-        }
-        .form-message.is-error {
-            display: block;
-            background: rgba(239, 68, 68, 0.1);
-            color: #b91c1c;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .form-message.is-success {
-            display: block;
-            background: rgba(63, 163, 77, 0.1);
-            color: var(--color-green);
-            border: 1px solid rgba(63, 163, 77, 0.3);
+             background-color: #7f1d1d;
         }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
-<header class="topbar">
-    <div class="container topbar-layout">
-        <a href="../index.html" class="branding">
-            <img class="logo-image" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
-            <div class="brand-copy">
-                <div class="logo">HC<span>ECO SYSTEM</span></div>
-                <p>Giải pháp bền vững cho năng lượng tương lai</p>
+
+    <!-- Header -->
+    <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <a href="../index.html" class="flex items-center gap-3">
+                    <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                    <div>
+                        <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Giải pháp bền vững cho năng lượng tương lai</p>
+                    </div>
+                </a>
+
+                <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
+                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
+                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
+                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
+                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
+                    <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Xây dựng</a>
+                    <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+                    
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2"></div>
+
+                    <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
             </div>
-        </a>
-        <div class="topbar-actions">
-            <nav class="nav">
-                <div class="nav-item nav-item--dropdown">
-                    <a href="pricing.html" class="nav-link">Bảng giá sản phẩm</a>
-                    <div class="nav-dropdown" role="menu">
-                        <a href="product-solar-panels.html">Tấm pin Jinko Solar</a>
-                        <a href="product-luxpower-hybrid.html">Inverter LuxPower Hybrid</a>
-                        <a href="product-luxpower-1pha.html">LuxPower Hybrid 1 Pha</a>
-                        <a href="product-luxpower-3phase.html">LuxPower Hybrid 3 Pha</a>
-                        <a href="product-luxpower-3phase-high.html">LuxPower 3 Pha Áp Cao</a>
-                        <a href="product-growatt-110kw.html">Growatt MAX 110kW</a>
-                        <a href="product-battery-storage.html">Pin lưu trữ A-Cornex</a>
-                        <a href="product-battery-byd.html">Pin lưu trữ BYD</a>
-                        <a href="product-electrical-cabinet.html">Tủ điện Hybrid</a>
-                        <a href="product-cables.html">Phụ kiện &amp; Cáp</a>
+        </div>
+        <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
+            <nav class="flex flex-col gap-2">
+                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
+                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Bảng giá</a>
+                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
+                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
+                <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Xây dựng</a>
+                <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800">
+        <div class="w-full max-w-md">
+            <!-- Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 sm:p-10">
+                <!-- Icon -->
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                     </div>
                 </div>
-                <a href="../index.html#solutions" class="nav-link">Giải pháp</a>
-                <a href="../index.html#process" class="nav-link">Quy trình</a>
-                <a href="https://c-homebuild.com/" target="_blank" rel="noopener" class="nav-link">Xây dựng</a>
-                <a href="tin-tuc.html" class="nav-link">Tin tức</a>
-                <a href="#site-footer" class="nav-link">Liên hệ</a>
-            </nav>
-            <a class="cta" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+
+                <!-- Title -->
+                <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-2">Tạo tài khoản</h1>
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Đăng ký để trải nghiệm dịch vụ</p>
+
+                <!-- Form -->
+                <form id="register-form" class="space-y-5">
+                    <div>
+                        <label for="register-fullname" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Họ và tên</label>
+                        <input type="text" id="register-fullname" name="full_name" required autocomplete="name" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                               placeholder="Nguyễn Văn A" />
+                    </div>
+
+                    <div>
+                        <label for="register-username" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tên đăng nhập</label>
+                        <input type="text" id="register-username" name="username" required autocomplete="username" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                               placeholder="nguyenvana" />
+                    </div>
+
+                    <div>
+                        <label for="register-phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Số điện thoại</label>
+                        <input type="tel" id="register-phone" name="phone" required autocomplete="tel" pattern="[0-9]{9,12}" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                               placeholder="0988919868" />
+                    </div>
+
+                    <div>
+                        <label for="register-password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Mật khẩu</label>
+                        <input type="password" id="register-password" name="password" required autocomplete="new-password" minlength="6" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                               placeholder="Tối thiểu 6 ký tự" />
+                    </div>
+
+                    <div>
+                        <label for="register-confirm" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Xác nhận mật khẩu</label>
+                        <input type="password" id="register-confirm" name="confirm_password" required autocomplete="new-password" minlength="6" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                               placeholder="Nhập lại mật khẩu" />
+                    </div>
+
+                    <div id="register-message" class="hidden rounded-xl p-4 text-sm"></div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
+                        Đăng ký ngay
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-8">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Hoặc</span>
+                    </div>
+                </div>
+
+                <!-- Login Link -->
+                <p class="text-center text-gray-600 dark:text-gray-400">
+                    Đã có tài khoản? 
+                    <a href="login.html" class="font-semibold text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors">Đăng nhập ngay</a>
+                </p>
+            </div>
         </div>
-    </div>
-</header>
-<div class="auth-floating" id="auth-floating">
-    <div class="auth-buttons" id="auth-buttons">
-        <a class="auth-btn auth-btn--login" href="login.html">Đăng nhập</a>
-        <a class="auth-btn auth-btn--register" href="register.html">Đăng ký</a>
-    </div>
-    
-</div>
-
-
-<main class="auth-page">
-    <section class="auth-card">
-        <h1>Đăng ký tài khoản</h1>
-        <form id="register-form" class="auth-form" autocomplete="on">
-            <div>
-                <label for="register-fullname">Họ và tên</label>
-                <input type="text" id="register-fullname" name="full_name" required autocomplete="name" />
-            </div>
-            <div>
-                <label for="register-username">Tên đăng nhập</label>
-                <input type="text" id="register-username" name="username" required autocomplete="username" />
-            </div>
-            <div>
-                <label for="register-phone">Số điện thoại</label>
-                <input type="tel" id="register-phone" name="phone" required autocomplete="tel" pattern="[0-9]{9,12}" />
-            </div>
-            <div>
-                <label for="register-password">Mật khẩu</label>
-                <input type="password" id="register-password" name="password" required autocomplete="new-password" minlength="6" />
-            </div>
-            <div>
-                <label for="register-confirm">Nhập lại mật khẩu</label>
-                <input type="password" id="register-confirm" name="confirm_password" required autocomplete="new-password" minlength="6" />
-            </div>
-            <div id="register-message" class="form-message"></div>
-            <button type="submit" class="auth-submit">Tạo tài khoản</button>
-        </form>
-        <p class="auth-note">Đã có tài khoản? <a href="login.html">Đăng nhập ngay</a></p>
-    </section>
-</main>
-
-<script src="../assets/js/auth.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('register-form');
-        const messageBox = document.getElementById('register-message');
-
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            messageBox.classList.remove('is-error', 'is-success');
-            messageBox.style.display = 'none';
-
-            const formData = {
-                full_name: form.full_name.value.trim(),
-                username: form.username.value.trim(),
-                phone: form.phone.value.trim(),
-                password: form.password.value,
-                confirm_password: form.confirm_password.value
-            };
-
-            if (!formData.full_name || !formData.username || !formData.phone || !formData.password || !formData.confirm_password) {
-                messageBox.textContent = 'Vui lòng nhập đầy đủ thông tin.';
-                messageBox.classList.add('is-error');
-                messageBox.style.display = 'block';
-                return;
-            }
-
-            if (formData.password !== formData.confirm_password) {
-                messageBox.textContent = 'Mật khẩu nhập lại không khớp.';
-                messageBox.classList.add('is-error');
-                messageBox.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('../api/register.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || 'Đăng ký thất bại, vui lòng thử lại.');
-                }
-
-                messageBox.textContent = 'Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...';
-                messageBox.classList.add('is-success');
-                messageBox.style.display = 'block';
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1200);
-            } catch (error) {
-                console.error(error);
-                messageBox.textContent = error.message || 'Không thể đăng ký. Vui lòng thử lại sau.';
-                messageBox.classList.add('is-error');
-                messageBox.style.display = 'block';
-            }
-        });
-    });
-</script>
-
+    </main>
 
     <!-- Footer -->
     <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
         <div class="container mx-auto px-4 py-12">
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-                <!-- Branding & Copyright -->
                 <div class="space-y-4">
                      <a href="../index.html" class="flex items-center gap-3">
                         <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
@@ -353,7 +244,6 @@
                     <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
                 </div>
 
-                <!-- Contact Info -->
                 <div class="space-y-2">
                     <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
                     <ul class="text-sm text-gray-400 space-y-1">
@@ -366,7 +256,6 @@
                     </ul>
                 </div>
 
-                <!-- Policies -->
                 <div class="space-y-2">
                      <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
                     <ul class="text-sm space-y-1">
@@ -383,37 +272,78 @@
         </div>
     </footer>
     
-    <!-- Scripts (IDs preserved) -->
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script>
-        // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        const header = document.getElementById('header');
-
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
-        
-        // Close menu when a link is clicked
         mobileMenu.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
                 mobileMenu.classList.add('hidden');
             }
         });
-        
-        // Hide menu on scroll for better UX
-        let lastScrollTop = 0;
-        window.addEventListener("scroll", function(){ 
-           var st = window.pageYOffset || document.documentElement.scrollTop; 
-           if (st > lastScrollTop){
-              // downscroll
-              mobileMenu.classList.add('hidden');
-           }
-           lastScrollTop = st <= 0 ? 0 : st;
-        }, false);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('register-form');
+            const messageBox = document.getElementById('register-message');
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                messageBox.classList.add('hidden');
+                messageBox.classList.remove('bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+
+                const formData = {
+                    full_name: form.full_name.value.trim(),
+                    username: form.username.value.trim(),
+                    phone: form.phone.value.trim(),
+                    password: form.password.value,
+                    confirm_password: form.confirm_password.value
+                };
+
+                if (!formData.full_name || !formData.username || !formData.phone || !formData.password || !formData.confirm_password) {
+                    messageBox.textContent = 'Vui lòng nhập đầy đủ thông tin.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
+                    return;
+                }
+
+                if (formData.password !== formData.confirm_password) {
+                    messageBox.textContent = 'Mật khẩu nhập lại không khớp.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('../api/register.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.message || 'Đăng ký thất bại, vui lòng thử lại.');
+                    }
+
+                    messageBox.textContent = 'Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-green-100', 'text-green-700', 'border-2', 'border-green-300');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1200);
+                } catch (error) {
+                    console.error(error);
+                    messageBox.textContent = error.message || 'Không thể đăng ký. Vui lòng thử lại sau.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
+                }
+            });
+        });
     </script>
 </body>
 </html>

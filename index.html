@@ -17,6 +17,9 @@
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="assets/img/logo.jpg" />
 
+    <!-- Slideshow CSS -->
+    <link rel="stylesheet" href="assets/css/slideshow.css" />
+
     <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
         :root {
@@ -111,9 +114,52 @@
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
              background-color: #7f1d1d; /* red-800 */
         }
+
+        /* Slideshow enhancements */
+        body {
+            background-color: transparent !important;
+        }
+
+        /* Make content sections slightly transparent to show slideshow */
+        .bg-gray-50 {
+            background-color: rgba(249, 250, 251, 0.95) !important;
+        }
+
+        body[data-theme="dark"] .bg-gray-900 {
+            background-color: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        /* Hero sections with glass effect */
+        #hero-section {
+            background: linear-gradient(135deg, rgba(30, 86, 49, 0.92), rgba(63, 163, 77, 0.88)) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Sections with glassmorphism */
+        section {
+            position: relative;
+        }
+
+        section:not(#hero-section) {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+        }
+
+        body[data-theme="dark"] section:not(#hero-section) {
+            background: rgba(26, 32, 44, 0.8);
+        }
+
+        /* Improve text readability on slideshow */
+        main {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-50 dark:bg-gray-900" data-page="home">
+
+    <!-- Background Slideshow -->
+    <div id="slideshow-background" class="slideshow-background"></div>
 
     <!-- Header -->
     <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
@@ -574,6 +620,14 @@
            lastScrollTop = st <= 0 ? 0 : st;
         }, false);
     </script>
+
+    <!-- Slideshow Scripts -->
+    <script>
+        // Override paths for index.html (at root level)
+        window.SLIDESHOW_PATH_PREFIX = '';
+    </script>
+    <script src="assets/js/slideshow-config.js"></script>
+    <script src="assets/js/slideshow.js"></script>
 </body>
 </html>
 

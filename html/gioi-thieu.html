@@ -14,6 +14,9 @@
     
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
 
+    <!-- Slideshow CSS -->
+    <link rel="stylesheet" href="../assets/css/slideshow.css" />
+
     <style>
         :root {
             --color-primary: #1E5631;
@@ -100,9 +103,51 @@
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
              background-color: #7f1d1d;
         }
+
+        /* Slideshow enhancements */
+        body {
+            background-color: transparent !important;
+        }
+
+        /* Make content sections slightly transparent to show slideshow */
+        .bg-gray-50 {
+            background-color: rgba(249, 250, 251, 0.95) !important;
+        }
+
+        body[data-theme="dark"] .bg-gray-900 {
+            background-color: rgba(17, 24, 39, 0.95) !important;
+        }
+
+        /* Hero sections with glass effect */
+        .bg-gradient-to-br {
+            backdrop-filter: blur(10px);
+        }
+
+        /* Sections with glassmorphism */
+        section {
+            position: relative;
+        }
+
+        section:not(.bg-gradient-to-br) {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+        }
+
+        body[data-theme="dark"] section:not(.bg-gradient-to-br) {
+            background: rgba(26, 32, 44, 0.8);
+        }
+
+        /* Improve text readability on slideshow */
+        main {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-50 dark:bg-gray-900" data-page="about">
+
+    <!-- Background Slideshow -->
+    <div id="slideshow-background" class="slideshow-background"></div>
 
     <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="container mx-auto px-4">
@@ -210,6 +255,166 @@
                     <div class="relative">
                         <img src="../Photo/about-us.png" alt="Về HC ECO SYSTEM" class="rounded-2xl shadow-2xl w-full" />
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quy Trình Tư Vấn 3 Bước - NEW SECTION -->
+        <section class="py-16 bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-800 dark:to-gray-900">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                        Quy Trình Tư Vấn Chuyên Nghiệp
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        3 bước đơn giản để bắt đầu hành trình năng lượng xanh của bạn
+                    </p>
+                </div>
+
+                <!-- Video Introduction -->
+                <div class="max-w-4xl mx-auto mb-12">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+                        <video controls class="w-full" poster="../Photo/Engineer Consulting with Homeowner about Solar Energy System.png">
+                            <source src="../Video/Prompt 2.mp4" type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ video.
+                        </video>
+                        <p class="text-sm text-gray-300 p-4 text-center bg-gray-800">
+                            Chuyên gia HC ECO SYSTEM tư vấn trực tiếp tại nhà khách hàng
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 3 Steps -->
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="../Photo/Engineer Consulting with Homeowner about Solar Energy System.png" 
+                                 alt="Tư vấn miễn phí" 
+                                 class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                            <div class="absolute top-4 left-4 h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
+                                1
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                                Tư Vấn Miễn Phí
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Chuyên gia đến tận nhà khảo sát thực tế, phân tích nhu cầu sử dụng điện và điều kiện lắp đặt.
+                            </p>
+                            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Khảo sát hiện trường miễn phí</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Phân tích hóa đơn điện</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Tư vấn giải pháp tối ưu</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="../Photo/Chuyên gia năng lượng mặt trời đang giới thiệu mô hình giải pháp năng lượng cho một gia đình Việt Nam tại phòng khách ấm cúng của họ.png" 
+                                 alt="Thiết kế giải pháp" 
+                                 class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                            <div class="absolute top-4 left-4 h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
+                                2
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                                Thiết Kế Giải Pháp
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Thiết kế hệ thống tối ưu với mô hình 3D, tính toán chi tiết hiệu suất và lợi ích đầu tư.
+                            </p>
+                            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Mô hình 3D trực quan</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Báo giá chi tiết minh bạch</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Tính toán ROI chính xác</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="../Photo/Đây là hình ảnh một kỹ sư đang lắp đặt tấm pin năng lượng mặt trời.png" 
+                                 alt="Triển khai & Bảo hành" 
+                                 class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                            <div class="absolute top-4 left-4 h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
+                                3
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                                Triển Khai & Bảo Hành
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Lắp đặt nhanh chóng, chuyên nghiệp. Bảo hành 10 năm và hỗ trợ suốt đời hệ thống.
+                            </p>
+                            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Lắp đặt trong 1-2 ngày</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Bảo hành 10 năm</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Hỗ trợ 24/7</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="text-center mt-12">
+                    <a href="lien-he.html" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        Đặt Lịch Tư Vấn Miễn Phí
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </section>
@@ -436,9 +641,9 @@
 
                     <!-- Image 5 -->
                     <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <img src="../Photo/solar-worker-installation.jpg" alt="Lắp đặt pin mặt trời" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src="../Photo/solar-worker-installation.jpg?v=2" alt="Lắp đặt pin mặt trời chuyên nghiệp" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                            <p class="text-white p-4 font-semibold">Đội ngũ kỹ thuật chuyên nghiệp</p>
+                            <p class="text-white p-4 font-semibold">Đội ngũ kỹ thuật lắp đặt chuyên nghiệp</p>
                         </div>
                     </div>
 
@@ -452,7 +657,7 @@
 
                     <!-- Image 7 -->
                     <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <img src="../Photo/solar-panels-sunset.jpg" alt="Pin mặt trời lúc hoàng hôn" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src="../Photo/solar-panels-sunset.png?v=3" alt="Tấm pin năng lượng mặt trời lúc hoàng hôn" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                             <p class="text-white p-4 font-semibold">Hoạt động hiệu quả cả ngày</p>
                         </div>
@@ -460,17 +665,17 @@
 
                     <!-- Image 8 -->
                     <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <img src="../Photo/engineer-checking-solar.jpg" alt="Kỹ sư kiểm tra hệ thống" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src="../Photo/engineer-checking-solar-panel.png?v=2" alt="Kỹ sư kiểm tra tấm pin năng lượng mặt trời" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                            <p class="text-white p-4 font-semibold">Kiểm tra và bảo trì định kỳ</p>
+                            <p class="text-white p-4 font-semibold">Kiểm tra và bảo trì định kỳ chuyên nghiệp</p>
                         </div>
                     </div>
 
                     <!-- Image 9 -->
                     <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <img src="../Photo/residential-solar-home.jpg" alt="Nhà ở có pin mặt trời" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src="../Photo/residential-solar-home.png?v=2" alt="Ngôi nhà sử dụng năng lượng mặt trời" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                            <p class="text-white p-4 font-semibold">Giải pháp cho mọi gia đình</p>
+                            <p class="text-white p-4 font-semibold">Giải pháp năng lượng xanh cho mọi gia đình</p>
                         </div>
                     </div>
                 </div>
@@ -693,6 +898,466 @@
             </div>
         </section>
 
+        <!-- Quy Trình Lắp Đặt 5 Bước - NEW SECTION -->
+        <section class="py-16 bg-white dark:bg-gray-900">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                        Quy Trình Lắp Đặt Chuyên Nghiệp
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        5 bước chuẩn kỹ thuật quốc tế, đảm bảo hệ thống vận hành tối ưu
+                    </p>
+                </div>
+
+                <!-- Video Flycam -->
+                <div class="max-w-5xl mx-auto mb-16">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+                        <video controls class="w-full" poster="../Photo/Solar Panel Installation on a Vietnamese Rooftop.png">
+                            <source src="../Video/Prompt 1.mp4" type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ video.
+                        </video>
+                        <p class="text-sm text-gray-300 p-4 text-center bg-gray-800">
+                            🎥 Video flycam thực tế quy trình lắp đặt hệ thống pin mặt trời tại HC ECO SYSTEM
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Timeline 5 Steps -->
+                <div class="max-w-4xl mx-auto space-y-8">
+                    <!-- Step 1 -->
+                    <div class="relative flex items-start gap-8">
+                        <div class="flex-shrink-0">
+                            <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">
+                                1
+                            </div>
+                        </div>
+                        <div class="flex-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-green-600">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                                Khảo Sát Hiện Trường & Đo Đạc
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Kỹ sư đến tận nơi đo đạc kích thước mái nhà, kiểm tra kết cấu, phân tích hướng nắng và bóng râm để thiết kế hệ thống tối ưu.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <img src="../Photo/engineer-checking-solar-panel.png" alt="Khảo sát" class="rounded-lg h-32 w-full object-cover" />
+                                <img src="../Photo/Kỹ sư đang kiểm tra cẩn thận các tấm pin năng lượng mặt trời trên mái nhà, với khung cảnh thành phố Việt Nam phía xa. Bầu trời trong xanh và ánh nắng rực rỡ, thể hiện hiệu quả của hệ thống.png" alt="Đo đạc" class="rounded-lg h-32 w-full object-cover" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative flex items-start gap-8">
+                        <div class="flex-shrink-0">
+                            <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">
+                                2
+                            </div>
+                        </div>
+                        <div class="flex-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-green-600">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                                Lắp Đặt Khung Giá Đỡ Chắc Chắn
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Sử dụng khung nhôm chịu lực cao, chống gỉ sét. Cố định chặt chẽ vào kết cấu mái, đảm bảo chịu được gió bão cấp 12.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative flex items-start gap-8">
+                        <div class="flex-shrink-0">
+                            <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">
+                                3
+                            </div>
+                        </div>
+                        <div class="flex-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-green-600">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                                Lắp Đặt Tấm Pin Năng Lượng Mặt Trời
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Gắn từng tấm pin lên khung giá đỡ, căn chỉnh góc nghiêng tối ưu theo vĩ độ Việt Nam (15-20 độ). Đấu nối dây cáp chống cháy, chống nước.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <img src="../Photo/Solar Panel Installation on a Vietnamese Rooftop.png" alt="Lắp pin" class="rounded-lg h-32 w-full object-cover" />
+                                <img src="../Photo/Đây là hình ảnh một kỹ sư đang lắp đặt tấm pin năng lượng mặt trời.png" alt="Kỹ sư lắp đặt" class="rounded-lg h-32 w-full object-cover" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="relative flex items-start gap-8">
+                        <div class="flex-shrink-0">
+                            <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">
+                                4
+                            </div>
+                        </div>
+                        <div class="flex-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-green-600">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                                Đấu Nối Hệ Thống & Kiểm Tra Điện Áp
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                Lắp đặt inverter biến đổi điện DC thành AC, đấu nối với tủ điện nhà. Kiểm tra điện áp, dòng điện với thiết bị chuyên dụng.
+                            </p>
+                            <!-- Video Kiểm tra -->
+                            <div class="rounded-lg overflow-hidden bg-gray-900">
+                                <video controls class="w-full" poster="../Photo/Kỹ sư đang kiểm tra hệ thống pin năng lượng mặt trời trên mái nhà dưới ánh nắng chan hòa.png">
+                                    <source src="../Video/Prompt 3.mp4" type="video/mp4">
+                                </video>
+                                <p class="text-xs text-gray-300 p-2 text-center">🔧 Kỹ sư kiểm tra điện áp với thiết bị đo chuyên dụng</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="relative flex items-start gap-8">
+                        <div class="flex-shrink-0">
+                            <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">
+                                5
+                            </div>
+                        </div>
+                        <div class="flex-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-green-600">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                                Nghiệm Thu & Bàn Giao Hồ Sơ
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">
+                                Chạy thử hệ thống, hướng dẫn sử dụng và bảo trì. Bàn giao đầy đủ hồ sơ kỹ thuật, giấy bảo hành 10 năm.
+                            </p>
+                            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                                <p class="text-green-800 dark:text-green-300 font-semibold flex items-center gap-2">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    ✅ Hoàn thành trong 1-2 ngày làm việc!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="text-center mt-12">
+                    <a href="khao-sat-dien-mat-troi.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        Đăng Ký Khảo Sát Miễn Phí
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Đội Ngũ Chuyên Nghiệp - NEW SECTION -->
+        <section class="py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                        Đội Ngũ Chuyên Nghiệp
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        Đội ngũ kỹ sư, kỹ thuật viên giàu kinh nghiệm với chứng chỉ quốc tế
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Team member 1 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="../Photo/engineer-checking-solar-panel.png" alt="Kỹ sư kiểm tra" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Kỹ Sư Lê Văn A</h3>
+                            <p class="text-green-600 dark:text-green-400 font-semibold mb-2">Trưởng Phòng Kỹ Thuật</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">10+ năm kinh nghiệm</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Chứng chỉ: PV System Engineer</p>
+                        </div>
+                    </div>
+
+                    <!-- Team member 2 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="../Photo/Đây là hình ảnh một kỹ sư đang lắp đặt tấm pin năng lượng mặt trời.png" alt="Kỹ thuật viên lắp đặt" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Kỹ Thuật Viên Nguyễn B</h3>
+                            <p class="text-green-600 dark:text-green-400 font-semibold mb-2">Trưởng Nhóm Lắp Đặt</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">8+ năm kinh nghiệm</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Chứng chỉ: Solar Installation Specialist</p>
+                        </div>
+                    </div>
+
+                    <!-- Team member 3 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="../Photo/Technician Installing Solar Panels on a Commercial Building.png" alt="Chuyên gia thương mại" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Chuyên Gia Trần C</h3>
+                            <p class="text-green-600 dark:text-green-400 font-semibold mb-2">Phụ Trách Dự Án Lớn</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">12+ năm kinh nghiệm</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Chứng chỉ: Project Management Professional</p>
+                        </div>
+                    </div>
+
+                    <!-- Team member 4 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="../Photo/solar-worker-installation.jpg" alt="Kỹ thuật viên" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Kỹ Thuật Viên Phạm D</h3>
+                            <p class="text-green-600 dark:text-green-400 font-semibold mb-2">Chuyên Viên Bảo Trì</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">6+ năm kinh nghiệm</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Chứng chỉ: Maintenance Technician</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Khách Hàng Hài Lòng - NEW TESTIMONIALS SECTION -->
+        <section class="py-16 bg-white dark:bg-gray-900">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                        Khách Hàng Nói Gì Về Chúng Tôi
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        Hơn 1000 khách hàng tin tưởng và hài lòng với dịch vụ của HC ECO SYSTEM
+                    </p>
+                </div>
+
+                <!-- Video Testimonial -->
+                <div class="max-w-4xl mx-auto mb-12">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+                        <video controls class="w-full" poster="../Photo/Family Enjoying a Home with Solar Power in Vietnam.png">
+                            <source src="../Video/Prompt 6.mp4" type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ video.
+                        </video>
+                        <p class="text-sm text-gray-300 p-4 text-center bg-gray-800">
+                            🎬 Phỏng vấn khách hàng thực tế về trải nghiệm sử dụng hệ thống năng lượng mặt trời
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Testimonial Cards -->
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-800 dark:to-gray-800 p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img src="../Photo/Family Enjoying a Home with Solar Power in Vietnam.png" alt="Gia đình hạnh phúc" class="w-16 h-16 rounded-full object-cover border-4 border-white" />
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-white">Anh Nguyễn Văn M</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Biệt thự Q7, TP.HCM</p>
+                                <div class="flex gap-1 mt-1">
+                                    <span class="text-yellow-500">★★★★★</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 italic">
+                            "Hệ thống hoạt động cực kỳ tốt! Tiết kiệm được 80% tiền điện mỗi tháng. Đội ngũ lắp đặt rất chuyên nghiệp và nhanh chóng."
+                        </p>
+                        <p class="text-sm text-green-600 dark:text-green-400 font-semibold mt-3">
+                            💰 Tiết kiệm: 5 triệu/tháng
+                        </p>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-800 p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img src="../Photo/residential-solar-home.png" alt="Nhà ở" class="w-16 h-16 rounded-full object-cover border-4 border-white" />
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-white">Chị Trần Thị L</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Nhà phố Bình Tân, TP.HCM</p>
+                                <div class="flex gap-1 mt-1">
+                                    <span class="text-yellow-500">★★★★★</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 italic">
+                            "Tư vấn nhiệt tình, giải đáp mọi thắc mắc. Sau 6 tháng sử dụng, hóa đơn điện giảm đáng kể. Rất hài lòng!"
+                        </p>
+                        <p class="text-sm text-green-600 dark:text-green-400 font-semibold mt-3">
+                            💰 Tiết kiệm: 3.5 triệu/tháng
+                        </p>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-800 dark:to-gray-800 p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img src="../Photo/Solar Panels on a Modern Vietnamese Villa.png" alt="Villa hiện đại" class="w-16 h-16 rounded-full object-cover border-4 border-white" />
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-white">Anh Lê Hoàng P</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Biệt thự Thủ Đức, TP.HCM</p>
+                                <div class="flex gap-1 mt-1">
+                                    <span class="text-yellow-500">★★★★★</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 italic">
+                            "Đã giới thiệu cho nhiều bạn bè. Chất lượng tuyệt vời, bảo hành chu đáo. Đầu tư rất đáng tiền!"
+                        </p>
+                        <p class="text-sm text-green-600 dark:text-green-400 font-semibold mt-3">
+                            💰 Tiết kiệm: 8 triệu/tháng
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="mt-12 grid md:grid-cols-4 gap-6">
+                    <div class="text-center bg-green-50 dark:bg-green-900/20 p-6 rounded-xl">
+                        <div class="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">98%</div>
+                        <p class="text-gray-600 dark:text-gray-300">Khách hàng hài lòng</p>
+                    </div>
+                    <div class="text-center bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
+                        <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">1000+</div>
+                        <p class="text-gray-600 dark:text-gray-300">Hệ thống đã lắp đặt</p>
+                    </div>
+                    <div class="text-center bg-purple-50 dark:bg-purple-900/20 p-6 rounded-xl">
+                        <div class="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">10 Năm</div>
+                        <p class="text-gray-600 dark:text-gray-300">Bảo hành toàn diện</p>
+                    </div>
+                    <div class="text-center bg-orange-50 dark:bg-orange-900/20 p-6 rounded-xl">
+                        <div class="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">24/7</div>
+                        <p class="text-gray-600 dark:text-gray-300">Hỗ trợ khách hàng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chính sách & Dịch vụ Section -->
+        <section class="py-16 bg-white dark:bg-gray-900">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-semibold rounded-full mb-4">Chính sách & Dịch vụ</span>
+                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">Cam kết dịch vụ và chính sách minh bạch</h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                        Chúng tôi đặt sự minh bạch và chuyên nghiệp lên hàng đầu trong mọi dịch vụ
+                    </p>
+                </div>
+
+                <!-- Policy Cards Grid -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <!-- Tầm Nhìn & Sứ Mệnh -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-blue-500 group">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🎯</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Tầm Nhìn & Sứ Mệnh</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Định hướng phát triển và cam kết của HC Eco System trong việc mang đến giải pháp năng lượng bền vững.</p>
+                        <a href="tam-nhin-su-menh.html" class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Điều Khoản & Điều Kiện -->
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-purple-500 group">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-purple-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">📋</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Điều Khoản & Điều Kiện</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Các điều khoản và điều kiện sử dụng dịch vụ, quyền và nghĩa vụ của các bên.</p>
+                        <a href="dieu-khoan-dieu-kien.html" class="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 font-semibold text-sm hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Chính Sách Đổi Trả -->
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-green-500 group">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-green-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🔄</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Chính Sách Đổi Trả</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Quy định về việc đổi trả sản phẩm và dịch vụ trong các trường hợp cụ thể.</p>
+                        <a href="chinh-sach-doi-tra.html" class="inline-flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm hover:text-green-700 dark:hover:text-green-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Chính Sách Bảo Mật Thông Tin Cá Nhân -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-indigo-500 group">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-indigo-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🔒</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Bảo Mật Thông Tin Cá Nhân</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Cam kết bảo vệ và xử lý thông tin cá nhân của khách hàng một cách an toàn.</p>
+                        <a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold text-sm hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Chính Sách Bảo Mật Thông Tin Thanh Toán -->
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-orange-500 group">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-orange-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">💳</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Bảo Mật Thanh Toán</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Đảm bảo an toàn tuyệt đối cho các giao dịch thanh toán của khách hàng.</p>
+                        <a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="inline-flex items-center gap-2 text-orange-600 dark:text-orange-400 font-semibold text-sm hover:text-orange-700 dark:hover:text-orange-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Chính Sách Bảo Hành -->
+                    <div class="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-red-500 group">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-red-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🛡️</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Chính Sách Bảo Hành</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Cam kết bảo hành sản phẩm và dịch vụ với thời gian và điều kiện rõ ràng.</p>
+                        <a href="chinh-sach-bao-hanh.html" class="inline-flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm hover:text-red-700 dark:hover:text-red-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Trở Thành Nhà Phân Phối -->
+                    <div class="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-teal-500 group sm:col-span-2 lg:col-span-1">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-teal-500 text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🤝</div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Trở Thành Nhà Phân Phối</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Cơ hội hợp tác và trở thành đối tác phân phối của HC Eco System.</p>
+                        <a href="tro-thanh-nha-phan-phoi.html" class="inline-flex items-center gap-2 text-teal-600 dark:text-teal-400 font-semibold text-sm hover:text-teal-700 dark:hover:text-teal-300 transition-colors">
+                            Xem chi tiết
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Trust & Quality Indicators -->
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white text-center mb-8">Cam kết chất lượng dịch vụ</h3>
+                    <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">✓</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Minh bạch</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Thông tin rõ ràng, không ẩn phí</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">⚡</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Nhanh chóng</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Tư vấn và triển khai nhanh</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">🛡️</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Bảo hành</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Bảo hành dài hạn 25 năm</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-orange-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">🎯</div>
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2">Chuyên nghiệp</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Đội ngũ kỹ thuật giàu kinh nghiệm</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer -->
@@ -755,6 +1420,14 @@
             }
         });
     </script>
+
+    <!-- Slideshow Scripts -->
+    <script>
+        // Set path prefix for pages in html/ directory
+        window.SLIDESHOW_PATH_PREFIX = '../';
+    </script>
+    <script src="../assets/js/slideshow-config.js"></script>
+    <script src="../assets/js/slideshow.js"></script>
 </body>
 </html>
 

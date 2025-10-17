@@ -16,7 +16,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
     
-    <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
         :root {
             --color-primary: #1E5631;
@@ -31,26 +30,24 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-dark);
             transition: background-color 0.3s, color 0.3s;
         }
-        /* Dark Mode styles */
         body[data-theme="dark"] {
             background-color: #12181B;
             color: var(--color-text-light);
         }
         body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
         body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:bg-gray-700 { background-color: #374151; }
         body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
         body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+        body[data-theme="dark"] .dark\:border-gray-600 { border-color: #4b5563; }
 
         .theme-toggle__icon { display: none; }
         body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
         body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
 
-        /* Styles for dynamically injected auth buttons */
         .auth-btn {
             padding: 0.6rem 1rem;
             border-radius: 9999px;
@@ -60,313 +57,58 @@
             line-height: 1.25rem;
             text-decoration: none;
         }
-        /* Login Button */
         .auth-btn--login {
-            background-color: #f3f4f6; /* gray-100 */
-            color: #1f2937; /* gray-800 */
+            background-color: #f3f4f6;
+            color: #1f2937;
         }
         .auth-btn--login:hover {
-            background-color: #e5e7eb; /* gray-200 */
+            background-color: #e5e7eb;
         }
-        /* Register button, also used for logout by auth.js */
         .auth-btn--register {
-            background-color: #16a34a; /* green-600 */
+            background-color: #16a34a;
             color: white;
         }
         .auth-btn--register:hover {
-             background-color: #15803d; /* green-700 */
+             background-color: #15803d;
         }
-        /* Logged-in state: username and logout button */
         .auth-user-name {
             font-weight: 600;
             padding: 0.6rem 0.25rem;
             white-space: nowrap;
             text-decoration: none;
         }
-        /* Specifically target the logout button */
         .auth-user-name + .auth-btn--register { 
-             background-color: #fee2e2; /* red-100 */
-             color: #b91c1c; /* red-700 */
+             background-color: #fee2e2;
+             color: #b91c1c;
         }
          .auth-user-name + .auth-btn--register:hover {
-             background-color: #fecaca; /* red-200 */
+             background-color: #fecaca;
         }
-
-        /* Dark mode styles for auth buttons */
         body[data-theme="dark"] .auth-btn--login {
-            background-color: #374151; /* gray-700 */
-            color: #f9fafb; /* gray-100 */
+            background-color: #374151;
+            color: #f9fafb;
         }
         body[data-theme="dark"] .auth-btn--login:hover {
-            background-color: #4b5563; /* gray-600 */
+            background-color: #4b5563;
         }
         body[data-theme="dark"] .auth-user-name {
-            color: #d1d5db; /* gray-300 */
+            color: #d1d5db;
         }
-        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
-             background-color: #450a0a; /* red-900 */
-             color: #fca5a5; /* red-400 */
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register {
+             background-color: #450a0a;
+             color: #fca5a5;
         }
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
-             background-color: #7f1d1d; /* red-800 */
+             background-color: #7f1d1d;
         }
-/* Main page styling */
-        .history-page { 
-            padding: 4rem 0; 
-            background: #f9fafb; 
-            min-height: calc(100vh - 200px);
-        }
-        
-        .history-container { 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            padding: 0 2rem;
-        }
-        
-        .history-container h1 { 
-            color: var(--color-green); 
-            text-align: center; 
-            margin-bottom: 2rem;
-            font-size: 2.5rem;
-        }
-        
-        /* Survey Card */
-        .survey-card { 
-            background: white; 
-            border-radius: 16px; 
-            margin-bottom: 2rem; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.07);
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .survey-card:hover {
-            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        /* Survey Header */
-        .survey-header { 
-            background: #f3f4f6; 
-            padding: 1.2rem 1.5rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            font-weight: 600;
-            border-bottom: 1px solid #e5e7eb;
-            cursor: pointer;
-        }
-        
-        .survey-header-left {
-            flex: 1;
-        }
-        
-        .survey-date {
-            font-size: 0.9rem;
-            color: #6b7280;
-            margin-bottom: 0.3rem;
-        }
-        
-        .survey-title {
-            font-size: 1.1rem;
-            color: #111827;
-        }
-        
-        .survey-header-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .survey-price {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--color-green);
-        }
-        
-        .expand-icon {
-            font-size: 1.2rem;
-            color: #9ca3af;
-            transition: transform 0.3s;
-        }
-        
-        .survey-card.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-        
-        /* Survey Body */
-        .survey-body { 
-            padding: 1.5rem; 
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        .survey-card.expanded .survey-body {
-            max-height: 5000px;
-        }
-        
-        .survey-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .meta-item {
-            padding: 0.8rem;
-            background: #f9fafb;
-            border-radius: 8px;
-        }
-        
-        .meta-label {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 0.3rem;
-        }
-        
-        .meta-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #111827;
-        }
-        
-        /* Results Table */
-        .results-table {
-            margin-top: 1rem;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 1rem;
-        }
-        
-        .results-table h4 {
-            color: #374151;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-        
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-        }
-        
-        .result-item {
-            padding: 1rem;
-            background: #f9fafb;
-            border-radius: 8px;
-            border-left: 3px solid var(--color-green);
-        }
-        
-        .result-label {
-            font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 0.3rem;
-        }
-        
-        .result-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #111827;
-        }
-        
-        /* Empty State */
-        .no-surveys { 
-            text-align: center; 
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.07);
-        }
-        
-        .no-surveys-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        
-        .no-surveys p {
-            color: #6b7280;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .btn-primary {
-            display: inline-block;
-            padding: 0.9rem 2rem;
-            background: linear-gradient(135deg, var(--color-green), #1e5631);
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(63, 163, 77, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(63, 163, 77, 0.4);
-        }
-        
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: #6b7280;
-            font-size: 1.2rem;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .survey-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.8rem;
-            }
-            
-            .survey-header-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .results-grid,
-            .survey-meta {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    <style>
-    /* Table Styles */
-    .survey-items-list table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
-    }
-
-    .survey-items-list th,
-    .survey-items-list td {
-        padding: 0.8rem;
-        text-align: left;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .survey-items-list th {
-        background: #fafafa;
-        font-weight: 600;
-        color: #374151;
-    }
-
-    .survey-items-list tr:hover {
-        background: #f9fafb;
-    }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
-    
 
     <!-- Header -->
     <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-20">
-                <!-- Branding -->
                 <a href="../index.html" class="flex items-center gap-3">
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
@@ -375,7 +117,6 @@
                     </div>
                 </a>
 
-                <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
                     <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
                     <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
@@ -385,27 +126,21 @@
                     <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
                 </nav>
 
-                <!-- Actions -->
                 <div class="flex items-center gap-2">
                     <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
-                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
                     <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
                     
-                    <!-- Auth buttons will appear here, integrated into the header -->
-                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2">
-                        <!-- Dynamically populated by auth.js -->
-                    </div>
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2"></div>
 
-                    <!-- Mobile Menu Button -->
                     <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Navigation -->
         <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
             <nav class="flex flex-col gap-2">
                 <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
@@ -420,38 +155,55 @@
 
     <!-- Floating Cart Button -->
     <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
     </a>
 
     <!-- Main Content -->
-
-    <main class="history-page">
-        <div class="history-container">
-            <h1>📋 Lịch Sử Khảo Sát</h1>
-            
-            <div id="loading" class="loading">
-                ⏳ Đang tải dữ liệu...
+    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
+        <div class="container mx-auto max-w-5xl">
+            <!-- Page Header -->
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-3xl p-8 md:p-12 mb-8 text-white shadow-xl">
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Lịch sử khảo sát</h1>
+                        <p class="text-emerald-50 text-lg">Xem lại các báo giá điện mặt trời của bạn</p>
+                    </div>
+                </div>
             </div>
 
-            <div id="surveyList" style="display: none;">
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-12">
+                <div class="inline-block w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Đang tải dữ liệu...</p>
+            </div>
+
+            <!-- Surveys List -->
+            <div id="surveyList" class="hidden space-y-6">
                 <!-- Surveys will be loaded here -->
             </div>
 
-            <div id="emptyState" class="no-surveys" style="display: none;">
-                <div class="no-surveys-icon">📭</div>
-                <p>Bạn chưa có khảo sát nào</p>
-                <a href="khao-sat-dien-mat-troi.html" class="btn-primary">Tạo khảo sát mới</a>
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden bg-white dark:bg-gray-800 rounded-3xl p-12 text-center shadow-xl">
+                <div class="w-32 h-32 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Chưa có khảo sát nào</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">Bạn chưa thực hiện khảo sát nào. Tính toán báo giá điện mặt trời ngay!</p>
+                <a href="khao-sat-dien-mat-troi.html" class="inline-block bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                    Tạo khảo sát mới
+                </a>
             </div>
         </div>
     </main>
 
-    
     <!-- Footer -->
     <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
         <div class="container mx-auto px-4 py-12">
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-                <!-- Branding & Copyright -->
                 <div class="space-y-4">
                      <a href="../index.html" class="flex items-center gap-3">
                         <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
@@ -462,7 +214,6 @@
                     <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
                 </div>
 
-                <!-- Contact Info -->
                 <div class="space-y-2">
                     <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
                     <ul class="text-sm text-gray-400 space-y-1">
@@ -475,7 +226,6 @@
                     </ul>
                 </div>
 
-                <!-- Policies -->
                 <div class="space-y-2">
                      <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
                     <ul class="text-sm space-y-1">
@@ -492,37 +242,20 @@
         </div>
     </footer>
     
-    <!-- Scripts (IDs preserved) -->
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script>
-        // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        const header = document.getElementById('header');
-
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
-        
-        // Close menu when a link is clicked
         mobileMenu.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
                 mobileMenu.classList.add('hidden');
             }
         });
-        
-        // Hide menu on scroll for better UX
-        let lastScrollTop = 0;
-        window.addEventListener("scroll", function(){ 
-           var st = window.pageYOffset || document.documentElement.scrollTop; 
-           if (st > lastScrollTop){
-              // downscroll
-              mobileMenu.classList.add('hidden');
-           }
-           lastScrollTop = st <= 0 ? 0 : st;
-        }, false);
     </script>
 </body>
 </html>

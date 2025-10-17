@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Đặt hàng - HC Eco System" />
     <title>Đặt hàng - HC Eco System</title>
         
     <!-- Tailwind CSS CDN -->
@@ -17,7 +16,6 @@
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
     
-    <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
         :root {
             --color-primary: #1E5631;
@@ -32,26 +30,24 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-dark);
             transition: background-color 0.3s, color 0.3s;
         }
-        /* Dark Mode styles */
         body[data-theme="dark"] {
             background-color: #12181B;
             color: var(--color-text-light);
         }
         body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
         body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:bg-gray-700 { background-color: #374151; }
         body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
         body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+        body[data-theme="dark"] .dark\:border-gray-600 { border-color: #4b5563; }
 
         .theme-toggle__icon { display: none; }
         body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
         body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
 
-        /* Styles for dynamically injected auth buttons */
         .auth-btn {
             padding: 0.6rem 1rem;
             border-radius: 9999px;
@@ -61,395 +57,58 @@
             line-height: 1.25rem;
             text-decoration: none;
         }
-        /* Login Button */
         .auth-btn--login {
-            background-color: #f3f4f6; /* gray-100 */
-            color: #1f2937; /* gray-800 */
+            background-color: #f3f4f6;
+            color: #1f2937;
         }
         .auth-btn--login:hover {
-            background-color: #e5e7eb; /* gray-200 */
+            background-color: #e5e7eb;
         }
-        /* Register button, also used for logout by auth.js */
         .auth-btn--register {
-            background-color: #16a34a; /* green-600 */
+            background-color: #16a34a;
             color: white;
         }
         .auth-btn--register:hover {
-             background-color: #15803d; /* green-700 */
+             background-color: #15803d;
         }
-        /* Logged-in state: username and logout button */
         .auth-user-name {
             font-weight: 600;
             padding: 0.6rem 0.25rem;
             white-space: nowrap;
             text-decoration: none;
         }
-        /* Specifically target the logout button */
         .auth-user-name + .auth-btn--register { 
-             background-color: #fee2e2; /* red-100 */
-             color: #b91c1c; /* red-700 */
+             background-color: #fee2e2;
+             color: #b91c1c;
         }
          .auth-user-name + .auth-btn--register:hover {
-             background-color: #fecaca; /* red-200 */
+             background-color: #fecaca;
         }
-
-        /* Dark mode styles for auth buttons */
         body[data-theme="dark"] .auth-btn--login {
-            background-color: #374151; /* gray-700 */
-            color: #f9fafb; /* gray-100 */
+            background-color: #374151;
+            color: #f9fafb;
         }
         body[data-theme="dark"] .auth-btn--login:hover {
-            background-color: #4b5563; /* gray-600 */
+            background-color: #4b5563;
         }
         body[data-theme="dark"] .auth-user-name {
-            color: #d1d5db; /* gray-300 */
+            color: #d1d5db;
         }
-        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
-             background-color: #450a0a; /* red-900 */
-             color: #fca5a5; /* red-400 */
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register {
+             background-color: #450a0a;
+             color: #fca5a5;
         }
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
-             background-color: #7f1d1d; /* red-800 */
-        }
-.checkout-page {
-            background: linear-gradient(135deg, #f6f9f2 0%, #e8f5e8 50%, #f0f8f0 100%);
-            min-height: 100vh;
-            padding: 2rem 0;
-        }
-
-        .checkout-hero {
-            background: linear-gradient(135deg, rgba(63, 163, 77, 0.08) 0%, rgba(197, 227, 132, 0.12) 50%, rgba(63, 163, 77, 0.06) 100%);
-            padding: 3rem 0;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .checkout-hero h1 {
-            color: var(--color-green);
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .checkout-hero p {
-            text-align: center;
-            color: var(--color-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .checkout-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 2rem;
-        }
-
-        .checkout-form {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(63, 163, 77, 0.1);
-            padding: 2rem;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-        }
-
-        .form-section h3 {
-            color: var(--color-green);
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(63, 163, 77, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            color: var(--color-text);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group label.required::after {
-            content: ' *';
-            color: #ef4444;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--color-green);
-            box-shadow: 0 0 0 3px rgba(63, 163, 77, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .order-summary {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(63, 163, 77, 0.1);
-            padding: 2rem;
-            height: fit-content;
-            position: sticky;
-            top: 2rem;
-        }
-
-        .order-summary h3 {
-            color: var(--color-green);
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .order-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border: 1px solid rgba(63, 163, 77, 0.1);
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            background: rgba(63, 163, 77, 0.02);
-        }
-
-        .order-item-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 2px solid rgba(63, 163, 77, 0.1);
-        }
-
-        .order-item-info {
-            flex: 1;
-        }
-
-        .order-item-info h4 {
-            color: var(--color-green);
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin: 0 0 0.25rem 0;
-            line-height: 1.3;
-        }
-
-        .order-item-info p {
-            color: var(--color-muted);
-            font-size: 0.8rem;
-            margin: 0;
-        }
-
-        .order-item-quantity {
-            color: var(--color-green);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .order-item-price {
-            color: var(--color-green);
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        .price-breakdown {
-            border-top: 2px solid rgba(63, 163, 77, 0.1);
-            padding-top: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-            font-size: 0.95rem;
-        }
-
-        .price-row.total {
-            border-top: 2px solid var(--color-green);
-            padding-top: 1rem;
-            margin-top: 1rem;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--color-green);
-        }
-
-        .payment-notice {
-            background: linear-gradient(135deg, rgba(197, 227, 132, 0.1), rgba(63, 163, 77, 0.05));
-            border: 2px solid rgba(197, 227, 132, 0.3);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        .payment-notice .icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .payment-notice p {
-            color: var(--color-text);
-            margin: 0;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            width: 100%;
-        }
-
-        .btn.primary {
-            background: linear-gradient(135deg, var(--color-green), #1E5631);
-            color: white;
-            box-shadow: 0 8px 25px rgba(63, 163, 77, 0.3);
-        }
-
-        .btn.primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(63, 163, 77, 0.4);
-        }
-
-        .btn.secondary {
-            background: white;
-            color: var(--color-green);
-            border: 2px solid var(--color-green);
-            margin-bottom: 1rem;
-        }
-
-        .btn.secondary:hover {
-            background: var(--color-green);
-            color: white;
-        }
-
-        .success-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .success-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .success-modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-        }
-
-        .success-modal.show .success-modal-content {
-            transform: scale(1);
-        }
-
-        .success-modal .icon {
-            font-size: 4rem;
-            color: var(--color-green);
-            margin-bottom: 1rem;
-        }
-
-        .success-modal h3 {
-            color: var(--color-green);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .success-modal p {
-            color: var(--color-muted);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 768px) {
-            .checkout-container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .order-summary {
-                position: static;
-            }
-            
-            .cart-fab {
-                display: none; /* Ẩn FAB trên trang đặt hàng */
-            }
+             background-color: #7f1d1d;
         }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
-    
 
     <!-- Header -->
     <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-20">
-                <!-- Branding -->
                 <a href="../index.html" class="flex items-center gap-3">
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
@@ -458,7 +117,6 @@
                     </div>
                 </a>
 
-                <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
                     <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
                     <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
@@ -468,27 +126,21 @@
                     <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
                 </nav>
 
-                <!-- Actions -->
                 <div class="flex items-center gap-2">
                     <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
-                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
                     <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
                     
-                    <!-- Auth buttons will appear here, integrated into the header -->
-                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2">
-                        <!-- Dynamically populated by auth.js -->
-                    </div>
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2"></div>
 
-                    <!-- Mobile Menu Button -->
                     <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Navigation -->
         <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
             <nav class="flex flex-col gap-2">
                 <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
@@ -501,128 +153,170 @@
         </div>
     </header>
 
-    <!-- Floating Cart Button -->
-    <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
-    </a>
-
     <!-- Main Content -->
-<main class="checkout-page">
-    <section class="checkout-hero">
-        <div class="container">
-            <h1>📋 Đặt hàng</h1>
-            <p>Điền thông tin để hoàn tất đơn hàng</p>
-        </div>
-    </section>
-
-    <div class="checkout-container">
-        <div class="checkout-form">
-            <form id="checkout-form">
-                <div class="form-section">
-                    <h3>📞 Thông tin liên hệ</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fullname" class="required">Họ và tên</label>
-                            <input type="text" id="fullname" name="fullname" required placeholder="Nguyễn Văn A">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone" class="required">Số điện thoại</label>
-                            <input type="tel" id="phone" name="phone" required placeholder="090x xxx xxx">
-                        </div>
+    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <!-- Page Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-3xl p-8 md:p-12 mb-8 text-white shadow-xl">
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="email@example.com">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Thông tin đặt hàng</h1>
+                        <p class="text-blue-50 text-lg">Hoàn tất thông tin để đặt hàng</p>
                     </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>📍 Địa chỉ giao hàng</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="city" class="required">Tỉnh/Thành phố</label>
-                            <select id="city" name="city" required>
-                                <option value="">Chọn tỉnh/thành</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="district" class="required">Phường/Xã</label>
-                            <select id="district" name="district" required>
-                                <option value="">Vui lòng chọn tỉnh/thành phố trước</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="address" class="required">Địa chỉ chi tiết</label>
-                        <input type="text" id="address" name="address" required placeholder="Số nhà, tên đường, phường/xã">
-                    </div>
-                    <div class="form-group">
-                        <label for="notes">Ghi chú đơn hàng</label>
-                        <textarea id="notes" name="notes" placeholder="Thời gian giao hàng, yêu cầu đặc biệt..."></textarea>
-                    </div>
-                </div>
-
-                <div class="payment-notice">
-                    <div class="icon">📞</div>
-                    <p><strong>Lưu ý quan trọng:</strong> Sau khi xác nhận đơn hàng, thông tin sẽ được chuyển đến bộ phận kinh doanh để gọi điện xác nhận lại với bạn về hình thức giao hàng và thanh toán.</p>
-                </div>
-
-                <button type="submit" class="btn primary">
-                    ✅ Xác nhận đặt hàng
-                </button>
-            </form>
-        </div>
-
-        <div class="order-summary">
-            <h3>📦 Đơn hàng của bạn</h3>
-            
-            <div id="order-items">
-                <!-- Order items will be loaded here -->
-            </div>
-
-            <div class="price-breakdown">
-                <div class="price-row">
-                    <span>Tạm tính:</span>
-                    <span id="subtotal">0₫</span>
-                </div>
-                <div class="price-row">
-                    <span>Phí vận chuyển:</span>
-                    <span>Liên hệ</span>
-                </div>
-                <div class="price-row">
-                    <span>Thuế VAT:</span>
-                    <span>Đã bao gồm</span>
-                </div>
-                <div class="price-row total">
-                    <span>Tổng cộng:</span>
-                    <span id="total">0₫</span>
                 </div>
             </div>
 
-            <a href="gio-hang.html" class="btn secondary">
-                ⬅️ Quay lại giỏ hàng
-            </a>
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Checkout Form -->
+                <div class="lg:col-span-2">
+                    <form id="checkout-form" class="space-y-6">
+                        <!-- Contact Information -->
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Thông tin liên hệ</h2>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="fullname" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Họ và tên <span class="text-red-500">*</span></label>
+                                    <input type="text" id="fullname" name="fullname" required 
+                                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                                           placeholder="Nguyễn Văn A" />
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Số điện thoại <span class="text-red-500">*</span></label>
+                                    <input type="tel" id="phone" name="phone" required 
+                                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                                           placeholder="0988919868" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                    <input type="email" id="email" name="email" 
+                                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                                           placeholder="email@example.com" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Address -->
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Địa chỉ giao hàng</h2>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="city" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tỉnh/Thành phố <span class="text-red-500">*</span></label>
+                                    <select id="city" name="city" required 
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
+                                        <option value="">Chọn tỉnh/thành</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="district" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phường/Xã <span class="text-red-500">*</span></label>
+                                    <select id="district" name="district" required 
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
+                                        <option value="">Chọn tỉnh/thành trước</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Địa chỉ chi tiết <span class="text-red-500">*</span></label>
+                                    <input type="text" id="address" name="address" required 
+                                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                                           placeholder="Số nhà, tên đường" />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="notes" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Ghi chú đơn hàng</label>
+                                    <textarea id="notes" name="notes" rows="3" 
+                                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none resize-none" 
+                                              placeholder="Ghi chú về thời gian giao hàng, yêu cầu đặc biệt..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Notice -->
+                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-6">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-amber-900 dark:text-amber-100 mb-2">Lưu ý quan trọng</h3>
+                                    <p class="text-amber-800 dark:text-amber-200 text-sm">Sau khi xác nhận đơn hàng, bộ phận kinh doanh sẽ liên hệ với bạn để xác nhận lại về hình thức giao hàng và thanh toán.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg sticky top-24">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Đơn hàng của bạn</h3>
+                        
+                        <div id="order-items" class="space-y-4 mb-6">
+                            <!-- Order items will be loaded here -->
+                        </div>
+
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3 mb-6">
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Tạm tính:</span>
+                                <span id="subtotal" class="font-semibold">0₫</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Phí vận chuyển:</span>
+                                <span class="font-semibold">Liên hệ</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Thuế VAT:</span>
+                                <span class="font-semibold">Đã bao gồm</span>
+                            </div>
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-3">
+                                <div class="flex justify-between text-xl font-bold text-gray-800 dark:text-white">
+                                    <span>Tổng cộng:</span>
+                                    <span id="total" class="text-green-600">0₫</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" form="checkout-form" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
+                            Xác nhận đặt hàng
+                        </button>
+
+                        <a href="gio-hang.html" class="mt-4 w-full block text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            Quay lại giỏ hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full text-center transform transition-all">
+            <div class="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Đặt hàng thành công!</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-8">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
+            <button onclick="closeSuccessModal()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                Đóng
+            </button>
         </div>
     </div>
-</main>
-
-<!-- Success Modal -->
-<div id="success-modal" class="success-modal">
-    <div class="success-modal-content">
-        <div class="icon">✅</div>
-        <h3>Đặt hàng thành công!</h3>
-        <p>Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận đơn hàng và thỏa thuận về hình thức giao hàng, thanh toán.</p>
-        <button class="btn primary" onclick="closeSuccessModal()">Đóng</button>
-    </div>
-</div>
-
 
     <!-- Footer -->
     <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
         <div class="container mx-auto px-4 py-12">
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-                <!-- Branding & Copyright -->
                 <div class="space-y-4">
                      <a href="../index.html" class="flex items-center gap-3">
                         <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
@@ -633,7 +327,6 @@
                     <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
                 </div>
 
-                <!-- Contact Info -->
                 <div class="space-y-2">
                     <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
                     <ul class="text-sm text-gray-400 space-y-1">
@@ -646,7 +339,6 @@
                     </ul>
                 </div>
 
-                <!-- Policies -->
                 <div class="space-y-2">
                      <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
                     <ul class="text-sm space-y-1">
@@ -663,37 +355,25 @@
         </div>
     </footer>
     
-    <!-- Scripts (IDs preserved) -->
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script>
-        // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        const header = document.getElementById('header');
-
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
-        
-        // Close menu when a link is clicked
         mobileMenu.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
                 mobileMenu.classList.add('hidden');
             }
         });
-        
-        // Hide menu on scroll for better UX
-        let lastScrollTop = 0;
-        window.addEventListener("scroll", function(){ 
-           var st = window.pageYOffset || document.documentElement.scrollTop; 
-           if (st > lastScrollTop){
-              // downscroll
-              mobileMenu.classList.add('hidden');
-           }
-           lastScrollTop = st <= 0 ? 0 : st;
-        }, false);
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            window.location.href = '../index.html';
+        }
     </script>
 </body>
 </html>
