@@ -274,11 +274,12 @@ function initializeProductActionButtons() {
         const addButton = cell.querySelector('.btn.primary');
         const buyButton = cell.querySelector('.btn.secondary');
         
-        const row = cell.closest('tr');
-        if (!row) return;
+        // Try to find the product container (could be tr, div.product-card, etc.)
+        const productContainer = cell.closest('tr') || cell.closest('.product-card') || cell.closest('div');
+        if (!productContainer) return;
 
         const productId = addButton.dataset.productId;
-        const nameEl = row.querySelector('.product-specs h4');
+        const nameEl = productContainer.querySelector('.product-title') || productContainer.querySelector('.product-specs h4') || productContainer.querySelector('h3');
         const productName = nameEl ? nameEl.textContent.trim() : 'Sản phẩm';
 
         if (addButton && productId && !addButton.dataset.cartBound) {
