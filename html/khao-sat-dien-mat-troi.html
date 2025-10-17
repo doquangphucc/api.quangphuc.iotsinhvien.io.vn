@@ -104,9 +104,14 @@
         /* Logged-in state: username and logout button */
         .auth-user-name {
             font-weight: 600;
-            padding: 0.6rem 0.25rem;
+            font-size: 0.875rem; /* 14px - smaller font */
+            padding: 0.5rem 0.75rem; /* Reduced padding */
             white-space: nowrap;
             text-decoration: none;
+            max-width: 120px; /* Limit width */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
         }
         /* Specifically target the logout button */
         .auth-user-name + .auth-btn--register { 
@@ -2576,3 +2581,4 @@
     <script src="../assets/js/slideshow.js"></script>
 </body>
 </html>
+
