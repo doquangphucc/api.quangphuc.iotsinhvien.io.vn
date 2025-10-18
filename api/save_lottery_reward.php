@@ -44,8 +44,10 @@ try {
         'reward_type' => $rewardType,
         'reward_value' => $rewardValue,
         'reward_code' => $rewardCode,
+        'reward_image' => null, // Add missing field
         'status' => 'pending',
-        'expires_at' => $expiresAt
+        'expires_at' => $expiresAt,
+        'notes' => null // Add missing field
     ];
 
     error_log("Attempting to save reward with data: " . json_encode($rewardData));
