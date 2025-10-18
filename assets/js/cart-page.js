@@ -425,7 +425,8 @@ async function setupAddressDropdowns() {
 // Initialize checkout page
 function initializeCheckoutPage() {
     const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
-    renderCheckoutItems(checkoutItems);
+    displayCartItems(checkoutItems);
+    updateCartSummary(checkoutItems);
     setupAddressDropdowns();
     setupEventListeners();
 }
