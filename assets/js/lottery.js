@@ -114,7 +114,6 @@ class LotteryWheel {
         setTimeout(() => {
             this.wheel.classList.remove('spinning');
             this.showResult(selectedPrize);
-            this.useTicket();
         }, 4000);
     }
     
@@ -122,15 +121,18 @@ class LotteryWheel {
         this.resultText.textContent = `Bạn đã nhận được: ${prize.name} - ${prize.description}`;
         this.resultModal.classList.remove('hidden');
         
-        // Lưu phần thưởng vào database
-        await this.saveReward(prize);
+        // Sử dụng vé trước để lấy ticket_id
+        const ticketId = await this.useTicket();
+        
+        // Lưu phần thưởng vào database với ticket_id
+        await this.saveReward(prize, ticketId);
         
         this.isSpinning = false;
         this.spinButton.disabled = false;
         this.spinText.textContent = 'Quay Ngay!';
     }
     
-    async saveReward(prize) {
+    async saveReward(prize, ticketId) {
         try {
             // Xác định loại phần thưởng và giá trị
             let rewardType = 'gift';
@@ -159,7 +161,7 @@ class LotteryWheel {
                     reward_type: rewardType,
                     reward_value: rewardValue,
                     reward_code: null, // Will be generated automatically
-                    ticket_id: null, // Will be set by backend
+                    ticket_id: ticketId, // Use the ticket_id from useTicket()
                     expires_days: 30
                 })
             });
@@ -168,7 +170,11 @@ class LotteryWheel {
                 const result = await response.json();
                 if (result.success) {
                     console.log('Phần thưởng đã được lưu:', result.data);
+                } else {
+                    console.error('Lỗi khi lưu phần thưởng:', result.message);
                 }
+            } else {
+                console.error('HTTP error:', response.status);
             }
         } catch (error) {
             console.error('Error saving reward:', error);
@@ -188,10 +194,19 @@ class LotteryWheel {
                 if (result.success) {
                     // Update ticket count
                     this.loadTicketCount();
+                    // Return ticket_id for use in saveReward
+                    return result.data.ticket_id;
+                } else {
+                    console.error('Lỗi khi sử dụng vé:', result.message);
+                    return null;
                 }
+            } else {
+                console.error('HTTP error:', response.status);
+                return null;
             }
         } catch (error) {
             console.error('Error using ticket:', error);
+            return null;
         }
     }
 }
