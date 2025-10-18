@@ -1,39 +1,12 @@
 <?php
-// API để lấy danh sách phần thưởng của user
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once 'connect.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-require_once 'session.php';
-require_once 'db_mysqli.php';
-
-// Kiểm tra phương thức request
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Chỉ chấp nhận phương thức GET'
-    ], JSON_UNESCAPED_UNICODE);
-    exit();
+    sendError('Phương thức không được hỗ trợ', 405);
 }
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Vui lòng đăng nhập để xem phần thưởng'
-    ], JSON_UNESCAPED_UNICODE);
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
+requireAuth();
+$userId = getCurrentUserId();
 
 // Lấy tham số filter từ query string
 $status = isset($_GET['status']) ? trim($_GET['status']) : 'all';
@@ -54,27 +27,23 @@ if (!in_array($order_by, $allowed_order_fields)) {
 }
 
 try {
-    $conn = DatabaseConnection::getInstance()->getConnection();
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
     
     // Xây dựng query
-    $where_clause = "WHERE user_id = ?";
-    $params = [$user_id];
-    $types = "i";
+    $where_clause = "WHERE user_id = :user_id";
+    $params = [':user_id' => $userId];
     
     if ($status !== 'all') {
-        $where_clause .= " AND status = ?";
-        $params[] = $status;
-        $types .= "s";
+        $where_clause .= " AND status = :status";
+        $params[':status'] = $status;
     }
     
     // Đếm tổng số phần thưởng
     $count_sql = "SELECT COUNT(*) as total FROM lottery_rewards $where_clause";
-    $stmt_count = $conn->prepare($count_sql);
-    $stmt_count->bind_param($types, ...$params);
-    $stmt_count->execute();
-    $count_result = $stmt_count->get_result();
-    $total = $count_result->fetch_assoc()['total'];
-    $stmt_count->close();
+    $stmt_count = $pdo->prepare($count_sql);
+    $stmt_count->execute($params);
+    $total = $stmt_count->fetchColumn();
     
     // Lấy danh sách phần thưởng
     $sql = "SELECT 
@@ -92,32 +61,24 @@ try {
             LEFT JOIN users u ON lr.user_id = u.id
             $where_clause
             ORDER BY $order_by $order_dir
-            LIMIT ? OFFSET ?";
+            LIMIT :limit OFFSET :offset";
     
-    $stmt = $conn->prepare($sql);
-    $params[] = $limit;
-    $params[] = $offset;
-    $types .= "ii";
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $params[':limit'] = $limit;
+    $params[':offset'] = $offset;
     
-    $rewards = [];
-    while ($row = $result->fetch_assoc()) {
-        // Tự động cập nhật status nếu đã hết hạn
-        if ($row['current_status'] === 'expired' && $row['status'] !== 'expired') {
-            $update_sql = "UPDATE lottery_rewards SET status = 'expired' WHERE id = ?";
-            $stmt_update = $conn->prepare($update_sql);
-            $stmt_update->bind_param("i", $row['id']);
-            $stmt_update->execute();
-            $stmt_update->close();
-            $row['status'] = 'expired';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $rewards = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Tự động cập nhật status nếu đã hết hạn
+    foreach ($rewards as &$reward) {
+        if ($reward['current_status'] === 'expired' && $reward['status'] !== 'expired') {
+            $update_sql = "UPDATE lottery_rewards SET status = 'expired' WHERE id = :id";
+            $stmt_update = $pdo->prepare($update_sql);
+            $stmt_update->execute([':id' => $reward['id']]);
+            $reward['status'] = 'expired';
         }
-        
-        $rewards[] = $row;
     }
-    
-    $stmt->close();
     
     // Thống kê
     $stats_sql = "SELECT 
@@ -126,42 +87,31 @@ try {
                     SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as used_count,
                     SUM(CASE WHEN status = 'expired' OR expires_at < NOW() THEN 1 ELSE 0 END) as expired_count
                   FROM lottery_rewards
-                  WHERE user_id = ?";
+                  WHERE user_id = :user_id";
     
-    $stmt_stats = $conn->prepare($stats_sql);
-    $stmt_stats->bind_param("i", $user_id);
-    $stmt_stats->execute();
-    $stats_result = $stmt_stats->get_result();
-    $stats = $stats_result->fetch_assoc();
-    $stmt_stats->close();
+    $stmt_stats = $pdo->prepare($stats_sql);
+    $stmt_stats->execute([':user_id' => $userId]);
+    $stats = $stmt_stats->fetch(PDO::FETCH_ASSOC);
     
-    http_response_code(200);
-    echo json_encode([
-        'success' => true,
-        'message' => 'Lấy danh sách phần thưởng thành công',
-        'data' => [
-            'rewards' => $rewards,
-            'pagination' => [
-                'total' => intval($total),
-                'limit' => $limit,
-                'offset' => $offset,
-                'has_more' => ($offset + $limit) < $total
-            ],
-            'stats' => [
-                'total_rewards' => intval($stats['total_rewards']),
-                'pending_count' => intval($stats['pending_count']),
-                'used_count' => intval($stats['used_count']),
-                'expired_count' => intval($stats['expired_count'])
-            ]
+    sendSuccess([
+        'rewards' => $rewards,
+        'pagination' => [
+            'total' => intval($total),
+            'limit' => $limit,
+            'offset' => $offset,
+            'has_more' => ($offset + $limit) < $total
+        ],
+        'stats' => [
+            'total_rewards' => intval($stats['total_rewards']),
+            'pending_count' => intval($stats['pending_count']),
+            'used_count' => intval($stats['used_count']),
+            'expired_count' => intval($stats['expired_count'])
         ]
-    ], JSON_UNESCAPED_UNICODE);
+    ], 'Lấy danh sách phần thưởng thành công');
     
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Lỗi server: ' . $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
+    error_log("Get lottery rewards error: " . $e->getMessage());
+    sendError('Không thể lấy danh sách phần thưởng.', 500);
 }
 ?>
 

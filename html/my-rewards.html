@@ -363,7 +363,8 @@
                 } else if (response.status === 401) {
                     window.location.href = 'login.html';
                 } else {
-                    showError('Không thể tải danh sách phần thưởng');
+                    const errorResult = await response.json();
+                    showError(errorResult.message || 'Không thể tải danh sách phần thưởng');
                 }
             } catch (error) {
                 console.error('Error loading rewards:', error);
@@ -375,19 +376,19 @@
             const statsContainer = document.getElementById('stats-container');
             statsContainer.innerHTML = `
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-                    <div class="text-3xl font-bold text-green-600 mb-1">${stats.total_rewards}</div>
+                    <div class="text-3xl font-bold text-green-600 mb-1">${stats.total_rewards || 0}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Tổng phần thưởng</div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-                    <div class="text-3xl font-bold text-blue-600 mb-1">${stats.pending_count}</div>
+                    <div class="text-3xl font-bold text-blue-600 mb-1">${stats.pending_count || 0}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Chưa sử dụng</div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-                    <div class="text-3xl font-bold text-green-600 mb-1">${stats.used_count}</div>
+                    <div class="text-3xl font-bold text-green-600 mb-1">${stats.used_count || 0}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Đã sử dụng</div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-                    <div class="text-3xl font-bold text-gray-600 mb-1">${stats.expired_count}</div>
+                    <div class="text-3xl font-bold text-gray-600 mb-1">${stats.expired_count || 0}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Hết hạn</div>
                 </div>
             `;
@@ -416,9 +417,10 @@
                     `<div class="text-xs text-orange-600 dark:text-orange-400 font-semibold">⚠️ Còn ${daysLeft} ngày hết hạn</div>` : '';
 
                 const rewardIcon = reward.reward_type === 'discount' ? '🎯' :
-                                 reward.reward_type === 'voucher' ? '🎫' :
                                  reward.reward_type === 'free_shipping' ? '🚚' :
-                                 reward.reward_type === 'accessory' ? '🎁' : '💝';
+                                 reward.reward_type === 'accessory' ? '🎁' :
+                                 reward.reward_type === 'gift' ? '🎁' :
+                                 reward.reward_type === 'no_prize' ? '😔' : '💝';
 
                 return `
                     <div class="reward-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -439,7 +441,7 @@
                                 </div>
                             ` : ''}
                             <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                                <div>🎁 Nhận lúc: ${new Date(reward.won_at).toLocaleString('vi-VN')}</div>
+                                <div>🎁 Nhận lúc: ${new Date(reward.created_at).toLocaleString('vi-VN')}</div>
                                 ${reward.expires_at ? `<div>⏰ Hết hạn: ${new Date(reward.expires_at).toLocaleString('vi-VN')}</div>` : ''}
                                 ${reward.used_at ? `<div>✅ Đã dùng: ${new Date(reward.used_at).toLocaleString('vi-VN')}</div>` : ''}
                             </div>
