@@ -12,14 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once 'connect.php';
 
 try {
+    error_log('get_survey_detail.php: Starting request');
+    
     // Check if user is logged in
     if (!isLoggedIn()) {
+        error_log('get_survey_detail.php: User not logged in');
         sendError('Bạn cần đăng nhập để thực hiện hành động này.', 401);
         exit;
     }
     
     $userId = getCurrentUserId();
     $surveyId = $_GET['id'] ?? null;
+    
+    error_log('get_survey_detail.php: User ID: ' . $userId . ', Survey ID: ' . $surveyId);
     
     if (!$surveyId) {
         sendError('Thiếu ID khảo sát');
@@ -33,6 +38,7 @@ try {
     }
     
     $pdo = $db->getConnection();
+    error_log('get_survey_detail.php: Database connection established');
     
     // Get survey with results
     $sql = "SELECT 
@@ -95,10 +101,16 @@ try {
             ORDER BY s.created_at DESC";
     
     $stmt = $pdo->prepare($sql);
+    error_log('get_survey_detail.php: SQL prepared: ' . $sql);
+    
     $stmt->execute([$surveyId, $userId]);
+    error_log('get_survey_detail.php: SQL executed with params: ' . $surveyId . ', ' . $userId);
+    
     $survey = $stmt->fetch(PDO::FETCH_ASSOC);
+    error_log('get_survey_detail.php: Survey data: ' . json_encode($survey));
     
     if (!$survey) {
+        error_log('get_survey_detail.php: No survey found');
         sendError('Không tìm thấy khảo sát');
         exit;
     }
