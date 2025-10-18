@@ -2586,27 +2586,55 @@
 
     <!-- Survey Save Logic -->
     <script>
+        // Debug: Check if button exists
+        console.log('Survey save script loaded');
+        
         // Add event listener for Save Survey button
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, looking for saveSurveyBtn...');
             const saveSurveyBtn = document.getElementById('saveSurveyBtn');
+            console.log('saveSurveyBtn found:', saveSurveyBtn);
+            
             if (saveSurveyBtn) {
-                saveSurveyBtn.addEventListener('click', saveSurvey);
+                console.log('Adding click event listener to saveSurveyBtn');
+                saveSurveyBtn.addEventListener('click', function(e) {
+                    console.log('Save button clicked!', e);
+                    saveSurvey();
+                });
+            } else {
+                console.error('saveSurveyBtn not found!');
+                // Try to find button by other means
+                const buttons = document.querySelectorAll('button');
+                console.log('All buttons found:', buttons);
+                buttons.forEach((btn, index) => {
+                    console.log(`Button ${index}:`, btn.textContent, btn.id);
+                });
             }
         });
 
         async function saveSurvey() {
+            console.log('saveSurvey function called');
             try {
                 // Show loading state
                 const saveBtn = document.getElementById('saveSurveyBtn');
+                console.log('Save button element:', saveBtn);
+                
+                if (!saveBtn) {
+                    console.error('Save button not found in saveSurvey function');
+                    return;
+                }
+                
                 const originalText = saveBtn.innerHTML;
                 saveBtn.innerHTML = '⏳ Đang lưu...';
                 saveBtn.disabled = true;
 
                 // Collect survey data from form
                 const surveyData = collectSurveyData();
+                console.log('Survey data collected:', surveyData);
                 
                 // Collect calculation results
                 const results = collectCalculationResults();
+                console.log('Calculation results collected:', results);
                 
                 // Prepare data for API
                 const apiData = {
@@ -2626,7 +2654,9 @@
                     body: JSON.stringify(apiData)
                 });
 
+                console.log('API response:', response);
                 const result = await response.json();
+                console.log('API result:', result);
 
                 if (result.success) {
                     // Show success message
@@ -2646,8 +2676,10 @@
             } finally {
                 // Restore button state
                 const saveBtn = document.getElementById('saveSurveyBtn');
-                saveBtn.innerHTML = originalText;
-                saveBtn.disabled = false;
+                if (saveBtn) {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                }
             }
         }
 
