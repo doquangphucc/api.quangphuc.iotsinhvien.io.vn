@@ -48,13 +48,19 @@ try {
         'expires_at' => $expiresAt
     ];
 
+    error_log("Attempting to save reward with data: " . json_encode($rewardData));
+    
     $rewardId = $db->insert('lottery_rewards', $rewardData);
+    
+    error_log("Reward saved successfully with ID: " . $rewardId);
 
     sendSuccess(['reward_id' => $rewardId, 'reward_code' => $rewardCode], 'Phần thưởng đã được lưu thành công!');
 
 } catch (Exception $e) {
     error_log("Save lottery reward error: " . $e->getMessage());
-    sendError('Không thể lưu phần thưởng.', 500);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    error_log("Input data: " . json_encode($input));
+    sendError('Không thể lưu phần thưởng: ' . $e->getMessage(), 500);
 }
 ?>
 
