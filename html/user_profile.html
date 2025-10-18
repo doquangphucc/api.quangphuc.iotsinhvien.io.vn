@@ -201,12 +201,45 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 Lịch sử khảo sát
                             </a>
+                            <a href="vong-quay-may-man.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl font-medium transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path></svg>
+                                Vòng Quay May Mắn
+                            </a>
                         </nav>
                     </div>
                 </div>
 
                 <!-- Main Content -->
                 <div class="md:col-span-2 space-y-6">
+                    <!-- Lottery Tickets -->
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 md:p-8 shadow-lg text-white">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path></svg>
+                            </div>
+                            <h2 class="text-2xl font-bold">Vé Quay May Mắn</h2>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 mb-2">Số vé hiện có:</p>
+                                <div class="flex items-center gap-2">
+                                    <span id="lottery-ticket-count" class="text-3xl font-bold">0</span>
+                                    <span class="text-purple-100">vé</span>
+                                </div>
+                            </div>
+                            <a href="vong-quay-may-man.html" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105">
+                                Quay Ngay!
+                            </a>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-xl">
+                            <p class="text-sm text-purple-100">
+                                💡 Mỗi đơn hàng thành công = 1 vé quay. Vé có hiệu lực trong 30 ngày.
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Personal Information -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-lg">
                         <div class="flex items-center gap-3 mb-6">
@@ -342,6 +375,28 @@
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
+    <script>
+        // Load lottery ticket count
+        async function loadLotteryTicketCount() {
+            try {
+                const response = await fetch('../api/get_lottery_tickets.php', {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('lottery-ticket-count').textContent = result.data.total_tickets;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading lottery ticket count:', error);
+            }
+        }
+
+        // Load lottery ticket count when page loads
+        document.addEventListener('DOMContentLoaded', loadLotteryTicketCount);
+    </script>
     <script>
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');

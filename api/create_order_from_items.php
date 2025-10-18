@@ -103,11 +103,26 @@ try {
         ]);
     }
 
+    // 3. Add lottery ticket for successful purchase
+    $ticketData = [
+        'user_id' => (int)$userId,
+        'order_id' => $orderId,
+        'ticket_type' => 'purchase',
+        'status' => 'active',
+        'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days')) // Expires in 30 days
+    ];
+    
+    $ticketId = $db->insert('lottery_tickets', $ticketData);
+
     // Commit all DB changes
     $pdo->commit();
 
     // Respond to client
-    sendSuccess(['order_id' => $orderId], 'Đặt hàng thành công!');
+    sendSuccess([
+        'order_id' => $orderId,
+        'lottery_ticket_id' => $ticketId,
+        'message' => 'Đặt hàng thành công! Bạn đã nhận được 1 vé quay may mắn!'
+    ], 'Đặt hàng thành công!');
 
 } catch (Exception $e) {
     // If anything fails, roll back the transaction

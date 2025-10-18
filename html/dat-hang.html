@@ -314,10 +314,29 @@
                 <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             </div>
             <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Đặt hàng thành công!</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-8">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
-            <button onclick="closeSuccessModal()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                Đóng
-            </button>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
+            
+            <!-- Lottery Ticket Notification -->
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl p-4 mb-6">
+                <div class="flex items-center justify-center gap-3">
+                    <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                    <div>
+                        <p class="font-semibold text-purple-800 dark:text-purple-200">🎉 Chúc mừng!</p>
+                        <p class="text-sm text-purple-700 dark:text-purple-300">Bạn đã nhận được 1 vé quay may mắn!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="closeSuccessModal()" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Đóng
+                </button>
+                <a href="vong-quay-may-man.html" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg text-center">
+                    Quay Ngay!
+                </a>
+            </div>
         </div>
     </div>
 

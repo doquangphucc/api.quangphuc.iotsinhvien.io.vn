@@ -151,6 +151,19 @@ CREATE TABLE IF NOT EXISTS cart_items (
     UNIQUE KEY (user_id, product_id)
 );
 
+-- Create lottery_tickets table
+CREATE TABLE IF NOT EXISTS lottery_tickets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    order_id INT,
+    ticket_type ENUM('purchase', 'bonus', 'promotion') DEFAULT 'purchase',
+    status ENUM('active', 'used', 'expired') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id)
+);
+
 -- Insert provinces data
 INSERT INTO tinh (id, ten_tinh) VALUES
 (1, 'THÀNH PHỐ HÀ NỘI'),
