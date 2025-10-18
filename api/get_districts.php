@@ -1,9 +1,9 @@
 <?php
 require_once 'connect.php';
 
-$cityId = $_GET['city_id'] ?? 0;
+$provinceId = $_GET['province_id'] ?? 0;
 
-if ($cityId <= 0) {
+if ($provinceId <= 0) {
     sendError('ID tỉnh/thành không hợp lệ');
 }
 
@@ -11,7 +11,7 @@ try {
     $db = Database::getInstance();
     
     $sql = "SELECT id, ten_phuong FROM phuong WHERE id_tinh = ? ORDER BY ten_phuong";
-    $stmt = $db->query($sql, [$cityId]);
+    $stmt = $db->query($sql, [$provinceId]);
     $districts = $stmt->fetchAll();
     
     sendSuccess(['districts' => $districts]);

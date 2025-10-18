@@ -344,16 +344,112 @@ function setupEventListeners() {
     }
 }
 
+// Checkout page specific functions
+async function setupAddressDropdowns() {
+    const citySelect = document.getElementById('city');
+    const districtSelect = document.getElementById('district');
+    
+    if (!citySelect || !districtSelect) return;
+    
+    try {
+        // Load provinces
+        const response = await fetch('../api/get_provinces.php', {
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch provinces');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success && result.data.provinces) {
+            // Clear existing options except the first one
+            citySelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
+            
+            // Add provinces
+            result.data.provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province.id;
+                option.textContent = province.ten_tinh;
+                citySelect.appendChild(option);
+            });
+        }
+        
+        // Handle city change
+        citySelect.addEventListener('change', async function() {
+            const provinceId = this.value;
+            districtSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            
+            if (!provinceId) {
+                districtSelect.innerHTML = '<option value="">Chọn tỉnh/thành trước</option>';
+                return;
+            }
+            
+            try {
+                // Load districts for selected province
+                const districtResponse = await fetch(`../api/get_districts.php?province_id=${provinceId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!districtResponse.ok) {
+                    throw new Error('Failed to fetch districts');
+                }
+                
+                const districtResult = await districtResponse.json();
+                
+                if (districtResult.success && districtResult.data.districts) {
+                    // Clear existing options except the first one
+                    districtSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                    
+                    // Add districts
+                    districtResult.data.districts.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.id;
+                        option.textContent = district.ten_phuong;
+                        districtSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading districts:', error);
+                districtSelect.innerHTML = '<option value="">Lỗi tải danh sách</option>';
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error loading provinces:', error);
+        citySelect.innerHTML = '<option value="">Lỗi tải danh sách</option>';
+    }
+}
+
+// Initialize checkout page
+function initializeCheckoutPage() {
+    const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
+    renderCheckoutItems(checkoutItems);
+    setupAddressDropdowns();
+    setupEventListeners();
+}
+
+// Check if we're on checkout page and initialize
+if (document.getElementById('checkout-form')) {
+    initializeCheckoutPage();
+}
+
 async function submitOrder() {
     try {
         // Get form data
         const formData = new FormData(document.getElementById('checkout-form'));
+        
+        // Get selected city and district names
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+        
         const orderData = {
             fullname: formData.get('fullname'),
             phone: formData.get('phone'),
             email: formData.get('email'),
-            city_name: formData.get('city'),
-            district_name: formData.get('district'),
+            city_name: citySelect.options[citySelect.selectedIndex]?.textContent || '',
+            district_name: districtSelect.options[districtSelect.selectedIndex]?.textContent || '',
             address: formData.get('address'),
             notes: formData.get('notes')
         };
