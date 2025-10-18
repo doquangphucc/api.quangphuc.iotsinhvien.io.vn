@@ -55,6 +55,30 @@
         .auth-btn--login:hover { background-color: #e5e7eb; }
         .auth-btn--register { background-color: #16a34a; color: white; }
         .auth-btn--register:hover { background-color: #15803d; }
+        .auth-user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            white-space: nowrap;
+            text-decoration: none;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+        .auth-user-name + .auth-btn--register { 
+             background-color: #fee2e2;
+             color: #b91c1c;
+             font-size: 0.75rem;
+             padding: 0.5rem 0.75rem;
+             min-width: auto;
+        }
+        .auth-user-name + .auth-btn--register:hover { background-color: #fecaca; }
+        body[data-theme="dark"] .auth-btn--login { background-color: #374151; color: #f9fafb; }
+        body[data-theme="dark"] .auth-btn--login:hover { background-color: #4b5563; }
+        body[data-theme="dark"] .auth-user-name { color: #d1d5db; }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register { background-color: #450a0a; color: #fca5a5; }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover { background-color: #7f1d1d; }
 
         .product-hero {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);

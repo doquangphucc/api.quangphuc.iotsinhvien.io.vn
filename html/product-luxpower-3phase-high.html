@@ -75,6 +75,45 @@
         .auth-btn--register:hover {
             background-color: #15803d;
         }
+        .auth-user-name {
+            font-weight: 600;
+            font-size: 0.875rem; /* 14px - smaller font */
+            padding: 0.5rem 0.75rem; /* Reduced padding */
+            white-space: nowrap;
+            text-decoration: none;
+            max-width: 120px; /* Limit width */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+        /* Specifically target the logout button */
+        .auth-user-name + .auth-btn--register { 
+             background-color: #fee2e2; /* red-100 */
+             color: #b91c1c; /* red-700 */
+             font-size: 0.75rem; /* 12px - smaller font */
+             padding: 0.5rem 0.75rem; /* Reduced padding */
+             min-width: auto; /* Remove minimum width */
+        }
+        .auth-user-name + .auth-btn--register:hover {
+             background-color: #fecaca; /* red-200 */
+        }
+        body[data-theme="dark"] .auth-btn--login {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-100 */
+        }
+        body[data-theme="dark"] .auth-btn--login:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        body[data-theme="dark"] .auth-user-name {
+            color: #d1d5db; /* gray-300 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register { /* Dark mode Logout button */
+             background-color: #450a0a; /* red-900 */
+             color: #fca5a5; /* red-400 */
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
+             background-color: #7f1d1d; /* red-800 */
+        }
 
         /* Product Hero */
         .product-hero {
