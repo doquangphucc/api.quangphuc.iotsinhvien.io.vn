@@ -2716,19 +2716,41 @@
             if (panelsNeededEl) results.panelsNeeded = parseInt(panelsNeededEl.textContent);
             if (totalCostEl) results.totalCost = parseFloat(totalCostEl.textContent.replace(/[^\d.]/g, ''));
 
+            // Get solar panel info from form
+            const solarPanelSelect = document.querySelector('select[name="solarPanel"]');
+            const solarPanelValue = solarPanelSelect?.value || '590';
+            
+            // Map solar panel values to panel info
+            const panelInfoMap = {
+                '590': { id: 1, name: 'Pin mặt trời 590W', power: 590, price: 2500000 },
+                '630': { id: 2, name: 'Pin mặt trời 630W', power: 630, price: 2800000 }
+            };
+            
+            const panelInfo = panelInfoMap[solarPanelValue] || panelInfoMap['590'];
+
+            console.log('Calculation results collected:', {
+                monthlyKWh: results.monthlyKWh || 0,
+                panelsNeeded: results.panelsNeeded || 0,
+                totalCost: results.totalCost || 0,
+                panelInfo: panelInfo
+            });
+
             // Add default values if not found
             return {
                 monthlyKWh: results.monthlyKWh || 0,
                 sunHours: 5.5, // Default sun hours
                 panelsNeeded: results.panelsNeeded || 0,
-                panelCost: 0,
-                inverter: { id: 1, name: 'Inverter', capacity: 0, price: 0 },
-                cabinet: { id: 1, name: 'Cabinet', capacity: 0, price: 0 },
+                panelCost: (results.panelsNeeded || 0) * panelInfo.price,
+                panelInfo: panelInfo,
+                energyPerPanelPerDay: panelInfo.power * 5.5, // sunHours
+                totalCapacity: (results.panelsNeeded || 0) * panelInfo.power,
+                inverter: { id: 1, name: 'Inverter Luxpower', capacity: 6000, price: 15000000 },
+                cabinet: { id: 1, name: 'Tủ điện', capacity: 6000, price: 2000000 },
                 batteryNeeded: 0,
                 totalCost: results.totalCost || 0,
                 batteryOptions: [
-                    { id: 1, name: 'Battery 8 cell', capacity: 0, quantity: 0, price: 0, totalCost: 0 },
-                    { id: 2, name: 'Battery 16 cell', capacity: 0, quantity: 0, price: 0, totalCost: 0 }
+                    { id: 1, name: 'Pin lưu trữ 8 cell', capacity: 8.3, quantity: 0, price: 15000000, totalCost: 0 },
+                    { id: 2, name: 'Pin lưu trữ 16 cell', capacity: 16.6, quantity: 0, price: 25000000, totalCost: 0 }
                 ],
                 accessories: {
                     bachZ: { qty: 0, price: 0, cost: 0 },
