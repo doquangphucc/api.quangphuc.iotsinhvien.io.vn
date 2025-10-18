@@ -2601,31 +2601,13 @@
         // Debug: Check if button exists
         console.log('Survey save script loaded');
         
-        // Add event listener for Save Survey button
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, looking for saveSurveyBtn...');
-            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
-            console.log('saveSurveyBtn found:', saveSurveyBtn);
-            
-            if (saveSurveyBtn) {
-                console.log('Adding click event listener to saveSurveyBtn');
-                saveSurveyBtn.addEventListener('click', function(e) {
-                    console.log('Save button clicked!', e);
-                    saveSurvey();
-                });
-            } else {
-                console.error('saveSurveyBtn not found!');
-                // Try to find button by other means
-                const buttons = document.querySelectorAll('button');
-                console.log('All buttons found:', buttons);
-                buttons.forEach((btn, index) => {
-                    console.log(`Button ${index}:`, btn.textContent, btn.id);
-                });
-            }
-        });
+        // Note: Event listener will be added when button is created dynamically
+        // No need to add it on DOMContentLoaded since button doesn't exist yet
 
         async function saveSurvey() {
             console.log('saveSurvey function called');
+            let originalText = '💾 Lưu Báo Giá'; // Default text
+            
             try {
                 // Show loading state
                 const saveBtn = document.getElementById('saveSurveyBtn');
@@ -2636,7 +2618,7 @@
                     return;
                 }
                 
-                const originalText = saveBtn.innerHTML;
+                originalText = saveBtn.innerHTML;
                 saveBtn.innerHTML = '⏳ Đang lưu...';
                 saveBtn.disabled = true;
 
