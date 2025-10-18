@@ -525,7 +525,24 @@ if (document.getElementById('checkout-form')) {
     initializeCheckoutPage();
 }
 
+let isSubmitting = false; // Flag to prevent duplicate submissions
+
 async function submitOrder() {
+    // Prevent duplicate submissions
+    if (isSubmitting) {
+        console.log('Order already being submitted, please wait...');
+        return;
+    }
+    
+    isSubmitting = true;
+    
+    // Disable submit button to prevent multiple clicks
+    const submitButton = document.querySelector('#checkout-form button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Đang xử lý...';
+    }
+    
     try {
         // Get form data
         const formData = new FormData(document.getElementById('checkout-form'));
@@ -614,11 +631,26 @@ async function submitOrder() {
             
             // Show success modal
             document.getElementById('success-modal').classList.remove('hidden');
+            
+            // Reset flag after successful order (don't reset to allow modal to show)
+            // isSubmitting will be reset when user navigates away
         } else {
+            isSubmitting = false; // Reset flag on error so user can retry
+            // Re-enable submit button
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Đặt Hàng';
+            }
             throw new Error(orderResult.message || 'Failed to create order');
         }
     } catch (error) {
         console.error('Error submitting order:', error);
+        isSubmitting = false; // Reset flag on error so user can retry
+        // Re-enable submit button
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Đặt Hàng';
+        }
         alert('Không thể đặt hàng: ' + error.message);
     }
 }

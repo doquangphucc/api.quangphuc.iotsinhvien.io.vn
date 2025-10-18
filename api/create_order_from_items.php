@@ -104,15 +104,28 @@ try {
     }
 
     // 3. Add lottery ticket for successful purchase
-    $ticketData = [
-        'user_id' => (int)$userId,
-        'order_id' => $orderId,
-        'ticket_type' => 'purchase',
-        'status' => 'active',
-        'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days')) // Expires in 30 days
-    ];
+    // First check if ticket already exists for this order to prevent duplicates
+    $checkTicketSql = "SELECT id FROM lottery_tickets WHERE order_id = ? LIMIT 1";
+    $checkStmt = $pdo->prepare($checkTicketSql);
+    $checkStmt->execute([$orderId]);
+    $existingTicket = $checkStmt->fetch(PDO::FETCH_ASSOC);
     
-    $ticketId = $db->insert('lottery_tickets', $ticketData);
+    $ticketId = null;
+    
+    if (!$existingTicket) {
+        // Only create ticket if it doesn't exist for this order
+        $ticketData = [
+            'user_id' => (int)$userId,
+            'order_id' => $orderId,
+            'ticket_type' => 'purchase',
+            'status' => 'active',
+            'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days')) // Expires in 30 days
+        ];
+        
+        $ticketId = $db->insert('lottery_tickets', $ticketData);
+    } else {
+        $ticketId = $existingTicket['id'];
+    }
 
     // Commit all DB changes
     $pdo->commit();
