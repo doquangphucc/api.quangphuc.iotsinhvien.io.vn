@@ -1,83 +1,121 @@
 <?php
-require_once 'connect.php';
-require_once 'auth_helpers.php';
+// Test script để debug lỗi save_lottery_reward.php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Test API save_lottery_reward.php với dữ liệu mẫu
-echo "🧪 Testing save_lottery_reward.php API...\n\n";
+echo "=== TEST SAVE LOTTERY REWARD DEBUG ===\n\n";
 
+// Test 1: Kiểm tra database connection
+echo "1. Testing database connection...\n";
 try {
-    // Simulate POST data
-    $_SERVER['REQUEST_METHOD'] = 'POST';
+    require_once 'config.php';
+    $pdo = new PDO(
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+        DB_USER,
+        DB_PASS,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+    echo "✅ Database connection OK\n";
+} catch (Exception $e) {
+    echo "❌ Database connection failed: " . $e->getMessage() . "\n";
+    exit;
+}
+
+// Test 2: Kiểm tra bảng lottery_rewards
+echo "\n2. Testing lottery_rewards table...\n";
+try {
+    $stmt = $pdo->query("DESCRIBE lottery_rewards");
+    $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo "✅ Table lottery_rewards exists with " . count($columns) . " columns\n";
     
-    // Mock session data (thay bằng user_id thật)
-    $_SESSION['user_id'] = 1; // Thay bằng user_id thật từ database
+    // Kiểm tra các cột quan trọng
+    $requiredColumns = ['id', 'user_id', 'reward_name', 'reward_type', 'reward_value', 'reward_code', 'reward_image', 'status', 'ticket_id', 'expires_at', 'notes'];
+    $foundColumns = array_column($columns, 'Field');
     
-    // Mock input data
+    foreach ($requiredColumns as $col) {
+        if (in_array($col, $foundColumns)) {
+            echo "  ✅ Column '$col' exists\n";
+        } else {
+            echo "  ❌ Column '$col' MISSING\n";
+        }
+    }
+} catch (Exception $e) {
+    echo "❌ Table lottery_rewards error: " . $e->getMessage() . "\n";
+}
+
+// Test 3: Kiểm tra session
+echo "\n3. Testing session...\n";
+session_start();
+if (isset($_SESSION['user_id'])) {
+    echo "✅ Session user_id: " . $_SESSION['user_id'] . "\n";
+} else {
+    echo "❌ No session user_id found\n";
+    echo "Available session data: " . print_r($_SESSION, true) . "\n";
+}
+
+// Test 4: Test insert vào bảng lottery_rewards
+echo "\n4. Testing insert into lottery_rewards...\n";
+try {
     $testData = [
+        'user_id' => 1, // Test với user_id = 1
+        'ticket_id' => null,
         'reward_name' => 'Test Reward',
         'reward_type' => 'gift',
         'reward_value' => 'Test Value',
-        'reward_code' => null,
-        'ticket_id' => null,
-        'expires_days' => 30
-    ];
-    
-    echo "📝 Test data: " . json_encode($testData) . "\n\n";
-    
-    // Test database connection
-    $db = Database::getInstance();
-    $pdo = $db->getConnection();
-    echo "✅ Database connection successful\n";
-    
-    // Test table exists
-    $stmt = $pdo->query("SHOW TABLES LIKE 'lottery_rewards'");
-    if ($stmt->fetch()) {
-        echo "✅ Table lottery_rewards exists\n";
-    } else {
-        echo "❌ Table lottery_rewards does not exist\n";
-        exit;
-    }
-    
-    // Test user exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    if ($stmt->fetch()) {
-        echo "✅ User ID " . $_SESSION['user_id'] . " exists\n";
-    } else {
-        echo "❌ User ID " . $_SESSION['user_id'] . " does not exist\n";
-        echo "Available users:\n";
-        $stmt = $pdo->query("SELECT id, username FROM users LIMIT 5");
-        while ($row = $stmt->fetch()) {
-            echo "- ID: " . $row['id'] . ", Username: " . $row['username'] . "\n";
-        }
-        exit;
-    }
-    
-    // Test insert
-    $expiresAt = date('Y-m-d H:i:s', strtotime("+30 days"));
-    $rewardData = [
-        'user_id' => $_SESSION['user_id'],
-        'ticket_id' => null,
-        'reward_name' => $testData['reward_name'],
-        'reward_type' => $testData['reward_type'],
-        'reward_value' => $testData['reward_value'],
         'reward_code' => 'TEST123',
+        'reward_image' => null,
         'status' => 'pending',
-        'expires_at' => $expiresAt
+        'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days')),
+        'notes' => null
     ];
     
-    echo "📊 Attempting insert with data: " . json_encode($rewardData) . "\n";
+    $fields = array_keys($testData);
+    $fieldList = implode(',', $fields);
+    $paramList = ':' . implode(', :', $fields);
     
-    $rewardId = $db->insert('lottery_rewards', $rewardData);
-    echo "✅ Insert successful! Reward ID: " . $rewardId . "\n";
+    $sql = "INSERT INTO lottery_rewards ({$fieldList}) VALUES ({$paramList})";
+    $stmt = $pdo->prepare($sql);
+    $result = $stmt->execute($testData);
     
-    // Clean up test data
-    $pdo->prepare("DELETE FROM lottery_rewards WHERE id = ?")->execute([$rewardId]);
-    echo "🧹 Test data cleaned up\n";
-    
+    if ($result) {
+        $insertId = $pdo->lastInsertId();
+        echo "✅ Test insert successful, ID: $insertId\n";
+        
+        // Xóa record test
+        $pdo->prepare("DELETE FROM lottery_rewards WHERE id = ?")->execute([$insertId]);
+        echo "✅ Test record cleaned up\n";
+    } else {
+        echo "❌ Test insert failed\n";
+    }
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage() . "\n";
-    echo "📍 File: " . $e->getFile() . " Line: " . $e->getLine() . "\n";
-    echo "📋 Stack trace:\n" . $e->getTraceAsString() . "\n";
+    echo "❌ Test insert error: " . $e->getMessage() . "\n";
+    echo "SQL Error Info: " . print_r($stmt->errorInfo(), true) . "\n";
 }
+
+// Test 5: Kiểm tra file save_lottery_reward.php
+echo "\n5. Testing save_lottery_reward.php syntax...\n";
+$phpFile = 'save_lottery_reward.php';
+if (file_exists($phpFile)) {
+    $output = shell_exec("php -l $phpFile 2>&1");
+    if (strpos($output, 'No syntax errors') !== false) {
+        echo "✅ PHP syntax OK\n";
+    } else {
+        echo "❌ PHP syntax error:\n$output\n";
+    }
+} else {
+    echo "❌ File save_lottery_reward.php not found\n";
+}
+
+// Test 6: Kiểm tra các file dependencies
+echo "\n6. Testing dependencies...\n";
+$deps = ['connect.php', 'auth_helpers.php', 'config.php'];
+foreach ($deps as $dep) {
+    if (file_exists($dep)) {
+        echo "✅ $dep exists\n";
+    } else {
+        echo "❌ $dep MISSING\n";
+    }
+}
+
+echo "\n=== DEBUG COMPLETE ===\n";
 ?>
