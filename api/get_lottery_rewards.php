@@ -22,9 +22,9 @@ if (!in_array($order_dir, ['ASC', 'DESC'])) {
 }
 
 // Validate order by
-$allowed_order_fields = ['won_at', 'reward_name', 'reward_type', 'expires_at', 'status'];
+$allowed_order_fields = ['created_at', 'won_at', 'reward_name', 'reward_type', 'expires_at', 'status'];
 if (!in_array($order_by, $allowed_order_fields)) {
-    $order_by = 'won_at';
+    $order_by = 'created_at';
 }
 
 try {
@@ -49,8 +49,6 @@ try {
     // Lấy danh sách phần thưởng
     $sql = "SELECT 
                 lr.*,
-                lt.ticket_code,
-                u.full_name as user_name,
                 CASE 
                     WHEN lr.status = 'expired' THEN 'expired'
                     WHEN lr.expires_at < NOW() THEN 'expired'
@@ -58,8 +56,6 @@ try {
                 END as current_status,
                 DATEDIFF(lr.expires_at, NOW()) as days_until_expiry
             FROM lottery_rewards lr
-            LEFT JOIN lottery_tickets lt ON lr.ticket_id = lt.id
-            LEFT JOIN users u ON lr.user_id = u.id
             $where_clause
             ORDER BY $order_by $order_dir
             LIMIT :limit OFFSET :offset";
@@ -112,7 +108,8 @@ try {
     
 } catch (Exception $e) {
     error_log("Get lottery rewards error: " . $e->getMessage());
-    sendError('Không thể lấy danh sách phần thưởng.', 500);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    sendError('Không thể lấy danh sách phần thưởng: ' . $e->getMessage(), 500);
 }
 ?>
 
