@@ -2679,17 +2679,21 @@
 
         function collectSurveyData() {
             // Get form values
-            const region = document.querySelector('input[name="region"]:checked')?.value || '';
+            const region = document.querySelector('select[name="region"]')?.value || '';
             const phase = document.querySelector('input[name="phase"]:checked')?.value || '';
-            const solarPanel = document.querySelector('input[name="solarPanel"]:checked')?.value || '';
-            const monthlyBill = document.getElementById('monthlyBill')?.value || '';
-            const usageTime = document.querySelector('input[name="usageTime"]:checked')?.value || '';
+            const solarPanel = document.querySelector('select[name="solarPanel"]')?.value || '';
+            const monthlyBill = document.getElementById('monthlyBillInput')?.value || '';
+            const usageTime = document.querySelector('select[name="usageTime"]')?.value || '';
+
+            console.log('Form values collected:', {
+                region, phase, solarPanel, monthlyBill, usageTime
+            });
 
             return {
                 region: region,
                 phase: parseInt(phase),
                 solarPanel: parseInt(solarPanel),
-                monthlyBill: parseFloat(monthlyBill),
+                monthlyBill: parseFloat(monthlyBill.replace(/[^\d]/g, '')), // Remove formatting
                 usageTime: usageTime
             };
         }
