@@ -314,8 +314,10 @@
             
             // Display orders
             orders.forEach(order => {
-                const orderCard = createOrderCard(order);
-                container.appendChild(orderCard);
+                const orderCardHtml = createOrderCard(order);
+                const orderCardElement = document.createElement('div');
+                orderCardElement.innerHTML = orderCardHtml;
+                container.appendChild(orderCardElement.firstElementChild);
             });
         }
 
