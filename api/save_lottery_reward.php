@@ -82,7 +82,20 @@ try {
     error_log("Save lottery reward error: " . $e->getMessage());
     error_log("Stack trace: " . $e->getTraceAsString());
     error_log("Input data: " . json_encode($input));
-    sendError('Không thể lưu phần thưởng: ' . $e->getMessage(), 500);
+    
+    // Return detailed error for debugging
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Không thể lưu phần thưởng: ' . $e->getMessage(),
+        'debug' => [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
+            'input' => $input
+        ]
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 ?>
 
