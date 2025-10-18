@@ -2,18 +2,20 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+require_once 'session.php';
+
 try {
     error_log('get_survey_detail.php: Starting request');
     
-    // Simple authentication check
-    session_start();
-    if (!isset($_SESSION['user_id'])) {
+    // Check if user is logged in using session.php
+    if (!isLoggedIn()) {
         error_log('get_survey_detail.php: User not logged in');
         echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập']);
         exit;
     }
     
-    $userId = $_SESSION['user_id'];
+    $userId = getCurrentUserId();
+    error_log('get_survey_detail.php: User ID from session: ' . $userId);
     $surveyId = $_GET['id'] ?? null;
     
     error_log('get_survey_detail.php: User ID: ' . $userId . ', Survey ID: ' . $surveyId);
