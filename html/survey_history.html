@@ -318,9 +318,9 @@
         }
         
         function createSurveyCard(survey) {
-            const createdAt = new Date(survey.created_at).toLocaleDateString('vi-VN');
-            const regionName = survey.region_name || 'Không xác định';
-            const totalCost = survey.total_cost ? survey.total_cost.toLocaleString('vi-VN') : '0';
+            const createdAt = new Date(survey.createdAt).toLocaleDateString('vi-VN');
+            const regionName = survey.regionName || 'Không xác định';
+            const totalCost = survey.results?.totalCost ? survey.results.totalCost.toLocaleString('vi-VN') : '0';
             
             return `
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -354,21 +354,21 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Tấm pin:</span>
-                                <span class="font-semibold text-gray-800 dark:text-white">${survey.panel_name || 'N/A'}</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.panelName || 'N/A'}</span>
                             </div>
                         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Số tấm:</span>
-                                <span class="font-semibold text-gray-800 dark:text-white">${survey.panels_needed || 0}</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.panelsNeeded || 0}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Công suất:</span>
-                                <span class="font-semibold text-gray-800 dark:text-white">${survey.total_capacity || 0} kW</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.totalCapacity || 0} kW</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Hóa đơn:</span>
-                                <span class="font-semibold text-gray-800 dark:text-white">${survey.monthly_bill ? survey.monthly_bill.toLocaleString('vi-VN') : '0'}đ</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.monthlyBill ? survey.monthlyBill.toLocaleString('vi-VN') : '0'}đ</span>
                             </div>
                         </div>
                     </div>
@@ -386,8 +386,7 @@
         }
         
         function viewSurveyDetails(surveyId) {
-            // TODO: Implement survey details view
-            alert('Chức năng xem chi tiết đang được phát triển. Survey ID: ' + surveyId);
+            window.location.href = `survey_detail.html?id=${surveyId}`;
         }
         
         function createNewSurvey() {
