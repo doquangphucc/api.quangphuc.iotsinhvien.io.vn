@@ -106,8 +106,21 @@ try {
     error_log('get_survey_detail.php: Survey data: ' . json_encode($survey));
     
     if (!$survey) {
-        error_log('get_survey_detail.php: No survey found');
-        sendError('Không tìm thấy khảo sát');
+        error_log('get_survey_detail.php: No survey found for ID: ' . $surveyId . ', User ID: ' . $userId);
+        
+        // Check if survey exists but belongs to different user
+        $checkSql = "SELECT id, user_id FROM solar_surveys WHERE id = ?";
+        $checkStmt = $pdo->prepare($checkSql);
+        $checkStmt->execute([$surveyId]);
+        $checkSurvey = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($checkSurvey) {
+            error_log('get_survey_detail.php: Survey exists but belongs to user: ' . $checkSurvey['user_id']);
+            sendError('Bạn không có quyền xem khảo sát này');
+        } else {
+            error_log('get_survey_detail.php: Survey does not exist');
+            sendError('Không tìm thấy khảo sát');
+        }
         exit;
     }
     
