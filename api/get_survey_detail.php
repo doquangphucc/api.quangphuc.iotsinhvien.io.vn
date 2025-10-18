@@ -14,12 +14,8 @@ require_once 'connect.php';
 try {
     error_log('get_survey_detail.php: Starting request');
     
-    // Check if user is logged in
-    if (!isLoggedIn()) {
-        error_log('get_survey_detail.php: User not logged in');
-        sendError('Bạn cần đăng nhập để thực hiện hành động này.', 401);
-        exit;
-    }
+    requireAuth();
+    error_log('get_survey_detail.php: Authentication passed');
     
     $userId = getCurrentUserId();
     $surveyId = $_GET['id'] ?? null;
