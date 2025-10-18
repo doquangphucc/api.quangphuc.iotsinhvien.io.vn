@@ -254,6 +254,171 @@
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/cache-buster.js"></script>
+    
+    <!-- Survey History Logic -->
+    <script>
+        let surveys = [];
+        
+        // Load surveys on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadSurveys();
+        });
+        
+        async function loadSurveys() {
+            try {
+                console.log('Loading survey history...');
+                
+                const response = await fetch('../api/get_survey_history.php', {
+                    credentials: 'include'
+                });
+                
+                console.log('API response:', response);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('API result:', result);
+                    
+                    if (result.success) {
+                        surveys = result.data.surveys || [];
+                        displaySurveys(surveys);
+                    } else {
+                        showError(result.message);
+                    }
+                } else if (response.status === 401) {
+                    window.location.href = 'login.html';
+                } else {
+                    const errorResult = await response.json();
+                    showError(errorResult.message || 'Không thể tải lịch sử khảo sát');
+                }
+            } catch (error) {
+                console.error('Error loading surveys:', error);
+                showError('Lỗi kết nối server');
+            }
+        }
+        
+        function displaySurveys(surveys) {
+            const loadingEl = document.getElementById('loading');
+            const surveyListEl = document.getElementById('surveyList');
+            const emptyStateEl = document.getElementById('emptyState');
+            
+            // Hide loading
+            loadingEl.classList.add('hidden');
+            
+            if (surveys.length === 0) {
+                // Show empty state
+                emptyStateEl.classList.remove('hidden');
+                surveyListEl.classList.add('hidden');
+            } else {
+                // Show surveys
+                emptyStateEl.classList.add('hidden');
+                surveyListEl.classList.remove('hidden');
+                
+                surveyListEl.innerHTML = surveys.map(survey => createSurveyCard(survey)).join('');
+            }
+        }
+        
+        function createSurveyCard(survey) {
+            const createdAt = new Date(survey.created_at).toLocaleDateString('vi-VN');
+            const regionName = survey.region_name || 'Không xác định';
+            const totalCost = survey.total_cost ? survey.total_cost.toLocaleString('vi-VN') : '0';
+            
+            return `
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800 dark:text-white">Khảo sát #${survey.id}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${createdAt}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-emerald-600">${totalCost}đ</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Tổng chi phí</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Khu vực:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${regionName}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Loại điện:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.phase} pha</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Tấm pin:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.panel_name || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Số tấm:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.panels_needed || 0}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Công suất:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.total_capacity || 0} kW</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Hóa đơn:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.monthly_bill ? survey.monthly_bill.toLocaleString('vi-VN') : '0'}đ</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button onclick="viewSurveyDetails(${survey.id})" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-200">
+                            Xem chi tiết
+                        </button>
+                        <button onclick="createNewSurvey()" class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
+                            Tạo mới
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function viewSurveyDetails(surveyId) {
+            // TODO: Implement survey details view
+            alert('Chức năng xem chi tiết đang được phát triển. Survey ID: ' + surveyId);
+        }
+        
+        function createNewSurvey() {
+            window.location.href = 'khao-sat-dien-mat-troi.html';
+        }
+        
+        function showError(message) {
+            const loadingEl = document.getElementById('loading');
+            const surveyListEl = document.getElementById('surveyList');
+            const emptyStateEl = document.getElementById('emptyState');
+            
+            loadingEl.classList.add('hidden');
+            surveyListEl.classList.add('hidden');
+            emptyStateEl.classList.remove('hidden');
+            
+            // Update empty state with error message
+            emptyStateEl.innerHTML = `
+                <div class="w-32 h-32 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Lỗi tải dữ liệu</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">${message}</p>
+                <button onclick="loadSurveys()" class="inline-block bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                    Thử lại
+                </button>
+            `;
+        }
+    </script>
+    
     <script>
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
