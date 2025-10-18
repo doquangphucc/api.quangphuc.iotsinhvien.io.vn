@@ -118,13 +118,61 @@ class LotteryWheel {
         }, 4000);
     }
     
-    showResult(prize) {
+    async showResult(prize) {
         this.resultText.textContent = `Bạn đã nhận được: ${prize.name} - ${prize.description}`;
         this.resultModal.classList.remove('hidden');
+        
+        // Lưu phần thưởng vào database
+        await this.saveReward(prize);
         
         this.isSpinning = false;
         this.spinButton.disabled = false;
         this.spinText.textContent = 'Quay Ngay!';
+    }
+    
+    async saveReward(prize) {
+        try {
+            // Xác định loại phần thưởng và giá trị
+            let rewardType = 'gift';
+            let rewardValue = null;
+            
+            if (prize.name.includes('%')) {
+                rewardType = 'discount';
+                rewardValue = prize.name.match(/\d+/)?.[0] + '%';
+            } else if (prize.name.includes('vận chuyển')) {
+                rewardType = 'free_shipping';
+                rewardValue = '0đ';
+            } else if (prize.name.includes('phụ kiện')) {
+                rewardType = 'accessory';
+                rewardValue = 'Phụ kiện miễn phí';
+            } else if (prize.name.includes('may mắn')) {
+                rewardType = 'no_prize';
+                rewardValue = 'Chúc may mắn lần sau';
+            }
+            
+            const response = await fetch('../api/save_lottery_reward.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    reward_name: prize.name,
+                    reward_type: rewardType,
+                    reward_value: rewardValue,
+                    reward_code: null, // Will be generated automatically
+                    ticket_id: null, // Will be set by backend
+                    expires_days: 30
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    console.log('Phần thưởng đã được lưu:', result.data);
+                }
+            }
+        } catch (error) {
+            console.error('Error saving reward:', error);
+        }
     }
     
     async useTicket() {
