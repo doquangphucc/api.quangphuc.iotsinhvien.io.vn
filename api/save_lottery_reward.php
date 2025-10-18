@@ -1,17 +1,31 @@
 <?php
+// Debug: Log start
+error_log("=== SAVE LOTTERY REWARD DEBUG START ===");
+
 require_once 'connect.php';
+error_log("DEBUG: connect.php loaded");
+
 require_once 'auth_helpers.php';
+error_log("DEBUG: auth_helpers.php loaded");
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    error_log("DEBUG: Wrong method: " . $_SERVER['REQUEST_METHOD']);
     sendError('Phương thức không được hỗ trợ', 405);
 }
 
+error_log("DEBUG: Method OK, checking auth...");
+
 requireAuth();
+error_log("DEBUG: Auth OK");
+
 $userId = getCurrentUserId();
+error_log("DEBUG: User ID: " . $userId);
 
 $input = json_decode(file_get_contents('php://input'), true);
+error_log("DEBUG: Input data: " . json_encode($input));
 
 if (json_last_error() !== JSON_ERROR_NONE) {
+    error_log("DEBUG: JSON decode error: " . json_last_error_msg());
     sendError('Dữ liệu JSON không hợp lệ');
 }
 
@@ -32,10 +46,16 @@ if (in_array($rewardType, ['discount', 'free_shipping', 'accessory', 'gift']) &&
 }
 
 try {
+    error_log("DEBUG: Starting database operations...");
+    
     $db = Database::getInstance();
+    error_log("DEBUG: Database instance created");
+    
     $pdo = $db->getConnection();
+    error_log("DEBUG: Database connection obtained");
 
     $expiresAt = date('Y-m-d H:i:s', strtotime("+$expiresDays days"));
+    error_log("DEBUG: Expires at: " . $expiresAt);
 
     $rewardData = [
         'user_id' => $userId,
