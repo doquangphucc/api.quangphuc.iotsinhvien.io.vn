@@ -332,7 +332,7 @@ function setupEventListeners() {
         checkoutBtn.addEventListener('click', async function() {
             try {
                 // Get cart items from database
-                const response = await fetch('../api/get_cart.php', {
+                const response = await fetch('../api/get_cart_without_auth.php', {
                     credentials: 'include'
                 });
                 
@@ -478,7 +478,7 @@ function initializeCheckoutPage() {
 // Fallback function to load cart items from database
 async function loadCartItemsFromDatabase() {
     try {
-        const response = await fetch('../api/get_cart.php', {
+        const response = await fetch('../api/get_cart_without_auth.php', {
             credentials: 'include'
         });
         
@@ -551,8 +551,48 @@ async function submitOrder() {
         
         if (!checkoutItems || checkoutItems.length === 0) {
             console.error('No checkout items found in localStorage');
-            alert('Giỏ hàng trống! Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.');
-            return;
+            
+            // Try to get from database as fallback
+            console.log('Attempting to load from database as fallback...');
+            try {
+                const response = await fetch('../api/get_cart_without_auth.php', {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Database cart result:', result);
+                    
+                    if (result.success && result.data.cart && result.data.cart.length > 0) {
+                        console.log('Found items in database, using them for checkout');
+                        const dbCheckoutItems = result.data.cart.map(item => ({
+                            product_id: item.product_id,
+                            id: item.product_id,
+                            name: item.name,
+                            quantity: item.quantity,
+                            price: item.price,
+                            image_url: item.image_url,
+                            specifications: item.specifications || ''
+                        }));
+                        
+                        // Save to localStorage for consistency
+                        localStorage.setItem('checkoutItems', JSON.stringify(dbCheckoutItems));
+                        
+                        // Continue with database items
+                        checkoutItems = dbCheckoutItems;
+                    } else {
+                        alert('Giỏ hàng trống! Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.');
+                        return;
+                    }
+                } else {
+                    alert('Giỏ hàng trống! Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error loading from database:', error);
+                alert('Giỏ hàng trống! Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.');
+                return;
+            }
         }
 
         // Submit order with localStorage data
