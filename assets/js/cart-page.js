@@ -156,6 +156,9 @@ async function updateQuantity(cartItemId, newQuantity) {
         const result = await response.json();
         
         if (result.success) {
+            // Show success notification
+            showSuccessNotification('Đã cập nhật số lượng sản phẩm');
+            
             // Reload cart items
             await loadCartItems();
             // Update cart counter
@@ -167,15 +170,59 @@ async function updateQuantity(cartItemId, newQuantity) {
         }
     } catch (error) {
         console.error('Error updating quantity:', error);
-        alert('Không thể cập nhật số lượng: ' + error.message);
+        showErrorNotification('Không thể cập nhật số lượng: ' + error.message);
     }
 }
 
 async function removeFromCart(cartItemId) {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-        return;
-    }
+    // Show custom confirmation modal instead of browser confirm
+    showDeleteConfirmation(cartItemId);
+}
 
+function showDeleteConfirmation(cartItemId) {
+    // Create modal overlay
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+    modalOverlay.id = 'delete-confirmation-modal';
+    
+    modalOverlay.innerHTML = `
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full text-center transform transition-all shadow-2xl">
+            <div class="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Xác nhận xóa sản phẩm</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-8">Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?</p>
+            <div class="flex gap-4">
+                <button onclick="closeDeleteConfirmation()" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Hủy bỏ
+                </button>
+                <button onclick="confirmDelete(${cartItemId})" class="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold py-3 rounded-xl hover:from-red-700 hover:to-red-800 transition-all shadow-lg">
+                    Xóa sản phẩm
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modalOverlay);
+    
+    // Add animation
+    setTimeout(() => {
+        modalOverlay.querySelector('div').style.transform = 'scale(1)';
+    }, 10);
+}
+
+function closeDeleteConfirmation() {
+    const modal = document.getElementById('delete-confirmation-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+async function confirmDelete(cartItemId) {
+    closeDeleteConfirmation();
+    
     try {
         const response = await fetch('../api/update_cart_item.php', {
             method: 'POST',
@@ -190,6 +237,9 @@ async function removeFromCart(cartItemId) {
         const result = await response.json();
         
         if (result.success) {
+            // Show success notification
+            showSuccessNotification('Đã xóa sản phẩm khỏi giỏ hàng');
+            
             // Reload cart items
             await loadCartItems();
             // Update cart counter
@@ -201,8 +251,71 @@ async function removeFromCart(cartItemId) {
         }
     } catch (error) {
         console.error('Error removing item:', error);
-        alert('Không thể xóa sản phẩm: ' + error.message);
+        showErrorNotification('Không thể xóa sản phẩm: ' + error.message);
     }
+}
+
+function showSuccessNotification(message) {
+    showNotification(message, false);
+}
+
+function showErrorNotification(message) {
+    showNotification(message, true);
+}
+
+function showNotification(message, isError = false) {
+    // Remove existing notification if any
+    const existingNotification = document.getElementById('cart-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    const notification = document.createElement('div');
+    notification.id = 'cart-notification';
+    notification.className = `fixed top-24 right-4 z-50 max-w-sm w-full transform transition-all duration-300 translate-x-full`;
+    
+    const bgColor = isError ? 'bg-red-500' : 'bg-green-500';
+    const iconColor = isError ? 'text-red-100' : 'text-green-100';
+    const icon = isError ? 
+        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' :
+        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+    
+    notification.innerHTML = `
+        <div class="${bgColor} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+            <div class="flex-shrink-0">
+                <svg class="w-6 h-6 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${icon}
+                </svg>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold">${message}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 ${iconColor} hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 4000);
 }
 
 function formatPrice(price) {
