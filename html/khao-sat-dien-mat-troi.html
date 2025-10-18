@@ -2432,6 +2432,18 @@
             
             // Scroll to results
             resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Add event listener to save button (after it's created)
+            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
+            if (saveSurveyBtn) {
+                console.log('Save button found after creation, adding event listener');
+                saveSurveyBtn.addEventListener('click', function(e) {
+                    console.log('Save button clicked!', e);
+                    saveSurvey();
+                });
+            } else {
+                console.error('Save button still not found after creation!');
+            }
         }
 
         // Format currency input
