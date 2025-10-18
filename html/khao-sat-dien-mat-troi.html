@@ -2721,9 +2721,10 @@
             const solarPanelValue = solarPanelSelect?.value || '590';
             
             // Map solar panel values to panel info
+            // Note: power is in kW (not W) to match database DECIMAL(5,3)
             const panelInfoMap = {
-                '590': { id: 1, name: 'Pin mặt trời 590W', power: 590, price: 2500000 },
-                '630': { id: 2, name: 'Pin mặt trời 630W', power: 630, price: 2800000 }
+                '590': { id: 1, name: 'Pin mặt trời 590W', power: 0.590, price: 2500000 },
+                '630': { id: 2, name: 'Pin mặt trời 630W', power: 0.630, price: 2800000 }
             };
             
             const panelInfo = panelInfoMap[solarPanelValue] || panelInfoMap['590'];
@@ -2738,15 +2739,15 @@
             // Add default values if not found
             return {
                 monthlyKWh: results.monthlyKWh || 0,
-                sunHours: 5.5, // Default sun hours
+                sunHours: 5.5, // Default sun hours (DECIMAL(3,1) - max 99.9)
                 panelsNeeded: results.panelsNeeded || 0,
                 panelCost: (results.panelsNeeded || 0) * panelInfo.price,
                 panelInfo: panelInfo,
-                energyPerPanelPerDay: panelInfo.power * 5.5, // sunHours
-                totalCapacity: (results.panelsNeeded || 0) * panelInfo.power,
-                inverter: { id: 1, name: 'Inverter Luxpower', capacity: 6000, price: 15000000 },
-                cabinet: { id: 1, name: 'Tủ điện', capacity: 6000, price: 2000000 },
-                batteryNeeded: 0,
+                energyPerPanelPerDay: panelInfo.power * 5.5, // sunHours (DECIMAL(10,3) - max 9999999.999)
+                totalCapacity: (results.panelsNeeded || 0) * panelInfo.power, // (DECIMAL(10,2) - max 99999999.99)
+                inverter: { id: 1, name: 'Inverter Luxpower', capacity: 6.0, price: 15000000 }, // capacity in kW
+                cabinet: { id: 1, name: 'Tủ điện', capacity: 6.0, price: 2000000 }, // capacity in kW
+                batteryNeeded: 0, // (DECIMAL(10,2) - max 99999999.99)
                 totalCost: results.totalCost || 0,
                 batteryOptions: [
                     { id: 1, name: 'Pin lưu trữ 8 cell', capacity: 8.3, quantity: 0, price: 15000000, totalCost: 0 },
