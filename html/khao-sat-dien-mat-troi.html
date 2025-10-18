@@ -2701,68 +2701,108 @@
         function collectCalculationResults() {
             // Try to get results from global variables or DOM
             if (typeof window.surveyResults !== 'undefined') {
+                console.log('Using global surveyResults:', window.surveyResults);
                 return window.surveyResults;
             }
 
-            // Fallback: try to reconstruct from DOM
-            const results = {};
+            // Fallback: Calculate based on form data
+            console.log('Calculating results from form data...');
             
-            // Get values from result display elements
-            const monthlyKWhEl = document.querySelector('[data-result="monthlyKWh"]');
-            const panelsNeededEl = document.querySelector('[data-result="panelsNeeded"]');
-            const totalCostEl = document.querySelector('[data-result="totalCost"]');
-            
-            if (monthlyKWhEl) results.monthlyKWh = parseFloat(monthlyKWhEl.textContent);
-            if (panelsNeededEl) results.panelsNeeded = parseInt(panelsNeededEl.textContent);
-            if (totalCostEl) results.totalCost = parseFloat(totalCostEl.textContent.replace(/[^\d.]/g, ''));
+            // Get form data
+            const region = document.querySelector('select[name="region"]')?.value || '';
+            const phase = parseInt(document.querySelector('input[name="phase"]:checked')?.value || '1');
+            const solarPanel = parseInt(document.querySelector('select[name="solarPanel"]')?.value || '590');
+            const monthlyBill = parseFloat(document.getElementById('monthlyBillInput')?.value?.replace(/[^\d]/g, '') || '0');
+            const usageTime = document.querySelector('select[name="usageTime"]')?.value || '';
 
-            // Get solar panel info from form
-            const solarPanelSelect = document.querySelector('select[name="solarPanel"]');
-            const solarPanelValue = solarPanelSelect?.value || '590';
-            
-            // Map solar panel values to panel info
-            // Note: power is in kW (not W) to match database DECIMAL(5,3)
+            // Get solar panel info
             const panelInfoMap = {
                 '590': { id: 1, name: 'Pin mặt trời 590W', power: 0.590, price: 2500000 },
                 '630': { id: 2, name: 'Pin mặt trời 630W', power: 0.630, price: 2800000 }
             };
-            
-            const panelInfo = panelInfoMap[solarPanelValue] || panelInfoMap['590'];
+            const panelInfo = panelInfoMap[solarPanel] || panelInfoMap['590'];
 
-            console.log('Calculation results collected:', {
-                monthlyKWh: results.monthlyKWh || 0,
-                panelsNeeded: results.panelsNeeded || 0,
-                totalCost: results.totalCost || 0,
-                panelInfo: panelInfo
-            });
+            // Calculate based on monthly bill
+            const monthlyKWh = calculateMonthlyKWh(monthlyBill, region);
+            const sunHours = getSunHours(region);
+            const panelsNeeded = calculatePanelsNeeded(monthlyKWh, panelInfo.power, sunHours);
+            const panelCost = panelsNeeded * panelInfo.price;
+            const totalCapacity = panelsNeeded * panelInfo.power;
+            const energyPerPanelPerDay = panelInfo.power * sunHours;
 
-            // Add default values if not found
-            return {
-                monthlyKWh: results.monthlyKWh || 0,
-                sunHours: 5.5, // Default sun hours (DECIMAL(3,1) - max 99.9)
-                panelsNeeded: results.panelsNeeded || 0,
-                panelCost: (results.panelsNeeded || 0) * panelInfo.price,
+            // Calculate other costs
+            const inverterCost = 15000000; // Fixed cost
+            const cabinetCost = 2000000;   // Fixed cost
+            const accessoriesCost = panelsNeeded * 500000; // Estimate
+            const laborCost = panelsNeeded * 300000; // Estimate
+            const totalCostWithoutBattery = panelCost + inverterCost + cabinetCost + accessoriesCost + laborCost;
+            const totalCost = totalCostWithoutBattery; // No battery for now
+
+            const results = {
+                monthlyKWh: monthlyKWh,
+                sunHours: sunHours,
+                panelsNeeded: panelsNeeded,
+                panelCost: panelCost,
                 panelInfo: panelInfo,
-                energyPerPanelPerDay: panelInfo.power * 5.5, // sunHours (DECIMAL(10,3) - max 9999999.999)
-                totalCapacity: (results.panelsNeeded || 0) * panelInfo.power, // (DECIMAL(10,2) - max 99999999.99)
-                inverter: { id: 1, name: 'Inverter Luxpower', capacity: 6.0, price: 15000000 }, // capacity in kW
-                cabinet: { id: 1, name: 'Tủ điện', capacity: 6.0, price: 2000000 }, // capacity in kW
-                batteryNeeded: 0, // (DECIMAL(10,2) - max 99999999.99)
-                totalCost: results.totalCost || 0,
+                energyPerPanelPerDay: energyPerPanelPerDay,
+                totalCapacity: totalCapacity,
+                inverter: { id: 1, name: 'Inverter Luxpower', capacity: 6.0, price: inverterCost },
+                cabinet: { id: 1, name: 'Tủ điện', capacity: 6.0, price: cabinetCost },
+                batteryNeeded: 0,
+                totalCost: totalCost,
                 batteryOptions: [
                     { id: 1, name: 'Pin lưu trữ 8 cell', capacity: 8.3, quantity: 0, price: 15000000, totalCost: 0 },
                     { id: 2, name: 'Pin lưu trữ 16 cell', capacity: 16.6, quantity: 0, price: 25000000, totalCost: 0 }
                 ],
                 accessories: {
-                    bachZ: { qty: 0, price: 0, cost: 0 },
-                    clip: { qty: 0, price: 0, cost: 0 },
-                    jackMC4: { qty: 0, price: 0, cost: 0 }
+                    bachZ: { qty: panelsNeeded, price: 50000, cost: panelsNeeded * 50000 },
+                    clip: { qty: panelsNeeded * 4, price: 10000, cost: panelsNeeded * 4 * 10000 },
+                    jackMC4: { qty: panelsNeeded * 2, price: 15000, cost: panelsNeeded * 2 * 15000 }
                 },
-                dcCable: { length: 0, price: 0, cost: 0 },
-                accessoriesCost: 0,
-                laborCost: 0,
+                dcCable: { length: panelsNeeded * 10, price: 20000, cost: panelsNeeded * 10 * 20000 },
+                accessoriesCost: accessoriesCost,
+                laborCost: laborCost,
                 billBreakdown: []
             };
+
+            console.log('Calculated results:', results);
+            return results;
+        }
+
+        // Helper functions for calculations
+        function calculateMonthlyKWh(monthlyBill, region) {
+            // Estimate kWh based on monthly bill and region
+            // This is a simplified calculation
+            const avgPricePerKWh = getAvgPricePerKWh(region);
+            return monthlyBill / avgPricePerKWh;
+        }
+
+        function getAvgPricePerKWh(region) {
+            // Average electricity price per kWh by region (VND)
+            const prices = {
+                'mien-bac': 2500,
+                'mien-trung': 2400,
+                'mien-nam': 2300
+            };
+            return prices[region] || 2500;
+        }
+
+        function getSunHours(region) {
+            // Average sun hours per day by region
+            const sunHours = {
+                'mien-bac': 4.5,
+                'mien-trung': 5.0,
+                'mien-nam': 5.5
+            };
+            return sunHours[region] || 5.0;
+        }
+
+        function calculatePanelsNeeded(monthlyKWh, panelPower, sunHours) {
+            // Calculate panels needed based on monthly consumption
+            const dailyConsumption = monthlyKWh / 30;
+            const dailyProductionPerPanel = panelPower * sunHours;
+            const panelsNeeded = Math.ceil(dailyConsumption / dailyProductionPerPanel);
+            return Math.max(panelsNeeded, 1); // At least 1 panel
         }
 
         function showNotification(message, type = 'info') {
