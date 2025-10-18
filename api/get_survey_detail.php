@@ -1,39 +1,42 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-// Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
-require_once 'connect.php';
 
 try {
     error_log('get_survey_detail.php: Starting request');
     
-    requireAuth();
-    error_log('get_survey_detail.php: Authentication passed');
+    // Simple authentication check
+    session_start();
+    if (!isset($_SESSION['user_id'])) {
+        error_log('get_survey_detail.php: User not logged in');
+        echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập']);
+        exit;
+    }
     
-    $userId = getCurrentUserId();
+    $userId = $_SESSION['user_id'];
     $surveyId = $_GET['id'] ?? null;
     
     error_log('get_survey_detail.php: User ID: ' . $userId . ', Survey ID: ' . $surveyId);
     
     if (!$surveyId) {
-        sendError('Thiếu ID khảo sát');
+        echo json_encode(['success' => false, 'message' => 'Thiếu ID khảo sát']);
         exit;
     }
     
     // Validate survey ID is numeric
     if (!is_numeric($surveyId)) {
-        sendError('ID khảo sát không hợp lệ');
+        echo json_encode(['success' => false, 'message' => 'ID khảo sát không hợp lệ']);
         exit;
     }
     
-    $pdo = $db->getConnection();
+    // Simple database connection
+    $host = 'localhost';
+    $dbname = 'nangluongmattroi';
+    $username = 'root';
+    $password = '';
+    
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     error_log('get_survey_detail.php: Database connection established');
     
     // Get survey with results
@@ -107,20 +110,7 @@ try {
     
     if (!$survey) {
         error_log('get_survey_detail.php: No survey found for ID: ' . $surveyId . ', User ID: ' . $userId);
-        
-        // Check if survey exists but belongs to different user
-        $checkSql = "SELECT id, user_id FROM solar_surveys WHERE id = ?";
-        $checkStmt = $pdo->prepare($checkSql);
-        $checkStmt->execute([$surveyId]);
-        $checkSurvey = $checkStmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($checkSurvey) {
-            error_log('get_survey_detail.php: Survey exists but belongs to user: ' . $checkSurvey['user_id']);
-            sendError('Bạn không có quyền xem khảo sát này');
-        } else {
-            error_log('get_survey_detail.php: Survey does not exist');
-            sendError('Không tìm thấy khảo sát');
-        }
+        echo json_encode(['success' => false, 'message' => 'Không tìm thấy khảo sát']);
         exit;
     }
     
@@ -183,10 +173,17 @@ try {
         ]
     ];
     
-    sendSuccess(['survey' => $formattedSurvey], 'Lấy chi tiết khảo sát thành công');
+    echo json_encode([
+        'success' => true,
+        'message' => 'Lấy chi tiết khảo sát thành công',
+        'data' => ['survey' => $formattedSurvey]
+    ]);
     
 } catch (Exception $e) {
     error_log('Error in get_survey_detail.php: ' . $e->getMessage());
-    sendError('Lỗi server: ' . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'message' => 'Lỗi server: ' . $e->getMessage()
+    ]);
 }
 ?>
