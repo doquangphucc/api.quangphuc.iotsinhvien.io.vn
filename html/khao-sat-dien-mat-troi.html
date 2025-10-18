@@ -2583,6 +2583,154 @@
     <script src="../assets/js/slideshow-config.js"></script>
     <script src="../assets/js/slideshow.js"></script>
     <script src="../assets/js/cache-buster.js"></script>
+
+    <!-- Survey Save Logic -->
+    <script>
+        // Add event listener for Save Survey button
+        document.addEventListener('DOMContentLoaded', function() {
+            const saveSurveyBtn = document.getElementById('saveSurveyBtn');
+            if (saveSurveyBtn) {
+                saveSurveyBtn.addEventListener('click', saveSurvey);
+            }
+        });
+
+        async function saveSurvey() {
+            try {
+                // Show loading state
+                const saveBtn = document.getElementById('saveSurveyBtn');
+                const originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '⏳ Đang lưu...';
+                saveBtn.disabled = true;
+
+                // Collect survey data from form
+                const surveyData = collectSurveyData();
+                
+                // Collect calculation results
+                const results = collectCalculationResults();
+                
+                // Prepare data for API
+                const apiData = {
+                    ...surveyData,
+                    results: results
+                };
+
+                console.log('Saving survey data:', apiData);
+
+                // Call API to save survey
+                const response = await fetch('../api/save_survey.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(apiData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success message
+                    showNotification('✅ Đã lưu báo giá thành công!', 'success');
+                    
+                    // Optional: Redirect to survey history
+                    setTimeout(() => {
+                        window.location.href = 'survey_history.html';
+                    }, 2000);
+                } else {
+                    showNotification('❌ Lỗi: ' + result.message, 'error');
+                }
+
+            } catch (error) {
+                console.error('Error saving survey:', error);
+                showNotification('❌ Lỗi kết nối server', 'error');
+            } finally {
+                // Restore button state
+                const saveBtn = document.getElementById('saveSurveyBtn');
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        function collectSurveyData() {
+            // Get form values
+            const region = document.querySelector('input[name="region"]:checked')?.value || '';
+            const phase = document.querySelector('input[name="phase"]:checked')?.value || '';
+            const solarPanel = document.querySelector('input[name="solarPanel"]:checked')?.value || '';
+            const monthlyBill = document.getElementById('monthlyBill')?.value || '';
+            const usageTime = document.querySelector('input[name="usageTime"]:checked')?.value || '';
+
+            return {
+                region: region,
+                phase: parseInt(phase),
+                solarPanel: parseInt(solarPanel),
+                monthlyBill: parseFloat(monthlyBill),
+                usageTime: usageTime
+            };
+        }
+
+        function collectCalculationResults() {
+            // Try to get results from global variables or DOM
+            if (typeof window.surveyResults !== 'undefined') {
+                return window.surveyResults;
+            }
+
+            // Fallback: try to reconstruct from DOM
+            const results = {};
+            
+            // Get values from result display elements
+            const monthlyKWhEl = document.querySelector('[data-result="monthlyKWh"]');
+            const panelsNeededEl = document.querySelector('[data-result="panelsNeeded"]');
+            const totalCostEl = document.querySelector('[data-result="totalCost"]');
+            
+            if (monthlyKWhEl) results.monthlyKWh = parseFloat(monthlyKWhEl.textContent);
+            if (panelsNeededEl) results.panelsNeeded = parseInt(panelsNeededEl.textContent);
+            if (totalCostEl) results.totalCost = parseFloat(totalCostEl.textContent.replace(/[^\d.]/g, ''));
+
+            // Add default values if not found
+            return {
+                monthlyKWh: results.monthlyKWh || 0,
+                sunHours: 5.5, // Default sun hours
+                panelsNeeded: results.panelsNeeded || 0,
+                panelCost: 0,
+                inverter: { id: 1, name: 'Inverter', capacity: 0, price: 0 },
+                cabinet: { id: 1, name: 'Cabinet', capacity: 0, price: 0 },
+                batteryNeeded: 0,
+                totalCost: results.totalCost || 0,
+                batteryOptions: [
+                    { id: 1, name: 'Battery 8 cell', capacity: 0, quantity: 0, price: 0, totalCost: 0 },
+                    { id: 2, name: 'Battery 16 cell', capacity: 0, quantity: 0, price: 0, totalCost: 0 }
+                ],
+                accessories: {
+                    bachZ: { qty: 0, price: 0, cost: 0 },
+                    clip: { qty: 0, price: 0, cost: 0 },
+                    jackMC4: { qty: 0, price: 0, cost: 0 }
+                },
+                dcCable: { length: 0, price: 0, cost: 0 },
+                accessoriesCost: 0,
+                laborCost: 0,
+                billBreakdown: []
+            };
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
 </body>
 </html>
 
