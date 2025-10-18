@@ -455,31 +455,31 @@ async function submitOrder() {
             notes: formData.get('notes')
         };
 
-        // Get cart items
-        const response = await fetch('../api/get_cart.php', {
-            credentials: 'include'
-        });
-        const cartResult = await response.json();
+        // Get cart items from localStorage (same as displayed)
+        const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
         
-        if (!cartResult.success || !cartResult.data.cart || cartResult.data.cart.length === 0) {
+        if (!checkoutItems || checkoutItems.length === 0) {
             alert('Giỏ hàng trống!');
             return;
         }
 
-        // Submit order
-        const orderResponse = await fetch('../api/create_order.php', {
+        // Submit order with localStorage data
+        const orderResponse = await fetch('../api/create_order_from_items.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
                 customer: orderData,
-                cart_item_ids: cartResult.data.cart.map(item => item.id)
+                items: checkoutItems // Send items directly from localStorage
             })
         });
 
         const orderResult = await orderResponse.json();
         
         if (orderResult.success) {
+            // Clear checkout items from localStorage
+            localStorage.removeItem('checkoutItems');
+            
             // Show success modal
             document.getElementById('success-modal').classList.remove('hidden');
         } else {
