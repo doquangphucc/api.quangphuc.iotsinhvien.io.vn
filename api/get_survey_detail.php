@@ -2,12 +2,12 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once 'session.php';
+require_once 'connect.php';
 
 try {
     error_log('get_survey_detail.php: Starting request');
     
-    // Check if user is logged in using session.php
+    // Check if user is logged in using connect.php
     if (!isLoggedIn()) {
         error_log('get_survey_detail.php: User not logged in');
         echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập']);
@@ -31,14 +31,8 @@ try {
         exit;
     }
     
-    // Simple database connection
-    $host = 'localhost';
-    $dbname = 'nangluongmattroi';
-    $username = 'root';
-    $password = '';
-    
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Use connect.php database connection
+    $pdo = $db->getConnection();
     error_log('get_survey_detail.php: Database connection established');
     
     // Get survey with results
