@@ -40,7 +40,7 @@ const homepageSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Solar Energy System in a Green Urban Landscape.png`,
+        src: `${pathPrefix}Photo/solar-farm-field.jpg`,
         alt: 'Hệ thống năng lượng mặt trời trong đô thị xanh'
     },
     {
@@ -59,7 +59,7 @@ const aboutSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Chuyên gia năng lượng mặt trời đang giới thiệu mô hình giải pháp năng lượng cho một gia đình Việt Nam tại phòng khách ấm cúng của họ.png`,
+        src: `${pathPrefix}Photo/engineer-consulting-homeowner.png`,
         alt: 'Chuyên gia tư vấn năng lượng mặt trời'
     },
     {
@@ -69,12 +69,12 @@ const aboutSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Kỹ sư đang kiểm tra cẩn thận các tấm pin năng lượng mặt trời trên mái nhà, với khung cảnh thành phố Việt Nam phía xa. Bầu trời trong xanh và ánh nắng rực rỡ, thể hiện hiệu quả của hệ thống.png`,
+        src: `${pathPrefix}Photo/engineer-checking-solar-panel.png`,
         alt: 'Kiểm tra hệ thống năng lượng mặt trời'
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Engineer Consulting with Homeowner about Solar Energy System.png`,
+        src: `${pathPrefix}Photo/engineer-consulting-homeowner.png`,
         alt: 'Kỹ sư tư vấn với chủ nhà'
     },
     {
@@ -103,7 +103,7 @@ const pricingSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Close-up of a Solar Panel with Sun Flare.png`,
+        src: `${pathPrefix}Photo/solar-panels-blue-sky.jpg`,
         alt: 'Cận cảnh tấm pin với ánh sáng mặt trời'
     },
     {
@@ -138,7 +138,7 @@ const pricingSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Solar Energy System in a Green Urban Landscape.png`,
+        src: `${pathPrefix}Photo/solar-farm-field.jpg`,
         alt: 'Hệ thống năng lượng mặt trời trong đô thị xanh'
     }
 ];
@@ -162,12 +162,12 @@ const surveySlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Solar Panels on a Modern Vietnamese Villa.png`,
+        src: `${pathPrefix}Photo/residential-solar-home.png`,
         alt: 'Pin mặt trời trên biệt thự hiện đại'
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Một góc nhìn rộng hơn của mái nhà Việt Nam với các tấm pin năng lượng mặt trời được lắp đặt hoàn chỉnh. Ngôi nhà nằm trong khu dân cư xanh mát, thể hiện sự hòa hợp giữa công nghệ và thiên nhiên.png`,
+        src: `${pathPrefix}Photo/vn-roof-wide-view.png`,
         alt: 'Mái nhà với pin mặt trời hoàn chỉnh'
     }
 ];
@@ -186,7 +186,7 @@ const projectsSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Technician Installing Solar Panels on a Commercial Building.png`,
+        src: `${pathPrefix}Photo/technician-commercial-building.png`,
         alt: 'Lắp đặt pin trên tòa nhà thương mại'
     },
     {
@@ -201,7 +201,7 @@ const projectsSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Solar Streetlights in a Vietnamese City Park.png`,
+        src: `${pathPrefix}Photo/solar-panels-blue-sky.jpg`,
         alt: 'Đèn đường năng lượng mặt trời'
     }
 ];
@@ -242,7 +242,7 @@ const newsSlides = homepageSlides;
 const contactSlides = [
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Engineer Consulting with Homeowner about Solar Energy System.png`,
+        src: `${pathPrefix}Photo/engineer-consulting-homeowner.png`,
         alt: 'Tư vấn về năng lượng mặt trời'
     },
     {
@@ -252,7 +252,7 @@ const contactSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Nhân viên tư vấn đang trao đổi với khách hàng về lợi ích của năng lượng mặt trời, trên bàn có tài liệu và mô hình tấm pin. Không gian hiện đại, chuyên nghiệp.png`,
+        src: `${pathPrefix}Photo/consultant-couple-home.png`,
         alt: 'Trao đổi với khách hàng'
     },
     {
