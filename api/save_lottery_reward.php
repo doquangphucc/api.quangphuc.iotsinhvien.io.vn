@@ -1,6 +1,5 @@
 <?php
 require_once 'connect.php';
-require_once 'auth_helpers.php';
 
 // Check request method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -44,24 +43,28 @@ try {
     // Calculate expiration date
     $expiresAt = date('Y-m-d H:i:s', strtotime("+$expiresDays days"));
 
-    // Prepare data for insertion - matching database schema
-    $rewardData = [
-        'user_id' => $userId,
-        'ticket_id' => $ticketId,
-        'reward_name' => $rewardName,
-        'reward_type' => $rewardType,
-        'reward_value' => $rewardValue ?: null,
-        'reward_code' => $rewardCode ?: null,
-        'reward_image' => null,
-        'status' => 'pending',
-        'expires_at' => $expiresAt,
-        'notes' => null
-    ];
-
     error_log("Saving reward for user_id: {$userId}, ticket_id: {$ticketId}, reward: {$rewardName}");
     
-    // Insert reward into database
-    $rewardId = $db->insert('lottery_rewards', $rewardData);
+    // Insert reward into database using direct PDO (same as use_lottery_ticket.php)
+    $sql = "INSERT INTO lottery_rewards 
+            (user_id, ticket_id, reward_name, reward_type, reward_value, reward_code, reward_image, status, expires_at, notes) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $userId,
+        $ticketId,
+        $rewardName,
+        $rewardType,
+        $rewardValue ?: null,
+        $rewardCode ?: null,
+        null, // reward_image
+        'pending', // status
+        $expiresAt,
+        null // notes
+    ]);
+    
+    $rewardId = $pdo->lastInsertId();
     
     error_log("Reward saved successfully with ID: {$rewardId}");
 
