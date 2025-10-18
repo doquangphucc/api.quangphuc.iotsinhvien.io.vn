@@ -1,6 +1,5 @@
 <?php
 require_once 'connect.php';
-require_once 'auth_helpers.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     sendError('Phương thức không được hỗ trợ', 405);
