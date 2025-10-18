@@ -1,37 +1,24 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+require_once 'connect.php';
+
+requireAuth();
+
+$userId = getCurrentUserId();
+$surveyId = $_GET['id'] ?? null;
+
+if (!$surveyId) {
+    sendError('Thiếu ID khảo sát');
+    exit;
+}
+
+if (!is_numeric($surveyId)) {
+    sendError('ID khảo sát không hợp lệ');
+    exit;
+}
 
 try {
-    error_log('get_survey_detail.php: Starting request');
-    
-    require_once 'session.php';
-    
-    // Check if user is logged in
-    if (!isLoggedIn()) {
-        error_log('get_survey_detail.php: User not logged in');
-        echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập']);
-        exit;
-    }
-    
-    $userId = getCurrentUserId();
-    $surveyId = $_GET['id'] ?? null;
-    error_log('get_survey_detail.php: User ID: ' . $userId . ', Survey ID: ' . $surveyId);
-    
-    if (!$surveyId) {
-        echo json_encode(['success' => false, 'message' => 'Thiếu ID khảo sát']);
-        exit;
-    }
-    
-    if (!is_numeric($surveyId)) {
-        echo json_encode(['success' => false, 'message' => 'ID khảo sát không hợp lệ']);
-        exit;
-    }
-    
-    // Add database connection
-    require_once 'connect.php';
+    $db = Database::getInstance();
     $pdo = $db->getConnection();
-    error_log('get_survey_detail.php: Database connection established');
     
     // Get survey data
     $sql = "SELECT 
@@ -97,8 +84,7 @@ try {
     $survey = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$survey) {
-        error_log('get_survey_detail.php: No survey found for ID: ' . $surveyId . ', User ID: ' . $userId);
-        echo json_encode(['success' => false, 'message' => 'Không tìm thấy khảo sát']);
+        sendError('Không tìm thấy khảo sát');
         exit;
     }
     
@@ -161,18 +147,10 @@ try {
         ]
     ];
     
-    echo json_encode([
-        'success' => true,
-        'message' => 'Lấy chi tiết khảo sát thành công',
-        'data' => ['survey' => $formattedSurvey]
-    ]);
-    exit;
+    sendSuccess(['survey' => $formattedSurvey], 'Lấy chi tiết khảo sát thành công');
     
 } catch (Exception $e) {
     error_log('Error in get_survey_detail.php: ' . $e->getMessage());
-    echo json_encode([
-        'success' => false,
-        'message' => 'Lỗi server: ' . $e->getMessage()
-    ]);
+    sendError('Lỗi server: ' . $e->getMessage());
 }
 ?>
