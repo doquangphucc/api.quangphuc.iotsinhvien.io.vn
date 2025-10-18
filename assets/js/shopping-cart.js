@@ -303,6 +303,7 @@ function initializeProductActionButtons() {
 
 // Expose updateAllCartCounters globally for use in cart-page.js
 window.updateAllCartCounters = updateAllCartCounters;
+window.fetchCartCount = fetchCartCount;
 
 // --- SCRIPT EXECUTION ---
 
