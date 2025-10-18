@@ -174,7 +174,7 @@ try {
         ]
     ];
     
-    sendSuccess('Lấy chi tiết khảo sát thành công', ['survey' => $formattedSurvey]);
+    sendSuccess(['survey' => $formattedSurvey], 'Lấy chi tiết khảo sát thành công');
     
 } catch (Exception $e) {
     error_log('Error in get_survey_detail.php: ' . $e->getMessage());
