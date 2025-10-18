@@ -501,8 +501,8 @@
                     const result = await response.json();
                     console.log('API result:', result);
                     
-                    if (result.success && result.data) {
-                        surveyData = result.data;
+                    if (result.success && result.data && result.data.survey) {
+                        surveyData = result.data.survey;
                         displaySurveyDetail(surveyData);
                     } else {
                         showError(result.message || 'Không tìm thấy khảo sát');
@@ -587,7 +587,7 @@
             const timeMap = {
                 'day': 'Ban ngày',
                 'night': 'Ban đêm',
-                'both': 'Cả ngày và đêm'
+                'balanced': 'Cân bằng'
             };
             return timeMap[usageTime] || usageTime || '-';
         }
