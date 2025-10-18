@@ -259,6 +259,193 @@
                 mobileMenu.classList.add('hidden');
             }
         });
+
+        // Load order history
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadOrderHistory();
+        });
+
+        async function loadOrderHistory() {
+            try {
+                console.log('Loading order history...');
+                
+                const response = await fetch('../api/get_order_history.php', {
+                    credentials: 'include'
+                });
+                
+                console.log('Order history API response:', response);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Order history result:', result);
+                    
+                    if (result.success && result.data && result.data.orders) {
+                        displayOrders(result.data.orders);
+                    } else {
+                        showEmptyState();
+                    }
+                } else if (response.status === 401) {
+                    window.location.href = 'login.html';
+                } else {
+                    const errorResult = await response.json();
+                    console.error('Error loading order history:', errorResult);
+                    showError(errorResult.message || 'Không thể tải lịch sử đơn hàng');
+                }
+            } catch (error) {
+                console.error('Error loading order history:', error);
+                showError('Lỗi kết nối server');
+            }
+        }
+
+        function displayOrders(orders) {
+            const container = document.getElementById('order-history-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (!orders || orders.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.classList.add('hidden');
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Display orders
+            orders.forEach(order => {
+                const orderCard = createOrderCard(order);
+                container.appendChild(orderCard);
+            });
+        }
+
+        function createOrderCard(order) {
+            const createdAt = new Date(order.created_at).toLocaleDateString('vi-VN');
+            const totalAmount = order.total_amount ? order.total_amount.toLocaleString('vi-VN') : '0';
+            const statusText = getStatusText(order.status);
+            const statusColor = getStatusColor(order.status);
+            
+            const itemsList = order.items && order.items.length > 0 
+                ? order.items.map(item => `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800 dark:text-white">${item.product_name || 'Sản phẩm'}</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Số lượng: ${item.quantity}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-gray-800 dark:text-white">${item.price ? item.price.toLocaleString('vi-VN') : '0'}đ</p>
+                        </div>
+                    </div>
+                `).join('')
+                : '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Không có sản phẩm</p>';
+            
+            return `
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800 dark:text-white">Đơn hàng #${order.id}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${createdAt}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-purple-600">${totalAmount}đ</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Tổng tiền</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-600 dark:text-gray-400">Trạng thái:</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-semibold ${statusColor}">${statusText}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400">Phương thức:</span>
+                            <span class="font-semibold text-gray-800 dark:text-white">${order.payment_method || 'Chưa xác định'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-3">Sản phẩm:</h4>
+                        <div class="space-y-2">
+                            ${itemsList}
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="viewOrderDetails(${order.id})" class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-200">
+                            Xem chi tiết
+                        </button>
+                        <button onclick="reorder(${order.id})" class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
+                            Đặt lại
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Chờ xử lý',
+                'processing': 'Đang xử lý',
+                'shipped': 'Đã giao hàng',
+                'delivered': 'Đã nhận hàng',
+                'cancelled': 'Đã hủy'
+            };
+            return statusMap[status] || status || 'Chưa xác định';
+        }
+
+        function getStatusColor(status) {
+            const colorMap = {
+                'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                'processing': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+                'shipped': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                'delivered': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+            };
+            return colorMap[status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        }
+
+        function showEmptyState() {
+            const container = document.getElementById('order-history-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            container.innerHTML = '';
+            emptyState.classList.remove('hidden');
+        }
+
+        function showError(message) {
+            const container = document.getElementById('order-history-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            container.innerHTML = `
+                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Có lỗi xảy ra</h3>
+                    <p class="text-red-600 dark:text-red-400">${message}</p>
+                </div>
+            `;
+            emptyState.classList.add('hidden');
+        }
+
+        function viewOrderDetails(orderId) {
+            // TODO: Implement order details page
+            alert('Chức năng xem chi tiết đơn hàng đang được phát triển');
+        }
+
+        function reorder(orderId) {
+            // TODO: Implement reorder functionality
+            alert('Chức năng đặt lại đang được phát triển');
+        }
     </script>
 </body>
 </html>
