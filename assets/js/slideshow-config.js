@@ -15,7 +15,7 @@ const homepageSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Solar Panel Installation on a Vietnamese Rooftop.png`,
+        src: `${pathPrefix}Photo/solar-installation-vn-rooftop.png`,
         alt: 'Lắp đặt pin mặt trời trên mái nhà Việt Nam'
     },
     {
@@ -35,7 +35,7 @@ const homepageSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Family Enjoying a Home with Solar Power in Vietnam.png`,
+        src: `${pathPrefix}Photo/family-solar-vietnam.png`,
         alt: 'Gia đình tận hưởng ngôi nhà với năng lượng mặt trời'
     },
     {
@@ -118,7 +118,7 @@ const pricingSlides = [
     },
     {
         type: 'image',
-        src: `${pathPrefix}Photo/Solar Panel Installation on a Vietnamese Rooftop.png`,
+        src: `${pathPrefix}Photo/solar-installation-vn-rooftop.png`,
         alt: 'Lắp đặt pin mặt trời trên mái nhà Việt Nam'
     },
     {
