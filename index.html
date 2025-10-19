@@ -123,6 +123,13 @@
              background-color: #7f1d1d; /* red-800 */
         }
 
+        /* Mobile auth buttons styling */
+        #mobile-auth-buttons .auth-btn {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+
         /* Slideshow enhancements */
         body {
             background-color: transparent !important;
@@ -221,6 +228,13 @@
                 <a href="html/tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
                 <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Xây dựng</a>
                 <a href="html/lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+                
+                <!-- Mobile Auth Buttons -->
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                    <div id="mobile-auth-buttons" class="flex flex-col gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
+                </div>
             </nav>
         </div>
     </header>

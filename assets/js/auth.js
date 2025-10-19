@@ -22,12 +22,15 @@
 
     function renderAuthUI() {
         const buttonsContainer = document.getElementById('auth-buttons');
-        if (!buttonsContainer) {
+        const mobileButtonsContainer = document.getElementById('mobile-auth-buttons');
+        
+        if (!buttonsContainer && !mobileButtonsContainer) {
             return;
         }
 
         // Clear current buttons to rebuild them
-        buttonsContainer.innerHTML = '';
+        if (buttonsContainer) buttonsContainer.innerHTML = '';
+        if (mobileButtonsContainer) mobileButtonsContainer.innerHTML = '';
 
         const user = getStoredUser();
 
@@ -67,8 +70,17 @@
                 window.location.reload(); // Reload the page to reset state
             });
 
-            buttonsContainer.appendChild(userLink);
-            buttonsContainer.appendChild(logoutBtn);
+            // Add to desktop container
+            if (buttonsContainer) {
+                buttonsContainer.appendChild(userLink.cloneNode(true));
+                buttonsContainer.appendChild(logoutBtn.cloneNode(true));
+            }
+            
+            // Add to mobile container
+            if (mobileButtonsContainer) {
+                mobileButtonsContainer.appendChild(userLink.cloneNode(true));
+                mobileButtonsContainer.appendChild(logoutBtn.cloneNode(true));
+            }
 
         } else {
             // --- LOGGED OUT STATE ---
@@ -90,8 +102,17 @@
             registerBtn.href = registerPath;
             registerBtn.textContent = 'Đăng ký';
 
-            buttonsContainer.appendChild(loginBtn);
-            buttonsContainer.appendChild(registerBtn);
+            // Add to desktop container
+            if (buttonsContainer) {
+                buttonsContainer.appendChild(loginBtn.cloneNode(true));
+                buttonsContainer.appendChild(registerBtn.cloneNode(true));
+            }
+            
+            // Add to mobile container
+            if (mobileButtonsContainer) {
+                mobileButtonsContainer.appendChild(loginBtn.cloneNode(true));
+                mobileButtonsContainer.appendChild(registerBtn.cloneNode(true));
+            }
         }
     }
 
