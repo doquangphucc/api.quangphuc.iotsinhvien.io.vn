@@ -92,14 +92,56 @@
 
             // Add to desktop container
             if (buttonsContainer) {
-                buttonsContainer.appendChild(userLink.cloneNode(true));
-                buttonsContainer.appendChild(logoutBtn.cloneNode(true));
+                buttonsContainer.appendChild(userLink);
+                buttonsContainer.appendChild(logoutBtn);
             }
             
             // Add to mobile container
             if (mobileButtonsContainer) {
-                mobileButtonsContainer.appendChild(userLink.cloneNode(true));
-                mobileButtonsContainer.appendChild(logoutBtn.cloneNode(true));
+                // Create separate instances for mobile
+                const mobileUserLink = userLink.cloneNode(true);
+                const mobileLogoutBtn = logoutBtn.cloneNode(true);
+                
+                // Re-attach event listener for mobile logout button
+                mobileLogoutBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    try {
+                        // Call logout API first
+                        const response = await fetch('../api/logout.php', {
+                            method: 'POST',
+                            credentials: 'include'
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            console.log('Logout successful:', result.message);
+                        } else {
+                            console.warn('Logout API failed, but continuing with local cleanup');
+                        }
+                    } catch (error) {
+                        console.error('Error calling logout API:', error);
+                        // Continue with local cleanup even if API fails
+                    }
+                    
+                    // Clear user from storage
+                    storeUser(null);
+                    
+                    // Clear cart from localStorage
+                    localStorage.removeItem('cartItems');
+                    
+                    // Clear cart counter before reload
+                    const fabCounter = document.getElementById('fab-cart-count');
+                    if (fabCounter) {
+                        fabCounter.style.display = 'none';
+                        fabCounter.textContent = '0';
+                    }
+                    
+                    window.location.reload(); // Reload the page to reset state
+                });
+                
+                mobileButtonsContainer.appendChild(mobileUserLink);
+                mobileButtonsContainer.appendChild(mobileLogoutBtn);
             }
 
         } else {
