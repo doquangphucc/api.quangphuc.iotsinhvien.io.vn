@@ -1,6 +1,11 @@
 <?php
 require_once 'connect.php';
 
+// Allow both GET and POST requests for logout
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    sendError('Phương thức không được hỗ trợ', 405);
+}
+
 // Destroy session
 session_unset();
 session_destroy();
@@ -14,6 +19,5 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-sendSuccess([], 'ÄÄƒng xuáº¥t thÃ nh cÃ´ng');
+sendSuccess([], 'Đăng xuất thành công');
 ?>
-

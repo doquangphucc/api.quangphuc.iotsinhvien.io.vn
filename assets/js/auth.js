@@ -53,9 +53,29 @@
             logoutBtn.className = 'auth-btn auth-btn--register'; // Re-use class for style consistency
             logoutBtn.textContent = 'Đăng xuất';
             logoutBtn.href = '#';
-            logoutBtn.addEventListener('click', function(e) {
+            logoutBtn.addEventListener('click', async function(e) {
                 e.preventDefault();
-                storeUser(null); // Clear user from storage
+                
+                try {
+                    // Call logout API first
+                    const response = await fetch('../api/logout.php', {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Logout successful:', result.message);
+                    } else {
+                        console.warn('Logout API failed, but continuing with local cleanup');
+                    }
+                } catch (error) {
+                    console.error('Error calling logout API:', error);
+                    // Continue with local cleanup even if API fails
+                }
+                
+                // Clear user from storage
+                storeUser(null);
                 
                 // Clear cart from localStorage
                 localStorage.removeItem('cartItems');
