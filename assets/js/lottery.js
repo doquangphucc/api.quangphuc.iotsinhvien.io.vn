@@ -53,7 +53,8 @@ async function loadTickets() {
         const result = await response.json();
         
         if (result.success) {
-            availableTickets = result.data.available_count || 0;
+            // API trả về total_tickets, không phải available_count
+            availableTickets = result.data.total_tickets || 0;
             updateTicketDisplay();
         }
     } catch (error) {
