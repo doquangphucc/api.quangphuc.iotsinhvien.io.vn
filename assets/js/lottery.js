@@ -1,217 +1,207 @@
-// Lottery Wheel JavaScript
-class LotteryWheel {
-    constructor() {
-        this.wheel = document.getElementById('lottery-wheel');
-        this.spinButton = document.getElementById('spin-button');
-        this.spinText = document.getElementById('spin-text');
-        this.ticketCount = document.getElementById('ticket-count');
-        this.resultModal = document.getElementById('result-modal');
-        this.resultText = document.getElementById('result-text');
-        
-        this.prizes = [
-            { name: 'Giảm 10%', description: 'Giảm giá cho đơn hàng tiếp theo', color: '#FF6B6B' },
-            { name: 'Giảm 20%', description: 'Giảm giá cho đơn hàng tiếp theo', color: '#4ECDC4' },
-            { name: 'Miễn phí vận chuyển', description: 'Áp dụng cho đơn hàng tiếp theo', color: '#45B7D1' },
-            { name: 'Tặng kèm phụ kiện', description: 'Nhận thêm phụ kiện miễn phí', color: '#96CEB4' },
-            { name: 'Giảm 50%', description: 'Giảm giá lớn cho đơn hàng tiếp theo', color: '#FFEAA7' },
-            { name: 'Chúc may mắn lần sau!', description: 'Hãy thử lại lần sau nhé!', color: '#DDA0DD' }
-        ];
-        
-        this.isSpinning = false;
-        this.currentRotation = 0;
-        
-        this.init();
-    }
+/**
+ * Slot Machine Lottery System
+ * File: assets/js/lottery.js
+ * Description: Vertical scrolling slot machine with smooth animations
+ */
+
+// Prize configuration
+const prizes = [
+    { id: 1, name: 'Giảm 10%', icon: '🎁', type: 'discount', value: '10%' },
+    { id: 2, name: 'Giảm 20%', icon: '🎉', type: 'discount', value: '20%' },
+    { id: 3, name: 'Miễn phí vận chuyển', icon: '🚚', type: 'free_shipping', value: 'Free' },
+    { id: 4, name: 'Tặng kèm phụ kiện', icon: '🎁', type: 'accessory', value: 'Gift' },
+    { id: 5, name: 'Giảm 50%', icon: '💎', type: 'discount', value: '50%' },
+    { id: 6, name: 'Chúc may mắn lần sau!', icon: '😢', type: 'no_prize', value: 'None' }
+];
+
+let isSpinning = false;
+let availableTickets = 0;
+
+// Initialize slot machine
+function initSlotMachine() {
+    const reel = document.getElementById('slot-reel');
+    if (!reel) return;
     
-    init() {
-        this.createWheelSections();
-        this.loadTicketCount();
-        this.bindEvents();
-    }
+    // Create extended reel (repeat prizes multiple times for smooth scrolling)
+    const repeats = 10;
+    let reelHTML = '';
     
-    createWheelSections() {
-        const sectionAngle = 360 / this.prizes.length;
-        
-        this.prizes.forEach((prize, index) => {
-            const section = document.createElement('div');
-            section.className = 'wheel-section';
-            section.style.transform = `rotate(${index * sectionAngle}deg)`;
-            section.style.background = `linear-gradient(${index * sectionAngle}deg, ${prize.color}, ${this.darkenColor(prize.color, 20)})`;
-            section.style.clipPath = 'polygon(0 0, 100% 0, 50% 100%)';
-            section.innerHTML = `
-                <div style="transform: rotate(${-index * sectionAngle}deg); font-size: 12px; text-align: center; padding: 10px;">
-                    ${prize.name}
+    for (let i = 0; i < repeats; i++) {
+        prizes.forEach(prize => {
+            reelHTML += `
+                <div class="slot-item" data-prize-id="${prize.id}">
+                    <div class="slot-item-icon">${prize.icon}</div>
+                    <div class="slot-item-text">${prize.name}</div>
                 </div>
             `;
-            this.wheel.appendChild(section);
         });
     }
     
-    darkenColor(color, percent) {
-        const num = parseInt(color.replace("#", ""), 16);
-        const amt = Math.round(2.55 * percent);
-        const R = (num >> 16) - amt;
-        const G = (num >> 8 & 0x00FF) - amt;
-        const B = (num & 0x0000FF) - amt;
-        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-    }
+    reel.innerHTML = reelHTML;
     
-    bindEvents() {
-        this.spinButton.addEventListener('click', () => {
-            this.spin();
+    // Set initial position
+    reel.style.top = '0px';
+}
+
+// Load user tickets
+async function loadTickets() {
+    try {
+        const response = await fetch('../api/get_lottery_tickets.php', {
+            credentials: 'include'
         });
-    }
-    
-    async loadTicketCount() {
-        try {
-            const response = await fetch('../api/get_lottery_tickets.php', {
-                credentials: 'include'
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    this.ticketCount.textContent = result.data.total_tickets;
-                    
-                    // Disable spin button if no tickets
-                    if (result.data.total_tickets === 0) {
-                        this.spinButton.disabled = true;
-                        this.spinText.textContent = 'Không có vé quay';
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error loading ticket count:', error);
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            availableTickets = result.data.available_count || 0;
+            updateTicketDisplay();
         }
-    }
-    
-    async spin() {
-        if (this.isSpinning || this.ticketCount.textContent === '0') {
-            return;
-        }
-        
-        this.isSpinning = true;
-        this.spinButton.disabled = true;
-        this.spinText.textContent = 'Đang quay...';
-        
-        // Random rotation (5-10 full rotations + random angle)
-        const randomRotations = 5 + Math.random() * 5;
-        const randomAngle = Math.random() * 360;
-        const totalRotation = randomRotations * 360 + randomAngle;
-        
-        this.currentRotation += totalRotation;
-        this.wheel.style.transform = `rotate(${this.currentRotation}deg)`;
-        this.wheel.classList.add('spinning');
-        
-        // Calculate which prize was selected
-        const normalizedAngle = (360 - (randomAngle % 360)) % 360;
-        const prizeIndex = Math.floor(normalizedAngle / (360 / this.prizes.length));
-        const selectedPrize = this.prizes[prizeIndex];
-        
-        // Wait for animation to complete
-        setTimeout(() => {
-            this.wheel.classList.remove('spinning');
-            this.showResult(selectedPrize);
-        }, 4000);
-    }
-    
-    async showResult(prize) {
-        this.resultText.textContent = `Bạn đã nhận được: ${prize.name} - ${prize.description}`;
-        this.resultModal.classList.remove('hidden');
-        
-        // Sử dụng vé trước để lấy ticket_id
-        const ticketId = await this.useTicket();
-        
-        // Lưu phần thưởng vào database với ticket_id
-        await this.saveReward(prize, ticketId);
-        
-        this.isSpinning = false;
-        this.spinButton.disabled = false;
-        this.spinText.textContent = 'Quay Ngay!';
-    }
-    
-    async saveReward(prize, ticketId) {
-        try {
-            // Xác định loại phần thưởng và giá trị
-            let rewardType = 'gift';
-            let rewardValue = null;
-            
-            if (prize.name.includes('%')) {
-                rewardType = 'discount';
-                rewardValue = prize.name.match(/\d+/)?.[0] + '%';
-            } else if (prize.name.includes('vận chuyển')) {
-                rewardType = 'free_shipping';
-                rewardValue = '0đ';
-            } else if (prize.name.includes('phụ kiện')) {
-                rewardType = 'accessory';
-                rewardValue = 'Phụ kiện miễn phí';
-            } else if (prize.name.includes('may mắn')) {
-                rewardType = 'no_prize';
-                rewardValue = 'Chúc may mắn lần sau';
-            }
-            
-            const response = await fetch('../api/save_lottery_reward.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    reward_name: prize.name,
-                    reward_type: rewardType,
-                    reward_value: rewardValue,
-                    reward_code: null, // Will be generated automatically
-                    ticket_id: ticketId, // Use the ticket_id from useTicket()
-                    expires_days: 30
-                })
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    console.log('Phần thưởng đã được lưu:', result.data);
-                } else {
-                    console.error('Lỗi khi lưu phần thưởng:', result.message);
-                }
-            } else {
-                console.error('HTTP error:', response.status);
-            }
-        } catch (error) {
-            console.error('Error saving reward:', error);
-        }
-    }
-    
-    async useTicket() {
-        try {
-            const response = await fetch('../api/use_lottery_ticket.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    // Update ticket count
-                    this.loadTicketCount();
-                    // Return ticket_id for use in saveReward
-                    return result.data.ticket_id;
-                } else {
-                    console.error('Lỗi khi sử dụng vé:', result.message);
-                    return null;
-                }
-            } else {
-                console.error('HTTP error:', response.status);
-                return null;
-            }
-        } catch (error) {
-            console.error('Error using ticket:', error);
-            return null;
-        }
+    } catch (error) {
+        console.error('Error loading tickets:', error);
     }
 }
 
-// Initialize lottery wheel when page loads
+// Update ticket display
+function updateTicketDisplay() {
+    const ticketCount = document.getElementById('ticket-count');
+    if (ticketCount) {
+        ticketCount.textContent = availableTickets;
+    }
+}
+
+// Spin the slot machine
+async function spinSlot() {
+    if (isSpinning) return;
+    
+    if (availableTickets <= 0) {
+        alert('Bạn không có vé quay! Hãy mua hàng để nhận vé.');
+        return;
+    }
+    
+    isSpinning = true;
+    const spinButton = document.getElementById('spin-button');
+    const spinText = document.getElementById('spin-text');
+    const reel = document.getElementById('slot-reel');
+    
+    // Disable button
+    spinButton.disabled = true;
+    spinText.textContent = 'Đang quay...';
+    
+    try {
+        // Call API to use ticket and get result
+        const response = await fetch('../api/use_lottery_ticket.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Không thể sử dụng vé');
+        }
+        
+        const wonPrize = result.data.reward;
+        
+        // Find prize index
+        const prizeIndex = prizes.findIndex(p => p.name === wonPrize.reward_name);
+        const targetPrize = prizeIndex >= 0 ? prizes[prizeIndex] : prizes[5]; // Default to "no prize"
+        
+        // Calculate scroll distance
+        const itemHeight = 180; // Height of each slot item
+        const totalItems = prizes.length * 10; // Total items in reel
+        
+        // Start with fast spinning
+        reel.classList.add('spinning');
+        
+        // Spin through multiple cycles
+        const spinCycles = 5;
+        const finalPosition = (spinCycles * prizes.length + prizeIndex) * itemHeight;
+        
+        // Fast spin for 2 seconds
+        let currentPos = 0;
+        const fastSpinInterval = setInterval(() => {
+            currentPos -= itemHeight;
+            if (currentPos <= -totalItems * itemHeight) {
+                currentPos = 0;
+            }
+            reel.style.top = currentPos + 'px';
+        }, 50);
+        
+        // After 2 seconds, slow down and land on prize
+        setTimeout(() => {
+            clearInterval(fastSpinInterval);
+            reel.classList.remove('spinning');
+            
+            // Smooth deceleration to final position
+            reel.style.top = -finalPosition + 'px';
+            
+            // Show result after animation
+            setTimeout(() => {
+                showResult(wonPrize);
+                availableTickets--;
+                updateTicketDisplay();
+                
+                // Reset button
+                spinButton.disabled = false;
+                spinText.textContent = 'Quay Ngay!';
+                isSpinning = false;
+                
+                // Reset reel position for next spin
+                setTimeout(() => {
+                    reel.style.transition = 'none';
+                    reel.style.top = '0px';
+                    setTimeout(() => {
+                        reel.style.transition = 'top 3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                    }, 50);
+                }, 500);
+            }, 3000);
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Spin error:', error);
+        alert(error.message || 'Có lỗi xảy ra khi quay thưởng');
+        
+        // Reset button
+        spinButton.disabled = false;
+        spinText.textContent = 'Quay Ngay!';
+        isSpinning = false;
+    }
+}
+
+// Show result modal
+function showResult(reward) {
+    const modal = document.getElementById('result-modal');
+    const resultText = document.getElementById('result-text');
+    
+    if (reward.reward_type === 'no_prize') {
+        resultText.innerHTML = `
+            <div class="text-4xl mb-4">😢</div>
+            <div class="text-xl font-bold text-gray-800 dark:text-white mb-2">Chúc may mắn lần sau!</div>
+            <div class="text-gray-600 dark:text-gray-400">Đừng bỏ cuộc, hãy thử lại nhé!</div>
+        `;
+    } else {
+        resultText.innerHTML = `
+            <div class="text-4xl mb-4">🎉</div>
+            <div class="text-xl font-bold text-gray-800 dark:text-white mb-2">Chúc mừng!</div>
+            <div class="text-lg text-purple-600 dark:text-purple-400 font-semibold mb-2">${reward.reward_name}</div>
+            <div class="text-gray-600 dark:text-gray-400">${reward.reward_value || 'Phần thưởng đặc biệt'}</div>
+        `;
+    }
+    
+    modal.classList.remove('hidden');
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    new LotteryWheel();
+    initSlotMachine();
+    loadTickets();
+    
+    // Add spin button event
+    const spinButton = document.getElementById('spin-button');
+    if (spinButton) {
+        spinButton.addEventListener('click', spinSlot);
+    }
 });

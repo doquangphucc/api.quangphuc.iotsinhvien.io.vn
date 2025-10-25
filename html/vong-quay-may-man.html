@@ -110,62 +110,130 @@
              background-color: #7f1d1d;
         }
 
-        /* Lottery Wheel Styles */
-        .lottery-wheel {
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            position: relative;
+        /* Slot Machine Styles */
+        .slot-machine {
+            width: 100%;
+            max-width: 400px;
             margin: 0 auto;
-            border: 8px solid #1E5631;
-            box-shadow: 0 0 30px rgba(30, 86, 49, 0.3);
-            transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
         }
 
-        .lottery-wheel.spinning {
-            transform: rotate(1800deg);
+        .slot-frame {
+            background: linear-gradient(135deg, #1E5631, #3FA34D);
+            border-radius: 24px;
+            padding: 40px 20px;
+            box-shadow: 0 20px 60px rgba(30, 86, 49, 0.4);
+            position: relative;
         }
 
-        .wheel-section {
+        .slot-window {
+            background: white;
+            border-radius: 16px;
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+            border: 8px solid #C5E384;
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .slot-reel {
             position: absolute;
-            width: 50%;
-            height: 50%;
-            transform-origin: 100% 100%;
+            width: 100%;
+            top: 0;
+            transition: top 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .slot-reel.spinning {
+            transition: top 0.1s linear;
+        }
+
+        .slot-item {
+            height: 180px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            padding: 20px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-bottom: 2px solid #e5e7eb;
         }
 
-        .wheel-center {
+        .slot-item-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .slot-item-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1E5631;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .slot-indicator {
             position: absolute;
+            left: -30px;
+            right: -30px;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: #1E5631;
-            border-radius: 50%;
-            border: 4px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transform: translateY(-50%);
+            height: 180px;
+            border: 4px solid #1E5631;
+            border-radius: 12px;
+            pointer-events: none;
             z-index: 10;
+            box-shadow: 0 0 20px rgba(30, 86, 49, 0.5);
         }
 
-        .wheel-pointer {
+        .slot-indicator::before,
+        .slot-indicator::after {
+            content: '';
             position: absolute;
-            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid #1E5631;
-            z-index: 5;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+        }
+
+        .slot-indicator::before {
+            top: -24px;
+            border-bottom: 20px solid #1E5631;
+        }
+
+        .slot-indicator::after {
+            bottom: -24px;
+            border-top: 20px solid #1E5631;
+        }
+
+        .slot-lights {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .slot-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #FFD700;
+            box-shadow: 0 0 10px #FFD700;
+            animation: blink 1s infinite alternate;
+        }
+
+        .slot-light:nth-child(2) { animation-delay: 0.2s; }
+        .slot-light:nth-child(3) { animation-delay: 0.4s; }
+        .slot-light:nth-child(4) { animation-delay: 0.6s; }
+        .slot-light:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
         .prize-item {
@@ -266,16 +334,25 @@
                     <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg text-center">
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Vòng Quay May Mắn</h2>
                         
-                        <!-- Wheel Container -->
-                        <div class="relative mb-8">
-                            <div class="lottery-wheel" id="lottery-wheel">
-                                <div class="wheel-pointer"></div>
-                                <div class="wheel-center">
-                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                    </svg>
+                        <!-- Slot Machine Container -->
+                        <div class="slot-machine mb-8">
+                            <div class="slot-frame">
+                                <!-- Decorative lights -->
+                                <div class="slot-lights">
+                                    <div class="slot-light"></div>
+                                    <div class="slot-light"></div>
+                                    <div class="slot-light"></div>
+                                    <div class="slot-light"></div>
+                                    <div class="slot-light"></div>
                                 </div>
-                                <!-- Wheel sections will be generated by JavaScript -->
+                                
+                                <!-- Slot window -->
+                                <div class="slot-window">
+                                    <div class="slot-indicator"></div>
+                                    <div class="slot-reel" id="slot-reel">
+                                        <!-- Slot items will be generated by JavaScript -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
