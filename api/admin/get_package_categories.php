@@ -35,6 +35,7 @@ try {
         $categories[] = [
             'id' => (int)$row['id'],
             'name' => $row['name'],
+            'logo_url' => $row['logo_url'],
             'badge_text' => $row['badge_text'],
             'badge_color' => $row['badge_color'],
             'display_order' => (int)$row['display_order'],
