@@ -141,7 +141,7 @@ async function deleteProduct(id) {
 async function loadOrders() {
     const status = document.getElementById('order-status-filter')?.value || '';
     try {
-        const response = await fetch(`${API_BASE}/admin/get_orders.php?status=${status}&t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
+        const response = await fetch(`${API_BASE}/admin/get_orders.php?status=${status}&t=${Date.now()}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             renderOrders(data.orders);
@@ -247,7 +247,7 @@ async function approveOrder(orderId) {
 // Tickets Functions
 async function loadTickets() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_tickets.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
+        const response = await fetch(`${API_BASE}/admin/get_tickets.php?t=${Date.now()}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             renderTickets(data.tickets);
@@ -414,7 +414,7 @@ async function deleteTicket(id) {
 // Rewards Functions
 async function loadRewards() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
+        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now()}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             rewardTemplatesData = data.templates;
@@ -575,7 +575,7 @@ async function deleteReward(id) {
 // Load users
 async function loadUsers() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_users.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
+        const response = await fetch(`${API_BASE}/admin/get_users.php?t=${Date.now()}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             usersData = data.users;
@@ -588,7 +588,7 @@ async function loadUsers() {
 // Load reward templates for dropdowns
 async function loadRewardTemplates() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
+        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now()}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             rewardTemplatesData = data.templates;
