@@ -226,9 +226,23 @@ function renderPackages() {
 async function loadPackageCategoriesForSelect() {
     await loadPackageCategories();
     const select = document.getElementById('package_category_id');
-    if (!select) return;
+    if (!select) {
+        console.error('Package category select not found');
+        return;
+    }
     
+    // Clear and add default option
     select.innerHTML = '<option value="">-- Chọn danh mục gói --</option>';
+    
+    // Debug log
+    console.log('Package categories data:', packageCategoriesData);
+    
+    if (packageCategoriesData.length === 0) {
+        select.innerHTML += '<option value="">(Chưa có danh mục gói - Vui lòng tạo danh mục trước)</option>';
+        console.warn('No package categories found');
+        return;
+    }
+    
     packageCategoriesData.forEach(cat => {
         select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
     });
