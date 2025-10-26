@@ -2,6 +2,8 @@
 // Check if user is admin
 require_once __DIR__ . '/../connect.php';
 
+header('Content-Type: application/json');
+
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo json_encode([
@@ -40,5 +42,3 @@ echo json_encode([
 
 $stmt->close();
 $conn->close();
-?>
-
