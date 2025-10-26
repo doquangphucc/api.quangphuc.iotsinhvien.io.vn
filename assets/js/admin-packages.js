@@ -236,6 +236,7 @@ async function loadPackageCategoriesForSelect() {
     
     // Debug log
     console.log('Package categories data:', packageCategoriesData);
+    console.log('Number of categories:', packageCategoriesData.length);
     
     if (packageCategoriesData.length === 0) {
         select.innerHTML += '<option value="">(Chưa có danh mục gói - Vui lòng tạo danh mục trước)</option>';
@@ -244,8 +245,11 @@ async function loadPackageCategoriesForSelect() {
     }
     
     packageCategoriesData.forEach(cat => {
+        console.log('Adding category to select:', cat.id, cat.name);
         select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
     });
+    
+    console.log('Select options after loading:', select.innerHTML);
 }
 
 function openPackageModal(id = null) {
