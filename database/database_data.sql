@@ -10,13 +10,7 @@ USE nangluongmattroi;
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCT_CATEGORIES
 -- =====================================================
-INSERT INTO product_categories (id, name, logo_url, description, display_order, is_active) VALUES
-(1, 'Tấm Pin Mặt Trời', 'assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg', 'Tấm pin năng lượng mặt trời công suất cao', 1, TRUE),
-(2, 'Inverter 1 Pha', 'assets/img/products/eco-hybrid-5kw-sna5000wpv.png', 'Biến tần hòa lưới 1 pha cho hộ gia đình', 2, TRUE),
-(3, 'Inverter 3 Pha', 'assets/img/products/hybrid-trip2-lb-3p-12k.png', 'Biến tần hòa lưới 3 pha công suất cao', 3, TRUE),
-(4, 'Pin Lưu Trữ', 'assets/img/products/cell-a-cornex-lifepo4-16cell.png', 'Pin lưu trữ năng lượng LiFePO4', 4, TRUE),
-(5, 'Tủ Điện Hybrid', 'assets/img/products/electrical-cabinet.jpg', 'Tủ điện chuyên dụng cho hệ thống solar', 5, TRUE),
-(6, 'Phụ Kiện', 'assets/img/products/daydien.png', 'Phụ kiện lắp đặt và kết nối', 6, TRUE);
+-- Không cần dữ liệu mẫu - Admin sẽ tự thêm qua giao diện quản lý
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCTS
