@@ -1,13 +1,13 @@
 <?php
 // Get all lottery tickets
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_mysqli.php';
+require_once __DIR__ . '/../auth_helpers.php';
+
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
-
-session_start();
-require_once __DIR__ . '/../db_mysqli.php';
-require_once __DIR__ . '/../auth_helpers.php';
 
 if (!is_admin()) {
     echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
