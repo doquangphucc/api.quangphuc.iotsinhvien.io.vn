@@ -79,8 +79,7 @@ async function openProductModal(id = null) {
             document.getElementById('product_market_price').value = product.market_price;
             document.getElementById('product_category_price').value = product.category_price || '';
             document.getElementById('product_image_url').value = product.image_url || '';
-            document.getElementById('product_description').value = product.description || '';
-            document.getElementById('product_specifications').value = product.specifications || '';
+            document.getElementById('product_technical_description').value = product.technical_description || '';
             document.getElementById('product_is_active').checked = product.is_active == 1;
             document.getElementById('productModalTitle').textContent = 'Sửa sản phẩm';
             
@@ -230,8 +229,7 @@ async function saveProduct(event) {
         market_price: marketPrice,
         category_price: categoryPriceVal ? parseFloat(categoryPriceVal) : null,
         image_url: document.getElementById('product_image_url').value || '',
-        description: document.getElementById('product_description').value.trim(),
-        specifications: document.getElementById('product_specifications').value.trim(),
+        technical_description: document.getElementById('product_technical_description').value.trim(),
         is_active: document.getElementById('product_is_active').checked
     };
 

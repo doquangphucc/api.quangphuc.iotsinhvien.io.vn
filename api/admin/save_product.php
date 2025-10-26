@@ -26,8 +26,7 @@ $category_id = intval($data['category_id'] ?? 0);
 $title = $data['title'] ?? '';
 $market_price = floatval($data['market_price'] ?? 0);
 $category_price = !empty($data['category_price']) ? floatval($data['category_price']) : null;
-$description = $data['description'] ?? '';
-$specifications = $data['specifications'] ?? '';
+$technical_description = $data['technical_description'] ?? '';
 $image_url = $data['image_url'] ?? '';
 $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
 
@@ -49,12 +48,12 @@ if ($market_price <= 0) {
 
 if ($id > 0) {
     // Update existing product
-    $stmt = $conn->prepare("UPDATE products SET category_id = ?, title = ?, market_price = ?, category_price = ?, description = ?, specifications = ?, image_url = ?, is_active = ? WHERE id = ?");
-    $stmt->bind_param("isddsssii", $category_id, $title, $market_price, $category_price, $description, $specifications, $image_url, $is_active, $id);
+    $stmt = $conn->prepare("UPDATE products SET category_id = ?, title = ?, market_price = ?, category_price = ?, technical_description = ?, image_url = ?, is_active = ? WHERE id = ?");
+    $stmt->bind_param("isddssii", $category_id, $title, $market_price, $category_price, $technical_description, $image_url, $is_active, $id);
 } else {
     // Insert new product
-    $stmt = $conn->prepare("INSERT INTO products (category_id, title, market_price, category_price, description, specifications, image_url, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("isddsssi", $category_id, $title, $market_price, $category_price, $description, $specifications, $image_url, $is_active);
+    $stmt = $conn->prepare("INSERT INTO products (category_id, title, market_price, category_price, technical_description, image_url, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("issdssi", $category_id, $title, $market_price, $category_price, $technical_description, $image_url, $is_active);
 }
 
 if ($stmt->execute()) {
