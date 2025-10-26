@@ -1,4 +1,5 @@
 // Pricing page - Load and display products and packages from database
+// Updated for new product structure: title, market_price, category_price, technical_description
 
 let allProducts = [];
 let allPackages = [];
@@ -68,8 +69,8 @@ function renderCategoryFilters() {
     
     let html = `
         <button onclick="filterByCategory(null)" 
-                class="px-6 py-2 rounded-lg font-semibold transition-all ${!currentCategoryFilter ? 'bg-green-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300'}">
-            Tất cả
+                class="px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105 ${!currentCategoryFilter ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow'}">
+            🏠 Tất cả
         </button>
     `;
     
@@ -77,7 +78,8 @@ function renderCategoryFilters() {
         const isActive = currentCategoryFilter === cat.id;
         html += `
             <button onclick="filterByCategory(${cat.id})" 
-                    class="px-6 py-2 rounded-lg font-semibold transition-all ${isActive ? 'bg-green-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300'}">
+                    class="px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105 flex items-center gap-2 ${isActive ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow'}">
+                ${cat.logo_url ? `<img src="${cat.logo_url}" alt="${cat.name}" class="h-6 w-6 object-contain">` : ''}
                 ${cat.name}
             </button>
         `;
@@ -99,58 +101,112 @@ function renderProducts() {
     if (!container) return;
     
     if (allProducts.length === 0) {
-        container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">Không có sản phẩm nào</div>';
+        container.innerHTML = `
+            <div class="col-span-full text-center py-16">
+                <div class="text-6xl mb-4">📦</div>
+                <p class="text-xl text-gray-500 dark:text-gray-400">Chưa có sản phẩm nào trong danh mục này</p>
+                <button onclick="filterByCategory(null)" class="mt-6 px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-all">
+                    Xem tất cả sản phẩm
+                </button>
+            </div>
+        `;
         return;
     }
     
     let html = '';
     
     allProducts.forEach(product => {
+        const category = categories.find(c => c.id === product.category_id);
+        
         html += `
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                ${product.category_logo ? `
-                    <div class="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-3">
-                        <img src="${product.category_logo}" alt="${product.category_name}" class="h-8 object-contain mx-auto">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] border-2 border-transparent hover:border-green-500">
+                <!-- Category Logo Bar -->
+                ${category && category.logo_url ? `
+                    <div class="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 dark:from-green-900/20 dark:via-blue-900/20 dark:to-purple-900/20 p-4 flex items-center justify-center gap-3 border-b-2 border-green-600">
+                        <img src="${category.logo_url}" alt="${product.category_name}" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">${product.category_name}</span>
                     </div>
                 ` : ''}
                 
-                <div class="p-6">
+                <!-- Product Image -->
+                <div class="relative h-64 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
                     ${product.image_url ? `
-                        <img src="${product.image_url}" alt="${product.name}" class="w-full h-48 object-cover rounded-lg mb-4">
-                    ` : ''}
-                    
-                    <div class="mb-2">
-                        <span class="text-xs font-semibold px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
-                            ${product.category_name}
-                        </span>
-                    </div>
-                    
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">${product.name}</h3>
-                    
-                    ${product.brand ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Hãng: ${product.brand}</p>` : ''}
-                    ${product.model ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Model: ${product.model}</p>` : ''}
-                    ${product.power_rating ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Công suất: ${product.power_rating}</p>` : ''}
-                    
-                    ${product.description ? `
-                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">${product.description}</p>
-                    ` : ''}
-                    
-                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-                        <div class="mb-2">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Giá niêm yết:</span>
-                            <p class="text-2xl font-bold text-green-600">${formatPrice(product.price)}</p>
+                        <img src="${product.image_url}" 
+                             alt="${product.title}" 
+                             class="w-full h-full object-contain p-6 hover:scale-110 transition-transform duration-300"
+                             onerror="this.src='../assets/img/logo.jpg'">
+                    ` : `
+                        <div class="w-full h-full flex items-center justify-center text-6xl">
+                            📦
                         </div>
-                        ${product.price_installation ? `
-                            <div>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">Giá lắp đặt trọn gói:</span>
-                                <p class="text-xl font-bold text-blue-600">${formatPrice(product.price_installation)}</p>
+                    `}
+                    ${!product.is_active ? `
+                        <div class="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                            Tạm hết hàng
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="p-6">
+                    <!-- Product Title -->
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3 line-clamp-2 min-h-[56px]">
+                        ${product.title}
+                    </h3>
+                    
+                    <!-- Technical Description -->
+                    ${product.technical_description ? `
+                        <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 mb-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-4 whitespace-pre-line">
+                                ${product.technical_description}
+                            </p>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Pricing -->
+                    <div class="border-t-2 border-dashed border-gray-200 dark:border-gray-700 pt-4 mb-4 space-y-3">
+                        <!-- Market Price -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">💰 Giá thị trường:</span>
+                            <span class="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                                ${formatPrice(product.market_price)}
+                            </span>
+                        </div>
+                        
+                        <!-- Category Price -->
+                        ${product.category_price ? `
+                            <div class="flex justify-between items-center bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 -mx-2">
+                                <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                                    ⭐ Giá ${product.category_name}:
+                                </span>
+                                <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                    ${formatPrice(product.category_price)}
+                                </span>
                             </div>
                         ` : ''}
                     </div>
                     
-                    <button onclick="addToCart(${product.id})" class="w-full mt-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg">
-                        Thêm vào giỏ
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="space-y-3">
+                        <!-- Add to Cart Button -->
+                        <button onclick="addToCart(${product.id})" 
+                                class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                                ${!product.is_active ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Thêm vào giỏ hàng
+                        </button>
+                        
+                        <!-- Order Now Button -->
+                        <button onclick="orderNow(${product.id})" 
+                                class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-3 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                                ${!product.is_active ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Đặt hàng ngay
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -178,102 +234,168 @@ function renderPackages() {
         packagesByCategory[pkg.category_name].push(pkg);
     });
     
-    let html = '';
+    let html = '<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">';
     
-    Object.keys(packagesByCategory).forEach(categoryName => {
-        const packages = packagesByCategory[categoryName];
+    allPackages.forEach(pkg => {
+        const badgeColor = pkg.badge_color || 'blue';
         
         html += `
-            <div class="mb-12">
-                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">${categoryName}</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                ${pkg.badge_text ? `
+                    <div class="bg-gradient-to-r from-${badgeColor}-600 to-${badgeColor}-700 text-white text-center py-3 font-bold text-sm uppercase tracking-wider">
+                        ${pkg.badge_text}
+                    </div>
+                ` : ''}
                 
-                <div class="grid md:grid-cols-3 gap-8">
-        `;
-        
-        packages.forEach(pkg => {
-            html += `
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
-                    ${pkg.badge_text ? `
-                        <div class="bg-${pkg.badge_color}-600 text-white text-center py-2 font-semibold">
-                            ${pkg.badge_text}
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">${pkg.name}</h3>
+                    
+                    ${pkg.description ? `
+                        <p class="text-gray-600 dark:text-gray-400 mb-6 text-sm">${pkg.description}</p>
+                    ` : ''}
+                    
+                    <div class="mb-6">
+                        <div class="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                            ${pkg.price > 0 ? formatPrice(pkg.price) : 'Liên hệ'}
+                        </div>
+                    </div>
+                    
+                    ${pkg.savings_per_month || pkg.payback_period ? `
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-4 space-y-2">
+                            ${pkg.savings_per_month ? `
+                                <p class="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                                    💰 Tiết kiệm: ${pkg.savings_per_month}
+                                </p>
+                            ` : ''}
+                            ${pkg.payback_period ? `
+                                <p class="text-sm font-semibold text-purple-700 dark:text-purple-400">
+                                    ⏱️ Hoàn vốn: ${pkg.payback_period}
+                                </p>
+                            ` : ''}
                         </div>
                     ` : ''}
                     
-                    <div class="p-8">
-                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">${pkg.name}</h3>
-                        
-                        ${pkg.description ? `
-                            <p class="text-gray-600 dark:text-gray-400 mb-6">${pkg.description}</p>
-                        ` : ''}
-                        
-                        <div class="mb-6">
-                            <span class="text-4xl font-bold text-green-600">${formatPrice(pkg.price)}</span>
-                        </div>
-                        
-                        ${pkg.savings_per_month ? `
-                            <p class="text-sm text-blue-600 dark:text-blue-400 mb-2">💰 Tiết kiệm: ${pkg.savings_per_month}</p>
-                        ` : ''}
-                        ${pkg.payback_period ? `
-                            <p class="text-sm text-purple-600 dark:text-purple-400 mb-4">⏱️ Hoàn vốn: ${pkg.payback_period}</p>
-                        ` : ''}
-                        
-                        ${pkg.items.length > 0 ? `
-                            <ul class="space-y-2 mb-6">
-                                ${pkg.items.map(item => `
-                                    <li class="flex items-start gap-2">
-                                        <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span class="text-gray-700 dark:text-gray-300">${item.name}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        ` : ''}
-                        
-                        <button onclick="contactForPackage('${pkg.name}')" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg">
-                            Liên hệ tư vấn
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-        
-        html += `
+                    ${pkg.items && pkg.items.length > 0 ? `
+                        <ul class="space-y-2 mb-6">
+                            ${pkg.items.map(item => `
+                                <li class="flex items-start gap-2 text-sm">
+                                    <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700 dark:text-gray-300">${item.name}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+                    
+                    <button onclick="contactForPackage('${pkg.name.replace(/'/g, "\\'")}' )" 
+                            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                        📞 Liên hệ tư vấn
+                    </button>
                 </div>
             </div>
         `;
     });
     
+    html += '</div>';
     container.innerHTML = html;
 }
 
 // Helper functions
 function formatPrice(price) {
+    if (!price) return 'Liên hệ';
     return new Intl.NumberFormat('vi-VN', { 
         style: 'currency', 
         currency: 'VND' 
     }).format(price);
 }
 
+// Add to cart
 function addToCart(productId) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) return;
     
+    // Use category_price if available, otherwise use market_price
+    const price = product.category_price || product.market_price;
+    
     if (window.ShoppingCart) {
         window.ShoppingCart.addItem({
             id: product.id,
-            name: product.name,
-            price: product.price_installation || product.price,
+            name: product.title,
+            price: price,
             image_url: product.image_url,
             quantity: 1
         });
-        alert('Đã thêm sản phẩm vào giỏ hàng!');
+        
+        // Show toast notification
+        showToast('✅ Đã thêm vào giỏ hàng!', 'success');
     } else {
-        alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+        showToast('⚠️ Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng', 'warning');
+        setTimeout(() => {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        }, 1500);
     }
 }
 
+// Order now - Go directly to order page with this product
+function orderNow(productId) {
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
+    
+    // Store product in sessionStorage for order page
+    sessionStorage.setItem('quickOrderProduct', JSON.stringify({
+        id: product.id,
+        title: product.title,
+        price: product.category_price || product.market_price,
+        image_url: product.image_url,
+        category_name: product.category_name,
+        quantity: 1
+    }));
+    
+    // Redirect to order page
+    window.location.href = 'dat-hang.html';
+}
+
+// Contact for package
 function contactForPackage(packageName) {
     window.location.href = `lien-he.html?package=${encodeURIComponent(packageName)}`;
 }
 
+// Toast notification
+function showToast(message, type = 'info') {
+    // Check if toast container exists
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-4 right-4 z-50 space-y-3';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    const colors = {
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        warning: 'bg-yellow-600',
+        info: 'bg-blue-600'
+    };
+    
+    toast.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full opacity-0 flex items-center gap-3 max-w-md`;
+    toast.innerHTML = `
+        <div class="text-xl">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</div>
+        <div class="font-semibold">${message}</div>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+    }, 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
