@@ -528,9 +528,149 @@
         </div>
     </div>
 
+    <!-- Package Category Modal -->
+    <div id="packageCategoryModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4" id="packageCategoryModalTitle">Thêm danh mục gói</h3>
+            <form id="packageCategoryForm" onsubmit="savePackageCategory(event)">
+                <input type="hidden" id="package_category_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên danh mục *</label>
+                        <input type="text" id="package_category_name" required class="w-full px-4 py-2 border rounded-lg" placeholder="VD: Gói Điện Mặt Trời Gia Đình">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Badge Text</label>
+                            <input type="text" id="package_category_badge_text" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: PHỔ BIẾN">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Badge Color</label>
+                            <select id="package_category_badge_color" class="w-full px-4 py-2 border rounded-lg">
+                                <option value="blue">Xanh dương</option>
+                                <option value="green">Xanh lá</option>
+                                <option value="red">Đỏ</option>
+                                <option value="yellow">Vàng</option>
+                                <option value="purple">Tím</option>
+                                <option value="orange">Cam</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị</label>
+                        <input type="number" id="package_category_display_order" value="0" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="package_category_is_active" checked>
+                            <span class="font-semibold">Kích hoạt</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closePackageCategoryModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Package Modal -->
+    <div id="packageModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="packageModalTitle">Thêm gói sản phẩm</h3>
+            <form id="packageForm" onsubmit="savePackage(event)">
+                <input type="hidden" id="package_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Danh mục gói *</label>
+                        <select id="package_category_id" required class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">-- Chọn danh mục gói --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên gói *</label>
+                        <input type="text" id="package_name" required class="w-full px-4 py-2 border rounded-lg" placeholder="VD: Gói Solar 3kW">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                        <textarea id="package_description" rows="3" class="w-full px-4 py-2 border rounded-lg" placeholder="Mô tả ngắn về gói sản phẩm"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Giá gói (VNĐ) *</label>
+                        <input type="number" id="package_price" required min="0" step="1000" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Badge Text</label>
+                            <input type="text" id="package_badge_text" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: TIẾT KIỆM">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Badge Color</label>
+                            <select id="package_badge_color" class="w-full px-4 py-2 border rounded-lg">
+                                <option value="blue">Xanh dương</option>
+                                <option value="green">Xanh lá</option>
+                                <option value="red">Đỏ</option>
+                                <option value="yellow">Vàng</option>
+                                <option value="purple">Tím</option>
+                                <option value="orange">Cam</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Tiết kiệm/tháng</label>
+                            <input type="text" id="package_savings_per_month" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: ~3.5 triệu/tháng">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Hoàn vốn</label>
+                            <input type="text" id="package_payback_period" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 4-5 năm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị</label>
+                        <input type="number" id="package_display_order" value="0" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="package_is_active" checked>
+                            <span class="font-semibold">Kích hoạt</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Package Items -->
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="block text-sm font-semibold">Các item trong gói</label>
+                            <button type="button" onclick="addPackageItem()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                + Thêm item
+                            </button>
+                        </div>
+                        <div id="package-items-container" class="space-y-2">
+                            <!-- Package items will be added here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closePackageModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="../assets/js/cache-buster.js"></script>
     <script src="../assets/js/admin.js"></script>
     <script src="../assets/js/admin-products.js"></script>
+    <script src="../assets/js/admin-packages.js"></script>
     <script>
         // Check admin access
         async function checkAdmin() {
@@ -578,6 +718,10 @@
             switch(tabName) {
                 case 'categories': loadCategories(); break;
                 case 'products': loadProducts(); break;
+                case 'packages': 
+                    loadPackageCategories(); 
+                    loadPackages(); 
+                    break;
                 case 'orders': loadOrders(); break;
                 case 'tickets': loadTickets(); break;
                 case 'rewards': loadRewards(); break;
