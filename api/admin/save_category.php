@@ -1,6 +1,14 @@
 <?php
 // Add or update product category with image upload
-header('Access-Control-Allow-Origin: *');
+
+// Start session first
+session_start();
+require_once __DIR__ . '/../db_mysqli.php';
+require_once __DIR__ . '/../auth_helpers.php';
+
+// CORS headers
+header('Access-Control-Allow-Origin: https://api.quangphuc.iotsinhvien.io.vn');
+header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -9,14 +17,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-session_start();
-require_once __DIR__ . '/../db_mysqli.php';
-require_once __DIR__ . '/../auth_helpers.php';
-
 header('Content-Type: application/json; charset=utf-8');
 
+// Debug log
+error_log("Save category - Session ID: " . session_id());
+error_log("Save category - User ID: " . ($_SESSION['user_id'] ?? 'NOT SET'));
+error_log("Save category - is_admin check: " . (is_admin() ? 'TRUE' : 'FALSE'));
+
 if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Không có quyền truy cập',
+        'debug' => [
+            'session_id' => session_id(),
+            'has_user_id' => isset($_SESSION['user_id']),
+            'user_id' => $_SESSION['user_id'] ?? null
+        ]
+    ]);
     exit;
 }
 
