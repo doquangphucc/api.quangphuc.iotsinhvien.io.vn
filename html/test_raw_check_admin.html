@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Raw Check Admin Output</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #0f0;
+        }
+        .result {
+            background: #111;
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .hex {
+            color: #ff0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 RAW CHECK ADMIN OUTPUT TEST</h1>
+    
+    <button onclick="testRawOutput()">Test Raw Output</button>
+    <button onclick="clearResults()">Clear</button>
+
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'https://api.quangphuc.iotsinhvien.io.vn/api';
+
+        function addResult(title, content) {
+            const div = document.createElement('div');
+            div.className = 'result';
+            div.innerHTML = `<h3>${title}</h3><pre>${content}</pre>`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function stringToHex(str) {
+            let hex = '';
+            for (let i = 0; i < str.length; i++) {
+                const charCode = str.charCodeAt(i);
+                const hexValue = charCode.toString(16).padStart(2, '0');
+                hex += hexValue + ' ';
+                if ((i + 1) % 16 === 0) hex += '\n';
+            }
+            return hex;
+        }
+
+        async function testRawOutput() {
+            try {
+                // Get as text first
+                const response = await fetch(`${API_BASE}/admin/check_admin.php?t=${Date.now()}`, {
+                    credentials: 'include'
+                });
+                
+                const text = await response.text();
+                
+                addResult('📄 Response Status', `${response.status} ${response.statusText}`);
+                
+                addResult('📊 Response Headers', JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
+                
+                addResult('📝 Raw Text Output', `Length: ${text.length} bytes\n\nContent:\n"${text}"`);
+                
+                addResult('🔢 HEX Dump (first 200 bytes)', `<span class="hex">${stringToHex(text.substring(0, 200))}</span>`);
+                
+                // Check for BOM
+                if (text.charCodeAt(0) === 0xEF && text.charCodeAt(1) === 0xBB && text.charCodeAt(2) === 0xBF) {
+                    addResult('⚠️ WARNING', 'UTF-8 BOM detected at start!');
+                }
+                
+                // Check leading/trailing whitespace
+                if (text.match(/^\s/)) {
+                    addResult('⚠️ WARNING', `Leading whitespace detected! First char code: ${text.charCodeAt(0)}`);
+                }
+                if (text.match(/\s$/)) {
+                    addResult('⚠️ WARNING', `Trailing whitespace detected! Last char code: ${text.charCodeAt(text.length - 1)}`);
+                }
+                
+                // Try to parse JSON
+                try {
+                    const json = JSON.parse(text);
+                    addResult('✅ JSON Parse Success', JSON.stringify(json, null, 2));
+                } catch (e) {
+                    addResult('❌ JSON Parse Error', `${e.message}\n\nTrying to find where JSON starts...`);
+                    
+                    // Find first {
+                    const firstBrace = text.indexOf('{');
+                    if (firstBrace > 0) {
+                        addResult('⚠️ Junk Before JSON', `Found ${firstBrace} characters before first '{'\n\nJunk: "${text.substring(0, firstBrace)}"\n\nHex: ${stringToHex(text.substring(0, firstBrace))}`);
+                    }
+                    
+                    // Find last }
+                    const lastBrace = text.lastIndexOf('}');
+                    if (lastBrace < text.length - 1) {
+                        addResult('⚠️ Junk After JSON', `Found ${text.length - lastBrace - 1} characters after last '}'\n\nJunk: "${text.substring(lastBrace + 1)}"\n\nHex: ${stringToHex(text.substring(lastBrace + 1))}`);
+                    }
+                }
+                
+            } catch (error) {
+                addResult('❌ Fetch Error', `${error.message}\n${error.stack}`);
+            }
+        }
+
+        // Auto run
+        window.addEventListener('DOMContentLoaded', testRawOutput);
+    </script>
+</body>
+</html>
+
