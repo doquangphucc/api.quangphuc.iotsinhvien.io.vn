@@ -107,6 +107,11 @@ if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
     }
 }
 
+// Ensure logo_url is not null
+if (empty($logo_url)) {
+    $logo_url = null;
+}
+
 // Save to database
 if ($id > 0) {
     // Update existing category
@@ -125,9 +130,9 @@ if ($stmt->execute()) {
         'message' => 'Lưu danh mục gói thành công',
         'category_id' => $category_id,
         'logo_url' => $logo_url
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error]);
+    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error], JSON_UNESCAPED_UNICODE);
 }
 
 $stmt->close();
