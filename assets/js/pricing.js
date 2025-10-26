@@ -131,7 +131,7 @@ function renderProducts() {
                 <!-- Product Image -->
                 <div class="relative h-64 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
                     ${product.image_url ? `
-                        <img src="${product.image_url}" 
+                        <img src="../${product.image_url}" 
                              alt="${product.title}" 
                              class="w-full h-full object-contain p-6 hover:scale-110 transition-transform duration-300"
                              onerror="this.src='../assets/img/logo.jpg'">

@@ -39,7 +39,7 @@ function renderProducts(products) {
         <tr class="border-b hover:bg-gray-50">
             <td class="px-4 py-3">${p.id}</td>
             <td class="px-4 py-3">
-                ${p.image_url ? `<img src="${p.image_url}" class="h-16 w-16 object-cover rounded border" onerror="this.src='../assets/img/logo.jpg'">` : '<span class="text-gray-400">Chưa có</span>'}
+                ${p.image_url ? `<img src="../${p.image_url}" class="h-16 w-16 object-cover rounded border" onerror="this.src='../assets/img/logo.jpg'">` : '<span class="text-gray-400">Chưa có</span>'}
             </td>
             <td class="px-4 py-3 font-semibold">${p.title}</td>
             <td class="px-4 py-3">${p.category_name || '—'}</td>
