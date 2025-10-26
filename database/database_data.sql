@@ -18,7 +18,196 @@ INSERT INTO product_categories (id, name, logo_url, display_order, is_active) VA
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCTS
 -- =====================================================
--- Không thêm dữ liệu mẫu - Admin sẽ tự thêm qua giao diện quản lý
+-- Thêm dữ liệu mẫu cho danh mục "Bảo Duy Solar" (category_id = 1)
+INSERT INTO products (category_id, title, market_price, category_price, technical_description, image_url, is_active) VALUES
+(1, 'Tấm Pin Jinko Solar 590W Tiger Neo', 2300000, NULL, 
+'Thương hiệu: Jinko Solar
+Model: Tiger Neo 590W
+
+Thông số kỹ thuật:
+- Công suất: 590W
+- Công nghệ: N-Type Tiger Neo
+- Hiệu suất: 22.3%
+- Kích thước: 2278×1134×30mm
+- Bảo hành: 15 năm sản phẩm, 30 năm công suất', 
+'assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg', TRUE),
+
+(1, 'Tấm Pin Jinko Solar 630W Tiger Neo', 2600000, NULL,
+'Thương hiệu: Jinko Solar
+Model: Tiger Neo 630W
+
+Thông số kỹ thuật:
+- Công suất: 630W
+- Công nghệ: N-Type Tiger Neo
+- Hiệu suất: 22.5%
+- Bảo hành: 15 năm sản phẩm, 30 năm công suất',
+'assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png', TRUE),
+
+(1, 'ECO Hybrid 5kW (Bản mới 2025)', 16500000, NULL,
+'Thương hiệu: LuxPower
+Model: SNA5000WPV
+
+Thông số kỹ thuật:
+- On-grid/Back-up: 5kW
+- Điện áp: 1 pha
+- Hỗ trợ pin lithium và ắc quy
+- Bảo hành: 5 năm',
+'assets/img/products/eco-hybrid-5kw-sna5000wpv.png', TRUE),
+
+(1, 'ECO Hybrid 6kW', 17500000, NULL,
+'Thương hiệu: LuxPower
+Model: SNA6000WPV
+
+Thông số kỹ thuật:
+- On-grid/Back-up: 6kW
+- Điện áp: 1 pha
+- Hỗ trợ pin lithium và ắc quy
+- Bảo hành: 5 năm',
+'assets/img/products/eco-hybrid-6kw-sna6000wpv.png', TRUE),
+
+(1, 'ECO Hybrid 12kW', 35500000, NULL,
+'Thương hiệu: LuxPower
+Model: SNA 12K
+
+Thông số kỹ thuật:
+- On-grid/Back-up: 12kW
+- Điện áp: 1 pha
+- Hỗ trợ pin lithium và ắc quy
+- Bảo hành: 5 năm',
+'assets/img/products/eco-hybrid-12kw-sna12k.png', TRUE),
+
+(1, 'Hybrid GEN-LB-EU 6K', 28900000, NULL,
+'Thương hiệu: LuxPower
+Model: GEN-LB-EU 6K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 6kW
+- Sạc/xả: 6000W 125A/140A
+- Điện áp: 1 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-gen-lb-eu-6k.png', TRUE),
+
+(1, 'Hybrid GEN-LB-EU 8K', 48000000, NULL,
+'Thương hiệu: LuxPower
+Model: GEN-LB-EU 8K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 8kW
+- Sạc/xả: 8000W 167A/167A
+- Điện áp: 1 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-gen-lb-eu-8k.png', TRUE),
+
+(1, 'Hybrid GEN-LB-EU 10K', 54000000, NULL,
+'Thương hiệu: LuxPower
+Model: GEN-LB-EU 10K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 10kW
+- Sạc/xả: 10000W 210A/210A
+- Điện áp: 1 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-gen-lb-eu-10k.png', TRUE),
+
+(1, 'Hybrid LXP-12K 12kW', 59000000, NULL,
+'Thương hiệu: LuxPower
+Model: LXP-12K
+
+Thông số kỹ thuật:
+- Hòa lưới On-grid: 12kW
+- Chạy độc lập Back-up: 12kW
+- Điện áp: 1 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-lxp-12k.png', TRUE),
+
+(1, 'Cell BYD 173ah LiFePO4', 15500000, NULL,
+'Thương hiệu: BYD
+Model: LiFePO4 173Ah
+
+Thông số kỹ thuật:
+- Điện áp: 51.2V
+- Dung lượng: 173ah (8.8kW)
+- Công nghệ: LiFePO4
+- Bảo hành: 10 năm',
+'assets/img/products/cell-byd-173ah-lifepo4.png', TRUE),
+
+(1, 'Cell A-Cornex LiFePO4 16 Cell', 50000000, NULL,
+'Thương hiệu: A-Cornex
+Model: LiFePO4 16C
+
+Thông số kỹ thuật:
+- Cấu hình: 16 Cell
+- Điện áp hệ thống: 52V
+- Công nghệ: LiFePO4
+- Bảo hành: 10 năm',
+'assets/img/products/cell-a-cornex-lifepo4-16cell.png', TRUE),
+
+(1, 'Tủ điện Hybrid 1 pha 6kW', 1850000, NULL,
+'Thương hiệu: HC Eco
+Model: 1P-6KW
+
+Thông số kỹ thuật:
+- Công suất hệ thống: 6 kW
+- Điện áp: 1 pha
+- Bao gồm: MCB, RCCB, SPD, các thiết bị bảo vệ',
+'assets/img/products/electrical-cabinet.jpg', TRUE),
+
+(1, 'Tủ điện Hybrid 1 pha 12kW', 2850000, NULL,
+'Thương hiệu: HC Eco
+Model: 1P-12KW
+
+Thông số kỹ thuật:
+- Công suất hệ thống: 12 kW
+- Điện áp: 1 pha
+- Bao gồm: MCB, RCCB, SPD, các thiết bị bảo vệ',
+'assets/img/products/electrical-cabinet.jpg', TRUE),
+
+(1, 'Tủ điện Hybrid 1 pha 15kW', 3800000, NULL,
+'Thương hiệu: HC Eco
+Model: 1P-15KW
+
+Thông số kỹ thuật:
+- Công suất hệ thống: 15 kW
+- Điện áp: 1 pha
+- Bao gồm: MCB, RCCB, SPD, các thiết bị bảo vệ',
+'assets/img/products/electrical-cabinet.jpg', TRUE),
+
+(1, 'Dongles Lan LuxPower', 1200000, NULL,
+'Thương hiệu: LuxPower
+Model: LAN Dongle
+
+Thông số kỹ thuật:
+- Kết nối internet qua dây mạng LAN
+- Tương thích: Tất cả inverter LuxPower',
+'assets/img/products/dongles-lan-luxpower.png', TRUE),
+
+(1, 'Wifi LuxPower', 1000000, NULL,
+'Thương hiệu: LuxPower
+Model: WiFi Module
+
+Thông số kỹ thuật:
+- Kết nối internet qua WiFi 2.4GHz
+- Tương thích: Tất cả inverter LuxPower',
+'assets/img/products/wifi-luxpower.png', TRUE),
+
+(1, 'Bách Z', 22000, NULL,
+'Thương hiệu: HC Eco
+Model: Bách Z
+
+Thông số kỹ thuật:
+- Chức năng: Mạ kẽm nhũng nóng áp mái tôn
+- Ứng dụng: Cố định khung giá đỡ trên mái tôn
+- Vật liệu: Thép mạ kẽm nhúng nóng',
+'assets/img/products/bachz.png', TRUE),
+
+(1, 'Kẹp biên, Kẹp giữa tấm Pin', 11500, NULL,
+'Thương hiệu: HC Eco
+Model: Kẹp Pin
+
+Thông số kỹ thuật:
+- Chức năng: Cố định tấm pin vào khung giá đỡ
+- Vật liệu: Hợp kim nhôm',
+'assets/img/products/kepbien-tamgiua.png', TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - TỈNH/THÀNH PHỐ
