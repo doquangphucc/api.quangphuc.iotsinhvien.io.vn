@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS package_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description TEXT,
+    badge_text VARCHAR(50) DEFAULT NULL COMMENT 'Văn bản badge (VD: PHỔ BIẾN, HOT, ƯU ĐÃI)',
+    badge_color VARCHAR(50) DEFAULT 'blue' COMMENT 'Màu badge (blue, green, red, yellow, purple, orange)',
     display_order INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
