@@ -126,7 +126,7 @@
                                 <th class="px-4 py-3 text-left">ID</th>
                                 <th class="px-4 py-3 text-left">Logo</th>
                                 <th class="px-4 py-3 text-left">Tên danh mục</th>
-                                <th class="px-4 py-3 text-left">Mô tả</th>
+                                <th class="px-4 py-3 text-center">Thứ tự</th>
                                 <th class="px-4 py-3 text-center">Trạng thái</th>
                                 <th class="px-4 py-3 text-center">Thao tác</th>
                             </tr>
@@ -515,22 +515,35 @@
 
         function renderCategories(categories) {
             const tbody = document.getElementById('categories-tbody');
+            if (categories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                            Chưa có danh mục nào. Click "Thêm danh mục" để tạo mới.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
             tbody.innerHTML = categories.map(cat => `
                 <tr class="border-b hover:bg-gray-50">
                     <td class="px-4 py-3">${cat.id}</td>
                     <td class="px-4 py-3">
-                        ${cat.logo_url ? `<img src="../${cat.logo_url}" class="h-12 w-12 object-cover rounded">` : '-'}
+                        ${cat.logo_url ? `<img src="${cat.logo_url}" class="h-16 w-16 object-contain rounded border" onerror="this.src='../assets/img/logo.jpg'">` : '<span class="text-gray-400">Chưa có</span>'}
                     </td>
                     <td class="px-4 py-3 font-semibold">${cat.name}</td>
-                    <td class="px-4 py-3">${cat.description || '-'}</td>
                     <td class="px-4 py-3 text-center">
-                        <span class="px-3 py-1 rounded-full text-sm ${cat.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                            ${cat.is_active ? 'Hoạt động' : 'Tạm dừng'}
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-semibold">${cat.display_order}</span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${cat.is_active == 1 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            ${cat.is_active == 1 ? 'Hoạt động' : 'Tạm dừng'}
                         </span>
                     </td>
                     <td class="px-4 py-3 text-center">
-                        <button onclick="editCategory(${cat.id})" class="text-blue-600 hover:underline mr-2">Sửa</button>
-                        <button onclick="deleteCategory(${cat.id})" class="text-red-600 hover:underline">Xóa</button>
+                        <button onclick="editCategory(${cat.id})" class="text-blue-600 hover:underline mr-3">✏️ Sửa</button>
+                        <button onclick="deleteCategory(${cat.id})" class="text-red-600 hover:underline">🗑️ Xóa</button>
                     </td>
                 </tr>
             `).join('');
@@ -594,14 +607,14 @@
             if (file) {
                 // Check file size (max 2MB)
                 if (file.size > 2 * 1024 * 1024) {
-                    alert('Kích thước ảnh không được vượt quá 2MB!');
+                    showToast('Kích thước ảnh không được vượt quá 2MB!', 'error');
                     event.target.value = '';
                     return;
                 }
                 
                 // Check file type
                 if (!file.type.match('image.*')) {
-                    alert('Vui lòng chọn file ảnh!');
+                    showToast('Vui lòng chọn file ảnh!', 'error');
                     event.target.value = '';
                     return;
                 }
@@ -627,7 +640,7 @@
             );
             
             if (isDuplicate) {
-                alert(`Thứ tự ưu tiên ${displayOrder} đã được sử dụng cho danh mục khác! Vui lòng chọn số khác.`);
+                showToast(`Thứ tự ưu tiên ${displayOrder} đã được sử dụng! Vui lòng chọn số khác.`, 'warning');
                 return;
             }
             
@@ -655,15 +668,15 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    alert(data.message);
+                    showToast(data.message, 'success');
                     closeCategoryModal();
                     loadCategories();
                 } else {
-                    alert(data.message);
+                    showToast(data.message, 'error');
                 }
             } catch (error) {
                 console.error('Error saving category:', error);
-                alert('Có lỗi xảy ra');
+                showToast('Có lỗi xảy ra khi lưu danh mục', 'error');
             }
         }
 
@@ -682,11 +695,15 @@
                     body: JSON.stringify({ id })
                 });
                 const data = await response.json();
-                alert(data.message);
-                if (data.success) loadCategories();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadCategories();
+                } else {
+                    showToast(data.message, 'error');
+                }
             } catch (error) {
                 console.error('Error deleting category:', error);
-                alert('Có lỗi xảy ra');
+                showToast('Có lỗi xảy ra khi xóa danh mục', 'error');
             }
         }
 
