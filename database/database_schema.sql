@@ -346,8 +346,7 @@ CREATE TABLE IF NOT EXISTS survey_results (
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_phone ON users(phone);
 CREATE INDEX idx_products_category_id ON products(category_id);
-CREATE INDEX idx_products_brand ON products(brand);
-CREATE INDEX idx_products_available ON products(is_available);
+CREATE INDEX idx_products_is_active ON products(is_active);
 CREATE INDEX idx_surveys_user_id ON solar_surveys(user_id);
 CREATE INDEX idx_surveys_created_at ON solar_surveys(created_at);
 CREATE INDEX idx_survey_results_survey_id ON survey_results(survey_id);
