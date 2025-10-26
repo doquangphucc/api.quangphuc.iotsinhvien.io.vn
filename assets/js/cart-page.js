@@ -255,9 +255,8 @@ function proceedToCheckout() {
 
 // Format price
 function formatPrice(price) {
-    return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-    }).format(price);
+    // Round to integer and format with dots as thousand separators
+    const roundedPrice = Math.round(price);
+    return roundedPrice.toLocaleString('vi-VN') + '₫';
 }
 

@@ -485,14 +485,14 @@
             let discount = 0;
             if (appliedVoucher) {
                 discount = appliedVoucher.discount_amount;
-                discountEl.textContent = '-' + discount.toLocaleString('vi-VN') + '₫';
+                discountEl.textContent = '-' + Math.round(discount).toLocaleString('vi-VN') + '₫';
                 discountRow.classList.remove('hidden');
             } else {
                 discountRow.classList.add('hidden');
             }
             
             const finalTotal = Math.max(0, subtotal - discount);
-            totalEl.textContent = finalTotal.toLocaleString('vi-VN') + '₫';
+            totalEl.textContent = Math.round(finalTotal).toLocaleString('vi-VN') + '₫';
         }
 
         // Handle checkout form submission
