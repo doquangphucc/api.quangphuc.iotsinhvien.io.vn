@@ -68,6 +68,12 @@ function openPackageCategoryModal(id = null) {
     const form = document.getElementById('packageCategoryForm');
     form.reset();
     document.getElementById('package_category_id').value = '';
+    document.getElementById('package_category_logo').value = '';
+    
+    // Hide preview and reset hidden input
+    const preview = document.getElementById('package_category_logo_preview');
+    preview.classList.add('hidden');
+    document.getElementById('package_category_logo_preview').querySelector('img').src = '';
     
     if (id) {
         const cat = packageCategoriesData.find(c => c.id == id);
@@ -78,6 +84,14 @@ function openPackageCategoryModal(id = null) {
             document.getElementById('package_category_badge_color').value = cat.badge_color || 'blue';
             document.getElementById('package_category_display_order').value = cat.display_order;
             document.getElementById('package_category_is_active').checked = cat.is_active == 1;
+            
+            // Show existing logo if available
+            if (cat.logo_url) {
+                const img = document.getElementById('package_category_logo_preview').querySelector('img');
+                img.src = '../' + cat.logo_url;
+                preview.classList.remove('hidden');
+            }
+            
             document.getElementById('packageCategoryModalTitle').textContent = 'Sửa danh mục gói';
         }
     } else {
@@ -94,26 +108,42 @@ function closePackageCategoryModal() {
 async function savePackageCategory(event) {
     event.preventDefault();
     
-    const formData = {
-        id: document.getElementById('package_category_id').value || 0,
-        name: document.getElementById('package_category_name').value.trim(),
-        badge_text: document.getElementById('package_category_badge_text').value.trim(),
-        badge_color: document.getElementById('package_category_badge_color').value,
-        display_order: parseInt(document.getElementById('package_category_display_order').value) || 0,
-        is_active: document.getElementById('package_category_is_active').checked
-    };
+    const name = document.getElementById('package_category_name').value.trim();
+    const badge_text = document.getElementById('package_category_badge_text').value.trim();
+    const badge_color = document.getElementById('package_category_badge_color').value;
+    const display_order = parseInt(document.getElementById('package_category_display_order').value) || 0;
+    const is_active = document.getElementById('package_category_is_active').checked;
+    const id = document.getElementById('package_category_id').value || 0;
+    const logoInput = document.getElementById('package_category_logo');
     
-    if (formData.name === '') {
+    if (name === '') {
         showToast('Tên danh mục không được để trống', 'warning');
         return;
+    }
+    
+    // Get existing logo URL for edit mode
+    const existingLogo = id ? packageCategoriesData.find(c => c.id == id)?.logo_url || '' : '';
+    
+    // Use FormData to handle file upload
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('name', name);
+    formData.append('badge_text', badge_text);
+    formData.append('badge_color', badge_color);
+    formData.append('display_order', display_order);
+    formData.append('is_active', is_active ? 1 : 0);
+    formData.append('logo_url', existingLogo); // Keep existing logo if not changed
+    
+    // Add logo file if selected
+    if (logoInput.files && logoInput.files[0]) {
+        formData.append('logo', logoInput.files[0]);
     }
     
     try {
         const response = await fetch(`${API_BASE}/admin/save_package_category.php`, {
             credentials: 'include',
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: formData
         });
         const data = await response.json();
         

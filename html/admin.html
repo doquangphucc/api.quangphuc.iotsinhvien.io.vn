@@ -539,6 +539,14 @@
                         <label class="block text-sm font-semibold mb-2">Tên danh mục *</label>
                         <input type="text" id="package_category_name" required class="w-full px-4 py-2 border rounded-lg" placeholder="VD: Gói Điện Mặt Trời Gia Đình">
                     </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Logo danh mục</label>
+                        <input type="file" id="package_category_logo" accept="image/jpeg,image/png,image/gif,image/jpg" class="w-full px-4 py-2 border rounded-lg">
+                        <p class="text-xs text-gray-500 mt-1">Chỉ chấp nhận file ảnh JPG, PNG, GIF (tối đa 2MB)</p>
+                        <div id="package_category_logo_preview" class="mt-2 hidden">
+                            <img src="" alt="Logo preview" class="h-20 w-20 object-contain border rounded">
+                        </div>
+                    </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold mb-2">Badge Text</label>
@@ -938,6 +946,23 @@
                 showToast('Có lỗi xảy ra khi xóa danh mục', 'error');
             }
         }
+
+        // Preview logo image when selected
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'package_category_logo') {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('package_category_logo_preview');
+                        const img = preview.querySelector('img');
+                        img.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
