@@ -1,8 +1,8 @@
 // Admin Products Management - Updated Structure
 // This file contains the NEW product management functions with simplified fields
+// Note: productsData is already declared in admin.js, so we don't re-declare it here
 
 let productImagesData = [];
-let productsData = [];
 
 // Load products list
 async function loadProducts() {
