@@ -447,7 +447,12 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            event.target.classList.add('active');
+            
+            // Find and activate the corresponding button
+            const activeButton = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
             
             // Load data for the tab
             switch(tabName) {
