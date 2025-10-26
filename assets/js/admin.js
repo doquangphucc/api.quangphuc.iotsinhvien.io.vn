@@ -9,7 +9,9 @@ let usersData = [];
 async function loadProducts() {
     const categoryId = document.getElementById('product-category-filter')?.value || '';
     try {
-        const response = await fetch(`${API_BASE}/admin/get_products.php?category_id=${categoryId}&t=${Date.now()}`);
+        const response = await fetch(`${API_BASE}/admin/get_products.php?category_id=${categoryId}&t=${Date.now()}`, {
+            credentials: 'include'
+        });
         const data = await response.json();
         if (data.success) {
             productsData = data.products;
@@ -94,7 +96,7 @@ async function saveProduct(event) {
     };
 
     try {
-        const response = await fetch(`${API_BASE}/admin/save_product.php`, {
+        const response = await fetch(`${API_BASE}/admin/save_product.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -121,7 +123,7 @@ async function deleteProduct(id) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
     
     try {
-        const response = await fetch(`${API_BASE}/admin/delete_product.php`, {
+        const response = await fetch(`${API_BASE}/admin/delete_product.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
@@ -139,7 +141,7 @@ async function deleteProduct(id) {
 async function loadOrders() {
     const status = document.getElementById('order-status-filter')?.value || '';
     try {
-        const response = await fetch(`${API_BASE}/admin/get_orders.php?status=${status}&t=${Date.now()}`);
+        const response = await fetch(`${API_BASE}/admin/get_orders.php?status=${status}&t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             renderOrders(data.orders);
@@ -228,7 +230,7 @@ async function approveOrder(orderId) {
     if (!confirm('Duyệt đơn hàng này? Khách hàng sẽ nhận được 1 vé quay may mắn.')) return;
     
     try {
-        const response = await fetch(`${API_BASE}/admin/approve_order.php`, {
+        const response = await fetch(`${API_BASE}/admin/approve_order.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ order_id: orderId })
@@ -245,7 +247,7 @@ async function approveOrder(orderId) {
 // Tickets Functions
 async function loadTickets() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_tickets.php?t=${Date.now()}`);
+        const response = await fetch(`${API_BASE}/admin/get_tickets.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             renderTickets(data.tickets);
@@ -367,7 +369,7 @@ async function saveTicket(event) {
     };
 
     try {
-        const response = await fetch(`${API_BASE}/admin/save_ticket.php`, {
+        const response = await fetch(`${API_BASE}/admin/save_ticket.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -395,7 +397,7 @@ async function deleteTicket(id) {
     if (!confirm('Bạn có chắc muốn xóa vé này?')) return;
     
     try {
-        const response = await fetch(`${API_BASE}/admin/delete_ticket.php`, {
+        const response = await fetch(`${API_BASE}/admin/delete_ticket.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
@@ -412,7 +414,7 @@ async function deleteTicket(id) {
 // Rewards Functions
 async function loadRewards() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now()}`);
+        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             rewardTemplatesData = data.templates;
@@ -525,7 +527,7 @@ async function saveReward(event) {
     };
 
     try {
-        const response = await fetch(`${API_BASE}/admin/save_reward_template.php`, {
+        const response = await fetch(`${API_BASE}/admin/save_reward_template.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -553,7 +555,7 @@ async function deleteReward(id) {
     if (!confirm('Bạn có chắc muốn xóa phần thưởng này?')) return;
     
     try {
-        const response = await fetch(`${API_BASE}/admin/delete_reward_template.php`, {
+        const response = await fetch(`${API_BASE}/admin/delete_reward_template.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
@@ -573,7 +575,7 @@ async function deleteReward(id) {
 // Load users
 async function loadUsers() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_users.php?t=${Date.now()}`);
+        const response = await fetch(`${API_BASE}/admin/get_users.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             usersData = data.users;
@@ -586,7 +588,7 @@ async function loadUsers() {
 // Load reward templates for dropdowns
 async function loadRewardTemplates() {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now()}`);
+        const response = await fetch(`${API_BASE}/admin/get_reward_templates.php?t=${Date.now(, {credentials: 'include'})}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             rewardTemplatesData = data.templates;
