@@ -94,6 +94,9 @@
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('products')">
                     📦 Sản phẩm
                 </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('packages')">
+                    🎁 Gói sản phẩm
+                </button>
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('orders')">
                     🛒 Đơn hàng
                 </button>
@@ -166,6 +169,61 @@
                             </tr>
                         </thead>
                         <tbody id="products-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Packages Tab -->
+        <div id="tab-packages" class="tab-content hidden">
+            <!-- Package Categories Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Danh mục gói</h2>
+                    <button onclick="openPackageCategoryModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm danh mục gói
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">ID</th>
+                                <th class="px-4 py-3 text-left">Tên danh mục</th>
+                                <th class="px-4 py-3 text-left">Badge</th>
+                                <th class="px-4 py-3 text-center">Thứ tự</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="package-categories-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Packages Section -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Gói sản phẩm</h2>
+                    <button onclick="openPackageModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm gói
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">ID</th>
+                                <th class="px-4 py-3 text-left">Tên gói</th>
+                                <th class="px-4 py-3 text-left">Danh mục</th>
+                                <th class="px-4 py-3 text-right">Giá</th>
+                                <th class="px-4 py-3 text-center">Số items</th>
+                                <th class="px-4 py-3 text-center">Thứ tự</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="packages-tbody"></tbody>
                     </table>
                 </div>
             </div>
