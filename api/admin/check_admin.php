@@ -1,6 +1,6 @@
 <?php
 // Check if user is admin
-require_once __DIR__ . '/../connect.php';
+require_once __DIR__ . '/../db_mysqli.php';
 
 header('Content-Type: application/json');
 
