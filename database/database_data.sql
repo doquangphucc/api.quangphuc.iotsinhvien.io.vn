@@ -15,48 +15,7 @@ USE nangluongmattroi;
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCTS
 -- =====================================================
-INSERT INTO products (id, category_id, name, brand, model, price, price_installation, image_url, specifications) VALUES
--- Tấm Pin Mặt Trời (category_id = 1)
-(1, 1, 'Tấm Pin Jinko Solar 590W Tiger Neo', 'Jinko Solar', 'Tiger Neo 590W', 2300000, NULL, 'assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg', 'Công suất: 590W, Công nghệ: N-Type Tiger Neo'),
-(2, 1, 'Tấm Pin Jinko Solar 630W Tiger Neo', 'Jinko Solar', 'Tiger Neo 630W', 2600000, NULL, 'assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png', 'Công suất: 630W, Công nghệ: N-Type Tiger Neo'),
-
--- Inverter LuxPower 1 Pha (category_id = 2)
-(3, 2, 'ECO Hybrid 5kW (Bản mới 2025)', 'LuxPower', 'SNA5000WPV', 16500000, NULL, 'assets/img/products/eco-hybrid-5kw-sna5000wpv.png', 'Model: SNA5000WPV, On-grid/Back-up: 5kW'),
-(4, 2, 'ECO Hybrid 6kW', 'LuxPower', 'SNA6000WPV', 17500000, NULL, 'assets/img/products/eco-hybrid-6kw-sna6000wpv.png', 'Model: SNA6000WPV, On-grid/Back-up: 6kW'),
-(5, 2, 'ECO Hybrid 12kW', 'LuxPower', 'SNA 12K', 35500000, NULL, 'assets/img/products/eco-hybrid-12kw-sna12k.png', 'Model: SNA 12K, On-grid/Back-up: 12kW'),
-(6, 2, 'ECO Hybrid 14kW', 'LuxPower', 'SNA EU 14K', 39000000, NULL, 'assets/img/products/eco-hybrid-14kw-sna-eu-14k.png', 'Model: SNA EU 14K, On-grid/Back-up: 14kW'),
-(7, 2, 'Hybrid GEN-LB-EU 6K', 'LuxPower', 'GEN-LB-EU 6K', 28900000, NULL, 'assets/img/products/hybrid-gen-lb-eu-6k.png', 'On-grid/Backup: 6kW, Sạc/xả: 6000W 125A/140A'),
-(8, 2, 'Hybrid GEN-LB-EU 8K', 'LuxPower', 'GEN-LB-EU 8K', 48000000, NULL, 'assets/img/products/hybrid-gen-lb-eu-8k.png', 'On-grid/Backup: 8kW, Sạc/xả: 8000W 167A/167A'),
-(9, 2, 'Hybrid GEN-LB-EU 10K', 'LuxPower', 'GEN-LB-EU 10K', 54000000, NULL, 'assets/img/products/hybrid-gen-lb-eu-10k.png', 'On-grid/Backup: 10kW, Sạc/xả: 10000W 210A/210A'),
-(10, 2, 'Hybrid LXP-12K 12kW', 'LuxPower', 'LXP-12K', 59000000, NULL, 'assets/img/products/hybrid-lxp-12k.png', 'Hòa lưới On-grid: 12kW, Chạy độc lập Back-up: 12kW'),
-
--- Inverter LuxPower 3 Pha (category_id = 3)
-(11, 3, 'Hybrid TriP2-LB-3P 12K 12kW', 'LuxPower', 'TriP2-LB-3P 12K', 59000000, NULL, 'assets/img/products/hybrid-trip2-lb-3p-12k.png', 'On-grid/Backup: 12kW, 3 MPPT'),
-(12, 3, 'Hybrid TriP2-LB-3P 15K 15kW', 'LuxPower', 'TriP2-LB-3P 15K', 63000000, NULL, 'assets/img/products/hybrid-trip2-lb-3p-15k.png', 'On-grid/Backup: 15kW, 3 MPPT'),
-(13, 3, 'LUXPOWER Hybrid TRIP 10K', 'LuxPower', 'TRIP 10K', 69000000, NULL, 'assets/img/products/hybrid-trip-10k.png', 'Công suất: 10KW, Điện áp: 3 pha áp cao'),
-(14, 3, 'LUXPOWER Hybrid TRIP 15K', 'LuxPower', 'TRIP 15K', 89000000, NULL, 'assets/img/products/hybrid-trip-15k.png', 'Công suất: 15KW, Điện áp: 3 pha áp cao'),
-(15, 3, 'LUXPOWER Hybrid TRIP 20K', 'LuxPower', 'TRIP 20K', 109000000, NULL, 'assets/img/products/hybrid-trip-20k.png', 'Công suất: 20KW, Điện áp: 3 pha áp cao'),
-(16, 3, 'LUXPOWER Hybrid TRIP 25K', 'LuxPower', 'TRIP 25K', 69000000, NULL, 'assets/img/products/luxpower-trip-25k.png', 'Công suất: 25kW, Hỗ trợ pin: Acquy/Lithium 100-700V, 3 MPPT, On-grid/Backup: 50kW'),
-(17, 3, 'Biến tần Growatt 110kW MAX', 'Growatt', 'MAX 110KTL3-LV', 120000000, NULL, 'assets/img/products/growatt-110kw-max-real.png', 'Công suất: 110 kW, Hiệu suất: 98.8%'),
-
--- Pin Lưu Trữ (category_id = 4)
-(18, 4, 'Cell A-Cornex LiFePO4 16 Cell', 'A-Cornex', 'LiFePO4 16C', 50000000, NULL, 'assets/img/products/cell-a-cornex-lifepo4-16cell.png', 'Cấu hình: 16 Cell, Điện áp hệ thống: 52V'),
-(19, 4, 'Cell BYD 173ah LiFePO4', 'BYD', 'LiFePO4 173Ah', 15500000, NULL, 'assets/img/products/cell-byd-173ah-lifepo4.png', 'Điện áp: 51.2V, Dung lượng: 173ah (8.8kW)'),
-
--- Tủ Điện (category_id = 5)
-(20, 5, 'Tủ điện Hybrid 1 pha 6kW', 'HC Eco', '1P-6KW', 1850000, NULL, 'assets/img/products/electrical-cabinet.jpg', 'Công suất hệ thống: 6 kW, 1 pha'),
-(21, 5, 'Tủ điện Hybrid 1 pha 12kW', 'HC Eco', '1P-12KW', 2850000, NULL, 'assets/img/products/electrical-cabinet.jpg', 'Công suất hệ thống: 12 kW, 1 pha'),
-(22, 5, 'Tủ điện Hybrid 1 pha 15kW', 'HC Eco', '1P-15KW', 3800000, NULL, 'assets/img/products/electrical-cabinet.jpg', 'Công suất hệ thống: 15 kW, 1 pha'),
-(23, 5, 'Tủ điện Hybrid 3 pha 15kW', 'HC Eco', '3P-15KW', 4850000, NULL, 'assets/img/products/electrical-cabinet.jpg', 'Công suất hệ thống: 15 kW, 3 pha'),
-
--- Phụ Kiện (category_id = 6)
-(24, 6, 'Dongles Lan LuxPower', 'LuxPower', 'LAN Dongle', 1200000, NULL, 'assets/img/products/dongles-lan-luxpower.png', 'Kết nối internet qua dây mạng LAN'),
-(25, 6, 'Wifi LuxPower', 'LuxPower', 'WiFi Module', 1000000, NULL, 'assets/img/products/wifi-luxpower.png', 'Kết nối internet qua WiFi 2.4GHz'),
-(26, 6, 'CT ngoài LuxPower SNA 6kW', 'LuxPower', 'SNA 6kW CT', 800000, NULL, 'assets/img/products/ct-ngoai-luxpower-sna-6kw.png', 'Dòng điện: 100A/100mA'),
-(27, 6, 'Bách Z', 'HC Eco', 'Bách Z', 22000, NULL, 'assets/img/products/bachz.png', 'Chức năng: Mạ kẽm nhũng nóng áp mái tôn, Ứng dụng: Cố định khung giá đỡ trên mái tôn, Vật liệu: Thép mạ kẽm nhúng nóng'),
-(28, 6, 'Kẹp biên, Kẹp giữa tấm Pin', 'HC Eco', 'Kẹp Pin', 11500, NULL, 'assets/img/products/kepbien-tamgiua.png', 'Cố định tấm pin vào khung giá đỡ, hợp kim nhôm'),
-(29, 6, 'Jack Cắm MC4 1500VDC', 'MC4', 'MC4 1500VDC', 14000, NULL, 'assets/img/products/jackcam.png', 'Kết nối dây cáp DC, 30A-40A, IP67'),
-(30, 6, 'Dây điện đấu nối tấm PIN', 'HC Eco', 'Dây DC', 20000, NULL, 'assets/img/products/daydien.png', 'Dây DC chuyên dụng 4-6mm², 1000-1500V DC');
+-- Không cần dữ liệu mẫu - Admin sẽ tự thêm qua giao diện quản lý
 
 -- =====================================================
 -- DỮ LIỆU MẪU - TỈNH/THÀNH PHỐ
@@ -301,8 +260,6 @@ INSERT INTO vouchers (code, discount_amount, description, expires_at) VALUES
 -- HOÀN THÀNH IMPORT DỮ LIỆU
 -- =====================================================
 SELECT 'Sample data imported successfully!' as message;
-SELECT 'Product Categories: 6 categories' as info;
-SELECT 'Products: 30 items' as info;
 SELECT 'Packages: 4 packages' as info;
 SELECT 'Reward Templates: 6 templates' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
@@ -310,5 +267,9 @@ SELECT 'Districts: Sample districts for major cities' as info;
 SELECT 'Test users created:' as info;
 SELECT '  - testuser / 123456 (Regular user)' as info;
 SELECT '  - admin / admin123 (Admin user)' as info;
+SELECT '' as info;
+SELECT '⚠️ Product Categories & Products: Không có dữ liệu mẫu' as note;
+SELECT '→ Admin cần tự thêm qua giao diện quản lý tại admin.html' as note;
+SELECT '' as info;
 SELECT 'Ready for HC Eco System!' as status;
 
