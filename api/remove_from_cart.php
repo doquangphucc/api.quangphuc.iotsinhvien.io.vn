@@ -12,7 +12,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 
 $userId = getCurrentUserId();
-$cartItemId = $input['cart_item_id'] ?? 0;
+$cartItemId = $input['cart_item_id'] ?? ($input['cart_id'] ?? 0); // Support both parameter names
 
 if ($cartItemId <= 0) {
     sendError('Dữ liệu không hợp lệ.');

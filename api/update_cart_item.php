@@ -12,7 +12,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 
 $userId = getCurrentUserId();
-$cartItemId = $input['cart_item_id'] ?? 0;
+$cartItemId = $input['cart_item_id'] ?? ($input['cart_id'] ?? 0); // Support both parameter names
 $quantity = $input['quantity'] ?? -1; // Default to -1 to catch missing quantity
 
 if ($cartItemId <= 0 || $quantity < 0) {
