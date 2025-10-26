@@ -46,12 +46,15 @@ try {
     $cartItemIds = [];
 
     foreach ($itemsRaw as $cartItem) {
-        $cartId = $cartItem['cart_item_id'] ?? ($cartItem['id'] ?? null);
+        // Support multiple field names: cart_item_id, cart_id, or id
+        $cartId = $cartItem['cart_item_id'] ?? ($cartItem['cart_id'] ?? ($cartItem['id'] ?? null));
         $cartId = filter_var($cartId, FILTER_VALIDATE_INT);
         if ($cartId && $cartId > 0) {
             $cartItemIds[] = (int)$cartId;
         }
     }
+    
+    error_log("Extracted cart item IDs: " . print_r($cartItemIds, true));
 
     $cartItemIds = array_values(array_unique($cartItemIds));
 
@@ -64,11 +67,14 @@ try {
             FROM cart_items c
             JOIN products p ON c.product_id = p.id
             WHERE c.user_id = ? AND c.id IN ($placeholders)";
+    error_log("SQL: " . $sql);
+    error_log("Params: userId=" . (int)$userId . ", cartItemIds=" . print_r($cartItemIds, true));
     $stmt = $pdo->prepare($sql);
     $params = array_merge([(int)$userId], $cartItemIds);
     $stmt->execute($params);
 
     $cartRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    error_log("Found cart rows: " . count($cartRows));
 
     if (empty($cartRows)) {
         sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
