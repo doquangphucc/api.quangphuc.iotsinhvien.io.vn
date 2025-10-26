@@ -3,6 +3,9 @@
 
 let orderItems = [];
 
+// Export to global scope so inline scripts can access it
+window.orderItems = orderItems;
+
 // Initialize checkout page
 document.addEventListener('DOMContentLoaded', async function() {
     await loadOrderItems();
@@ -19,6 +22,7 @@ async function loadOrderItems() {
         try {
             const product = JSON.parse(quickOrderProduct);
             orderItems = [product];
+            window.orderItems = orderItems; // Update global reference
             sessionStorage.removeItem('quickOrderProduct'); // Clean up
             renderOrderItems();
             return;
@@ -42,6 +46,7 @@ async function loadOrderItems() {
     
     // If no items, show empty state
     if (orderItems.length === 0) {
+        window.orderItems = orderItems; // Update global reference
         showEmptyOrder();
     }
 }
@@ -69,12 +74,17 @@ async function loadCartItems(cartIds) {
                     cart_id: item.id
                 }));
             
+            window.orderItems = orderItems; // Update global reference
             renderOrderItems();
         } else {
+            orderItems = [];
+            window.orderItems = orderItems; // Update global reference
             showEmptyOrder();
         }
     } catch (error) {
         console.error('Error loading cart items:', error);
+        orderItems = [];
+        window.orderItems = orderItems; // Update global reference
         showEmptyOrder();
     }
 }
