@@ -379,20 +379,77 @@ INSERT INTO phuong (ten_phuong, id_tinh) VALUES
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_CATEGORIES
 -- =====================================================
--- Chỉ thêm 2 danh mục gói cơ bản, các thuộc tính khác (badge_text, badge_color) admin sẽ tự thêm sau
-INSERT INTO package_categories (id, name, display_order, is_active) VALUES
-(1, 'Bảo Duy Solar', 1, TRUE),
-(2, 'C - Home Building', 2, TRUE);
+INSERT INTO package_categories (id, name, badge_text, badge_color, display_order, is_active) VALUES
+(1, 'Bảo Duy Solar', 'Hot', 'red', 1, TRUE),
+(2, 'C - Home Building', NULL, 'blue', 2, TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGES
 -- =====================================================
--- Không thêm dữ liệu mẫu - Admin sẽ tự thêm gói qua giao diện quản lý
+INSERT INTO packages (category_id, name, description, price, badge_text, badge_color, savings_per_month, payback_period, display_order, is_active) VALUES
+(1, 'Gói Solar 3kW - Hộ Gia Đình', 
+'Hệ thống điện mặt trời 3kW phù hợp cho gia đình 2-3 người, giúp giảm 70-80% hóa đơn điện hàng tháng.',
+145000000, 'PHỔ BIẾN', 'blue', '~2.5 triệu/tháng', '4-5 năm', 1, TRUE),
+
+(1, 'Gói Solar 5kW - Gia Đình Vừa', 
+'Hệ thống điện mặt trời 5kW phù hợp cho gia đình 4-5 người, công suất cao, tiết kiệm tối đa.',
+225000000, 'BÁN CHẠY', 'red', '~4 triệu/tháng', '4-5 năm', 2, TRUE),
+
+(1, 'Gói Solar 10kW - Doanh Nghiệp Nhỏ', 
+'Hệ thống điện mặt trời 10kW phù hợp cho cửa hàng, văn phòng nhỏ, doanh nghiệp tiết kiệm chi phí.',
+425000000, 'KHUYẾN MÃI', 'green', '~8 triệu/tháng', '4-5 năm', 3, TRUE),
+
+(1, 'Gói Solar 20kW - Nhà Xưởng', 
+'Hệ thống điện mặt trời 20kW phù hợp cho nhà xưởng, doanh nghiệp vừa, tiết kiệm năng lượng lớn.',
+785000000, 'TIẾT KIỆM', 'yellow', '~15 triệu/tháng', '4-5 năm', 4, TRUE),
+
+(2, 'Hệ Thống Điện Nhà Thông Minh', 
+'Tích hợp hệ thống điện mặt trời với hệ thống điều khiển thông minh, tự động hóa toàn bộ.',
+555000000, 'MỚI', 'purple', '~10 triệu/tháng', '4-5 năm', 1, TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_ITEMS
 -- =====================================================
--- Không thêm dữ liệu mẫu - Sẽ được thêm cùng với packages qua giao diện admin
+INSERT INTO package_items (package_id, item_name, item_description, display_order) VALUES
+-- Items cho Gói Solar 3kW
+(1, 'Tấm Pin Jinko 590W', '10 tấm pin Jinko Solar 590W Tiger Neo', 1),
+(1, 'Inverter LuxPower 5kW', 'Bộ inverter hybrid ECO 5kW, hỗ trợ backup', 2),
+(1, 'Pin Lưu Trữ BYD', '1 pin lưu trữ BYD 8.8kW (173Ah)', 3),
+(1, 'Tủ Điện 1P-6kW', 'Tủ điện hybrid 1 pha 6kW đầy đủ thiết bị', 4),
+(1, 'Phụ Kiện', 'Dây cáp DC, kẹp pin, Bách Z và phụ kiện đầy đủ', 5),
+
+-- Items cho Gói Solar 5kW
+(2, 'Tấm Pin Jinko 630W', '10 tấm pin Jinko Solar 630W Tiger Neo', 1),
+(2, 'Inverter LuxPower 8kW', 'Bộ inverter hybrid 8kW GEN-LB-EU', 2),
+(2, 'Pin Lưu Trữ BYD', '2 pin lưu trữ BYD 8.8kW (173Ah)', 3),
+(2, 'Tủ Điện 1P-12kW', 'Tủ điện hybrid 1 pha 12kW đầy đủ thiết bị', 4),
+(2, 'Dongles LAN', 'Modul kết nối internet LAN', 5),
+(2, 'Phụ Kiện', 'Dây cáp DC, kẹp pin, Bách Z và phụ kiện đầy đủ', 6),
+
+-- Items cho Gói Solar 10kW
+(3, 'Tấm Pin Jinko 630W', '20 tấm pin Jinko Solar 630W Tiger Neo', 1),
+(3, 'Inverter LuxPower 12kW', 'Bộ inverter hybrid 12kW ECO', 2),
+(3, 'Pin A-Cornex 16 Cell', '1 pin lưu trữ A-Cornex 16 Cell', 3),
+(3, 'Tủ Điện 1P-15kW', 'Tủ điện hybrid 1 pha 15kW đầy đủ thiết bị', 4),
+(3, 'Dongles LAN', 'Modul kết nối internet LAN', 5),
+(3, 'Phụ Kiện', 'Dây cáp DC, kẹp pin, Bách Z và phụ kiện đầy đủ', 6),
+
+-- Items cho Gói Solar 20kW
+(4, 'Tấm Pin Jinko 630W', '40 tấm pin Jinko Solar 630W Tiger Neo', 1),
+(4, 'Inverter LuxPower 25kW', 'Bộ inverter hybrid 25kW TRIP', 2),
+(4, 'Pin A-Cornex 16 Cell', '2 pin lưu trữ A-Cornex 16 Cell', 3),
+(4, 'Tủ Điện 3P-15kW', 'Tủ điện hybrid 3 pha 15kW đầy đủ thiết bị', 4),
+(4, 'Dongles LAN', 'Modul kết nối internet LAN', 5),
+(4, 'Phụ Kiện', 'Dây cáp DC, kẹp pin, Bách Z và phụ kiện đầy đủ', 6),
+
+-- Items cho Hệ Thống Điện Nhà Thông Minh
+(5, 'Tấm Pin Jinko 630W', '15 tấm pin Jinko Solar 630W Tiger Neo', 1),
+(5, 'Inverter LuxPower 10kW', 'Bộ inverter hybrid 10kW GEN-LB-EU', 2),
+(5, 'Pin Lưu Trữ BYD', '1 pin lưu trữ BYD 8.8kW (173Ah)', 3),
+(5, 'Tủ Điện Thông Minh', 'Tủ điện hybrid 1 pha 12kW với điều khiển thông minh', 4),
+(5, 'App Điều Khiển', 'Ứng dụng điện thoại điều khiển hệ thống', 5),
+(5, 'WiFi Module', 'Modul kết nối WiFi', 6),
+(5, 'Phụ Kiện Cao Cấp', 'Dây cáp DC cao cấp, kẹp pin, Bách Z và phụ kiện đầy đủ', 7);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - REWARD_TEMPLATES
