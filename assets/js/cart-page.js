@@ -34,6 +34,12 @@ function renderCart() {
     const cartContainer = document.getElementById('cart-items');
     const emptyCart = document.getElementById('empty-cart');
     
+    // Check if elements exist
+    if (!cartContainer) {
+        console.error('Element #cart-items not found');
+        return;
+    }
+    
     if (!cartData || cartData.length === 0) {
         showEmptyCart();
         return;
@@ -41,7 +47,7 @@ function renderCart() {
     
     // Hide empty state
     if (emptyCart) emptyCart.classList.add('hidden');
-    if (cartContainer) cartContainer.classList.remove('hidden');
+    cartContainer.classList.remove('hidden');
     
     // Render each cart item
     cartContainer.innerHTML = cartData.map(item => `
