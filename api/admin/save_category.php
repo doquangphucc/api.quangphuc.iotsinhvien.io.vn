@@ -1,8 +1,8 @@
 <?php
 // Add or update product category with image upload
 
-// Start session first
-session_start();
+// Start session with proper config
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 
