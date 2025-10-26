@@ -10,9 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 requireAuth();
 $userId = getCurrentUserId();
 
-$input = json_decode(file_get_contents('php://input'), true);
+$inputRaw = file_get_contents('php://input');
+error_log("Raw input: " . $inputRaw);
+$input = json_decode($inputRaw, true);
+error_log("Decoded input: " . print_r($input, true));
 
 if (json_last_error() !== JSON_ERROR_NONE) {
+    error_log("JSON decode error: " . json_last_error_msg());
     sendError('Dữ liệu JSON không hợp lệ');
 }
 
@@ -20,6 +24,8 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 $customer = $input['customer'] ?? null;
 $itemsRaw = $input['items'] ?? null;
 $voucherCode = $input['voucher_code'] ?? '';
+
+error_log("Items raw: " . print_r($itemsRaw, true));
 
 $requiredCustomerKeys = ['fullname', 'phone', 'address', 'city_name', 'district_name', 'ward_name'];
 if (!$customer || count(array_diff($requiredCustomerKeys, array_keys($customer))) > 0) {
