@@ -1,6 +1,10 @@
 <?php
 // Add or update product category with image upload
 
+// Disable PHP errors/warnings display to prevent breaking JSON output
+ini_set('display_errors', 0);
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
+
 // Start session with proper config
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
@@ -74,10 +78,11 @@ if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
     // Create upload directory if not exists
     $upload_dir = __DIR__ . '/../../assets/img/categories/';
     if (!is_dir($upload_dir)) {
-        if (!mkdir($upload_dir, 0755, true) && !is_dir($upload_dir)) {
+        // Use @ to suppress warnings and check result
+        if (!@mkdir($upload_dir, 0755, true) && !is_dir($upload_dir)) {
             echo json_encode([
                 'success' => false, 
-                'message' => 'Không thể tạo thư mục upload. Vui lòng tạo thư mục assets/img/categories/ và chmod 755'
+                'message' => 'Không thể tạo thư mục upload. Vui lòng tạo thư mục assets/img/categories/ thủ công và chmod 755 hoặc 777'
             ]);
             exit;
         }
