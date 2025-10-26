@@ -229,7 +229,142 @@ Thông số kỹ thuật:
 - Tiêu chuẩn: TUV, UL
 - Chống tia cực tím, chịu nhiệt độ cao
 - Đơn giá: 25,000 VNĐ/mét',
-'assets/img/products/daydien.png', TRUE);
+'assets/img/products/daydien.png', TRUE),
+
+-- Thêm sản phẩm từ ảnh còn dư
+(1, 'ECO Hybrid 14kW', 42000000, 48300000,
+'Thương hiệu: LuxPower
+Model: SNA-EU-14K
+
+Thông số kỹ thuật:
+- On-grid/Back-up: 14kW
+- Điện áp: 1 pha
+- Hỗ trợ pin lithium và ắc quy
+- Bảo hành: 5 năm',
+'assets/img/products/eco-hybrid-14kw-sna-eu-14k.png', TRUE),
+
+(1, 'Hybrid GEN-LB-EU 12K', 62000000, 71300000,
+'Thương hiệu: LuxPower
+Model: GEN-LB-EU 12K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 12kW
+- Sạc/xả: 12000W 250A/250A
+- Điện áp: 1 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-gen-lb-eu-12k.png', TRUE),
+
+(1, 'Pin lưu trữ BYD', 15500000, 17825000,
+'Thương hiệu: BYD
+Model: LiFePO4 173Ah
+
+Thông số kỹ thuật:
+- Điện áp: 51.2V
+- Dung lượng: 173ah (8.8kW)
+- Công nghệ: LiFePO4
+- Bảo hành: 10 năm',
+'assets/img/products/pin-luu-tru-byd.jpg', TRUE),
+
+(1, 'Pin lưu trữ A-Cornex', 50000000, 57500000,
+'Thương hiệu: A-Cornex
+Model: LiFePO4 16C
+
+Thông số kỹ thuật:
+- Cấu hình: 16 Cell
+- Điện áp hệ thống: 52V
+- Công nghệ: LiFePO4
+- Bảo hành: 10 năm',
+'assets/img/products/pin-luu-tru-acornex.jpg', TRUE),
+
+(1, 'Hybrid TRIP 10k', 52000000, 59800000,
+'Thương hiệu: LuxPower
+Model: TRIP-10K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 10kW
+- Điện áp: 1 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-trip-10k.png', TRUE),
+
+(1, 'Hybrid TRIP 15k', 65000000, 74750000,
+'Thương hiệu: LuxPower
+Model: TRIP-15K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 15kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-trip-15k.png', TRUE),
+
+(1, 'Hybrid TRIP 20k', 75000000, 86250000,
+'Thương hiệu: LuxPower
+Model: TRIP-20K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 20kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-trip-20k.png', TRUE),
+
+(1, 'Hybrid TRIP 25k', 85000000, 97750000,
+'Thương hiệu: LuxPower
+Model: TRIP-25K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 25kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-trip-25k.png', TRUE),
+
+(1, 'LuxPower TRIP 25kW', 88000000, 101200000,
+'Thương hiệu: LuxPower
+Model: TRIP-25KW
+
+Thông số kỹ thuật:
+- On-grid/Backup: 25kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/luxpower-trip-25k.png', TRUE),
+
+(1, 'Hybrid TRIP2 LB 3P 12k', 62000000, 71300000,
+'Thương hiệu: LuxPower
+Model: TRIP2-LB-3P-12K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 12kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-trip2-lb-3p-12k.png', TRUE),
+
+(1, 'Hybrid TRIP2 LB 3P 15k', 68000000, 78200000,
+'Thương hiệu: LuxPower
+Model: TRIP2-LB-3P-15K
+
+Thông số kỹ thuật:
+- On-grid/Backup: 15kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/hybrid-trip2-lb-3p-15k.png', TRUE),
+
+(1, 'CT Ngoài LuxPower SNA 6kW', 1500000, 1725000,
+'Thương hiệu: LuxPower
+Model: CT-External-6K
+
+Thông số kỹ thuật:
+- Chức năng: Hạt nhân đo dòng điện
+- Tương thích: Inverter LuxPower 6kW
+- Bảo hành: 1 năm',
+'assets/img/products/ct-ngoai-luxpower-sna-6kw.png', TRUE),
+
+(1, 'Growatt 110kW MAX', 185000000, 212750000,
+'Thương hiệu: Growatt
+Model: MAX-110KW
+
+Thông số kỹ thuật:
+- Công suất: 110kW
+- Điện áp: 3 pha
+- Bảo hành: 5 năm',
+'assets/img/products/growatt-110kw-max-real.png', TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - TỈNH/THÀNH PHỐ
