@@ -149,14 +149,14 @@ function renderProducts() {
                 
                 <div class="p-6">
                     <!-- Product Title -->
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3 line-clamp-2 min-h-[56px]">
+                    <h3 class="text-2xl font-extrabold bg-gradient-to-r from-green-700 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4 line-clamp-2 min-h-[64px] leading-tight">
                         ${product.title}
                     </h3>
                     
                     <!-- Technical Description -->
                     ${product.technical_description ? `
-                        <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 mb-4 max-h-48 overflow-y-auto">
-                            <p class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">
+                        <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-xl p-4 mb-4 max-h-48 overflow-y-auto border border-gray-200 dark:border-gray-700">
+                            <p class="text-xs text-gray-600 dark:text-gray-400 whitespace-pre-line leading-relaxed">
                                 ${product.technical_description}
                             </p>
                         </div>
