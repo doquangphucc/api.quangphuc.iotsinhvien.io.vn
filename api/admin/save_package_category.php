@@ -1,6 +1,9 @@
 <?php
 // Add or update package category with image upload
 
+// Start output buffering to prevent any unexpected output
+ob_start();
+
 // Disable PHP errors/warnings display to prevent breaking JSON output
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -9,6 +12,9 @@ ini_set('display_errors', 0);
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+
+// Clean any output from includes
+ob_clean();
 
 // Handle CORS properly for same-origin with credentials
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
