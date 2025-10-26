@@ -52,9 +52,13 @@ try {
     // Set session for logged in user
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['username'] = $user['username'];
+    $_SESSION['is_admin'] = isset($user['is_admin']) && $user['is_admin'] ? true : false;
     
     // Remove password from response
     unset($user['password']);
+    
+    // Convert is_admin to boolean explicitly
+    $user['is_admin'] = isset($user['is_admin']) && ($user['is_admin'] == 1 || $user['is_admin'] === true) ? 1 : 0;
     
     // Return user data
     sendSuccess([
