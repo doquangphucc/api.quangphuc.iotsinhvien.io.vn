@@ -225,7 +225,7 @@ function renderPackages() {
 
 async function loadPackageCategoriesForSelect() {
     await loadPackageCategories();
-    const select = document.getElementById('package_category_id');
+    const select = document.getElementById('package_category_id_select');
     if (!select) {
         console.error('Package category select not found');
         return;
@@ -268,7 +268,7 @@ function openPackageModal(id = null) {
         const pkg = packagesData.find(p => p.id == id);
         if (pkg) {
             document.getElementById('package_id').value = pkg.id;
-            document.getElementById('package_category_id').value = pkg.category_id;
+            document.getElementById('package_category_id_select').value = pkg.category_id;
             document.getElementById('package_name').value = pkg.name;
             document.getElementById('package_description').value = pkg.description || '';
             document.getElementById('package_price').value = pkg.price;
@@ -328,7 +328,7 @@ function removePackageItem(itemId) {
 async function savePackage(event) {
     event.preventDefault();
     
-    const categoryId = parseInt(document.getElementById('package_category_id').value);
+    const categoryId = parseInt(document.getElementById('package_category_id_select').value);
     const name = document.getElementById('package_name').value.trim();
     const price = parseFloat(document.getElementById('package_price').value);
     
