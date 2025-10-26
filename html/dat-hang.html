@@ -569,6 +569,10 @@
                     voucher_code: appliedVoucher ? appliedVoucher.code : ''
                 };
 
+                // Debug: Log the data being sent
+                console.log('Cart items:', cart);
+                console.log('Order data being sent:', orderData);
+
                 try {
                     const response = await fetch('../api/create_order.php', {
                         method: 'POST',
