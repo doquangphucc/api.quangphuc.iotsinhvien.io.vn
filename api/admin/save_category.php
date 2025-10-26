@@ -74,7 +74,22 @@ if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
     // Create upload directory if not exists
     $upload_dir = __DIR__ . '/../../assets/img/categories/';
     if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0755, true);
+        if (!mkdir($upload_dir, 0755, true) && !is_dir($upload_dir)) {
+            echo json_encode([
+                'success' => false, 
+                'message' => 'Không thể tạo thư mục upload. Vui lòng tạo thư mục assets/img/categories/ và chmod 755'
+            ]);
+            exit;
+        }
+    }
+    
+    // Check if directory is writable
+    if (!is_writable($upload_dir)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Thư mục upload không có quyền ghi. Vui lòng chmod 755 hoặc 777 cho thư mục assets/img/categories/'
+        ]);
+        exit;
     }
 
     // Generate unique filename
