@@ -247,6 +247,15 @@ function renderPackages() {
                     </div>
                 ` : ''}
                 
+                <!-- Category Badge -->
+                ${pkg.category_name ? `
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                        <span class="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+                            📦 ${pkg.category_name}
+                        </span>
+                    </div>
+                ` : ''}
+                
                 <div class="p-6">
                     <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">${pkg.name}</h3>
                     
