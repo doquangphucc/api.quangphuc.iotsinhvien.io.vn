@@ -104,7 +104,11 @@ async function spinSlot() {
             throw new Error(result.message || 'Không thể sử dụng vé');
         }
         
-        const wonPrize = result.data.reward;
+        // Kiểm tra xem có reward không
+        const wonPrize = result.data?.reward;
+        if (!wonPrize) {
+            throw new Error('Không nhận được thông tin phần thưởng từ server');
+        }
         
         // Find prize index
         const prizeIndex = prizes.findIndex(p => p.name === wonPrize.reward_name);

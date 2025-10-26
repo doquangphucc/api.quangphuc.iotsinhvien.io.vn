@@ -32,9 +32,63 @@ try {
     $updateStmt = $pdo->prepare($updateSql);
     $updateStmt->execute([$ticket['id']]);
 
+    // Define available rewards with probabilities
+    $rewards = [
+        ['name' => 'Giảm 10%', 'type' => 'discount', 'value' => '10%', 'weight' => 30],
+        ['name' => 'Giảm 20%', 'type' => 'discount', 'value' => '20%', 'weight' => 20],
+        ['name' => 'Miễn phí vận chuyển', 'type' => 'free_shipping', 'value' => 'Free', 'weight' => 15],
+        ['name' => 'Tặng kèm phụ kiện', 'type' => 'accessory', 'value' => 'Gift', 'weight' => 10],
+        ['name' => 'Giảm 50%', 'type' => 'discount', 'value' => '50%', 'weight' => 5],
+        ['name' => 'Chúc may mắn lần sau!', 'type' => 'no_prize', 'value' => 'None', 'weight' => 20]
+    ];
+
+    // Calculate total weight
+    $totalWeight = array_sum(array_column($rewards, 'weight'));
+    
+    // Random selection based on weight
+    $random = mt_rand(1, $totalWeight);
+    $currentWeight = 0;
+    $selectedReward = $rewards[5]; // Default to no prize
+    
+    foreach ($rewards as $reward) {
+        $currentWeight += $reward['weight'];
+        if ($random <= $currentWeight) {
+            $selectedReward = $reward;
+            break;
+        }
+    }
+
+    // Save reward to database
+    $rewardSql = "INSERT INTO lottery_rewards 
+                  (user_id, reward_name, reward_type, reward_value, reward_code, status, ticket_id, won_at, expires_at) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY))";
+    
+    $rewardCode = $selectedReward['type'] !== 'no_prize' ? 'REWARD_' . strtoupper(uniqid()) : null;
+    $rewardStatus = $selectedReward['type'] !== 'no_prize' ? 'pending' : 'used';
+    
+    $rewardStmt = $pdo->prepare($rewardSql);
+    $rewardStmt->execute([
+        $userId,
+        $selectedReward['name'],
+        $selectedReward['type'],
+        $selectedReward['value'],
+        $rewardCode,
+        $rewardStatus,
+        $ticket['id']
+    ]);
+    
+    $rewardId = $pdo->lastInsertId();
+
+    // Get the created reward
+    $getRewardSql = "SELECT * FROM lottery_rewards WHERE id = ?";
+    $getRewardStmt = $pdo->prepare($getRewardSql);
+    $getRewardStmt->execute([$rewardId]);
+    $createdReward = $getRewardStmt->fetch();
+
     sendSuccess([
         'ticket_id' => $ticket['id'],
-        'message' => 'Vé quay đã được sử dụng'
+        'reward' => $createdReward,
+        'message' => 'Quay thưởng thành công'
     ]);
 
 } catch (Exception $e) {
