@@ -4,11 +4,14 @@
 let allProducts = [];
 let allPackages = [];
 let categories = [];
+let packageCategories = [];
 let currentCategoryFilter = null;
+let currentPackageCategoryFilter = null;
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', async function() {
     await loadCategories();
+    await loadPackageCategories();
     await loadProducts();
     await loadPackages();
 });
@@ -25,6 +28,21 @@ async function loadCategories() {
         }
     } catch (error) {
         console.error('Error loading categories:', error);
+    }
+}
+
+// Load package categories
+async function loadPackageCategories() {
+    try {
+        const response = await fetch('../api/get_package_categories_public.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            packageCategories = data.categories;
+            renderPackageCategoryFilters();
+        }
+    } catch (error) {
+        console.error('Error loading package categories:', error);
     }
 }
 
@@ -93,6 +111,39 @@ function filterByCategory(categoryId) {
     currentCategoryFilter = categoryId;
     renderCategoryFilters();
     loadProducts();
+}
+
+// Render package category filters
+function renderPackageCategoryFilters() {
+    const filterContainer = document.getElementById('package-category-filters');
+    if (!filterContainer) return;
+    
+    let html = `
+        <button onclick="filterByPackageCategory(null)" 
+                class="px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105 ${!currentPackageCategoryFilter ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow'}">
+            ⚡ Tất cả
+        </button>
+    `;
+    
+    packageCategories.forEach(cat => {
+        const isActive = currentPackageCategoryFilter === cat.id;
+        html += `
+            <button onclick="filterByPackageCategory(${cat.id})" 
+                    class="px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105 flex items-center gap-2 ${isActive ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow'}">
+                ${cat.logo_url ? `<img src="${cat.logo_url}" alt="${cat.name}" class="h-6 w-6 object-contain" onerror="this.style.display='none'">` : ''}
+                ${cat.name}
+            </button>
+        `;
+    });
+    
+    filterContainer.innerHTML = html;
+}
+
+// Filter by package category
+function filterByPackageCategory(categoryId) {
+    currentPackageCategoryFilter = categoryId;
+    renderPackageCategoryFilters();
+    renderPackages();
 }
 
 // Render products
@@ -220,23 +271,20 @@ function renderPackages() {
     const container = document.getElementById('packages-container');
     if (!container) return;
     
-    if (allPackages.length === 0) {
-        container.innerHTML = '';
+    // Filter packages by category if filter is active
+    let filteredPackages = allPackages;
+    if (currentPackageCategoryFilter !== null) {
+        filteredPackages = allPackages.filter(pkg => pkg.category_id === currentPackageCategoryFilter);
+    }
+    
+    if (filteredPackages.length === 0) {
+        container.innerHTML = '<div class="text-center col-span-full py-12"><p class="text-gray-500 dark:text-gray-400">Không có gói dịch vụ nào.</p></div>';
         return;
     }
     
-    // Group packages by category
-    const packagesByCategory = {};
-    allPackages.forEach(pkg => {
-        if (!packagesByCategory[pkg.category_name]) {
-            packagesByCategory[pkg.category_name] = [];
-        }
-        packagesByCategory[pkg.category_name].push(pkg);
-    });
-    
     let html = '<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">';
     
-    allPackages.forEach(pkg => {
+    filteredPackages.forEach(pkg => {
         const badgeColor = pkg.badge_color || 'blue';
         
         html += `
