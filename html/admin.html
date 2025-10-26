@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - HC Eco System</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-button.active {
+            background-color: #16a34a;
+            color: white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="../assets/img/logo.jpg" alt="Logo" class="h-12 w-12 rounded-lg">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">HC ECO SYSTEM</h1>
+                    <p class="text-sm text-gray-600">Admin Panel</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="admin-name" class="text-gray-700 font-semibold"></span>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex gap-2 overflow-x-auto py-2">
+                <button class="tab-button active px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('categories')">
+                    📁 Danh mục SP
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('products')">
+                    📦 Sản phẩm
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('orders')">
+                    🛒 Đơn hàng
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('tickets')">
+                    🎫 Vé quay
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('rewards')">
+                    🎁 Phần thưởng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Categories Tab -->
+        <div id="tab-categories" class="tab-content">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Danh mục sản phẩm</h2>
+                    <button onclick="openCategoryModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm danh mục
+                    </button>
+                </div>
+                <div id="categories-list" class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">ID</th>
+                                <th class="px-4 py-3 text-left">Logo</th>
+                                <th class="px-4 py-3 text-left">Tên danh mục</th>
+                                <th class="px-4 py-3 text-left">Mô tả</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categories-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="tab-products" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Sản phẩm</h2>
+                    <button onclick="openProductModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm sản phẩm
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <select id="product-category-filter" class="px-4 py-2 border rounded-lg" onchange="loadProducts()">
+                        <option value="">Tất cả danh mục</option>
+                    </select>
+                </div>
+                <div id="products-list" class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">ID</th>
+                                <th class="px-4 py-3 text-left">Hình</th>
+                                <th class="px-4 py-3 text-left">Tên SP</th>
+                                <th class="px-4 py-3 text-left">Danh mục</th>
+                                <th class="px-4 py-3 text-right">Giá niêm yết</th>
+                                <th class="px-4 py-3 text-right">Giá lắp đặt</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="tab-orders" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Đơn hàng</h2>
+                    <select id="order-status-filter" class="px-4 py-2 border rounded-lg" onchange="loadOrders()">
+                        <option value="">Tất cả</option>
+                        <option value="pending">Chờ duyệt</option>
+                        <option value="approved">Đã duyệt</option>
+                        <option value="processing">Đang xử lý</option>
+                        <option value="completed">Hoàn thành</option>
+                        <option value="cancelled">Đã hủy</option>
+                    </select>
+                </div>
+                <div id="orders-list"></div>
+            </div>
+        </div>
+
+        <!-- Tickets Tab -->
+        <div id="tab-tickets" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Vé quay may mắn</h2>
+                    <button onclick="openTicketModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm vé
+                    </button>
+                </div>
+                <div id="tickets-list" class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">ID</th>
+                                <th class="px-4 py-3 text-left">Người dùng</th>
+                                <th class="px-4 py-3 text-left">Loại vé</th>
+                                <th class="px-4 py-3 text-left">Phần thưởng set sẵn</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-left">Ngày tạo</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tickets-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rewards Tab -->
+        <div id="tab-rewards" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Mẫu phần thưởng</h2>
+                    <button onclick="openRewardModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm phần thưởng
+                    </button>
+                </div>
+                <div id="rewards-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="categoryModalTitle">Thêm danh mục</h3>
+            <form id="categoryForm" onsubmit="saveCategory(event)">
+                <input type="hidden" id="category_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên danh mục *</label>
+                        <input type="text" id="category_name" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Logo URL</label>
+                        <input type="text" id="category_logo_url" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                        <textarea id="category_description" rows="3" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị</label>
+                        <input type="number" id="category_display_order" value="0" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="category_is_active" checked>
+                            <span class="font-semibold">Kích hoạt</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closeCategoryModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="productModalTitle">Thêm sản phẩm</h3>
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <input type="hidden" id="product_id">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Danh mục *</label>
+                        <select id="product_category_id" required class="w-full px-4 py-2 border rounded-lg"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên sản phẩm *</label>
+                        <input type="text" id="product_name" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Thương hiệu</label>
+                        <input type="text" id="product_brand" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Model</label>
+                        <input type="text" id="product_model" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Giá niêm yết (VNĐ) *</label>
+                        <input type="number" id="product_price" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Giá lắp đặt trọn gói (VNĐ)</label>
+                        <input type="number" id="product_price_installation" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold mb-2">Hình ảnh URL</label>
+                        <input type="text" id="product_image_url" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                        <textarea id="product_description" rows="2" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold mb-2">Thông số kỹ thuật</label>
+                        <textarea id="product_specifications" rows="2" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="product_is_available" checked>
+                            <span class="font-semibold">Sản phẩm còn hàng</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ticket Modal -->
+    <div id="ticketModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4" id="ticketModalTitle">Thêm vé</h3>
+            <form id="ticketForm" onsubmit="saveTicket(event)">
+                <input type="hidden" id="ticket_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Người dùng *</label>
+                        <select id="ticket_user_id" required class="w-full px-4 py-2 border rounded-lg"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Loại vé</label>
+                        <select id="ticket_type" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="purchase">Mua hàng</option>
+                            <option value="bonus">Khuyến mãi</option>
+                            <option value="promotion">Sự kiện</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Phần thưởng set sẵn</label>
+                        <select id="ticket_pre_assigned_reward_id" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">Không set sẵn</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Trạng thái</label>
+                        <select id="ticket_status" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="active">Hoạt động</option>
+                            <option value="used">Đã dùng</option>
+                            <option value="expired">Hết hạn</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closeTicketModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reward Modal -->
+    <div id="rewardModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="rewardModalTitle">Thêm phần thưởng</h3>
+            <form id="rewardForm" onsubmit="saveReward(event)">
+                <input type="hidden" id="reward_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên phần thưởng *</label>
+                        <input type="text" id="reward_name" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Loại phần thưởng *</label>
+                        <select id="reward_type" required class="w-full px-4 py-2 border rounded-lg" onchange="updateRewardFields()">
+                            <option value="voucher">Voucher giảm giá</option>
+                            <option value="cash">Tiền mặt</option>
+                            <option value="gift">Quà tặng</option>
+                        </select>
+                    </div>
+                    <div id="reward_value_field">
+                        <label class="block text-sm font-semibold mb-2">Giá trị (VNĐ)</label>
+                        <input type="number" id="reward_value" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mô tả chi tiết</label>
+                        <textarea id="reward_description" rows="3" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    </div>
+                    <div id="reward_quantity_field" style="display: none;">
+                        <label class="block text-sm font-semibold mb-2">Số lượng</label>
+                        <input type="number" id="reward_quantity" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Hình ảnh URL</label>
+                        <input type="text" id="reward_image" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="reward_is_active" checked>
+                            <span class="font-semibold">Kích hoạt</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closeRewardModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/cache-buster.js"></script>
+    <script src="../assets/js/admin.js"></script>
+    <script>
+        const API_BASE = '../api';
+
+        // Check admin access
+        async function checkAdmin() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/check_admin.php?t=${Date.now()}`);
+                const data = await response.json();
+                if (!data.success) {
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                document.getElementById('admin-name').textContent = data.user.full_name;
+                return true;
+            } catch (error) {
+                console.error('Error checking admin:', error);
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/logout.php`);
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            event.target.classList.add('active');
+            
+            // Load data for the tab
+            switch(tabName) {
+                case 'categories': loadCategories(); break;
+                case 'products': loadProducts(); break;
+                case 'orders': loadOrders(); break;
+                case 'tickets': loadTickets(); break;
+                case 'rewards': loadRewards(); break;
+            }
+        }
+
+        // Load Categories
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_categories.php?t=${Date.now()}`);
+                const data = await response.json();
+                if (data.success) {
+                    categoriesData = data.categories;
+                    renderCategories(data.categories);
+                    updateCategoryDropdowns();
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        function renderCategories(categories) {
+            const tbody = document.getElementById('categories-tbody');
+            tbody.innerHTML = categories.map(cat => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3">${cat.id}</td>
+                    <td class="px-4 py-3">
+                        ${cat.logo_url ? `<img src="../${cat.logo_url}" class="h-12 w-12 object-cover rounded">` : '-'}
+                    </td>
+                    <td class="px-4 py-3 font-semibold">${cat.name}</td>
+                    <td class="px-4 py-3">${cat.description || '-'}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-3 py-1 rounded-full text-sm ${cat.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            ${cat.is_active ? 'Hoạt động' : 'Tạm dừng'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="editCategory(${cat.id})" class="text-blue-600 hover:underline mr-2">Sửa</button>
+                        <button onclick="deleteCategory(${cat.id})" class="text-red-600 hover:underline">Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateCategoryDropdowns() {
+            const selects = [document.getElementById('product_category_id'), document.getElementById('product-category-filter')];
+            selects.forEach((select, i) => {
+                if (!select) return;
+                const currentValue = select.value;
+                select.innerHTML = (i === 1 ? '<option value="">Tất cả danh mục</option>' : '') + 
+                    categoriesData.filter(c => c.is_active).map(cat => 
+                        `<option value="${cat.id}">${cat.name}</option>`
+                    ).join('');
+                if (currentValue) select.value = currentValue;
+            });
+        }
+
+        // Category Modal Functions
+        function openCategoryModal(id = null) {
+            const modal = document.getElementById('categoryModal');
+            const form = document.getElementById('categoryForm');
+            form.reset();
+            
+            if (id) {
+                const cat = categoriesData.find(c => c.id == id);
+                if (cat) {
+                    document.getElementById('category_id').value = cat.id;
+                    document.getElementById('category_name').value = cat.name;
+                    document.getElementById('category_logo_url').value = cat.logo_url || '';
+                    document.getElementById('category_description').value = cat.description || '';
+                    document.getElementById('category_display_order').value = cat.display_order;
+                    document.getElementById('category_is_active').checked = cat.is_active == 1;
+                    document.getElementById('categoryModalTitle').textContent = 'Sửa danh mục';
+                }
+            } else {
+                document.getElementById('categoryModalTitle').textContent = 'Thêm danh mục';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('show');
+        }
+
+        async function saveCategory(event) {
+            event.preventDefault();
+            const formData = {
+                id: document.getElementById('category_id').value || 0,
+                name: document.getElementById('category_name').value,
+                logo_url: document.getElementById('category_logo_url').value,
+                description: document.getElementById('category_description').value,
+                display_order: parseInt(document.getElementById('category_display_order').value),
+                is_active: document.getElementById('category_is_active').checked
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/save_category.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message);
+                    closeCategoryModal();
+                    loadCategories();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error saving category:', error);
+                alert('Có lỗi xảy ra');
+            }
+        }
+
+        function editCategory(id) {
+            openCategoryModal(id);
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/delete_category.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (data.success) loadCategories();
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                alert('Có lỗi xảy ra');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            const isAdmin = await checkAdmin();
+            if (isAdmin) {
+                await loadCategories();
+                await loadUsers();
+                await loadRewardTemplates();
+                showTab('categories');
+            }
+        });
+    </script>
+</body>
+</html>
+

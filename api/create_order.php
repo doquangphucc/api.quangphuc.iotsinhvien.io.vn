@@ -19,6 +19,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 // --- Input Validation ---
 $customer = $input['customer'] ?? null;
 $itemsRaw = $input['items'] ?? null;
+$voucherCode = $input['voucher_code'] ?? '';
 
 $requiredCustomerKeys = ['fullname', 'phone', 'address', 'city_name', 'district_name'];
 if (!$customer || count(array_diff($requiredCustomerKeys, array_keys($customer))) > 0) {
@@ -100,23 +101,54 @@ try {
         sendError('Giỏ hàng không hợp lệ.');
     }
 
+    // --- Check and apply voucher if provided ---
+    $discountAmount = 0;
+    $voucherCodeToSave = null;
+    
+    if (!empty($voucherCode)) {
+        $voucherSql = "SELECT * FROM vouchers WHERE code = ? AND is_used = 0 AND (expires_at IS NULL OR expires_at > NOW())";
+        $voucherStmt = $pdo->prepare($voucherSql);
+        $voucherStmt->execute([trim($voucherCode)]);
+        $voucher = $voucherStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($voucher) {
+            $discountAmount = (float)$voucher['discount_amount'];
+            $voucherCodeToSave = $voucher['code'];
+        } else {
+            sendError('Mã voucher không hợp lệ hoặc đã hết hạn.');
+        }
+    }
+    
+    $finalTotal = max(0, $calculatedTotal - $discountAmount);
+
     // --- Transactional Database Operations ---
     $pdo->beginTransaction();
 
     // 1. Insert into `orders` table with server-verified data
     $orderData = [
-        'user_id'      => (int)$userId,
-        'full_name'    => sanitizeInput($customer['fullname']),
-        'phone'        => sanitizeInput($customer['phone']),
-        'email'        => sanitizeInput($customer['email'] ?? ''),
-        'city'         => sanitizeInput($customer['city_name']),
-        'district'     => sanitizeInput($customer['district_name']),
-        'address'      => sanitizeInput($customer['address']),
-        'notes'        => sanitizeInput($customer['notes'] ?? ''),
-        'total_amount' => $calculatedTotal // CRITICAL: Use server-calculated total
+        'user_id'         => (int)$userId,
+        'full_name'       => sanitizeInput($customer['fullname']),
+        'phone'           => sanitizeInput($customer['phone']),
+        'email'           => sanitizeInput($customer['email'] ?? ''),
+        'city'            => sanitizeInput($customer['city_name']),
+        'district'        => sanitizeInput($customer['district_name']),
+        'address'         => sanitizeInput($customer['address']),
+        'notes'           => sanitizeInput($customer['notes'] ?? ''),
+        'subtotal'        => $calculatedTotal,
+        'voucher_code'    => $voucherCodeToSave,
+        'discount_amount' => $discountAmount,
+        'total_amount'    => $finalTotal,
+        'order_status'    => 'pending' // Chờ admin duyệt
     ];
 
     $orderId = $db->insert('orders', $orderData);
+    
+    // Mark voucher as used if applicable
+    if ($voucherCodeToSave) {
+        $updateVoucherSql = "UPDATE vouchers SET is_used = 1, used_by_user_id = ?, used_at = NOW() WHERE code = ?";
+        $updateVoucherStmt = $pdo->prepare($updateVoucherSql);
+        $updateVoucherStmt->execute([(int)$userId, $voucherCodeToSave]);
+    }
 
     // 2. Insert into `order_items` table
     $itemInsertSql = "INSERT INTO order_items (order_id, product_id, product_name, quantity, price, image_url) VALUES (?, ?, ?, ?, ?, ?)";
@@ -144,7 +176,11 @@ try {
     $pdo->commit();
 
     // Respond to client
-    sendSuccess(['order_id' => $orderId], 'Đặt hàng thành công!');
+    sendSuccess([
+        'order_id' => $orderId,
+        'total_amount' => $finalTotal,
+        'discount_amount' => $discountAmount
+    ], 'Đặt hàng thành công! Đơn hàng của bạn đang chờ xác nhận.');
 
 } catch (Exception $e) {
     // If anything fails, roll back the transaction

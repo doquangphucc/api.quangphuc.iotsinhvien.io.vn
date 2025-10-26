@@ -273,10 +273,27 @@
                             <!-- Order items will be loaded here -->
                         </div>
 
+                        <!-- Voucher Section -->
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Mã giảm giá</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="voucher-code" placeholder="Nhập mã voucher" 
+                                       class="flex-1 px-4 py-2 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 outline-none">
+                                <button type="button" onclick="applyVoucher()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold whitespace-nowrap">
+                                    Áp dụng
+                                </button>
+                            </div>
+                            <div id="voucher-message" class="mt-2 text-sm hidden"></div>
+                        </div>
+
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3 mb-6">
                             <div class="flex justify-between text-gray-600 dark:text-gray-400">
                                 <span>Tạm tính:</span>
                                 <span id="subtotal" class="font-semibold">0₫</span>
+                            </div>
+                            <div id="discount-row" class="flex justify-between text-green-600 hidden">
+                                <span>Giảm giá:</span>
+                                <span id="discount" class="font-semibold">0₫</span>
                             </div>
                             <div class="flex justify-between text-gray-600 dark:text-gray-400">
                                 <span>Phí vận chuyển:</span>
@@ -316,25 +333,25 @@
             <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Đặt hàng thành công!</h3>
             <p class="text-gray-600 dark:text-gray-400 mb-4">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
             
-            <!-- Lottery Ticket Notification -->
-            <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl p-4 mb-6">
+            <!-- Note about approval -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
                 <div class="flex items-center justify-center gap-3">
-                    <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div>
-                        <p class="font-semibold text-purple-800 dark:text-purple-200">🎉 Chúc mừng!</p>
-                        <p class="text-sm text-purple-700 dark:text-purple-300">Bạn đã nhận được 1 vé quay may mắn!</p>
+                        <p class="font-semibold text-blue-800 dark:text-blue-200">Đơn hàng đang chờ xác nhận</p>
+                        <p class="text-sm text-blue-700 dark:text-blue-300">Bạn sẽ nhận vé quay may mắn sau khi đơn hàng được duyệt</p>
                     </div>
                 </div>
             </div>
             
             <div class="flex gap-3">
-                <button onclick="closeSuccessModal()" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                    Đóng
+                <button onclick="closeSuccessModal()" class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg">
+                    Hoàn tất
                 </button>
-                <a href="vong-quay-may-man.html" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg text-center">
-                    Quay Ngay!
+                <a href="order_history.html" class="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg text-center">
+                    Xem đơn hàng
                 </a>
             </div>
         </div>
@@ -402,6 +419,130 @@
         function closeSuccessModal() {
             document.getElementById('success-modal').classList.add('hidden');
             window.location.href = '../index.html';
+        }
+
+        // Voucher Management
+        let appliedVoucher = null;
+
+        async function applyVoucher() {
+            const code = document.getElementById('voucher-code').value.trim();
+            const messageEl = document.getElementById('voucher-message');
+            
+            if (!code) {
+                messageEl.textContent = 'Vui lòng nhập mã voucher';
+                messageEl.className = 'mt-2 text-sm text-red-600';
+                messageEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch('../api/check_voucher.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    appliedVoucher = data.voucher;
+                    messageEl.textContent = `✓ ${data.voucher.description || 'Mã giảm giá hợp lệ'}`;
+                    messageEl.className = 'mt-2 text-sm text-green-600';
+                    messageEl.classList.remove('hidden');
+                    updateTotals(); // Recalculate with discount
+                } else {
+                    appliedVoucher = null;
+                    messageEl.textContent = data.message;
+                    messageEl.className = 'mt-2 text-sm text-red-600';
+                    messageEl.classList.remove('hidden');
+                    updateTotals();
+                }
+            } catch (error) {
+                console.error('Error checking voucher:', error);
+                messageEl.textContent = 'Có lỗi xảy ra khi kiểm tra voucher';
+                messageEl.className = 'mt-2 text-sm text-red-600';
+                messageEl.classList.remove('hidden');
+            }
+        }
+
+        // Update totals to include discount
+        function updateTotals() {
+            const subtotalEl = document.getElementById('subtotal');
+            const discountEl = document.getElementById('discount');
+            const discountRow = document.getElementById('discount-row');
+            const totalEl = document.getElementById('total');
+            
+            // Get current subtotal
+            const subtotalText = subtotalEl.textContent.replace(/[^\d]/g, '');
+            const subtotal = parseInt(subtotalText) || 0;
+            
+            let discount = 0;
+            if (appliedVoucher) {
+                discount = appliedVoucher.discount_amount;
+                discountEl.textContent = '-' + discount.toLocaleString('vi-VN') + '₫';
+                discountRow.classList.remove('hidden');
+            } else {
+                discountRow.classList.add('hidden');
+            }
+            
+            const finalTotal = Math.max(0, subtotal - discount);
+            totalEl.textContent = finalTotal.toLocaleString('vi-VN') + '₫';
+        }
+
+        // Handle checkout form submission
+        const checkoutForm = document.getElementById('checkout-form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Get cart items from shopping cart
+                const cart = window.ShoppingCart ? window.ShoppingCart.getCart() : [];
+                if (cart.length === 0) {
+                    alert('Giỏ hàng trống!');
+                    return;
+                }
+
+                // Get customer info
+                const customerData = {
+                    fullname: document.getElementById('fullname').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    city_name: document.getElementById('city').options[document.getElementById('city').selectedIndex].text,
+                    district_name: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+                    address: document.getElementById('address').value,
+                    notes: document.getElementById('notes').value
+                };
+
+                // Prepare order data
+                const orderData = {
+                    customer: customerData,
+                    items: cart,
+                    voucher_code: appliedVoucher ? appliedVoucher.code : ''
+                };
+
+                try {
+                    const response = await fetch('../api/create_order.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Clear cart
+                        if (window.ShoppingCart) {
+                            window.ShoppingCart.clearCart();
+                        }
+                        // Show success modal
+                        document.getElementById('success-modal').classList.remove('hidden');
+                    } else {
+                        alert(result.message || 'Có lỗi xảy ra khi đặt hàng');
+                    }
+                } catch (error) {
+                    console.error('Error submitting order:', error);
+                    alert('Không thể đặt hàng, vui lòng thử lại sau');
+                }
+            });
         }
     </script>
 </body>

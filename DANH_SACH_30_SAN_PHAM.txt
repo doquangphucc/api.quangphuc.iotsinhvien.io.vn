@@ -1,0 +1,305 @@
+================================================================================
+                    DANH SÁCH 30 SẢN PHẨM - HC ECO SYSTEM
+                     HỆ THỐNG NĂNG LƯỢNG MẶT TRỜI
+================================================================================
+
+--------------------------------------------------------------------------------
+PHẦN 1: TẤM PIN MẶT TRỜI (2 sản phẩm)
+--------------------------------------------------------------------------------
+
+[1] Tấm Pin Jinko Solar 590W Tiger Neo
+    - Thương hiệu: Jinko Solar
+    - Model: Tiger Neo 590W
+    - Danh mục: Solar Panel
+    - Giá: 2,300,000 VND
+    - Thông số kỹ thuật: Công suất: 590W, Công nghệ: N-Type Tiger Neo
+    - Hình ảnh: assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg
+
+[2] Tấm Pin Jinko Solar 630W Tiger Neo
+    - Thương hiệu: Jinko Solar
+    - Model: Tiger Neo 630W
+    - Danh mục: Solar Panel
+    - Giá: 2,600,000 VND
+    - Thông số kỹ thuật: Công suất: 630W, Công nghệ: N-Type Tiger Neo
+    - Hình ảnh: assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png
+
+--------------------------------------------------------------------------------
+PHẦN 2: INVERTER LUXPOWER HYBRID (4 sản phẩm)
+--------------------------------------------------------------------------------
+
+[3] ECO Hybrid 5kW (Bản mới 2025)
+    - Thương hiệu: LuxPower
+    - Model: SNA5000WPV
+    - Danh mục: Inverter
+    - Giá: 16,500,000 VND
+    - Thông số kỹ thuật: Model: SNA5000WPV, On-grid/Back-up: 5kW
+    - Hình ảnh: assets/img/products/eco-hybrid-5kw-sna5000wpv.png
+
+[4] ECO Hybrid 6kW
+    - Thương hiệu: LuxPower
+    - Model: SNA6000WPV
+    - Danh mục: Inverter
+    - Giá: 17,500,000 VND
+    - Thông số kỹ thuật: Model: SNA6000WPV, On-grid/Back-up: 6kW
+    - Hình ảnh: assets/img/products/eco-hybrid-6kw-sna6000wpv.png
+
+[5] ECO Hybrid 12kW
+    - Thương hiệu: LuxPower
+    - Model: SNA 12K
+    - Danh mục: Inverter
+    - Giá: 35,500,000 VND
+    - Thông số kỹ thuật: Model: SNA 12K, On-grid/Back-up: 12kW
+    - Hình ảnh: assets/img/products/eco-hybrid-12kw-sna12k.png
+
+[6] ECO Hybrid 14kW
+    - Thương hiệu: LuxPower
+    - Model: SNA EU 14K
+    - Danh mục: Inverter
+    - Giá: 39,000,000 VND
+    - Thông số kỹ thuật: Model: SNA EU 14K, On-grid/Back-up: 14kW
+    - Hình ảnh: assets/img/products/eco-hybrid-14kw-sna-eu-14k.png
+
+--------------------------------------------------------------------------------
+PHẦN 3: INVERTER LUXPOWER 1 PHA (4 sản phẩm)
+--------------------------------------------------------------------------------
+
+[7] Hybrid GEN-LB-EU 6K
+    - Thương hiệu: LuxPower
+    - Model: GEN-LB-EU 6K
+    - Danh mục: Inverter
+    - Giá: 28,900,000 VND
+    - Thông số kỹ thuật: On-grid/Backup: 6kW, Sạc/xả: 6000W 125A/140A
+    - Hình ảnh: assets/img/products/hybrid-gen-lb-eu-6k.png
+
+[8] Hybrid GEN-LB-EU 8K
+    - Thương hiệu: LuxPower
+    - Model: GEN-LB-EU 8K
+    - Danh mục: Inverter
+    - Giá: 48,000,000 VND
+    - Thông số kỹ thuật: On-grid/Backup: 8kW, Sạc/xả: 8000W 167A/167A
+    - Hình ảnh: assets/img/products/hybrid-gen-lb-eu-8k.png
+
+[9] Hybrid GEN-LB-EU 10K
+    - Thương hiệu: LuxPower
+    - Model: GEN-LB-EU 10K
+    - Danh mục: Inverter
+    - Giá: 54,000,000 VND
+    - Thông số kỹ thuật: On-grid/Backup: 10kW, Sạc/xả: 10000W 210A/210A
+    - Hình ảnh: assets/img/products/hybrid-gen-lb-eu-10k.png
+
+[10] Hybrid LXP-12K 12kW
+     - Thương hiệu: LuxPower
+     - Model: LXP-12K
+     - Danh mục: Inverter
+     - Giá: 59,000,000 VND
+     - Thông số kỹ thuật: Hòa lưới On-grid: 12kW, Chạy độc lập Back-up: 12kW
+     - Hình ảnh: assets/img/products/hybrid-lxp-12k.png
+
+--------------------------------------------------------------------------------
+PHẦN 4: INVERTER LUXPOWER 3 PHA (2 sản phẩm)
+--------------------------------------------------------------------------------
+
+[11] Hybrid TriP2-LB-3P 12K 12kW
+     - Thương hiệu: LuxPower
+     - Model: TriP2-LB-3P 12K
+     - Danh mục: Inverter
+     - Giá: 59,000,000 VND
+     - Thông số kỹ thuật: On-grid/Backup: 12kW, 3 MPPT
+     - Hình ảnh: assets/img/products/hybrid-trip2-lb-3p-12k.png
+
+[12] Hybrid TriP2-LB-3P 15K 15kW
+     - Thương hiệu: LuxPower
+     - Model: TriP2-LB-3P 15K
+     - Danh mục: Inverter
+     - Giá: 63,000,000 VND
+     - Thông số kỹ thuật: On-grid/Backup: 15kW, 3 MPPT
+     - Hình ảnh: assets/img/products/hybrid-trip2-lb-3p-15k.png
+
+--------------------------------------------------------------------------------
+PHẦN 5: INVERTER LUXPOWER 3 PHA ÁP CAO (4 sản phẩm)
+--------------------------------------------------------------------------------
+
+[13] LUXPOWER Hybrid TRIP 10K
+     - Thương hiệu: LuxPower
+     - Model: TRIP 10K
+     - Danh mục: Inverter
+     - Giá: 69,000,000 VND
+     - Thông số kỹ thuật: Công suất: 10KW, Điện áp: 3 pha áp cao
+     - Hình ảnh: assets/img/products/hybrid-trip-10k.png
+
+[14] LUXPOWER Hybrid TRIP 15K
+     - Thương hiệu: LuxPower
+     - Model: TRIP 15K
+     - Danh mục: Inverter
+     - Giá: 89,000,000 VND
+     - Thông số kỹ thuật: Công suất: 15KW, Điện áp: 3 pha áp cao
+     - Hình ảnh: assets/img/products/hybrid-trip-15k.png
+
+[15] LUXPOWER Hybrid TRIP 20K
+     - Thương hiệu: LuxPower
+     - Model: TRIP 20K
+     - Danh mục: Inverter
+     - Giá: 109,000,000 VND
+     - Thông số kỹ thuật: Công suất: 20KW, Điện áp: 3 pha áp cao
+     - Hình ảnh: assets/img/products/hybrid-trip-20k.png
+
+[16] LUXPOWER Hybrid TRIP 25K
+     - Thương hiệu: LuxPower
+     - Model: TRIP 25K
+     - Danh mục: Inverter
+     - Giá: 69,000,000 VND
+     - Thông số kỹ thuật: Công suất: 25kW, Hỗ trợ pin: Acquy/Lithium 100-700V, 
+       3 MPPT, On-grid/Backup: 50kW
+     - Hình ảnh: assets/img/products/luxpower-trip-25k.png
+
+--------------------------------------------------------------------------------
+PHẦN 6: INVERTER GROWATT (1 sản phẩm)
+--------------------------------------------------------------------------------
+
+[17] Biến tần Growatt 110kW MAX
+     - Thương hiệu: Growatt
+     - Model: MAX 110KTL3-LV
+     - Danh mục: Inverter
+     - Giá: 120,000,000 VND
+     - Thông số kỹ thuật: Công suất: 110 kW, Hiệu suất: 98.8%
+     - Hình ảnh: assets/img/products/growatt-110kw-max-real.png
+
+--------------------------------------------------------------------------------
+PHẦN 7: PIN LƯU TRỮ (2 sản phẩm)
+--------------------------------------------------------------------------------
+
+[18] Cell A-Cornex LiFePO4 16 Cell
+     - Thương hiệu: A-Cornex
+     - Model: LiFePO4 16C
+     - Danh mục: Battery
+     - Giá: 50,000,000 VND
+     - Thông số kỹ thuật: Cấu hình: 16 Cell, Điện áp hệ thống: 52V
+     - Hình ảnh: assets/img/products/cell-a-cornex-lifepo4-16cell.png
+
+[19] Cell BYD 173ah LiFePO4
+     - Thương hiệu: BYD
+     - Model: LiFePO4 173Ah
+     - Danh mục: Battery
+     - Giá: 15,500,000 VND
+     - Thông số kỹ thuật: Điện áp: 51.2V, Dung lượng: 173ah (8.8kW)
+     - Hình ảnh: assets/img/products/cell-byd-173ah-lifepo4.png
+
+--------------------------------------------------------------------------------
+PHẦN 8: TỦ ĐIỆN (4 sản phẩm)
+--------------------------------------------------------------------------------
+
+[20] Tủ điện Hybrid 1 pha 6kW
+     - Thương hiệu: HC Eco
+     - Model: 1P-6KW
+     - Danh mục: Electrical Cabinet
+     - Giá: 1,850,000 VND
+     - Thông số kỹ thuật: Công suất hệ thống: 6 kW, 1 pha
+     - Hình ảnh: assets/img/products/electrical-cabinet.jpg
+
+[21] Tủ điện Hybrid 1 pha 12kW
+     - Thương hiệu: HC Eco
+     - Model: 1P-12KW
+     - Danh mục: Electrical Cabinet
+     - Giá: 2,850,000 VND
+     - Thông số kỹ thuật: Công suất hệ thống: 12 kW, 1 pha
+     - Hình ảnh: assets/img/products/electrical-cabinet.jpg
+
+[22] Tủ điện Hybrid 1 pha 15kW
+     - Thương hiệu: HC Eco
+     - Model: 1P-15KW
+     - Danh mục: Electrical Cabinet
+     - Giá: 3,800,000 VND
+     - Thông số kỹ thuật: Công suất hệ thống: 15 kW, 1 pha
+     - Hình ảnh: assets/img/products/electrical-cabinet.jpg
+
+[23] Tủ điện Hybrid 3 pha 15kW
+     - Thương hiệu: HC Eco
+     - Model: 3P-15KW
+     - Danh mục: Electrical Cabinet
+     - Giá: 4,850,000 VND
+     - Thông số kỹ thuật: Công suất hệ thống: 15 kW, 3 pha
+     - Hình ảnh: assets/img/products/electrical-cabinet.jpg
+
+--------------------------------------------------------------------------------
+PHẦN 9: PHỤ KIỆN (7 sản phẩm)
+--------------------------------------------------------------------------------
+
+[24] Dongles Lan LuxPower
+     - Thương hiệu: LuxPower
+     - Model: LAN Dongle
+     - Danh mục: Accessories
+     - Giá: 1,200,000 VND
+     - Thông số kỹ thuật: Kết nối internet qua dây mạng LAN
+     - Hình ảnh: assets/img/products/dongles-lan-luxpower.png
+
+[25] Wifi LuxPower
+     - Thương hiệu: LuxPower
+     - Model: WiFi Module
+     - Danh mục: Accessories
+     - Giá: 1,000,000 VND
+     - Thông số kỹ thuật: Kết nối internet qua WiFi 2.4GHz
+     - Hình ảnh: assets/img/products/wifi-luxpower.png
+
+[26] CT ngoài LuxPower SNA 6kW
+     - Thương hiệu: LuxPower
+     - Model: SNA 6kW CT
+     - Danh mục: Accessories
+     - Giá: 800,000 VND
+     - Thông số kỹ thuật: Dòng điện: 100A/100mA
+     - Hình ảnh: assets/img/products/ct-ngoai-luxpower-sna-6kw.png
+
+[27] Bách Z
+     - Thương hiệu: HC Eco
+     - Model: Bách Z
+     - Danh mục: Accessories
+     - Giá: 22,000 VND
+     - Thông số kỹ thuật: Chức năng: Mạ kẽm nhũng nóng áp mái tôn, 
+       Ứng dụng: Cố định khung giá đỡ trên mái tôn, 
+       Vật liệu: Thép mạ kẽm nhúng nóng
+     - Hình ảnh: assets/img/products/bachz.png
+
+[28] Kẹp biên, Kẹp giữa tấm Pin
+     - Thương hiệu: HC Eco
+     - Model: Kẹp Pin
+     - Danh mục: Accessories
+     - Giá: 11,500 VND
+     - Thông số kỹ thuật: Cố định tấm pin vào khung giá đỡ, hợp kim nhôm
+     - Hình ảnh: assets/img/products/kepbien-tamgiua.png
+
+[29] Jack Cắm MC4 1500VDC
+     - Thương hiệu: MC4
+     - Model: MC4 1500VDC
+     - Danh mục: Accessories
+     - Giá: 14,000 VND
+     - Thông số kỹ thuật: Kết nối dây cáp DC, 30A-40A, IP67
+     - Hình ảnh: assets/img/products/jackcam.png
+
+[30] Dây điện đấu nối tấm PIN
+     - Thương hiệu: HC Eco
+     - Model: Dây DC
+     - Danh mục: Accessories
+     - Giá: 20,000 VND
+     - Thông số kỹ thuật: Dây DC chuyên dụng 4-6mm², 1000-1500V DC
+     - Hình ảnh: assets/img/products/daydien.png
+
+================================================================================
+                            TỔNG KẾT DANH MỤC
+================================================================================
+
+PHẦN 1: TẤM PIN MẶT TRỜI           - 2 sản phẩm
+PHẦN 2: INVERTER LUXPOWER HYBRID    - 4 sản phẩm
+PHẦN 3: INVERTER LUXPOWER 1 PHA     - 4 sản phẩm
+PHẦN 4: INVERTER LUXPOWER 3 PHA     - 2 sản phẩm
+PHẦN 5: INVERTER LUXPOWER 3P ÁP CAO - 4 sản phẩm
+PHẦN 6: INVERTER GROWATT            - 1 sản phẩm
+PHẦN 7: PIN LƯU TRỮ                 - 2 sản phẩm
+PHẦN 8: TỦ ĐIỆN                     - 4 sản phẩm
+PHẦN 9: PHỤ KIỆN                    - 7 sản phẩm
+
+TỔNG CỘNG:                          30 SẢN PHẨM
+
+================================================================================
+                  File được tạo bởi HC ECO SYSTEM - 2025
+                Website: api.quangphuc.iotsinhvien.io.vn
+================================================================================
+
