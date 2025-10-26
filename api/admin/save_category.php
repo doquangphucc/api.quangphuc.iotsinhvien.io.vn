@@ -6,9 +6,12 @@ session_start();
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 
-// CORS headers
-header('Access-Control-Allow-Origin: https://api.quangphuc.iotsinhvien.io.vn');
-header('Access-Control-Allow-Credentials: true');
+// Handle CORS properly for same-origin with credentials
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if ($origin === 'https://api.quangphuc.iotsinhvien.io.vn' || empty($origin)) {
+    header('Access-Control-Allow-Origin: https://api.quangphuc.iotsinhvien.io.vn');
+    header('Access-Control-Allow-Credentials: true');
+}
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -19,20 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Debug log
-error_log("Save category - Session ID: " . session_id());
-error_log("Save category - User ID: " . ($_SESSION['user_id'] ?? 'NOT SET'));
-error_log("Save category - is_admin check: " . (is_admin() ? 'TRUE' : 'FALSE'));
+// Debug: Show all session info
+$debug_info = [
+    'session_id' => session_id(),
+    'session_name' => session_name(),
+    'session_data' => $_SESSION,
+    'cookies' => $_COOKIE,
+    'http_cookie' => $_SERVER['HTTP_COOKIE'] ?? 'NONE',
+    'is_admin_check' => is_admin()
+];
 
 if (!is_admin()) {
     echo json_encode([
         'success' => false, 
         'message' => 'Không có quyền truy cập',
-        'debug' => [
-            'session_id' => session_id(),
-            'has_user_id' => isset($_SESSION['user_id']),
-            'user_id' => $_SESSION['user_id'] ?? null
-        ]
+        'debug' => $debug_info
     ]);
     exit;
 }
