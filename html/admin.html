@@ -415,7 +415,9 @@
         // Check admin access
         async function checkAdmin() {
             try {
-                const response = await fetch(`${API_BASE}/admin/check_admin.php?t=${Date.now()}`);
+                const response = await fetch(`${API_BASE}/admin/check_admin.php?t=${Date.now()}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 if (!data.success) {
                     window.location.href = 'login.html';
@@ -460,7 +462,9 @@
         // Load Categories
         async function loadCategories() {
             try {
-                const response = await fetch(`${API_BASE}/admin/get_categories.php?t=${Date.now()}`);
+                const response = await fetch(`${API_BASE}/admin/get_categories.php?t=${Date.now()}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 if (data.success) {
                     categoriesData = data.categories;
@@ -550,6 +554,7 @@
             try {
                 const response = await fetch(`${API_BASE}/admin/save_category.php`, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
@@ -577,6 +582,7 @@
             try {
                 const response = await fetch(`${API_BASE}/admin/delete_category.php`, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id })
                 });
