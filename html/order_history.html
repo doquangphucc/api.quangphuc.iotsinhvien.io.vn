@@ -402,17 +402,19 @@
         function getStatusText(status) {
             const statusMap = {
                 'pending': 'Chờ xử lý',
+                'approved': 'Đã duyệt',
                 'processing': 'Đang xử lý',
                 'shipped': 'Đã giao hàng',
                 'delivered': 'Đã nhận hàng',
                 'cancelled': 'Đã hủy'
             };
-            return statusMap[status] || status || 'Chưa xác định';
+            return statusMap[status] || 'Chưa xác định';
         }
 
         function getStatusColor(status) {
             const colorMap = {
                 'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                'approved': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
                 'processing': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
                 'shipped': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                 'delivered': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
