@@ -379,9 +379,9 @@ INSERT INTO phuong (ten_phuong, id_tinh) VALUES
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_CATEGORIES
 -- =====================================================
-INSERT INTO package_categories (id, name, badge_text, badge_color, display_order, is_active) VALUES
-(1, 'Bảo Duy Solar', 'Hot', 'red', 1, TRUE),
-(2, 'C - Home Building', NULL, 'blue', 2, TRUE);
+INSERT INTO package_categories (id, name, logo_url, badge_text, badge_color, display_order, is_active) VALUES
+(1, 'Bảo Duy Solar', NULL, 'Hot', 'red', 1, TRUE),
+(2, 'C - Home Building', NULL, NULL, 'blue', 2, TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGES

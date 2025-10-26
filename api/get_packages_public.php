@@ -14,7 +14,7 @@ require_once __DIR__ . '/db_mysqli.php';
 
 try {
     // Get packages grouped by category
-    $sql = "SELECT p.*, pc.name as category_name 
+    $sql = "SELECT p.*, pc.name as category_name, pc.logo_url as category_logo_url 
             FROM packages p 
             JOIN package_categories pc ON p.category_id = pc.id 
             WHERE p.is_active = 1 AND pc.is_active = 1 
@@ -46,6 +46,7 @@ try {
             'id' => $package_id,
             'category_id' => (int)$row['category_id'],
             'category_name' => $row['category_name'],
+            'category_logo_url' => $row['category_logo_url'],
             'name' => $row['name'],
             'description' => $row['description'],
             'price' => floatval($row['price']),

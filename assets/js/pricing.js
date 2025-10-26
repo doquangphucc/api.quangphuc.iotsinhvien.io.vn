@@ -249,9 +249,12 @@ function renderPackages() {
                 
                 <!-- Category Badge -->
                 ${pkg.category_name ? `
-                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2">
+                        ${pkg.category_logo_url ? `
+                            <img src="${pkg.category_logo_url}" alt="${pkg.category_name}" class="h-5 w-5 object-contain" onerror="this.style.display='none'">
+                        ` : ''}
                         <span class="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
-                            📦 ${pkg.category_name}
+                            ${pkg.category_name}
                         </span>
                     </div>
                 ` : ''}
