@@ -228,13 +228,20 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="district" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phường/Xã <span class="text-red-500">*</span></label>
-                                    <select id="district" name="district" required 
+                                    <label for="district" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Quận/Huyện <span class="text-red-500">*</span></label>
+                                    <select id="district" name="district" required disabled
                                             class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
                                         <option value="">Chọn tỉnh/thành trước</option>
                                     </select>
                                 </div>
-                                <div class="md:col-span-2">
+                                <div>
+                                    <label for="ward" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phường/Xã <span class="text-red-500">*</span></label>
+                                    <select id="ward" name="ward" required disabled
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
+                                        <option value="">Chọn quận/huyện trước</option>
+                                    </select>
+                                </div>
+                                <div>
                                     <label for="address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Địa chỉ chi tiết <span class="text-red-500">*</span></label>
                                     <input type="text" id="address" name="address" required 
                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
@@ -502,12 +509,17 @@
                 }
 
                 // Get customer info
+                const citySelect = document.getElementById('city');
+                const districtSelect = document.getElementById('district');
+                const wardSelect = document.getElementById('ward');
+                
                 const customerData = {
                     fullname: document.getElementById('fullname').value,
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
-                    city_name: document.getElementById('city').options[document.getElementById('city').selectedIndex].text,
-                    district_name: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+                    city_name: citySelect.options[citySelect.selectedIndex].text,
+                    district_name: districtSelect.options[districtSelect.selectedIndex].text,
+                    ward_name: wardSelect.options[wardSelect.selectedIndex].text,
                     address: document.getElementById('address').value,
                     notes: document.getElementById('notes').value
                 };
