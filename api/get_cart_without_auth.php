@@ -17,6 +17,13 @@ try {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$userId]);
         $cartItems = $stmt->fetchAll();
+        
+        // Fix image URL paths
+        foreach ($cartItems as &$item) {
+            if (!empty($item['image_url']) && !str_starts_with($item['image_url'], 'http')) {
+                $item['image_url'] = '../' . $item['image_url'];
+            }
+        }
 
         sendSuccess(['cart' => $cartItems, 'logged_in' => true]);
     } else {

@@ -87,12 +87,18 @@ try {
         $price = (float)$row['price'];
         $calculatedTotal += $price * $quantity;
 
+        // Fix image URL path
+        $imageUrl = $row['image_url'] ?? '';
+        if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
+            $imageUrl = '../' . $imageUrl;
+        }
+        
         $verifiedItems[] = [
             'id'            => (int)$row['product_id'],
             'name'          => $row['name'],
             'quantity'      => $quantity,
             'price'         => $price,
-            'image_url'     => $row['image_url'] ?? '',
+            'image_url'     => $imageUrl,
             'cart_item_id'  => $cartId
         ];
     }

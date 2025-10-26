@@ -39,6 +39,12 @@ try {
     $products = [];
     
     while ($row = $result->fetch_assoc()) {
+        // Fix image URL path for HTML pages in /html/ subdirectory
+        $imageUrl = $row['image_url'];
+        if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
+            $imageUrl = '../' . $imageUrl;
+        }
+        
         $products[] = [
             'id' => (int)$row['id'],
             'category_id' => (int)$row['category_id'],
@@ -48,7 +54,7 @@ try {
             'market_price' => floatval($row['market_price']),
             'category_price' => $row['category_price'] ? floatval($row['category_price']) : null,
             'technical_description' => $row['technical_description'],
-            'image_url' => $row['image_url'],
+            'image_url' => $imageUrl,
             'is_active' => (int)$row['is_active']
         ];
     }
