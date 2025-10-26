@@ -42,6 +42,15 @@ try {
         }
         $itemsStmt->close();
         
+        // Parse highlights JSON
+        $highlights = [];
+        if (!empty($row['highlights'])) {
+            $decoded_highlights = json_decode($row['highlights'], true);
+            if (is_array($decoded_highlights)) {
+                $highlights = $decoded_highlights;
+            }
+        }
+        
         $packages[] = [
             'id' => $package_id,
             'category_id' => (int)$row['category_id'],
@@ -50,10 +59,11 @@ try {
             'name' => $row['name'],
             'description' => $row['description'],
             'price' => floatval($row['price']),
-            'savings_per_month' => $row['savings_per_month'],
-            'payback_period' => $row['payback_period'],
             'badge_text' => $row['badge_text'],
             'badge_color' => $row['badge_color'],
+            'highlights' => $highlights,
+            'savings_per_month' => $row['savings_per_month'], // Deprecated, for backward compatibility
+            'payback_period' => $row['payback_period'], // Deprecated, for backward compatibility
             'items' => $items
         ];
     }

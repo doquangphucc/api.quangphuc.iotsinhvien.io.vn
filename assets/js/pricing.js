@@ -79,7 +79,7 @@ function renderCategoryFilters() {
         html += `
             <button onclick="filterByCategory(${cat.id})" 
                     class="px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105 flex items-center gap-2 ${isActive ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow'}">
-                ${cat.logo_url ? `<img src="${cat.logo_url}" alt="${cat.name}" class="h-6 w-6 object-contain">` : ''}
+                ${cat.logo_url ? `<img src="../${cat.logo_url}" alt="${cat.name}" class="h-6 w-6 object-contain">` : ''}
                 ${cat.name}
             </button>
         `;
@@ -123,7 +123,7 @@ function renderProducts() {
                 <!-- Category Logo Bar -->
                 ${category && category.logo_url ? `
                     <div class="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 dark:from-green-900/20 dark:via-blue-900/20 dark:to-purple-900/20 p-4 flex items-center justify-center gap-3 border-b-2 border-green-600">
-                        <img src="${category.logo_url}" alt="${product.category_name}" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+                        <img src="../${category.logo_url}" alt="${product.category_name}" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
                         <span class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">${product.category_name}</span>
                     </div>
                 ` : ''}
@@ -251,7 +251,7 @@ function renderPackages() {
                 ${pkg.category_name ? `
                     <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2">
                         ${pkg.category_logo_url ? `
-                            <img src="${pkg.category_logo_url}" alt="${pkg.category_name}" class="h-5 w-5 object-contain" onerror="this.style.display='none'">
+                            <img src="../${pkg.category_logo_url}" alt="${pkg.category_name}" class="h-5 w-5 object-contain" onerror="this.style.display='none'">
                         ` : ''}
                         <span class="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
                             ${pkg.category_name}
@@ -272,7 +272,22 @@ function renderPackages() {
                         </div>
                     </div>
                     
-                    ${pkg.savings_per_month || pkg.payback_period ? `
+                    ${pkg.highlights && pkg.highlights.length > 0 ? `
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 mb-4 space-y-3">
+                            ${pkg.highlights.map(hl => `
+                                <div class="border-l-4 border-green-500 pl-3">
+                                    <p class="font-bold text-sm text-gray-800 dark:text-gray-200">
+                                        ${hl.title || ''}
+                                    </p>
+                                    ${hl.content ? `
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                            ${hl.content}
+                                        </p>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : pkg.savings_per_month || pkg.payback_period ? `
                         <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-4 space-y-2">
                             ${pkg.savings_per_month ? `
                                 <p class="text-sm font-semibold text-blue-700 dark:text-blue-400">
@@ -288,16 +303,19 @@ function renderPackages() {
                     ` : ''}
                     
                     ${pkg.items && pkg.items.length > 0 ? `
-                        <ul class="space-y-2 mb-6">
-                            ${pkg.items.map(item => `
-                                <li class="flex items-start gap-2 text-sm">
-                                    <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span class="text-gray-700 dark:text-gray-300">${item.name}</span>
-                                </li>
-                            `).join('')}
-                        </ul>
+                        <div class="mb-6">
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">📦 Nội dung gói:</p>
+                            <ul class="space-y-2">
+                                ${pkg.items.map(item => `
+                                    <li class="flex items-start gap-2 text-sm">
+                                        <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="text-gray-700 dark:text-gray-300">${item.name || item.item_name || ''}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
                     ` : ''}
                     
                     <button onclick="contactForPackage('${pkg.name.replace(/'/g, "\\'")}' )" 
