@@ -157,10 +157,10 @@
                             <tr>
                                 <th class="px-4 py-3 text-left">ID</th>
                                 <th class="px-4 py-3 text-left">Hình</th>
-                                <th class="px-4 py-3 text-left">Tên SP</th>
+                                <th class="px-4 py-3 text-left">Tiêu đề</th>
                                 <th class="px-4 py-3 text-left">Danh mục</th>
-                                <th class="px-4 py-3 text-right">Giá niêm yết</th>
-                                <th class="px-4 py-3 text-right">Giá lắp đặt</th>
+                                <th class="px-4 py-3 text-right">Giá thị trường</th>
+                                <th class="px-4 py-3 text-right" id="category-price-header">Giá danh mục</th>
                                 <th class="px-4 py-3 text-center">Trạng thái</th>
                                 <th class="px-4 py-3 text-center">Thao tác</th>
                             </tr>
@@ -285,56 +285,91 @@
             <h3 class="text-2xl font-bold mb-4" id="productModalTitle">Thêm sản phẩm</h3>
             <form id="productForm" onsubmit="saveProduct(event)">
                 <input type="hidden" id="product_id">
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-4">
+                    <!-- Danh mục -->
                     <div>
                         <label class="block text-sm font-semibold mb-2">Danh mục *</label>
-                        <select id="product_category_id" required class="w-full px-4 py-2 border rounded-lg"></select>
+                        <select id="product_category_id" required class="w-full px-4 py-2 border rounded-lg" onchange="updateCategoryPriceLabel()">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
                     </div>
+
+                    <!-- Tiêu đề/Tên -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Tên sản phẩm *</label>
-                        <input type="text" id="product_name" required class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-semibold mb-2">Tiêu đề/Tên sản phẩm *</label>
+                        <input type="text" id="product_title" required class="w-full px-4 py-2 border rounded-lg"
+                            placeholder="Ví dụ: Tấm Pin Jinko Solar 590W Tiger Neo">
                     </div>
+
+                    <!-- Giá thị trường -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Thương hiệu</label>
-                        <input type="text" id="product_brand" class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-semibold mb-2">Giá thị trường (VNĐ) *</label>
+                        <input type="number" id="product_market_price" required min="0" step="1000" 
+                            class="w-full px-4 py-2 border rounded-lg" placeholder="2300000">
                     </div>
+
+                    <!-- Giá danh mục (động theo tên danh mục) -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Model</label>
-                        <input type="text" id="product_model" class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-semibold mb-2" id="product_category_price_label">Giá danh mục (VNĐ)</label>
+                        <input type="number" id="product_category_price" min="0" step="1000" 
+                            class="w-full px-4 py-2 border rounded-lg" placeholder="3500000">
+                        <p class="text-xs text-gray-500 mt-1">Để trống nếu không có giá riêng cho danh mục này</p>
                     </div>
+
+                    <!-- Hình ảnh -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Giá niêm yết (VNĐ) *</label>
-                        <input type="number" id="product_price" required class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-semibold mb-2">Hình ảnh sản phẩm</label>
+                        <div class="space-y-2">
+                            <!-- Upload ảnh mới -->
+                            <div class="flex gap-2">
+                                <input type="file" id="product_image_file" accept="image/*" 
+                                    class="flex-1 px-4 py-2 border rounded-lg" onchange="uploadProductImage(event)">
+                                <button type="button" onclick="document.getElementById('product_image_file').click()" 
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                    📁 Upload
+                                </button>
+                            </div>
+                            <!-- Chọn ảnh có sẵn -->
+                            <select id="product_image_url" class="w-full px-4 py-2 border rounded-lg" onchange="previewProductImage()">
+                                <option value="">-- Hoặc chọn ảnh có sẵn --</option>
+                            </select>
+                            <!-- Preview ảnh -->
+                            <div id="product_image_preview" class="hidden mt-2">
+                                <img id="product_image_preview_img" src="" alt="Preview" 
+                                    class="h-32 w-32 object-cover rounded-lg border-2 border-gray-300">
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Mô tả -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Giá lắp đặt trọn gói (VNĐ)</label>
-                        <input type="number" id="product_price_installation" class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-semibold mb-2">Mô tả ngắn</label>
+                        <textarea id="product_description" rows="2" class="w-full px-4 py-2 border rounded-lg"
+                            placeholder="Mô tả ngắn gọn về sản phẩm..."></textarea>
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold mb-2">Hình ảnh URL</label>
-                        <input type="text" id="product_image_url" class="w-full px-4 py-2 border rounded-lg">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold mb-2">Mô tả</label>
-                        <textarea id="product_description" rows="2" class="w-full px-4 py-2 border rounded-lg"></textarea>
-                    </div>
-                    <div class="md:col-span-2">
+
+                    <!-- Thông số kỹ thuật -->
+                    <div>
                         <label class="block text-sm font-semibold mb-2">Thông số kỹ thuật</label>
-                        <textarea id="product_specifications" rows="2" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                        <textarea id="product_specifications" rows="4" class="w-full px-4 py-2 border rounded-lg"
+                            placeholder="Công suất: 590W&#10;Công nghệ: N-Type Tiger Neo&#10;Hiệu suất: 22.3%&#10;Kích thước: 2278×1134×30mm"></textarea>
                     </div>
-                    <div class="md:col-span-2">
+
+                    <!-- Trạng thái -->
+                    <div>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" id="product_is_available" checked>
-                            <span class="font-semibold">Sản phẩm còn hàng</span>
+                            <input type="checkbox" id="product_is_active" checked>
+                            <span class="font-semibold">Kích hoạt (hiển thị trên website)</span>
                         </label>
                     </div>
                 </div>
+                
                 <div class="flex gap-4 mt-6">
                     <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                        Lưu
+                        💾 Lưu sản phẩm
                     </button>
                     <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
-                        Hủy
+                        ❌ Hủy
                     </button>
                 </div>
             </form>

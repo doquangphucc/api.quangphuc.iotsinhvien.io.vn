@@ -23,29 +23,38 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 $id = isset($data['id']) ? intval($data['id']) : 0;
 $category_id = intval($data['category_id'] ?? 0);
-$name = $data['name'] ?? '';
-$brand = $data['brand'] ?? '';
-$model = $data['model'] ?? '';
-$price = floatval($data['price'] ?? 0);
-$price_installation = !empty($data['price_installation']) ? floatval($data['price_installation']) : null;
+$title = $data['title'] ?? '';
+$market_price = floatval($data['market_price'] ?? 0);
+$category_price = !empty($data['category_price']) ? floatval($data['category_price']) : null;
 $description = $data['description'] ?? '';
 $specifications = $data['specifications'] ?? '';
 $image_url = $data['image_url'] ?? '';
-$is_available = isset($data['is_available']) ? ($data['is_available'] ? 1 : 0) : 1;
+$is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
 
-if (empty($name) || $category_id <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Tên sản phẩm và danh mục không được để trống']);
+// Validation
+if (empty($title)) {
+    echo json_encode(['success' => false, 'message' => 'Tiêu đề sản phẩm không được để trống']);
+    exit;
+}
+
+if ($category_id <= 0) {
+    echo json_encode(['success' => false, 'message' => 'Vui lòng chọn danh mục']);
+    exit;
+}
+
+if ($market_price <= 0) {
+    echo json_encode(['success' => false, 'message' => 'Giá thị trường phải lớn hơn 0']);
     exit;
 }
 
 if ($id > 0) {
-    // Update
-    $stmt = $conn->prepare("UPDATE products SET category_id = ?, name = ?, brand = ?, model = ?, price = ?, price_installation = ?, description = ?, specifications = ?, image_url = ?, is_available = ? WHERE id = ?");
-    $stmt->bind_param("isssddssiii", $category_id, $name, $brand, $model, $price, $price_installation, $description, $specifications, $image_url, $is_available, $id);
+    // Update existing product
+    $stmt = $conn->prepare("UPDATE products SET category_id = ?, title = ?, market_price = ?, category_price = ?, description = ?, specifications = ?, image_url = ?, is_active = ? WHERE id = ?");
+    $stmt->bind_param("isddsssii", $category_id, $title, $market_price, $category_price, $description, $specifications, $image_url, $is_active, $id);
 } else {
-    // Insert
-    $stmt = $conn->prepare("INSERT INTO products (category_id, name, brand, model, price, price_installation, description, specifications, image_url, is_available) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("isssddsssi", $category_id, $name, $brand, $model, $price, $price_installation, $description, $specifications, $image_url, $is_available);
+    // Insert new product
+    $stmt = $conn->prepare("INSERT INTO products (category_id, title, market_price, category_price, description, specifications, image_url, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("isddsssi", $category_id, $title, $market_price, $category_price, $description, $specifications, $image_url, $is_active);
 }
 
 if ($stmt->execute()) {
