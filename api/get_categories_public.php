@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/db_mysqli.php';
 
 try {
-    $sql = "SELECT * FROM product_categories WHERE is_active = 1 ORDER BY display_order";
+    $sql = "SELECT id, name, logo_url, display_order, is_active FROM product_categories WHERE is_active = 1 ORDER BY display_order";
     $result = $conn->query($sql);
     $categories = [];
     
@@ -22,8 +22,8 @@ try {
             'id' => (int)$row['id'],
             'name' => $row['name'],
             'logo_url' => $row['logo_url'],
-            'description' => $row['description'],
-            'display_order' => (int)$row['display_order']
+            'display_order' => (int)$row['display_order'],
+            'is_active' => (int)$row['is_active']
         ];
     }
     
@@ -39,5 +39,3 @@ try {
 }
 
 $conn->close();
-?>
-

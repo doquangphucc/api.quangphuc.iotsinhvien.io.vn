@@ -60,14 +60,12 @@ try {
     echo json_encode([
         'success' => true,
         'packages' => $packages
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
         'message' => 'Lỗi khi lấy gói sản phẩm: ' . $e->getMessage()
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
 }
 
 $conn->close();
-?>
-
