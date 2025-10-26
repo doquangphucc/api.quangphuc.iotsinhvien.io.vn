@@ -284,22 +284,42 @@ function showToast(message, type = 'info') {
 
     const toast = document.createElement('div');
     const colors = {
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        warning: 'bg-yellow-500',
-        info: 'bg-blue-500'
+        success: {
+            bg: 'bg-gradient-to-r from-green-500 to-green-600',
+            icon: 'bg-green-700/30',
+            border: 'border-green-700'
+        },
+        error: {
+            bg: 'bg-gradient-to-r from-red-500 to-red-600',
+            icon: 'bg-red-700/30',
+            border: 'border-red-700'
+        },
+        warning: {
+            bg: 'bg-gradient-to-r from-amber-500 to-amber-600',
+            icon: 'bg-amber-700/30',
+            border: 'border-amber-700'
+        },
+        info: {
+            bg: 'bg-gradient-to-r from-blue-500 to-blue-600',
+            icon: 'bg-blue-700/30',
+            border: 'border-blue-700'
+        }
     };
     const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
     };
 
-    toast.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-xl flex items-center space-x-3 transform translate-x-full transition-transform duration-300 ease-out`;
+    const colorScheme = colors[type];
+    
+    toast.className = `${colorScheme.bg} text-white px-6 py-4 rounded-xl shadow-2xl border-2 ${colorScheme.border} flex items-center space-x-4 transform translate-x-full transition-all duration-300 ease-out backdrop-blur-sm`;
     toast.innerHTML = `
-        <span class="text-xl">${icons[type]}</span>
-        <span class="font-semibold">${message}</span>
+        <div class="w-10 h-10 ${colorScheme.icon} rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold text-lg">${icons[type]}</span>
+        </div>
+        <span class="font-semibold text-base">${message}</span>
     `;
 
     container.appendChild(toast);
@@ -307,11 +327,13 @@ function showToast(message, type = 'info') {
     // Animate in
     setTimeout(() => {
         toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
     }, 100);
 
     // Animate out and remove
     setTimeout(() => {
-        toast.style.transform = 'translateX(120%)';
+        toast.style.transform = 'translateX(150%)';
+        toast.style.opacity = '0';
         toast.addEventListener('transitionend', () => toast.remove());
     }, 3000);
 }
