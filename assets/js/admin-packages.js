@@ -285,14 +285,14 @@ async function loadPackageCategoriesForSelect() {
     console.log('Select options after loading:', select.innerHTML);
 }
 
-function openPackageModal(id = null) {
+async function openPackageModal(id = null) {
     const modal = document.getElementById('packageModal');
     const form = document.getElementById('packageForm');
     form.reset();
     document.getElementById('package_id').value = '';
     
-    // Load categories for dropdown
-    loadPackageCategoriesForSelect();
+    // Load categories for dropdown FIRST
+    await loadPackageCategoriesForSelect();
     
     // Clear items container
     document.getElementById('package-items-container').innerHTML = '';
@@ -308,7 +308,14 @@ function openPackageModal(id = null) {
         const pkg = packagesData.find(p => p.id == id);
         if (pkg) {
             document.getElementById('package_id').value = pkg.id;
-            document.getElementById('package_category_id_select').value = pkg.category_id;
+            
+            // Set category dropdown AFTER categories are loaded
+            const categorySelect = document.getElementById('package_category_id_select');
+            if (categorySelect) {
+                categorySelect.value = pkg.category_id;
+                console.log('Set category_id to:', pkg.category_id, 'Current value:', categorySelect.value);
+            }
+            
             document.getElementById('package_name').value = pkg.name;
             document.getElementById('package_description').value = pkg.description || '';
             document.getElementById('package_price').value = pkg.price;
