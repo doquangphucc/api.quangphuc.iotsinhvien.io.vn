@@ -21,7 +21,7 @@ $customer = $input['customer'] ?? null;
 $itemsRaw = $input['items'] ?? null;
 $voucherCode = $input['voucher_code'] ?? '';
 
-$requiredCustomerKeys = ['fullname', 'phone', 'address', 'city_name', 'district_name'];
+$requiredCustomerKeys = ['fullname', 'phone', 'address', 'city_name', 'district_name', 'ward_name'];
 if (!$customer || count(array_diff($requiredCustomerKeys, array_keys($customer))) > 0) {
     sendError('Thông tin khách hàng không đầy đủ (thiếu họ tên, SĐT, địa chỉ, v.v...).');
 }
@@ -132,6 +132,7 @@ try {
         'email'           => sanitizeInput($customer['email'] ?? ''),
         'city'            => sanitizeInput($customer['city_name']),
         'district'        => sanitizeInput($customer['district_name']),
+        'ward'            => sanitizeInput($customer['ward_name']),
         'address'         => sanitizeInput($customer['address']),
         'notes'           => sanitizeInput($customer['notes'] ?? ''),
         'subtotal'        => $calculatedTotal,
