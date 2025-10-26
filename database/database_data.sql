@@ -288,7 +288,7 @@ INSERT INTO reward_templates (id, reward_name, reward_type, reward_value, reward
 -- Tạo admin user (username: admin, password: admin123)
 INSERT INTO users (id, full_name, username, phone, password, is_admin) VALUES
 (1, 'Test User', 'testuser', '0123456789', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', FALSE),
-(2, 'Admin User', 'admin', '0988919868', '$2y$10$E4Mjzm5z3xW0nYJX5K5XKOYqXvXdWzQ5Q5XYZ5Z5Z5Z5Z5Z5Z5Z5Z5', TRUE);
+(2, 'Admin User', 'admin', '0988919868', '$2y$10$rGHvG3J5YLxZ0h6qKz.uJeP7VzN4Y0QfY9xY8f.g1rP6qB2K4nDUO', TRUE);
 
 -- Tạo lottery tickets test cho user
 INSERT INTO lottery_tickets (user_id, ticket_type, status, created_at) VALUES
