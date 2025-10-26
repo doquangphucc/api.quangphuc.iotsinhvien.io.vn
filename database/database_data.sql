@@ -186,42 +186,20 @@ INSERT INTO phuong (ten_phuong, id_tinh) VALUES
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_CATEGORIES
 -- =====================================================
-INSERT INTO package_categories (id, name, description, display_order, is_active) VALUES
-(1, 'Gói Lắp Đặt Trọn Gói', 'Gói lắp đặt hoàn chỉnh cho hộ gia đình và doanh nghiệp', 1, TRUE);
+-- Chỉ thêm 2 danh mục gói cơ bản, các thuộc tính khác (badge_text, badge_color) admin sẽ tự thêm sau
+INSERT INTO package_categories (id, name, display_order, is_active) VALUES
+(1, 'Bảo Duy Solar', 1, TRUE),
+(2, 'C - Home Building', 2, TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGES
 -- =====================================================
-INSERT INTO packages (id, category_id, name, description, price, savings_per_month, payback_period, badge_text, badge_color, display_order) VALUES
-(1, 1, '6 kWp', 'Phù hợp hộ gia đình nhỏ', 6700000000, '3-4 triệu/tháng', '5-6 năm', 'GÓI CƠ BẢN', 'green', 1),
-(2, 1, '10 kWp', 'Hộ gia đình trung bình', 10000000000, '5-7 triệu/tháng', '5-6 năm', 'PHỔ BIẾN', 'blue', 2),
-(3, 1, '15 kWp', 'Biệt thự, nhà lớn', 14750000000, '8-10 triệu/tháng', '5-6 năm', 'GÓI CAO CẤP', 'purple', 3),
-(4, 1, '20+ kWp', 'Nhà xưởng, văn phòng', 0, '15+ triệu/tháng', '4-5 năm', 'GÓI DOANH NGHIỆP', 'orange', 4);
+-- Không thêm dữ liệu mẫu - Admin sẽ tự thêm gói qua giao diện quản lý
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_ITEMS
 -- =====================================================
-INSERT INTO package_items (package_id, item_name, item_description, display_order) VALUES
--- Gói 6 kWp
-(1, '10 tấm Jinko 590W', NULL, 1),
-(1, 'Inverter Luxpower 6K', NULL, 2),
-(1, 'Pin lưu trữ BYD 8.8kWh', NULL, 3),
-(1, 'Phụ kiện & lắp đặt', NULL, 4),
--- Gói 10 kWp
-(2, '17 tấm Jinko 590W', NULL, 1),
-(2, 'Inverter Luxpower 10K', NULL, 2),
-(2, 'Pin lưu trữ A-Cornex 16.3kWh', NULL, 3),
-(2, 'Phụ kiện & lắp đặt', NULL, 4),
--- Gói 15 kWp
-(3, '24 tấm Jinko 630W', NULL, 1),
-(3, 'Inverter Luxpower 15K (3P)', NULL, 2),
-(3, 'Pin lưu trữ A-Cornex 16.3kWh x2', NULL, 3),
-(3, 'Phụ kiện & lắp đặt', NULL, 4),
--- Gói 20+ kWp
-(4, '30+ tấm Jinko 630W', NULL, 1),
-(4, 'Inverter Luxpower 20K+ (3P)', NULL, 2),
-(4, 'Pin tùy chọn theo nhu cầu', NULL, 3),
-(4, 'Thiết kế riêng cho công trình', NULL, 4);
+-- Không thêm dữ liệu mẫu - Sẽ được thêm cùng với packages qua giao diện admin
 
 -- =====================================================
 -- DỮ LIỆU MẪU - REWARD_TEMPLATES
