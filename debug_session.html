@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Session & Login Flow</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #00ff00; }
+        .section { background: #2d2d2d; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background: #16a34a; color: white; border: none; cursor: pointer; }
+        pre { background: #000; padding: 10px; overflow: auto; }
+        .error { color: #ff4444; }
+        .success { color: #44ff44; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Session & Login Flow</h1>
+    
+    <div class="section">
+        <h2>1. LocalStorage Data</h2>
+        <button onclick="checkLocalStorage()">Check LocalStorage</button>
+        <button onclick="clearLocalStorage()">Clear LocalStorage</button>
+        <pre id="localStorage-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Test Login</h2>
+        <input type="text" id="username" value="admin" style="padding: 5px; margin: 5px;">
+        <input type="password" id="password" value="admin123" style="padding: 5px; margin: 5px;">
+        <button onclick="testLogin()">Login</button>
+        <pre id="login-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Test check_admin.php</h2>
+        <button onclick="testCheckAdmin()">Check Admin Access</button>
+        <pre id="checkadmin-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>4. Cookie Info</h2>
+        <button onclick="showCookies()">Show Cookies</button>
+        <pre id="cookie-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>5. Test get_categories.php</h2>
+        <button onclick="testGetCategories()">Get Categories</button>
+        <pre id="categories-result"></pre>
+    </div>
+
+    <script>
+        function checkLocalStorage() {
+            const result = document.getElementById('localStorage-result');
+            const authUser = localStorage.getItem('authUser');
+            result.innerHTML = 'authUser in localStorage:\n' + (authUser || 'NULL') + '\n\n';
+            if (authUser) {
+                try {
+                    const parsed = JSON.parse(authUser);
+                    result.innerHTML += 'Parsed:\n' + JSON.stringify(parsed, null, 2);
+                } catch (e) {
+                    result.innerHTML += 'Error parsing: ' + e.message;
+                }
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('Cleared!');
+            checkLocalStorage();
+        }
+
+        async function testLogin() {
+            const result = document.getElementById('login-result');
+            result.innerHTML = '⏳ Testing login...';
+            
+            try {
+                const response = await fetch('api/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include', // IMPORTANT!
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+
+                const data = await response.json();
+                
+                result.innerHTML = '✅ Login Response:\n';
+                result.innerHTML += JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    localStorage.setItem('authUser', JSON.stringify(data.data.user));
+                    result.innerHTML += '\n\n✅ Saved to localStorage';
+                }
+            } catch (error) {
+                result.innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+
+        async function testCheckAdmin() {
+            const result = document.getElementById('checkadmin-result');
+            result.innerHTML = '⏳ Checking admin access...';
+            
+            try {
+                const response = await fetch('api/admin/check_admin.php?t=' + Date.now(), {
+                    method: 'GET',
+                    credentials: 'include', // IMPORTANT!
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const text = await response.text();
+                result.innerHTML = '📥 Raw Response:\n' + text + '\n\n';
+                
+                try {
+                    const data = JSON.parse(text);
+                    result.innerHTML += '📊 Parsed Response:\n' + JSON.stringify(data, null, 2);
+                    
+                    if (data.success) {
+                        result.innerHTML += '\n\n✅ ADMIN ACCESS OK';
+                    } else {
+                        result.innerHTML += '\n\n❌ ADMIN ACCESS DENIED: ' + data.message;
+                    }
+                } catch (e) {
+                    result.innerHTML += '\n❌ JSON Parse Error: ' + e.message;
+                }
+            } catch (error) {
+                result.innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+
+        function showCookies() {
+            const result = document.getElementById('cookie-result');
+            result.innerHTML = 'All Cookies:\n' + document.cookie + '\n\n';
+            
+            const cookies = document.cookie.split(';');
+            result.innerHTML += 'Parsed:\n';
+            cookies.forEach(c => {
+                result.innerHTML += c.trim() + '\n';
+            });
+            
+            if (!document.cookie) {
+                result.innerHTML += '\n❌ NO COOKIES FOUND!';
+            }
+        }
+
+        async function testGetCategories() {
+            const result = document.getElementById('categories-result');
+            result.innerHTML = '⏳ Getting categories...';
+            
+            try {
+                const response = await fetch('api/admin/get_categories.php?t=' + Date.now(), {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+                result.innerHTML = '📥 Response:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+
+        // Auto check on load
+        window.onload = () => {
+            checkLocalStorage();
+            showCookies();
+        };
+    </script>
+</body>
+</html>
+
