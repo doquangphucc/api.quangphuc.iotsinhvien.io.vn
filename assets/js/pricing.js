@@ -155,8 +155,8 @@ function renderProducts() {
                     
                     <!-- Technical Description -->
                     ${product.technical_description ? `
-                        <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 mb-4">
-                            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-4 whitespace-pre-line">
+                        <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 mb-4 max-h-48 overflow-y-auto">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">
                                 ${product.technical_description}
                             </p>
                         </div>
