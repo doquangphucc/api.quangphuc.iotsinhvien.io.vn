@@ -34,7 +34,7 @@ function renderPackageCategories() {
     if (packageCategoriesData.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                <td colspan="7" class="px-4 py-8 text-center text-gray-500">
                     Chưa có danh mục gói nào. Click "Thêm danh mục gói" để tạo mới.
                 </td>
             </tr>
@@ -45,6 +45,9 @@ function renderPackageCategories() {
     tbody.innerHTML = packageCategoriesData.map(cat => `
         <tr class="border-b hover:bg-gray-50">
             <td class="px-4 py-3">${cat.id}</td>
+            <td class="px-4 py-3">
+                ${cat.logo_url ? `<img src="${cat.logo_url}" alt="${cat.name}" class="h-10 w-10 object-contain rounded">` : '-'}
+            </td>
             <td class="px-4 py-3 font-semibold">${cat.name}</td>
             <td class="px-4 py-3">
                 ${cat.badge_text ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-${cat.badge_color}-100 text-${cat.badge_color}-800">${cat.badge_text}</span>` : '-'}
