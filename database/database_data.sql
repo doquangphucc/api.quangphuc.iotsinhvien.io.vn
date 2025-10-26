@@ -208,7 +208,28 @@ Model: Kẹp Pin
 Thông số kỹ thuật:
 - Chức năng: Cố định tấm pin vào khung giá đỡ
 - Vật liệu: Hợp kim nhôm',
-'assets/img/products/kepbien-tamgiua.png', TRUE);
+'assets/img/products/kepbien-tamgiua.png', TRUE),
+
+(1, 'Jack MC4', 15000, 17250,
+'Thương hiệu: HC Eco
+Model: MC4 Connector
+
+Thông số kỹ thuật:
+- Chức năng: Kết nối dây điện giữa các tấm pin
+- Tiêu chuẩn: IP67
+- Vật liệu: Nhựa chống UV',
+'assets/img/products/jackcam.png', TRUE),
+
+(1, 'Dây DC', 25000, 28750,
+'Thương hiệu: HC Eco
+Model: PV Cable 4mm² / 6mm²
+
+Thông số kỹ thuật:
+- Tiết diện: 4mm² hoặc 6mm²
+- Tiêu chuẩn: TUV, UL
+- Chống tia cực tím, chịu nhiệt độ cao
+- Đơn giá: 25,000 VNĐ/mét',
+'assets/img/products/daydien.png', TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - TỈNH/THÀNH PHỐ
