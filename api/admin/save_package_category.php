@@ -2,8 +2,8 @@
 // Add or update package category with image upload
 
 // Disable PHP errors/warnings display to prevent breaking JSON output
+error_reporting(0);
 ini_set('display_errors', 0);
-error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
 // Start session with proper config
 require_once __DIR__ . '/../session.php';
@@ -123,18 +123,21 @@ if ($id > 0) {
     $stmt->bind_param("ssssii", $name, $logo_url, $badge_text, $badge_color, $display_order, $is_active);
 }
 
-if ($stmt->execute()) {
-    $category_id = $id > 0 ? $id : $conn->insert_id;
-    echo json_encode([
-        'success' => true,
-        'message' => 'Lưu danh mục gói thành công',
-        'category_id' => $category_id,
-        'logo_url' => $logo_url
-    ], JSON_UNESCAPED_UNICODE);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error], JSON_UNESCAPED_UNICODE);
+try {
+    if ($stmt->execute()) {
+        $category_id = $id > 0 ? $id : $conn->insert_id;
+        echo json_encode([
+            'success' => true,
+            'message' => 'Lưu danh mục gói thành công',
+            'category_id' => $category_id,
+            'logo_url' => $logo_url
+        ], JSON_UNESCAPED_UNICODE);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error], JSON_UNESCAPED_UNICODE);
+    }
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], JSON_UNESCAPED_UNICODE);
 }
 
-$stmt->close();
-$conn->close();
-
+if (isset($stmt)) $stmt->close();
+if (isset($conn)) $conn->close();
