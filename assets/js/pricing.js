@@ -273,14 +273,18 @@ function renderPackages() {
                     </div>
                     
                     ${pkg.highlights && pkg.highlights.length > 0 ? `
-                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 mb-4 space-y-3">
-                            ${pkg.highlights.map(hl => `
-                                <div class="border-l-4 border-green-500 pl-3">
-                                    <p class="font-bold text-sm text-gray-800 dark:text-gray-200">
+                        <div class="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-900/20 dark:via-green-900/20 dark:to-teal-900/20 rounded-xl p-4 mb-4 space-y-3 border border-emerald-200 dark:border-emerald-800">
+                            <div class="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                Điểm Nổi Bật
+                            </div>
+                            ${pkg.highlights.map((hl, idx) => `
+                                <div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 border-l-4 ${idx === 0 ? 'border-l-emerald-500' : idx === 1 ? 'border-l-blue-500' : 'border-l-purple-500'} shadow-sm hover:shadow-md transition-shadow">
+                                    <p class="font-bold text-sm ${idx === 0 ? 'text-emerald-700 dark:text-emerald-400' : idx === 1 ? 'text-blue-700 dark:text-blue-400' : 'text-purple-700 dark:text-purple-400'} mb-1">
                                         ${hl.title || ''}
                                     </p>
                                     ${hl.content ? `
-                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                                             ${hl.content}
                                         </p>
                                     ` : ''}
@@ -288,16 +292,22 @@ function renderPackages() {
                             `).join('')}
                         </div>
                     ` : pkg.savings_per_month || pkg.payback_period ? `
-                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-4 space-y-2">
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 mb-4 space-y-2 border border-blue-200 dark:border-blue-800">
+                            <div class="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                Thông Tin Nổi Bật
+                            </div>
                             ${pkg.savings_per_month ? `
-                                <p class="text-sm font-semibold text-blue-700 dark:text-blue-400">
-                                    💰 Tiết kiệm: ${pkg.savings_per_month}
-                                </p>
+                                <div class="bg-white dark:bg-gray-800/50 rounded-lg p-2.5 border-l-4 border-l-amber-500 shadow-sm">
+                                    <p class="text-xs font-bold text-amber-700 dark:text-amber-400 mb-0.5">💰 Tiết kiệm/tháng</p>
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">${pkg.savings_per_month}</p>
+                                </div>
                             ` : ''}
                             ${pkg.payback_period ? `
-                                <p class="text-sm font-semibold text-purple-700 dark:text-purple-400">
-                                    ⏱️ Hoàn vốn: ${pkg.payback_period}
-                                </p>
+                                <div class="bg-white dark:bg-gray-800/50 rounded-lg p-2.5 border-l-4 border-l-purple-500 shadow-sm">
+                                    <p class="text-xs font-bold text-purple-700 dark:text-purple-400 mb-0.5">⏱️ Hoàn vốn</p>
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">${pkg.payback_period}</p>
+                                </div>
                             ` : ''}
                         </div>
                     ` : ''}
