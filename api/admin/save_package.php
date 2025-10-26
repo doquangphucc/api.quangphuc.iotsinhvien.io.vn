@@ -31,11 +31,13 @@ $description = $data['description'] ?? '';
 $price = floatval($data['price'] ?? 0);
 $badge_text = $data['badge_text'] ?? '';
 $badge_color = $data['badge_color'] ?? 'blue';
-$savings_per_month = $data['savings_per_month'] ?? '';
-$payback_period = $data['payback_period'] ?? '';
 $display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
 $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
 $items = $data['items'] ?? [];
+$highlights = $data['highlights'] ?? [];
+
+// Convert highlights to JSON
+$highlights_json = !empty($highlights) ? json_encode($highlights) : null;
 
 // Validation
 if (empty($name)) {
@@ -59,8 +61,8 @@ $conn->begin_transaction();
 try {
     if ($id > 0) {
         // Update existing package
-        $stmt = $conn->prepare("UPDATE packages SET category_id = ?, name = ?, description = ?, price = ?, badge_text = ?, badge_color = ?, savings_per_month = ?, payback_period = ?, display_order = ?, is_active = ? WHERE id = ?");
-        $stmt->bind_param("issdssssiii", $category_id, $name, $description, $price, $badge_text, $badge_color, $savings_per_month, $payback_period, $display_order, $is_active, $id);
+        $stmt = $conn->prepare("UPDATE packages SET category_id = ?, name = ?, description = ?, price = ?, badge_text = ?, badge_color = ?, highlights = ?, display_order = ?, is_active = ? WHERE id = ?");
+        $stmt->bind_param("issdsssiii", $category_id, $name, $description, $price, $badge_text, $badge_color, $highlights_json, $display_order, $is_active, $id);
         $stmt->execute();
         $package_id = $id;
         
@@ -71,8 +73,8 @@ try {
         $delete_items_stmt->close();
     } else {
         // Insert new package
-        $stmt = $conn->prepare("INSERT INTO packages (category_id, name, description, price, badge_text, badge_color, savings_per_month, payback_period, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("issdssssii", $category_id, $name, $description, $price, $badge_text, $badge_color, $savings_per_month, $payback_period, $display_order, $is_active);
+        $stmt = $conn->prepare("INSERT INTO packages (category_id, name, description, price, badge_text, badge_color, highlights, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issdsssii", $category_id, $name, $description, $price, $badge_text, $badge_color, $highlights_json, $display_order, $is_active);
         $stmt->execute();
         $package_id = $conn->insert_id;
     }

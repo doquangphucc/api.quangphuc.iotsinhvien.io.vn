@@ -52,6 +52,15 @@ if ($result) {
         }
         $items_stmt->close();
         
+        // Parse highlights JSON
+        $highlights = [];
+        if (!empty($row['highlights'])) {
+            $decoded_highlights = json_decode($row['highlights'], true);
+            if (is_array($decoded_highlights)) {
+                $highlights = $decoded_highlights;
+            }
+        }
+        
         $packages[] = [
             'id' => (int)$row['id'],
             'category_id' => (int)$row['category_id'],
@@ -61,8 +70,9 @@ if ($result) {
             'price' => floatval($row['price']),
             'badge_text' => $row['badge_text'],
             'badge_color' => $row['badge_color'],
-            'savings_per_month' => $row['savings_per_month'],
-            'payback_period' => $row['payback_period'],
+            'highlights' => $highlights,
+            'savings_per_month' => $row['savings_per_month'], // Backward compatibility
+            'payback_period' => $row['payback_period'], // Backward compatibility
             'display_order' => (int)$row['display_order'],
             'is_active' => (int)$row['is_active'],
             'items' => $items

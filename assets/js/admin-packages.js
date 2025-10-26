@@ -297,6 +297,13 @@ function openPackageModal(id = null) {
     // Clear items container
     document.getElementById('package-items-container').innerHTML = '';
     
+    // Clear highlights container
+    document.getElementById('package-highlights-container').innerHTML = '';
+    
+    // Reset counters
+    packageItemCounter = 0;
+    packageHighlightCounter = 0;
+    
     if (id) {
         const pkg = packagesData.find(p => p.id == id);
         if (pkg) {
@@ -307,8 +314,6 @@ function openPackageModal(id = null) {
             document.getElementById('package_price').value = pkg.price;
             document.getElementById('package_badge_text').value = pkg.badge_text || '';
             document.getElementById('package_badge_color').value = pkg.badge_color || 'blue';
-            document.getElementById('package_savings_per_month').value = pkg.savings_per_month || '';
-            document.getElementById('package_payback_period').value = pkg.payback_period || '';
             document.getElementById('package_display_order').value = pkg.display_order;
             document.getElementById('package_is_active').checked = pkg.is_active == 1;
             document.getElementById('packageModalTitle').textContent = 'Sửa gói sản phẩm';
@@ -318,6 +323,23 @@ function openPackageModal(id = null) {
                 pkg.items.forEach(item => {
                     addPackageItem(item.item_name, item.item_description);
                 });
+            }
+            
+            // Load highlights (for backward compatibility, check both old and new fields)
+            if (pkg.highlights && pkg.highlights.length > 0) {
+                pkg.highlights.forEach(highlight => {
+                    addPackageHighlight(highlight.title || '', highlight.content || '');
+                });
+            } else {
+                // Fallback to old fields for backward compatibility
+                if (pkg.savings_per_month || pkg.payback_period) {
+                    if (pkg.savings_per_month) {
+                        addPackageHighlight('Tiết kiệm/tháng', pkg.savings_per_month);
+                    }
+                    if (pkg.payback_period) {
+                        addPackageHighlight('Hoàn vốn', pkg.payback_period);
+                    }
+                }
             }
         }
     } else {
@@ -332,6 +354,7 @@ function closePackageModal() {
 }
 
 let packageItemCounter = 0;
+let packageHighlightCounter = 0;
 
 function addPackageItem(itemName = '', itemDescription = '') {
     packageItemCounter++;
@@ -356,6 +379,31 @@ function addPackageItem(itemName = '', itemDescription = '') {
 function removePackageItem(itemId) {
     const item = document.getElementById(itemId);
     if (item) item.remove();
+}
+
+function addPackageHighlight(title = '', content = '') {
+    packageHighlightCounter++;
+    const container = document.getElementById('package-highlights-container');
+    const highlightId = `package-highlight-${packageHighlightCounter}`;
+    
+    const highlightHtml = `
+        <div id="${highlightId}" class="flex gap-2 items-start p-3 bg-gray-50 rounded-lg">
+            <div class="flex-1 grid grid-cols-2 gap-2">
+                <input type="text" class="package-highlight-title w-full px-3 py-2 border rounded" placeholder="Tiêu đề (VD: Tiết kiệm/tháng)" value="${title}">
+                <input type="text" class="package-highlight-content w-full px-3 py-2 border rounded" placeholder="Nội dung (VD: ~4 triệu/tháng)" value="${content}">
+            </div>
+            <button type="button" onclick="removePackageHighlight('${highlightId}')" class="text-red-600 hover:text-red-800 mt-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', highlightHtml);
+}
+
+function removePackageHighlight(highlightId) {
+    const highlight = document.getElementById(highlightId);
+    if (highlight) highlight.remove();
 }
 
 async function savePackage(event) {
@@ -393,6 +441,22 @@ async function savePackage(event) {
         }
     });
     
+    // Collect highlights
+    const highlightTitles = document.querySelectorAll('.package-highlight-title');
+    const highlightContents = document.querySelectorAll('.package-highlight-content');
+    const highlights = [];
+    
+    highlightTitles.forEach((input, index) => {
+        const title = input.value.trim();
+        const content = highlightContents[index]?.value.trim() || '';
+        if (title && content) {
+            highlights.push({
+                title: title,
+                content: content
+            });
+        }
+    });
+    
     const formData = {
         id: document.getElementById('package_id').value || 0,
         category_id: categoryId,
@@ -401,11 +465,10 @@ async function savePackage(event) {
         price: price,
         badge_text: document.getElementById('package_badge_text').value.trim(),
         badge_color: document.getElementById('package_badge_color').value,
-        savings_per_month: document.getElementById('package_savings_per_month').value.trim(),
-        payback_period: document.getElementById('package_payback_period').value.trim(),
         display_order: parseInt(document.getElementById('package_display_order').value) || 0,
         is_active: document.getElementById('package_is_active').checked,
-        items: items
+        items: items,
+        highlights: highlights
     };
     
     try {
