@@ -317,8 +317,14 @@
                     messageBox.textContent = 'Đăng nhập thành công! Đang chuyển hướng...';
                     messageBox.classList.remove('hidden');
                     messageBox.classList.add('bg-green-100', 'text-green-700', 'border-2', 'border-green-300');
+                    
+                    // Check if user is admin and redirect accordingly
                     setTimeout(() => {
-                        window.location.href = '../index.html';
+                        if (data.data.user.is_admin === 1 || data.data.user.is_admin === true) {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = '../index.html';
+                        }
                     }, 1000);
                 } catch (error) {
                     console.error(error);
