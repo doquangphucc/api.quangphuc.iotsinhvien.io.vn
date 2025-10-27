@@ -5,6 +5,11 @@
 ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
+// Increase upload limits for file uploads (2MB)
+ini_set('upload_max_filesize', '2M');
+ini_set('post_max_size', '10M');
+ini_set('max_execution_time', 300);
+
 // Start session with proper config
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';

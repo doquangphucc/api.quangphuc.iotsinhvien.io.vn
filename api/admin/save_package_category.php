@@ -1,6 +1,11 @@
 <?php
 // Add or update package category with image upload
 
+// Increase upload limits for file uploads (2MB)
+ini_set('upload_max_filesize', '2M');
+ini_set('post_max_size', '10M');
+ini_set('max_execution_time', 300);
+
 try {
 // Start output buffering to prevent any unexpected output
 ob_start();

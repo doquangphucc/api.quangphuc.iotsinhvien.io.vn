@@ -1,0 +1,30 @@
+[33mb43b221[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix footer and encoding for all HTML files - standardize contact info and fix Vietnamese font display
+[33mf4c6be5[m Update footer: Add new main hotline 0969 397 434, remove tax code, update Zalo number
+[33ma20a8e4[m Fix: Add absolute path prefix for image URLs in survey form options
+[33m0479ffd[m Fix: Add ../ prefix to image URLs in frontend for correct path resolution
+[33mcaaef94[m Fix: Add ../ prefix to image URLs for correct path resolution
+[33ma36c969[m Remove unused update_order_status_enum.sql file
+[33m11a824f[m Fix packages data flow: Add highlights support and image URL fixes
+[33md0e53b9[m Fix image URLs in frontend JS files - add ../ prefix
+[33mc0b9c15[m Fix image URL paths - add ../ prefix for HTML pages
+[33mc559395[m Cấu hình lại form gói: thay 2 trường fix cứng bằng highlights động
+[33m1163808[m fix: Rename package_category_id select to avoid ID collision with hidden input
+[33m14a9c84[m fix: Add badge_text and badge_color columns to package_categories table
+[33ma3c6cc3[m fix: Suppress PHP warnings in save_package_category and save_package APIs to prevent JSON parsing errors
+[33mbe07048[m fix: Add debug logging for empty package categories
+[33mea92d1b[m fix: Update product categories to match package categories - Only 2 categories: Bao Duy Solar and C - Home Building - Remove sample products data - Admin will add products via UI
+[33m19c08aa[m Create cart-page.js and fix cart APIs to support new schema and render cart items correctly
+[33m03b4445[m fix: Remove duplicate productsData declaration in admin-products.js
+[33m2920f13[m fix: Remove obsolete indexes for deleted columns (brand, is_available)
+[33m8f008dc[m fix: Replace session_start() with session.php in all admin APIs for consistent session handling
+[33md942094[m fix: Use session.php in get_categories.php for consistent session handling
+[33m97a3269[m fix: Remove sample products data - admin will add via UI
+[33m6defa5e[m fix: Update category table display, remove description column, fix image paths, replace alerts with toast notifications
+[33m35e0829[m fix: Suppress PHP warnings that break JSON output in save_category.php
+[33me18798c[m fix: Add better error handling for upload directory permissions
+[33m43ae217[m fix: Remove duplicate requireAuth and getCurrentUserId from auth_helpers.php
+[33mc26b5d0[m fix: Use session.php instead of raw session_start() to ensure correct session name
+[33m9d2d506[m fix: Correct CORS headers for credentials in save_category.php
+[33mb2716b9[m fix: Add session debugging and proper CORS headers for save_category.php
+[33m5d45725[m fix: Fix showTab function to handle event properly when called programmatically
+[33mc8cc349[m fix: Update get_categories.php to use db_mysqli.php and add proper headers

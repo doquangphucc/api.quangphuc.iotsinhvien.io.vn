@@ -1040,6 +1040,21 @@
                     credentials: 'include',
                     body: formData // Don't set Content-Type header, browser will set it with boundary
                 });
+                
+                // Check if response is 413 (Request Entity Too Large)
+                if (response.status === 413) {
+                    showToast('Kích thước ảnh quá lớn! Vui lòng chọn ảnh nhỏ hơn 2MB.', 'error');
+                    return;
+                }
+                
+                // Check if response is not OK
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', response.status, errorText);
+                    showToast('Lỗi server: ' + response.status + '. Vui lòng thử lại.', 'error');
+                    return;
+                }
+                
                 const data = await response.json();
                 if (data.success) {
                     showToast(data.message, 'success');
@@ -1050,7 +1065,11 @@
                 }
             } catch (error) {
                 console.error('Error saving category:', error);
-                showToast('Có lỗi xảy ra khi lưu danh mục', 'error');
+                if (error.message.includes('Unexpected token')) {
+                    showToast('Kích thước ảnh quá lớn hoặc server không thể xử lý. Vui lòng chọn ảnh nhỏ hơn 2MB.', 'error');
+                } else {
+                    showToast('Có lỗi xảy ra khi lưu danh mục: ' + error.message, 'error');
+                }
             }
         }
 
@@ -1068,6 +1087,14 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id })
                 });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', response.status, errorText);
+                    showToast('Lỗi server: ' + response.status + '. Vui lòng thử lại.', 'error');
+                    return;
+                }
+                
                 const data = await response.json();
                 if (data.success) {
                     showToast(data.message, 'success');
@@ -1077,7 +1104,7 @@
                 }
             } catch (error) {
                 console.error('Error deleting category:', error);
-                showToast('Có lỗi xảy ra khi xóa danh mục', 'error');
+                showToast('Có lỗi xảy ra khi xóa danh mục: ' + error.message, 'error');
             }
         }
 
@@ -1086,6 +1113,20 @@
             if (e.target.id === 'package_category_logo') {
                 const file = e.target.files[0];
                 if (file) {
+                    // Check file size (max 2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        showToast('Kích thước ảnh không được vượt quá 2MB!', 'error');
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    // Check file type
+                    if (!file.type.match('image.*')) {
+                        showToast('Vui lòng chọn file ảnh!', 'error');
+                        e.target.value = '';
+                        return;
+                    }
+                    
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const preview = document.getElementById('package_category_logo_preview');
@@ -1278,6 +1319,13 @@
                      })
                  });
                  
+                 if (!response.ok) {
+                     const errorText = await response.text();
+                     console.error('Server error:', response.status, errorText);
+                     showToast('Lỗi server: ' + response.status + '. Vui lòng thử lại.', 'error');
+                     return;
+                 }
+                 
                  const data = await response.json();
                  if (data.success) {
                      showToast(data.message, 'success');
@@ -1288,7 +1336,7 @@
                  }
              } catch (error) {
                  console.error('Error saving survey config:', error);
-                 showToast('Có lỗi xảy ra khi lưu cấu hình', 'error');
+                 showToast('Có lỗi xảy ra khi lưu cấu hình: ' + error.message, 'error');
              }
          }
         
@@ -1303,6 +1351,13 @@
                     body: JSON.stringify({ product_id: productId })
                 });
                 
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', response.status, errorText);
+                    showToast('Lỗi server: ' + response.status + '. Vui lòng thử lại.', 'error');
+                    return;
+                }
+                
                 const data = await response.json();
                 if (data.success) {
                     showToast(data.message, 'success');
@@ -1312,7 +1367,7 @@
                 }
             } catch (error) {
                 console.error('Error deleting survey config:', error);
-                showToast('Có lỗi xảy ra', 'error');
+                showToast('Có lỗi xảy ra khi xóa: ' + error.message, 'error');
             }
         }
 
