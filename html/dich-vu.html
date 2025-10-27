@@ -198,6 +198,13 @@
                 <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
                 <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700">Dịch vụ</a>
                 <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+                
+                <!-- Mobile Auth Buttons -->
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                    <div id="mobile-auth-buttons" class="flex flex-col gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -255,7 +262,7 @@
                         <div id="ecosystem-logos-container" class="flex gap-6">
                             <!-- Logos will be inserted by JavaScript -->
                         </div>
-                    </div>
+        </div>
                 </div>
 
                 <div class="space-y-2">
@@ -357,7 +364,7 @@
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-white">${service.name}</h2>
                         </div>
-                    </div>
+        </div>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                         ${service.description || ''}
                     </p>

@@ -157,8 +157,13 @@
                 <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
                 <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dịch vụ</a>
                 <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
-            </nav>
+            </nav>                <!-- Mobile Auth Buttons -->
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                    <div id="mobile-auth-buttons" class="flex flex-col gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
         </div>
+</div>
     </header>
 
     <!-- Floating Cart Button -->
@@ -181,12 +186,12 @@
                             <h1 class="text-3xl md:text-4xl font-bold mb-2">Chi tiết đơn hàng #<span id="orderId">-</span></h1>
                             <p class="text-purple-50 text-lg">Thông tin chi tiết về đơn hàng của bạn</p>
                         </div>
-                    </div>
+        </div>
                     <div class="text-right">
                         <div class="text-3xl font-bold" id="totalAmount">0đ</div>
                         <div class="text-purple-50">Tổng tiền</div>
                     </div>
-                </div>
+        </div>
             </div>
 
             <!-- Loading State -->
@@ -233,7 +238,7 @@
                                 <span class="text-gray-600 dark:text-gray-400">Trạng thái:</span>
                                 <span id="orderStatus" class="px-3 py-1 rounded-full text-sm font-semibold">-</span>
                             </div>
-                        </div>
+        </div>
                         <div class="space-y-3">
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Tổng tiền:</span>
@@ -247,9 +252,9 @@
                                 <span class="text-gray-600 dark:text-gray-400">Số điện thoại:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white" id="orderPhone">-</span>
                             </div>
-                        </div>
+        </div>
                     </div>
-                </div>
+        </div>
 
                 <!-- Customer Info -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl">
@@ -264,7 +269,7 @@
                                 <span class="text-gray-600 dark:text-gray-400">Thành phố:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white" id="customerCity">-</span>
                             </div>
-                        </div>
+        </div>
                         <div class="space-y-3">
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Quận/Huyện:</span>
@@ -274,13 +279,13 @@
                                 <span class="text-gray-600 dark:text-gray-400">Địa chỉ:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white" id="customerAddress">-</span>
                             </div>
-                        </div>
+        </div>
                     </div>
                     <div class="mt-4" id="customerNotes" style="display: none;">
                         <span class="text-gray-600 dark:text-gray-400">Ghi chú:</span>
                         <p class="font-semibold text-gray-800 dark:text-white mt-1" id="customerNotesText">-</p>
                     </div>
-                </div>
+        </div>
 
                 <!-- Products -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl">
@@ -288,7 +293,7 @@
                     <div id="productsList" class="space-y-4">
                         <!-- Products will be loaded here -->
                     </div>
-                </div>
+        </div>
 
                 <!-- Actions -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl">
@@ -300,7 +305,7 @@
                             In đơn hàng
                         </button>
                     </div>
-                </div>
+        </div>
             </div>
         </div>
     </main>
@@ -322,7 +327,7 @@
                         <div id="ecosystem-logos-container" class="flex gap-6">
                             <!-- Logos will be inserted by JavaScript -->
                         </div>
-                    </div>
+        </div>
                 </div>
 
                 <div class="space-y-2">
@@ -492,7 +497,7 @@
                         <p class="font-bold text-gray-800 dark:text-white">${item.price ? Math.round(item.price).toLocaleString('vi-VN') : '0'}đ</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">${item.price ? Math.round(item.price * item.quantity).toLocaleString('vi-VN') : '0'}đ</p>
                     </div>
-                </div>
+        </div>
             `).join('');
         }
 

@@ -157,8 +157,13 @@
                 <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
                 <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dịch vụ</a>
                 <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
-            </nav>
+            </nav>                <!-- Mobile Auth Buttons -->
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                    <div id="mobile-auth-buttons" class="flex flex-col gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
         </div>
+</div>
     </header>
 
     <!-- Floating Cart Button -->
@@ -180,7 +185,7 @@
                         <h1 class="text-3xl md:text-4xl font-bold mb-2">Lịch sử khảo sát</h1>
                         <p class="text-emerald-50 text-lg">Xem lại các báo giá điện mặt trời của bạn</p>
                     </div>
-                </div>
+        </div>
             </div>
 
             <!-- Loading State -->
@@ -225,7 +230,7 @@
                         <div id="ecosystem-logos-container" class="flex gap-6">
                             <!-- Logos will be inserted by JavaScript -->
                         </div>
-                    </div>
+        </div>
                 </div>
 
                 <div class="space-y-2">
@@ -341,12 +346,12 @@
                                 <h3 class="font-bold text-lg text-gray-800 dark:text-white">Khảo sát #${survey.id}</h3>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">${createdAt}</p>
                             </div>
-                        </div>
+        </div>
                         <div class="text-right">
                             <div class="text-2xl font-bold text-emerald-600">${totalCost}đ</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400">Tổng chi phí</div>
                         </div>
-                    </div>
+        </div>
                     
                     <div class="grid md:grid-cols-2 gap-4 mb-4">
                         <div class="space-y-2">
@@ -362,7 +367,7 @@
                                 <span class="text-gray-600 dark:text-gray-400">Tấm pin:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.panelName || 'N/A'}</span>
                             </div>
-                        </div>
+        </div>
                         <div class="space-y-2">
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Số tấm:</span>
@@ -376,7 +381,7 @@
                                 <span class="text-gray-600 dark:text-gray-400">Hóa đơn:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.monthlyBill ? survey.monthlyBill.toLocaleString('vi-VN') : '0'}đ</span>
                             </div>
-                        </div>
+        </div>
                     </div>
                     
                     <div class="flex gap-3">
@@ -387,7 +392,7 @@
                             Tạo mới
                         </button>
                     </div>
-                </div>
+        </div>
             `;
         }
         

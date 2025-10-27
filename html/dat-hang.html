@@ -157,8 +157,13 @@
                 <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
                 <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dịch vụ</a>
                 <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
-            </nav>
+            </nav>                <!-- Mobile Auth Buttons -->
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                    <div id="mobile-auth-buttons" class="flex flex-col gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
         </div>
+</div>
     </header>
 
     <!-- Main Content -->
@@ -174,7 +179,7 @@
                         <h1 class="text-3xl md:text-4xl font-bold mb-2">Thông tin đặt hàng</h1>
                         <p class="text-blue-50 text-lg">Hoàn tất thông tin để đặt hàng</p>
                     </div>
-                </div>
+        </div>
             </div>
 
             <div class="grid lg:grid-cols-3 gap-6">
@@ -208,7 +213,7 @@
                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
                                            placeholder="email@example.com" />
                                 </div>
-                            </div>
+        </div>
                         </div>
 
                         <!-- Shipping Address -->
@@ -253,7 +258,7 @@
                                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none resize-none" 
                                               placeholder="Ghi chú về thời gian giao hàng, yêu cầu đặc biệt..."></textarea>
                                 </div>
-                            </div>
+        </div>
                         </div>
 
                         <!-- Payment Notice -->
@@ -266,7 +271,7 @@
                                     <h3 class="font-bold text-amber-900 dark:text-amber-100 mb-2">Lưu ý quan trọng</h3>
                                     <p class="text-amber-800 dark:text-amber-200 text-sm">Sau khi xác nhận đơn hàng, bộ phận kinh doanh sẽ liên hệ với bạn để xác nhận lại về hình thức giao hàng và thanh toán.</p>
                                 </div>
-                            </div>
+        </div>
                         </div>
                     </form>
                 </div>
@@ -313,7 +318,7 @@
                                     <span>Tổng cộng:</span>
                                     <span id="total" class="text-green-600">0₫</span>
                                 </div>
-                            </div>
+        </div>
                         </div>
 
                         <button type="submit" form="checkout-form" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
@@ -324,7 +329,7 @@
                             Quay lại giỏ hàng
                         </a>
                     </div>
-                </div>
+        </div>
             </div>
         </div>
     </main>
@@ -348,7 +353,7 @@
                         <p class="font-semibold text-blue-800 dark:text-blue-200">Đơn hàng đang chờ xác nhận</p>
                         <p class="text-sm text-blue-700 dark:text-blue-300">Bạn sẽ nhận vé quay may mắn sau khi đơn hàng được duyệt</p>
                     </div>
-                </div>
+        </div>
             </div>
             
             <div class="flex gap-3">
@@ -379,7 +384,7 @@
                         <div id="ecosystem-logos-container" class="flex gap-6">
                             <!-- Logos will be inserted by JavaScript -->
                         </div>
-                    </div>
+        </div>
                 </div>
 
                 <div class="space-y-2">
