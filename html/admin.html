@@ -1562,8 +1562,11 @@
             document.getElementById('introPostModalTitle').textContent = id ? 'Sửa bài viết' : 'Thêm bài viết';
             
             if (id > 0) {
+                // Convert id to string for comparison since API returns string IDs
+                const idString = String(id);
+                
                 // Try to find post in current array first
-                let post = currentIntroPosts.find(p => p.id === id);
+                let post = currentIntroPosts.find(p => String(p.id) === idString);
                 
                 // If not found, reload data from server
                 if (!post) {
@@ -1575,7 +1578,7 @@
                         
                         if (data.success) {
                             currentIntroPosts = data.posts;
-                            post = data.posts.find(p => p.id === id);
+                            post = data.posts.find(p => String(p.id) === idString);
                         }
                     } catch (error) {
                         console.error('Error loading post:', error);
