@@ -4,6 +4,7 @@ let categoriesData = [];
 let productsData = [];
 let rewardTemplatesData = [];
 let usersData = [];
+let ticketsData = [];
 
 // Products Functions
 async function loadProducts() {
@@ -291,6 +292,7 @@ async function loadTickets() {
         const response = await fetch(`${API_BASE}/admin/get_tickets.php?t=${Date.now()}`, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
+            ticketsData = data.tickets;
             renderTickets(data.tickets);
         }
     } catch (error) {
