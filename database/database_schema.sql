@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS orders (
     voucher_code VARCHAR(50) DEFAULT NULL,
     discount_amount DECIMAL(15, 2) DEFAULT 0,
     total_amount DECIMAL(15, 2) NOT NULL COMMENT 'Tổng tiền sau giảm giá',
-    order_status ENUM('pending', 'approved', 'processing', 'completed', 'cancelled') DEFAULT 'pending',
+    order_status ENUM('pending', 'approved', 'processing', 'shipping', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
     approved_by INT DEFAULT NULL COMMENT 'Admin ID duyệt đơn',
     approved_at TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
