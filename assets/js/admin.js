@@ -206,6 +206,7 @@ function renderOrders(orders) {
                         <option value="pending" ${order.order_status === 'pending' ? 'selected' : ''}>Chờ xử lý</option>
                         <option value="approved" ${order.order_status === 'approved' ? 'selected' : ''}>Đã duyệt</option>
                         <option value="processing" ${order.order_status === 'processing' ? 'selected' : ''}>Đang xử lý</option>
+                        <option value="shipping" ${order.order_status === 'shipping' ? 'selected' : ''}>Đang giao hàng</option>
                         <option value="shipped" ${order.order_status === 'shipped' ? 'selected' : ''}>Đã giao hàng</option>
                         <option value="delivered" ${order.order_status === 'delivered' ? 'selected' : ''}>Đã nhận hàng</option>
                         <option value="cancelled" ${order.order_status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
@@ -218,14 +219,15 @@ function renderOrders(orders) {
 
 function getOrderStatusClass(status) {
     const classes = {
-        'pending': 'bg-yellow-100 text-yellow-800',
-        'approved': 'bg-blue-100 text-blue-800',
-        'processing': 'bg-purple-100 text-purple-800',
-        'shipped': 'bg-indigo-100 text-indigo-800',
-        'delivered': 'bg-green-100 text-green-800',
-        'cancelled': 'bg-red-100 text-red-800'
+        'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+        'approved': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+        'processing': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+        'shipping': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
+        'shipped': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
+        'delivered': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+        'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
     };
-    return classes[status] || 'bg-gray-100 text-gray-800';
+    return classes[status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
 }
 
 function getOrderStatusText(status) {
@@ -233,11 +235,12 @@ function getOrderStatusText(status) {
         'pending': 'Chờ xử lý',
         'approved': 'Đã duyệt',
         'processing': 'Đang xử lý',
+        'shipping': 'Đang giao hàng',
         'shipped': 'Đã giao hàng',
         'delivered': 'Đã nhận hàng',
         'cancelled': 'Đã hủy'
     };
-    return texts[status] || status;
+    return texts[status] || 'Không xác định';
 }
 
 async function approveOrder(orderId) {

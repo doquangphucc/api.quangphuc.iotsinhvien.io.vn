@@ -24,7 +24,7 @@ $order_id = intval($data['order_id'] ?? 0);
 $new_status = $data['status'] ?? '';
 
 // Valid statuses
-$valid_statuses = ['pending', 'approved', 'processing', 'shipped', 'delivered', 'cancelled'];
+$valid_statuses = ['pending', 'approved', 'processing', 'shipping', 'shipped', 'delivered', 'cancelled'];
 
 if ($order_id <= 0) {
     echo json_encode(['success' => false, 'message' => 'ID đơn hàng không hợp lệ'], JSON_UNESCAPED_UNICODE);
@@ -57,6 +57,7 @@ try {
         'pending' => 'Chờ xử lý',
         'approved' => 'Đã duyệt',
         'processing' => 'Đang xử lý',
+        'shipping' => 'Đang giao hàng',
         'shipped' => 'Đã giao hàng',
         'delivered' => 'Đã nhận hàng',
         'cancelled' => 'Đã hủy'
