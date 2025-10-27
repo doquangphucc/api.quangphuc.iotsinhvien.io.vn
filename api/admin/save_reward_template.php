@@ -1,4 +1,9 @@
 <?php
+// Turn off output buffering and error display
+ob_start();
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
 require_once 'connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -89,10 +94,14 @@ try {
         $message = 'Thêm mẫu phần thưởng thành công.';
     }
 
+    ob_clean();
+    header('Content-Type: application/json; charset=utf-8');
     sendSuccess($message, ['id' => $id]);
 
 } catch (Exception $e) {
     error_log("Error saving reward template: " . $e->getMessage());
+    ob_clean();
+    header('Content-Type: application/json; charset=utf-8');
     sendError('Lỗi khi lưu mẫu phần thưởng: ' . $e->getMessage());
 }
 ?>
