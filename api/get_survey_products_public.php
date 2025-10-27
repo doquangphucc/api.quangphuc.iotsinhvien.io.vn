@@ -38,12 +38,9 @@ try {
         // Determine which price to use
         $price = ($row['price_type'] === 'market_price') ? $row['market_price'] : $row['category_price'];
         
-        // Fix image URL - database has paths like "assets/img/products/xxx.png"
-        // Need to add "../" since HTML files are in html/ folder
+        // Use image URL as-is from database
+        // Paths are like "assets/img/products/xxx.png" which work from document root
         $imageUrl = $row['image_url'];
-        if ($imageUrl && !str_starts_with($imageUrl, 'http') && !str_starts_with($imageUrl, '../')) {
-            $imageUrl = '../' . $imageUrl;
-        }
         
         $products[] = [
             'id' => (int)$row['id'],
