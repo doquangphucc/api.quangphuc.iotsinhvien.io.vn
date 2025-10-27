@@ -38,13 +38,11 @@ try {
         // Determine which price to use
         $price = ($row['price_type'] === 'market_price') ? $row['market_price'] : $row['category_price'];
         
-        // Fix image URL for frontend (from api/ folder needs ../)
+        // Fix image URL - database has paths like "assets/img/products/xxx.png"
+        // Need to add "../" since HTML files are in html/ folder
         $imageUrl = $row['image_url'];
-        // Paths in database are like: assets/img/products/xxx.png
-        // Need to prepend ../ for HTML files to work
         if ($imageUrl && !str_starts_with($imageUrl, 'http') && !str_starts_with($imageUrl, '../')) {
-            // Don't add ../ here - let frontend handle it or use absolute path
-            // Actually, database already has correct paths for html/ folder
+            $imageUrl = '../' . $imageUrl;
         }
         
         $products[] = [
