@@ -650,7 +650,23 @@
             const hasImage = project.image_url && project.image_url.trim() !== '';
             
             let mediaContent = '';
-            if (hasVideo) {
+            if (hasVideo && hasImage) {
+                // Có cả video và ảnh: hiển thị ảnh làm thumbnail, click để xem video
+                mediaContent = `
+                    <div class="relative cursor-pointer group" onclick="openLightbox('${project.video_url}')">
+                        <img src="${project.image_url}" alt="${project.title}" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <svg class="w-8 h-8 text-green-600 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
+                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">XEM VIDEO</span>
+                        </div>
+                    </div>
+                `;
+            } else if (hasVideo) {
+                // Chỉ có video: hiển thị video preview
                 mediaContent = `
                     <div class="relative cursor-pointer" onclick="openLightbox('${project.video_url}')">
                         <video class="w-full h-80 object-cover" muted>
@@ -662,16 +678,17 @@
                             </div>
                         </div>
                         <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
-                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">DỰ ÁN</span>
+                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">XEM VIDEO</span>
                         </div>
                     </div>
                 `;
             } else if (hasImage) {
+                // Chỉ có ảnh
                 mediaContent = `
                     <div class="relative h-80 overflow-hidden">
                         <img src="${project.image_url}" alt="${project.title}" class="w-full h-full object-cover">
                         <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
-                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">DỰ ÁN</span>
+                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">HÌNH ẢNH DỰ ÁN</span>
                         </div>
                     </div>
                 `;
