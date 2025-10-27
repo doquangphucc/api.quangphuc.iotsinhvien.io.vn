@@ -2505,7 +2505,12 @@
                     option.value = watt;
                     option.textContent = panel.title;
                     option.setAttribute('data-price', panel.price);
-                    option.setAttribute('data-image', panel.image_url);
+                    // Fix image URL path
+                    let imageUrl = panel.image_url;
+                    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                        imageUrl = '/' + imageUrl;
+                    }
+                    option.setAttribute('data-image', imageUrl);
                     solarPanelSelect.appendChild(option);
                 });
             }
@@ -2519,7 +2524,12 @@
                     option.value = battery.title.toLowerCase().replace(/\s+/g, '-');
                     option.textContent = battery.title;
                     option.setAttribute('data-price', battery.price);
-                    option.setAttribute('data-image', battery.image_url);
+                    // Fix image URL path
+                    let imageUrl = battery.image_url;
+                    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                        imageUrl = '/' + imageUrl;
+                    }
+                    option.setAttribute('data-image', imageUrl);
                     batterySelect.appendChild(option);
                 });
             }
