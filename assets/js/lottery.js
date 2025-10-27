@@ -4,18 +4,66 @@
  * Description: Vertical scrolling slot machine with smooth animations
  */
 
-// Prize configuration
-const prizes = [
-    { id: 1, name: 'Giảm 10%', icon: '🎁', type: 'discount', value: '10%' },
-    { id: 2, name: 'Giảm 20%', icon: '🎉', type: 'discount', value: '20%' },
-    { id: 3, name: 'Miễn phí vận chuyển', icon: '🚚', type: 'free_shipping', value: 'Free' },
-    { id: 4, name: 'Tặng kèm phụ kiện', icon: '🎁', type: 'accessory', value: 'Gift' },
-    { id: 5, name: 'Giảm 50%', icon: '💎', type: 'discount', value: '50%' },
-    { id: 6, name: 'Chúc may mắn lần sau!', icon: '😢', type: 'no_prize', value: 'None' }
-];
-
+// Prize configuration - loaded from database
+let prizes = [];
 let isSpinning = false;
 let availableTickets = 0;
+
+// Load reward templates from database
+async function loadRewardTemplates() {
+    try {
+        const response = await fetch('../api/get_reward_templates_public.php');
+        const data = await response.json();
+        
+        if (data.success && data.templates && data.templates.length > 0) {
+            prizes = data.templates.map((template, index) => ({
+                id: template.id,
+                name: template.reward_name,
+                icon: getRewardIcon(template.reward_type),
+                type: template.reward_type,
+                value: template.reward_value,
+                description: template.reward_description,
+                quantity: template.reward_quantity,
+                image: template.reward_image
+            }));
+        } else {
+            // Default prizes if no templates found
+            prizes = [
+                { id: 1, name: 'Giảm 10%', icon: '🎁', type: 'voucher', value: '10' },
+                { id: 2, name: 'Giảm 20%', icon: '🎉', type: 'voucher', value: '20' },
+                { id: 3, name: 'Miễn phí vận chuyển', icon: '🚚', type: 'gift', value: 'Free' },
+                { id: 4, name: 'Tặng kèm phụ kiện', icon: '🎁', type: 'gift', value: 'Gift' },
+                { id: 5, name: 'Giảm 50%', icon: '💎', type: 'voucher', value: '50' },
+                { id: 6, name: 'Chúc may mắn lần sau!', icon: '😢', type: 'gift', value: 'None' }
+            ];
+        }
+        
+        // Initialize slot machine with prizes
+        initSlotMachine();
+    } catch (error) {
+        console.error('Error loading reward templates:', error);
+        // Use default prizes on error
+        prizes = [
+            { id: 1, name: 'Giảm 10%', icon: '🎁', type: 'voucher', value: '10' },
+            { id: 2, name: 'Giảm 20%', icon: '🎉', type: 'voucher', value: '20' },
+            { id: 3, name: 'Miễn phí vận chuyển', icon: '🚚', type: 'gift', value: 'Free' },
+            { id: 4, name: 'Tặng kèm phụ kiện', icon: '🎁', type: 'gift', value: 'Gift' },
+            { id: 5, name: 'Giảm 50%', icon: '💎', type: 'voucher', value: '50' },
+            { id: 6, name: 'Chúc may mắn lần sau!', icon: '😢', type: 'gift', value: 'None' }
+        ];
+        initSlotMachine();
+    }
+}
+
+// Get icon based on reward type
+function getRewardIcon(type) {
+    const icons = {
+        'voucher': '🎁',
+        'cash': '💰',
+        'gift': '🎁'
+    };
+    return icons[type] || '🎁';
+}
 
 // Initialize slot machine
 function initSlotMachine() {
@@ -41,6 +89,27 @@ function initSlotMachine() {
     
     // Set initial position
     reel.style.top = '0px';
+    
+    // Update prize display on sidebar
+    updatePrizeDisplay();
+}
+
+// Update prize display in sidebar
+function updatePrizeDisplay() {
+    const prizeContainer = document.querySelector('.space-y-4');
+    if (!prizeContainer || !prizes || prizes.length === 0) return;
+    
+    let html = '';
+    prizes.forEach(prize => {
+        html += `
+            <div class="prize-item">
+                <h3>${prize.icon} ${prize.name}</h3>
+                <p>${prize.description || 'Phần thưởng đặc biệt'}</p>
+            </div>
+        `;
+    });
+    
+    prizeContainer.innerHTML = html;
 }
 
 // Load user tickets
@@ -201,7 +270,7 @@ function showResult(reward) {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    initSlotMachine();
+    loadRewardTemplates();
     loadTickets();
     
     // Add spin button event
