@@ -108,8 +108,8 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             // Delete old image if exists
-            if ($id > 0 && !empty($image_url) && strpos($image_url, '/uploads/intro_images/') !== false) {
-                $old_file = __DIR__ . '/../../' . ltrim($image_url, '/');
+            if ($id > 0 && !empty($old_image_url) && strpos($old_image_url, '/uploads/intro_images/') !== false) {
+                $old_file = __DIR__ . '/../../' . ltrim($old_image_url, '/');
                 if (file_exists($old_file)) {
                     unlink($old_file);
                 }
@@ -149,8 +149,8 @@ if (isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
         
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             // Delete old video if exists
-            if ($id > 0 && !empty($video_url) && strpos($video_url, '/uploads/intro_videos/') !== false) {
-                $old_file = __DIR__ . '/../../' . ltrim($video_url, '/');
+            if ($id > 0 && !empty($old_video_url) && strpos($old_video_url, '/uploads/intro_videos/') !== false) {
+                $old_file = __DIR__ . '/../../' . ltrim($old_video_url, '/');
                 if (file_exists($old_file)) {
                     unlink($old_file);
                 }
