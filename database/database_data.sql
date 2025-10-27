@@ -703,12 +703,22 @@ INSERT INTO intro_posts (id, title, description, image_url, video_url, is_active
 (4, 'Giải Pháp Cho Mọi Quy Mô', 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.', NULL, NULL, 1, 4, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
 
 -- =====================================================
+-- DỮ LIỆU MẪU - PROJECTS (Dự án)
+-- =====================================================
+INSERT INTO projects (id, title, description, image_url, video_url, is_active, display_order, created_at, updated_at) VALUES
+(1, 'Lắp Đặt Hệ Thống 5kW Tại Gia Đình Sài Gòn', 'Hệ thống điện mặt trời 5kW cho gia đình tại Quận 7, TP. Hồ Chí Minh. Sử dụng công nghệ pin cao cấp từ Jinko Solar và inverter Growatt.', NULL, NULL, 1, 1, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
+(2, 'Dự Án Điện Mặt Trời 10kW Cho Shop Coffee', 'Lắp đặt hệ thống 10kW cho cửa hàng coffee shop tại Đà Nẵng. Giúp giảm hơn 80% chi phí điện hàng tháng.', NULL, NULL, 1, 2, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
+(3, 'Hệ Thống 20kW Cho Nhà Xưởng', 'Dự án lắp đặt 20kW trên mái nhà xưởng tại Bình Dương. Công suất lớn đáp ứng nhu cầu sản xuất và còn dư điện bán lưới.', NULL, NULL, 1, 3, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
+(4, 'Hệ Thống Hybrid 15kW Có Pin Lưu Trữ', 'Dự án hệ thống hybrid 15kW kết hợp pin lưu trữ tại Vũng Tàu. Tự chủ năng lượng 24/7, không lo mất điện.', NULL, NULL, 1, 4, '2025-10-27 12:00:00', '2025-10-27 12:00:00');
+
+-- =====================================================
 -- HOÀN THÀNH IMPORT DỮ LIỆU
 -- =====================================================
 SELECT 'Sample data imported successfully!' as message;
 SELECT 'Packages: 4 packages' as info;
 SELECT 'Reward Templates: 6 templates' as info;
 SELECT 'Intro Posts: 4 posts' as info;
+SELECT 'Projects: 4 projects' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
 SELECT 'Test users created:' as info;
