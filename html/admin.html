@@ -632,7 +632,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị *</label>
-                            <input type="number" id="intro_post_display_order" value="1" min="1" required 
+                            <input type="number" name="display_order" id="intro_post_display_order" value="1" min="1" required 
                                 class="w-full px-4 py-2 border rounded-lg">
                         </div>
                         <div>
@@ -1839,6 +1839,7 @@
                 
                 // Add additional fields that may not be in form directly
                 formData.append('id', document.getElementById('intro_post_id').value);
+                formData.append('display_order', document.getElementById('intro_post_display_order').value);
                 formData.append('is_active', document.getElementById('intro_post_is_active').checked ? '1' : '0');
                 
                 const response = await fetch(`${API_BASE}/admin/save_intro_post.php`, {

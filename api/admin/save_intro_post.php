@@ -27,12 +27,27 @@ if (!is_admin()) {
 $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 $title = $_POST['title'] ?? '';
 $description = $_POST['description'] ?? '';
-$display_order = intval($_POST['display_order'] ?? 0);
 $is_active = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
 $image_url = $_POST['image_url'] ?? '';
 $video_url = $_POST['video_url'] ?? '';
 $delete_image = isset($_POST['delete_image']) && $_POST['delete_image'] === '1';
 $delete_video = isset($_POST['delete_video']) && $_POST['delete_video'] === '1';
+
+// Handle display_order - get from POST or keep existing value when editing
+$display_order = 0;
+if (isset($_POST['display_order']) && $_POST['display_order'] !== '') {
+    $display_order = intval($_POST['display_order']);
+} elseif ($id > 0) {
+    // When editing, if display_order not provided, keep the existing value
+    $stmt = $conn->prepare("SELECT display_order FROM intro_posts WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $display_order = $row['display_order'];
+    }
+    $stmt->close();
+}
 
 if (empty($title)) {
     echo json_encode(['success' => false, 'message' => 'Tiêu đề không được để trống']);
