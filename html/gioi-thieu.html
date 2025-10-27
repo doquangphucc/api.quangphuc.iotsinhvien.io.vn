@@ -262,6 +262,9 @@
             </div>
         </section>
 
+        <!-- Intro Posts from Database -->
+        <section id="intro-posts-section" class="py-16 bg-gray-50 dark:bg-gray-800"></section>
+
         <!-- Quy Trình Tư Vấn 3 Bước - NEW SECTION -->
         <section class="py-16 bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-800 dark:to-gray-900">
             <div class="container mx-auto px-4">
@@ -1432,6 +1435,68 @@
     <script src="../assets/js/slideshow-config.js"></script>
     <script src="../assets/js/slideshow.js"></script>
     <script src="../assets/js/cache-buster.js"></script>
+    
+    <!-- Load Intro Posts from Database -->
+    <script>
+        const API_BASE = 'https://api.quangphuc.iotsinhvien.io.vn/api';
+        
+        async function loadIntroPosts() {
+            try {
+                const response = await fetch(`${API_BASE}/get_intro_posts_public.php`);
+                const data = await response.json();
+                
+                if (data.success && data.posts.length > 0) {
+                    displayIntroPosts(data.posts);
+                }
+            } catch (error) {
+                console.error('Error loading intro posts:', error);
+            }
+        }
+        
+        function displayIntroPosts(posts) {
+            const section = document.getElementById('intro-posts-section');
+            
+            let html = `
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">Giới Thiệu Của Chúng Tôi</h2>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-8">
+            `;
+            
+            posts.forEach((post, index) => {
+                const bgColors = ['bg-white', 'bg-green-50'];
+                const darkBgColors = ['dark:bg-gray-900', 'dark:bg-gray-800'];
+                const colorIndex = index % 2;
+                
+                html += `
+                    <div class="${bgColors[colorIndex]} ${darkBgColors[colorIndex]} rounded-2xl p-8 shadow-lg">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">${post.title}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">${post.description || ''}</p>
+                        ${post.image_url ? `<img src="${post.image_url}" alt="${post.title}" class="w-full rounded-xl mb-4" onerror="this.style.display='none'">` : ''}
+                        ${post.video_url ? `
+                            <div class="rounded-xl overflow-hidden mb-4">
+                                <video controls class="w-full" style="max-height: 300px;">
+                                    <source src="${post.video_url}" type="video/mp4">
+                                    Trình duyệt của bạn không hỗ trợ video.
+                                </video>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            section.innerHTML = html;
+        }
+        
+        // Load intro posts when page loads
+        window.addEventListener('DOMContentLoaded', loadIntroPosts);
+    </script>
 </body>
 </html>
 
