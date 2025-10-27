@@ -176,13 +176,14 @@
                 transform: translateX(0);
             }
             100% {
-                transform: translateX(-50%);
+                transform: translateX(-33.333%);
             }
         }
         
         .animate-scroll-ecosystem {
             display: flex;
             will-change: transform;
+            animation: scrollLeft 20s linear infinite;
         }
         
         .animate-scroll-ecosystem:hover {
@@ -747,12 +748,18 @@
                     
                     <!-- Ecosystem Logos Animation -->
                     <div class="mt-6 overflow-hidden" style="height: 80px;">
-                        <div class="flex gap-6 animate-scroll-ecosystem" style="animation: scrollLeft 12s linear infinite;">
+                        <div class="flex gap-6 animate-scroll-ecosystem">
+                            <!-- Logo row 1 -->
                             <img src="assets/img/ecosystem/baoduy-solar-logo.jpg" alt="Bảo Duy Solar" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
                             <img src="assets/img/ecosystem/hc-travel-logo.jpg" alt="HC Travel" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
                             <img src="assets/img/ecosystem/hc-cafe-logo.jpg" alt="HC Coffee & Restaurant" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
                             <img src="assets/img/ecosystem/c-home-logo.jpg" alt="C Home Build" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
-                            <!-- Duplicate for seamless loop -->
+                            <!-- Logo row 2 (duplicate for seamless loop) -->
+                            <img src="assets/img/ecosystem/baoduy-solar-logo.jpg" alt="Bảo Duy Solar" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/hc-travel-logo.jpg" alt="HC Travel" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/hc-cafe-logo.jpg" alt="HC Coffee & Restaurant" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/c-home-logo.jpg" alt="C Home Build" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <!-- Logo row 3 (duplicate for seamless loop) -->
                             <img src="assets/img/ecosystem/baoduy-solar-logo.jpg" alt="Bảo Duy Solar" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
                             <img src="assets/img/ecosystem/hc-travel-logo.jpg" alt="HC Travel" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
                             <img src="assets/img/ecosystem/hc-cafe-logo.jpg" alt="HC Coffee & Restaurant" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
