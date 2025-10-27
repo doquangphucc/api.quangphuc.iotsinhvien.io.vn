@@ -27,6 +27,18 @@ if ($id <= 0) {
     exit;
 }
 
+// Check if reward template is being used by lottery tickets
+$stmt = $conn->prepare("SELECT COUNT(*) as count FROM lottery_tickets WHERE pre_assigned_reward_id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+if ($row['count'] > 0) {
+    echo json_encode(['success' => false, 'message' => 'Không thể xóa mẫu phần thưởng đang được sử dụng bởi vé quay']);
+    exit;
+}
+
 $stmt = $conn->prepare("DELETE FROM reward_templates WHERE id = ?");
 $stmt->bind_param("i", $id);
 

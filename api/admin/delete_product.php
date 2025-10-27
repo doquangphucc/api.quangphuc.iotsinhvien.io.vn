@@ -27,10 +27,37 @@ if ($id <= 0) {
     exit;
 }
 
+// Get product image URL before deleting
+$stmt = $conn->prepare("SELECT image_url FROM products WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$product = $result->fetch_assoc();
+$stmt->close();
+
+// Delete the product
 $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
+    // Delete image file if exists
+    if ($product && !empty($product['image_url'])) {
+        // Handle both absolute and relative paths
+        $image_path = $product['image_url'];
+        
+        // Try relative path first (if starts with assets/)
+        if (strpos($image_path, 'assets/') === 0) {
+            $image_file = __DIR__ . '/../../' . $image_path;
+        } else {
+            // Try absolute path
+            $image_file = __DIR__ . '/../../' . ltrim($image_path, '/');
+        }
+        
+        if (file_exists($image_file)) {
+            unlink($image_file);
+        }
+    }
+    
     echo json_encode(['success' => true, 'message' => 'Xóa sản phẩm thành công']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error]);

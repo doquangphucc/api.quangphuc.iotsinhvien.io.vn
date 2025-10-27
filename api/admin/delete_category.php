@@ -39,10 +39,35 @@ if ($row['count'] > 0) {
     exit;
 }
 
+// Get category logo URL before deleting
+$stmt = $conn->prepare("SELECT logo_url FROM product_categories WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$category = $result->fetch_assoc();
+$stmt->close();
+
 $stmt = $conn->prepare("DELETE FROM product_categories WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
+    // Delete logo file if exists
+    if ($category && !empty($category['logo_url'])) {
+        $logo_path = $category['logo_url'];
+        
+        // Try relative path first (if starts with assets/)
+        if (strpos($logo_path, 'assets/') === 0) {
+            $logo_file = __DIR__ . '/../../' . $logo_path;
+        } else {
+            // Try absolute path
+            $logo_file = __DIR__ . '/../../' . ltrim($logo_path, '/');
+        }
+        
+        if (file_exists($logo_file)) {
+            unlink($logo_file);
+        }
+    }
+    
     echo json_encode(['success' => true, 'message' => 'Xóa danh mục thành công']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error]);
