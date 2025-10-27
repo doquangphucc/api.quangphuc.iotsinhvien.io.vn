@@ -61,8 +61,8 @@ server {
         # PHP-FPM configuration
         try_files $uri $uri/ =404;
         
-        # Increase client body size for API endpoints
-        client_max_body_size 10M;
+        # Increase client body size for API endpoints (for large file uploads)
+        client_max_body_size 100M;
         
         location ~ \.php$ {
             include fastcgi_params;
@@ -85,10 +85,11 @@ server {
             fastcgi_param PHP_VALUE "session.cookie_lifetime=86400
                                      session.cookie_httponly=1
                                      session.cookie_samesite=Lax
-                                     upload_max_filesize=5M
-                                     post_max_size=10M
-                                     max_execution_time=300
-                                     max_input_time=300";
+                                     upload_max_filesize=50M
+                                     post_max_size=60M
+                                     max_execution_time=600
+                                     max_input_time=600
+                                     memory_limit=256M";
         }
     }
 
