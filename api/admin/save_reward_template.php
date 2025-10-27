@@ -5,7 +5,7 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 try {
-    require_once 'connect.php';
+    require_once __DIR__ . '/../connect.php';
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         ob_clean();
