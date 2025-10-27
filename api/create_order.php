@@ -63,7 +63,7 @@ try {
     }
 
     $placeholders = implode(',', array_fill(0, count($cartItemIds), '?'));
-    $sql = "SELECT c.id AS cart_item_id, c.product_id, c.quantity, p.title as name, p.market_price as price, p.image_url
+    $sql = "SELECT c.id AS cart_item_id, c.user_id, c.product_id, c.quantity, p.title as name, p.market_price as price, p.image_url
             FROM cart_items c
             JOIN products p ON c.product_id = p.id
             WHERE c.user_id = ? AND c.id IN ($placeholders)";
@@ -75,6 +75,13 @@ try {
 
     $cartRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     error_log("Found cart rows: " . count($cartRows));
+    
+    // Debug: Log all cart items in database for this user
+    $debugSql = "SELECT id, user_id, product_id, quantity FROM cart_items WHERE user_id = ?";
+    $debugStmt = $pdo->prepare($debugSql);
+    $debugStmt->execute([(int)$userId]);
+    $allCartItems = $debugStmt->fetchAll(PDO::FETCH_ASSOC);
+    error_log("All cart items for user " . (int)$userId . ": " . print_r($allCartItems, true));
 
     if (empty($cartRows)) {
         sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
