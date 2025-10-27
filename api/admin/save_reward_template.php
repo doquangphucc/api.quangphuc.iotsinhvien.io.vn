@@ -56,14 +56,14 @@ try {
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("ssdsisi", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active, $id);
+        $stmt->bind_param("ssdsisii", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active, $id);
     } else {
         // Insert new reward template
         $stmt = $conn->prepare("INSERT INTO reward_templates (reward_name, reward_type, reward_value, reward_description, reward_quantity, is_active) VALUES (?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("ssdissi", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active);
+        $stmt->bind_param("ssdissii", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active);
     }
 
     if (!$stmt->execute()) {
