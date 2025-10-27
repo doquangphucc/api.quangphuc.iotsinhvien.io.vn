@@ -169,6 +169,25 @@
             position: relative;
             z-index: 1;
         }
+
+        /* Ecosystem logos animation */
+        @keyframes scrollLeft {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .animate-scroll-ecosystem {
+            display: flex;
+            will-change: transform;
+        }
+        
+        .animate-scroll-ecosystem:hover {
+            animation-play-state: paused;
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900" data-page="home">
@@ -725,6 +744,21 @@
                         </div>
                     </a>
                     <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+                    
+                    <!-- Ecosystem Logos Animation -->
+                    <div class="mt-6 overflow-hidden" style="height: 80px;">
+                        <div class="flex gap-6 animate-scroll-ecosystem" style="animation: scrollLeft 12s linear infinite;">
+                            <img src="assets/img/ecosystem/baoduy-solar-logo.jpg" alt="Bảo Duy Solar" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/hc-travel-logo.jpg" alt="HC Travel" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/hc-cafe-logo.jpg" alt="HC Coffee & Restaurant" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/c-home-logo.jpg" alt="C Home Build" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <!-- Duplicate for seamless loop -->
+                            <img src="assets/img/ecosystem/baoduy-solar-logo.jpg" alt="Bảo Duy Solar" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/hc-travel-logo.jpg" alt="HC Travel" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/hc-cafe-logo.jpg" alt="HC Coffee & Restaurant" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                            <img src="assets/img/ecosystem/c-home-logo.jpg" alt="C Home Build" class="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Contact Info -->
