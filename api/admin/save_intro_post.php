@@ -54,6 +54,20 @@ if (empty($title)) {
     exit;
 }
 
+// Check for duplicate display_order (except current post)
+$check_stmt = $conn->prepare("SELECT id, title FROM intro_posts WHERE display_order = ? AND id != ?");
+$check_stmt->bind_param("ii", $display_order, $id);
+$check_stmt->execute();
+$check_result = $check_stmt->get_result();
+if ($row = $check_result->fetch_assoc()) {
+    echo json_encode([
+        'success' => false, 
+        'message' => "Thứ tự hiển thị {$display_order} đã được sử dụng bởi bài viết khác: \"{$row['title']}\". Vui lòng chọn thứ tự khác."
+    ]);
+    exit;
+}
+$check_stmt->close();
+
 // Initialize old URLs if editing
 $old_image_url = '';
 $old_video_url = '';
