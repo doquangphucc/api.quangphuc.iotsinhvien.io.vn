@@ -13,7 +13,8 @@ USE nangluongmattroi;
 -- Chỉ thêm 2 danh mục giống package_categories
 INSERT INTO product_categories (id, name, logo_url, display_order, is_active) VALUES
 (1, 'Bảo Duy Solar', NULL, 1, TRUE),
-(2, 'C - Home Building', NULL, 2, TRUE);
+(2, 'C - Home Building', NULL, 2, TRUE),
+(3, 'Coffee', NULL, 3, TRUE);
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCTS
