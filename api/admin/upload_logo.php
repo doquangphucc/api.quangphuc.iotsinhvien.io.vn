@@ -52,13 +52,25 @@ if ($file['size'] > $max_size) {
     exit;
 }
 
+// Create parent directory if not exists
+$parent_dir = __DIR__ . '/../../assets/img';
+if (!is_dir($parent_dir)) {
+    if (!@mkdir($parent_dir, 0755, true) && !is_dir($parent_dir)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Không thể tạo thư mục assets/img. Vui lòng chmod 755 hoặc 777 cho thư mục assets/'
+        ]);
+        exit;
+    }
+}
+
 // Create upload directory if not exists
-$upload_dir = __DIR__ . '/../../assets/img/logo/';
+$upload_dir = $parent_dir . '/logo/';
 if (!is_dir($upload_dir)) {
     if (!@mkdir($upload_dir, 0755, true) && !is_dir($upload_dir)) {
         echo json_encode([
             'success' => false,
-            'message' => 'Không thể tạo thư mục upload. Vui lòng tạo thư mục assets/img/logo/ thủ công và chmod 755 hoặc 777'
+            'message' => 'Không thể tạo thư mục upload. Vui lòng chmod 755 hoặc 777 cho thư mục assets/img/'
         ]);
         exit;
     }
@@ -68,7 +80,7 @@ if (!is_dir($upload_dir)) {
 if (!is_writable($upload_dir)) {
     echo json_encode([
         'success' => false,
-        'message' => 'Thư mục upload không có quyền ghi. Vui lòng chmod 755 hoặc 777 cho thư mục assets/img/logo/'
+        'message' => 'Thư mục không có quyền ghi. Vui lòng chạy: chmod -R 755 assets/img (qua SSH)'
     ]);
     exit;
 }
