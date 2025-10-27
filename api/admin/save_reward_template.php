@@ -27,7 +27,6 @@ $reward_type = $data['reward_type'] ?? '';
 $reward_value = !empty($data['reward_value']) ? floatval($data['reward_value']) : null;
 $reward_description = $data['reward_description'] ?? '';
 $reward_quantity = !empty($data['reward_quantity']) ? intval($data['reward_quantity']) : null;
-$reward_image = $data['reward_image'] ?? '';
 $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
 
 if (empty($reward_name) || empty($reward_type)) {
@@ -37,12 +36,12 @@ if (empty($reward_name) || empty($reward_type)) {
 
 if ($id > 0) {
     // Update
-    $stmt = $conn->prepare("UPDATE reward_templates SET reward_name = ?, reward_type = ?, reward_value = ?, reward_description = ?, reward_quantity = ?, reward_image = ?, is_active = ? WHERE id = ?");
-    $stmt->bind_param("ssdsissi", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $reward_image, $is_active, $id);
+    $stmt = $conn->prepare("UPDATE reward_templates SET reward_name = ?, reward_type = ?, reward_value = ?, reward_description = ?, reward_quantity = ?, is_active = ? WHERE id = ?");
+    $stmt->bind_param("ssdsisi", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active, $id);
 } else {
     // Insert
-    $stmt = $conn->prepare("INSERT INTO reward_templates (reward_name, reward_type, reward_value, reward_description, reward_quantity, reward_image, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssdissi", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $reward_image, $is_active);
+    $stmt = $conn->prepare("INSERT INTO reward_templates (reward_name, reward_type, reward_value, reward_description, reward_quantity, is_active) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssdissi", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active);
 }
 
 if ($stmt->execute()) {
