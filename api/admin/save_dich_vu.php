@@ -33,6 +33,22 @@ if (empty($name)) {
     exit;
 }
 
+// Check for duplicate display_order (except current dich_vu)
+$check_stmt = $conn->prepare("SELECT id, name FROM dich_vu WHERE display_order = ? AND id != ?");
+$current_id = $id ? $id : 0;
+$check_stmt->bind_param("ii", $display_order, $current_id);
+$check_stmt->execute();
+$result = $check_stmt->get_result();
+
+if ($result->num_rows > 0) {
+    // Auto-increment display_order to next available value
+    $max_stmt = $conn->query("SELECT MAX(display_order) as max_order FROM dich_vu");
+    $max_row = $max_stmt->fetch_assoc();
+    $display_order = $max_row['max_order'] + 1;
+    $check_stmt->close();
+    $max_stmt->close();
+}
+
 if ($id) {
     // Update existing
     $sql = "UPDATE dich_vu SET name=?, description=?, logo_url=?, highlight_color=?, link_name=?, link_type=?, link_value=?, is_active=?, display_order=?, updated_at=CURRENT_TIMESTAMP WHERE id=?";
