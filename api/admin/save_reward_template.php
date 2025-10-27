@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 
 try {
     require_once __DIR__ . '/../connect.php';
+    require_once __DIR__ . '/../session.php';
+    require_once __DIR__ . '/../auth_helpers.php';
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         ob_clean();
@@ -16,7 +18,15 @@ try {
     }
 
     requireAuth();
-    requireAdmin();
+    
+    // Check if user is admin
+    if (!is_admin()) {
+        ob_clean();
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+        exit;
+    }
 
     $input = json_decode(file_get_contents('php://input'), true);
 
