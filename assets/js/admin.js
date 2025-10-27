@@ -534,7 +534,6 @@ function openRewardModal(id = null) {
             document.getElementById('reward_value').value = reward.reward_value || '';
             document.getElementById('reward_description').value = reward.reward_description || '';
             document.getElementById('reward_quantity').value = reward.reward_quantity || '';
-            document.getElementById('reward_image').value = reward.reward_image || '';
             document.getElementById('reward_is_active').checked = reward.is_active == 1;
             document.getElementById('rewardModalTitle').textContent = 'Sửa phần thưởng';
             updateRewardFields();
