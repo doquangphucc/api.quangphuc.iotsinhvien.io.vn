@@ -20,7 +20,7 @@
     <!-- Slideshow CSS -->
     <link rel="stylesheet" href="../assets/css/slideshow.css" />
 
-    <!-- Custom CSS -->
+    <!-- Custom CSS for theme transition and minor adjustments -->
     <style>
         :root {
             --color-primary: #1E5631;
@@ -112,6 +112,40 @@
         }
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
              background-color: #7f1d1d;
+        }
+
+        /* Slideshow enhancements */
+        body {
+            background-color: transparent !important;
+            background: transparent !important;
+            min-height: 100vh;
+        }
+
+        /* Ensure slideshow covers full viewport */
+        #slideshow-background {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: -1 !important;
+        }
+
+        /* Make sections completely transparent */
+        section {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        /* Only content containers have background */
+        .container {
+            position: relative;
+        }
+
+        /* Improve text readability on slideshow */
+        main {
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
@@ -366,6 +400,14 @@
             }
         });
     </script>
+
+    <!-- Slideshow Scripts -->
+    <script>
+        // Set path prefix for pages in html/ directory
+        window.SLIDESHOW_PATH_PREFIX = '../';
+    </script>
+    <script src="../assets/js/slideshow-config.js"></script>
+    <script src="../assets/js/slideshow.js"></script>
 
     <!-- Ecosystem Logos Carousel -->
     <script>
