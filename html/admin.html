@@ -979,9 +979,9 @@
         function previewCategoryLogo(event) {
             const file = event.target.files[0];
             if (file) {
-                // Check file size (max 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast('Kích thước ảnh không được vượt quá 2MB!', 'error');
+                // Check file size (max 3MB)
+                if (file.size > 3 * 1024 * 1024) {
+                    showToast('Kích thước ảnh không được vượt quá 3MB! File hiện tại: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB', 'error');
                     event.target.value = '';
                     return;
                 }
@@ -1043,7 +1043,8 @@
                 
                 // Check if response is 413 (Request Entity Too Large)
                 if (response.status === 413) {
-                    showToast('Kích thước ảnh quá lớn! Vui lòng chọn ảnh nhỏ hơn 2MB.', 'error');
+                    const fileSizeMB = logoFile ? (logoFile.size / 1024 / 1024).toFixed(2) : 'unknown';
+                    showToast('File quá lớn (' + fileSizeMB + 'MB)! Server chỉ cho phép upload file nhỏ hơn. Vui lòng chọn ảnh nhỏ hơn hoặc nén ảnh.', 'error');
                     return;
                 }
                 
@@ -1113,9 +1114,9 @@
             if (e.target.id === 'package_category_logo') {
                 const file = e.target.files[0];
                 if (file) {
-                    // Check file size (max 2MB)
-                    if (file.size > 2 * 1024 * 1024) {
-                        showToast('Kích thước ảnh không được vượt quá 2MB!', 'error');
+                    // Check file size (max 3MB)
+                    if (file.size > 3 * 1024 * 1024) {
+                        showToast('Kích thước ảnh không được vượt quá 3MB! File hiện tại: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB', 'error');
                         e.target.value = '';
                         return;
                     }

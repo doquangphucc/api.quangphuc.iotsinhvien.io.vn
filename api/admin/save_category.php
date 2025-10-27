@@ -5,10 +5,11 @@
 ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
-// Increase upload limits for file uploads (2MB)
-ini_set('upload_max_filesize', '2M');
+// Increase upload limits for file uploads (up to 5MB)
+ini_set('upload_max_filesize', '5M');
 ini_set('post_max_size', '10M');
 ini_set('max_execution_time', 300);
+ini_set('max_input_time', 300);
 
 // Start session with proper config
 require_once __DIR__ . '/../session.php';
@@ -63,10 +64,39 @@ if (empty($name)) {
 }
 
 // Handle image upload
-if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+if (isset($_FILES['logo'])) {
     $file = $_FILES['logo'];
+    
+    // Check for upload errors FIRST
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $error_messages = [
+            UPLOAD_ERR_INI_SIZE => 'File vượt quá upload_max_filesize (hiện tại: ' . ini_get('upload_max_filesize') . ')',
+            UPLOAD_ERR_FORM_SIZE => 'File vượt quá MAX_FILE_SIZE trong form',
+            UPLOAD_ERR_PARTIAL => 'File chỉ upload được một phần',
+            UPLOAD_ERR_NO_FILE => 'Không có file được upload',
+            UPLOAD_ERR_NO_TMP_DIR => 'Thiếu thư mục tạm',
+            UPLOAD_ERR_CANT_WRITE => 'Không thể ghi file ra đĩa',
+            UPLOAD_ERR_EXTENSION => 'Extension PHP đã chặn upload'
+        ];
+        
+        $error_msg = $error_messages[$file['error']] ?? 'Lỗi upload không xác định (code: ' . $file['error'] . ')';
+        
+        echo json_encode([
+            'success' => false, 
+            'message' => $error_msg,
+            'debug' => [
+                'error_code' => $file['error'],
+                'file_size' => $file['size'],
+                'file_size_mb' => round($file['size'] / (1024 * 1024), 2),
+                'upload_max_filesize' => ini_get('upload_max_filesize'),
+                'post_max_size' => ini_get('post_max_size')
+            ]
+        ]);
+        exit;
+    }
+    
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-    $max_size = 2 * 1024 * 1024; // 2MB
+    $max_size = 3 * 1024 * 1024; // 3MB - increased
 
     // Validate file type
     if (!in_array($file['type'], $allowed_types)) {
@@ -76,7 +106,7 @@ if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
 
     // Validate file size
     if ($file['size'] > $max_size) {
-        echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 2MB']);
+        echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 3MB']);
         exit;
     }
 
