@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vòng Quay May Mắn - HC Eco System</title>
-        
+    <meta name="description" content="Tổng hợp các dịch vụ của HC Eco System - Hệ sinh thái bền vững với năng lượng mặt trời, du lịch, nhà hàng và xây dựng." />
+    <title>Dịch vụ - HC Eco System</title>
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -15,7 +16,11 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
-    
+
+    <!-- Slideshow CSS -->
+    <link rel="stylesheet" href="../assets/css/slideshow.css" />
+
+    <!-- Custom CSS -->
     <style>
         :root {
             --color-primary: #1E5631;
@@ -25,12 +30,13 @@
             --color-text-dark: #1a202c;
             --color-text-light: #f7fafc;
         }
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+            color: var(--color-text-dark);
             transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
         }
         body[data-theme="dark"] {
             background-color: #12181B;
@@ -38,11 +44,9 @@
         }
         body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
         body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
-        body[data-theme="dark"] .dark\:bg-gray-700 { background-color: #374151; }
         body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
         body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
-        body[data-theme="dark"] .dark\:border-gray-600 { border-color: #4b5563; }
 
         .theme-toggle__icon { display: none; }
         body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
@@ -109,160 +113,12 @@
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
              background-color: #7f1d1d;
         }
-
-        /* Slot Machine Styles */
-        .slot-machine {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .slot-frame {
-            background: linear-gradient(135deg, #1E5631, #3FA34D);
-            border-radius: 24px;
-            padding: 40px 20px;
-            box-shadow: 0 20px 60px rgba(30, 86, 49, 0.4);
-            position: relative;
-        }
-
-        .slot-window {
-            background: white;
-            border-radius: 16px;
-            height: 180px;
-            overflow: hidden;
-            position: relative;
-            border: 8px solid #C5E384;
-            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .slot-reel {
-            position: absolute;
-            width: 100%;
-            top: 0;
-            transition: top 3s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        .slot-reel.spinning {
-            transition: top 0.1s linear;
-        }
-
-        .slot-item {
-            height: 180px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .slot-item-icon {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-        }
-
-        .slot-item-text {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1E5631;
-            text-align: center;
-            line-height: 1.3;
-        }
-
-        .slot-indicator {
-            position: absolute;
-            left: -30px;
-            right: -30px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 180px;
-            border: 4px solid #1E5631;
-            border-radius: 12px;
-            pointer-events: none;
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(30, 86, 49, 0.5);
-        }
-
-        .slot-indicator::before,
-        .slot-indicator::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-        }
-
-        .slot-indicator::before {
-            top: -24px;
-            border-bottom: 20px solid #1E5631;
-        }
-
-        .slot-indicator::after {
-            bottom: -24px;
-            border-top: 20px solid #1E5631;
-        }
-
-        .slot-lights {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .slot-light {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #FFD700;
-            box-shadow: 0 0 10px #FFD700;
-            animation: blink 1s infinite alternate;
-        }
-
-        .slot-light:nth-child(2) { animation-delay: 0.2s; }
-        .slot-light:nth-child(3) { animation-delay: 0.4s; }
-        .slot-light:nth-child(4) { animation-delay: 0.6s; }
-        .slot-light:nth-child(5) { animation-delay: 0.8s; }
-
-        @keyframes blink {
-            0% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-
-        .prize-item {
-            background: linear-gradient(135deg, #3FA34D, #1E5631);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            color: white;
-            box-shadow: 0 4px 15px rgba(63, 163, 77, 0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .prize-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .prize-item h3 {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .prize-item p {
-            font-size: 0.875rem;
-            opacity: 0.9;
-        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body data-page="dich-vu">
+
+    <!-- Background Slideshow -->
+    <div id="slideshow-background" class="slideshow-background"></div>
 
     <!-- Header -->
     <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
@@ -281,7 +137,7 @@
                     <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Bảng giá</a>
                     <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
                     <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
-                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dịch vụ</a>
+                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200 bg-white dark:bg-gray-700">Dịch vụ</a>
                     <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
                 </nav>
 
@@ -306,151 +162,147 @@
                 <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Bảng giá</a>
                 <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
                 <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
-                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dịch vụ</a>
+                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700">Dịch vụ</a>
                 <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
             </nav>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
-        <div class="container mx-auto max-w-6xl">
+    <main class="min-h-screen py-12 px-4">
+        <div class="container mx-auto max-w-7xl">
             <!-- Page Header -->
-            <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 mb-8 text-white shadow-xl">
-                <div class="flex items-center gap-4">
-                    <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path></svg>
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold text-gray-800 dark:text-white mb-4">
+                    Dịch Vụ Hệ Sinh Thái
+                </h1>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    Tổng hợp đầy đủ các dịch vụ của HC Eco System - Hệ sinh thái bền vững với đa dạng giải pháp cho cuộc sống hiện đại
+                </p>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <!-- 1. Bảo Duy Solar -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-24 h-24 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center">
+                            <img src="../assets/img/ecosystem/baoduy-solar-logo.jpg" alt="Bảo Duy Solar" class="w-20 h-20 rounded-xl object-cover" />
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Bảo Duy Solar</h2>
+                            <p class="text-green-600 font-semibold">Năng Lượng Mặt Trời</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Vòng Quay May Mắn</h1>
-                        <p class="text-purple-50 text-lg">Quay ngay để nhận phần thưởng hấp dẫn!</p>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                        Chuyên cung cấp giải pháp năng lượng mặt trời toàn diện cho hộ gia đình và doanh nghiệp. Lắp đặt pin năng lượng mặt trời chất lượng cao, tiết kiệm điện năng tối đa với chính sách bảo hành lâu dài.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">Lắp đặt pin mặt trời</span>
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">Tư vấn thiết kế</span>
+                        <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-sm font-medium">Bảo hành 25 năm</span>
                     </div>
+                    <a href="pricing.html" class="inline-flex items-center text-green-600 font-semibold hover:text-green-700 transition-colors">
+                        Xem bảng giá
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- 2. HC Travel -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center">
+                            <img src="../assets/img/ecosystem/hc-travel-logo.jpg" alt="HC Travel" class="w-20 h-20 rounded-xl object-cover" />
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">HC Travel</h2>
+                            <p class="text-blue-600 font-semibold">Du Lịch & Trải Nghiệm</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                        Dịch vụ du lịch đặc biệt dành cho khách hàng lắp đặt năng lượng mặt trời. Tận hưởng những chuyến du lịch đáng nhớ với ưu đãi đặc quyền và trải nghiệm độc đáo.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">Tours đặc biệt</span>
+                        <span class="px-3 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200 rounded-full text-sm font-medium">Ưu đãi VIP</span>
+                        <span class="px-3 py-1 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-200 rounded-full text-sm font-medium">Trải nghiệm độc đáo</span>
+                    </div>
+                    <a href="lien-he.html" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                        Liên hệ ngay
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- 3. HC Coffee & Restaurant -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-24 h-24 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center">
+                            <img src="../assets/img/ecosystem/hc-cafe-logo.jpg" alt="HC Coffee & Restaurant" class="w-20 h-20 rounded-xl object-cover" />
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">HC Coffee & Restaurant</h2>
+                            <p class="text-amber-600 font-semibold">Ẩm Thực & Cà Phê</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                        Nhà hàng và quán cà phê phục vụ những món ăn ngon, đồ uống chất lượng cao. Môi trường thân thiện, lý tưởng cho họp mặt, làm việc và thư giãn với bạn bè, gia đình.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 rounded-full text-sm font-medium">Cà phê cao cấp</span>
+                        <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-sm font-medium">Ẩm thực đa dạng</span>
+                        <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-full text-sm font-medium">Không gian thoải mái</span>
+                    </div>
+                    <a href="pricing.html" class="inline-flex items-center text-amber-600 font-semibold hover:text-amber-700 transition-colors">
+                        Xem thực đơn
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- 4. C Home Build -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center">
+                            <img src="../assets/img/ecosystem/c-home-logo.jpg" alt="C Home Build" class="w-20 h-20 rounded-xl object-cover" />
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">C Home Build</h2>
+                            <p class="text-green-600 font-semibold">Xây Dựng & Thiết Kế</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                        Dịch vụ xây dựng và thiết kế nhà ở hiện đại, bền vững với tiêu chuẩn cao. Tích hợp công nghệ xanh, tiết kiệm năng lượng trong từng công trình.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">Thiết kế nhà</span>
+                        <span class="px-3 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-200 rounded-full text-sm font-medium">Xây dựng xanh</span>
+                        <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 rounded-full text-sm font-medium">Tích hợp năng lượng</span>
+                    </div>
+                    <a href="https://c-homebuild.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-green-600 font-semibold hover:text-green-700 transition-colors">
+                        Xem website
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
                 </div>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8">
-                <!-- Lottery Wheel -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg text-center">
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Vòng Quay May Mắn</h2>
-                        
-                        <!-- Slot Machine Container -->
-                        <div class="slot-machine mb-8">
-                            <div class="slot-frame">
-                                <!-- Decorative lights -->
-                                <div class="slot-lights">
-                                    <div class="slot-light"></div>
-                                    <div class="slot-light"></div>
-                                    <div class="slot-light"></div>
-                                    <div class="slot-light"></div>
-                                    <div class="slot-light"></div>
-                                </div>
-                                
-                                <!-- Slot window -->
-                                <div class="slot-window">
-                                    <div class="slot-indicator"></div>
-                                    <div class="slot-reel" id="slot-reel">
-                                        <!-- Slot items will be generated by JavaScript -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Spin Button -->
-                        <button id="spin-button" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span id="spin-text">Quay Ngay!</span>
-                        </button>
-
-                        <!-- Tickets Counter -->
-                        <div class="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl">
-                            <div class="flex items-center justify-center gap-2">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
-                                </svg>
-                                <span class="text-lg font-semibold text-gray-800 dark:text-white">
-                                    Vé của bạn: <span id="ticket-count" class="text-green-600">0</span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- View Rewards Button -->
-                        <div class="mt-4">
-                            <a href="my-rewards.html" class="block w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
-                                    </svg>
-                                    <span>Xem Phần Thưởng Của Tôi</span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Prizes Info -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Phần Thưởng</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="prize-item">
-                                <h3>🎁 Giảm 10%</h3>
-                                <p>Giảm giá cho đơn hàng tiếp theo</p>
-                            </div>
-                            <div class="prize-item">
-                                <h3>🎁 Giảm 20%</h3>
-                                <p>Giảm giá cho đơn hàng tiếp theo</p>
-                            </div>
-                            <div class="prize-item">
-                                <h3>🎁 Miễn phí vận chuyển</h3>
-                                <p>Áp dụng cho đơn hàng tiếp theo</p>
-                            </div>
-                            <div class="prize-item">
-                                <h3>🎁 Tặng kèm phụ kiện</h3>
-                                <p>Nhận thêm phụ kiện miễn phí</p>
-                            </div>
-                            <div class="prize-item">
-                                <h3>🎁 Giảm 50%</h3>
-                                <p>Giảm giá lớn cho đơn hàng tiếp theo</p>
-                            </div>
-                            <div class="prize-item">
-                                <h3>🎁 Chúc may mắn lần sau!</h3>
-                                <p>Hãy thử lại lần sau nhé!</p>
-                            </div>
-                        </div>
-
-                        <!-- Rules -->
-                        <div class="mt-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                            <h4 class="font-semibold text-gray-800 dark:text-white mb-3">Quy tắc:</h4>
-                            <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                                <li>• Mỗi đơn hàng thành công = 1 vé quay</li>
-                                <li>• Vé có hiệu lực trong 30 ngày</li>
-                                <li>• Mỗi vé chỉ được sử dụng 1 lần</li>
-                                <li>• Phần thưởng sẽ được áp dụng tự động</li>
-                            </ul>
-                        </div>
-                    </div>
+            <!-- CTA Section -->
+            <div class="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 rounded-3xl p-12 text-center text-white shadow-2xl">
+                <h2 class="text-4xl font-bold mb-4">Khám Phá Hệ Sinh Thái Bền Vững</h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">
+                    Từ năng lượng sạch đến du lịch, ẩm thực và xây dựng - Tất cả đều hướng đến một cuộc sống bền vững và hiện đại
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="pricing.html" class="bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg">
+                        Xem bảng giá
+                    </a>
+                    <a href="lien-he.html" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-all">
+                        Liên hệ tư vấn
+                    </a>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Result Modal -->
-    <div id="result-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full text-center transform transition-all">
-            <div class="w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-10 h-10 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path></svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Chúc mừng!</h3>
-            <p id="result-text" class="text-gray-600 dark:text-gray-400 mb-8">Bạn đã nhận được phần thưởng!</p>
-            <button onclick="closeResultModal()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                Đóng
-            </button>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
+    <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300 mt-16">
         <div class="container mx-auto px-4 py-12">
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
                 <div class="space-y-4">
@@ -460,7 +312,8 @@
                             <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
                         </div>
                     </a>
-                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
+                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+                    
                     <!-- Ecosystem Logos Animation -->
                     <div class="mt-6 relative overflow-hidden" style="height: 80px;">
                         <div id="ecosystem-logos-container" class="flex gap-6">
@@ -498,8 +351,9 @@
     </footer>
     
     <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
-    <script src="../assets/js/lottery.js"></script>
+    <script src="../assets/js/cache-buster.js"></script>
     <script>
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -511,10 +365,6 @@
                 mobileMenu.classList.add('hidden');
             }
         });
-
-        function closeResultModal() {
-            document.getElementById('result-modal').classList.add('hidden');
-        }
     </script>
 
     <!-- Ecosystem Logos Carousel -->
@@ -550,3 +400,4 @@
     </script>
 </body>
 </html>
+
