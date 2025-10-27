@@ -708,10 +708,22 @@
         // Logout
         async function logout() {
             try {
+                // Call logout API
                 const response = await fetch(`${API_BASE}/logout.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
+                
+                // Clear user from localStorage (important for auth state)
+                if (window.authUtils && typeof window.authUtils.clearUser === 'function') {
+                    window.authUtils.clearUser();
+                } else {
+                    // Fallback: manually clear localStorage if authUtils not available
+                    localStorage.removeItem('authUser');
+                }
+                
+                // Clear cart data
+                localStorage.removeItem('cartItems');
                 
                 // Show success message if available
                 if (data.success) {
@@ -724,7 +736,15 @@
                 }, 500);
             } catch (error) {
                 console.error('Error logging out:', error);
-                // Even if there's an error, redirect to login
+                
+                // Even if there's an error, clear user data and redirect
+                if (window.authUtils && typeof window.authUtils.clearUser === 'function') {
+                    window.authUtils.clearUser();
+                } else {
+                    localStorage.removeItem('authUser');
+                }
+                localStorage.removeItem('cartItems');
+                
                 window.location.href = 'login.html';
             }
         }
