@@ -1018,6 +1018,14 @@
                 return;
             }
             
+            // Get submit button and show loading state
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn?.textContent;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Đang lưu...';
+            }
+            
             // Prepare form data for file upload
             const formData = new FormData();
             formData.append('id', categoryId);
@@ -1070,6 +1078,12 @@
                     showToast('Kích thước ảnh quá lớn hoặc server không thể xử lý. Vui lòng chọn ảnh nhỏ hơn 2MB.', 'error');
                 } else {
                     showToast('Có lỗi xảy ra khi lưu danh mục: ' + error.message, 'error');
+                }
+            } finally {
+                // Restore button state
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 }
             }
         }

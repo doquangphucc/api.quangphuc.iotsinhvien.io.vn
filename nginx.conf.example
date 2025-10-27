@@ -61,6 +61,9 @@ server {
         # PHP-FPM configuration
         try_files $uri $uri/ =404;
         
+        # Increase client body size for API endpoints
+        client_max_body_size 10M;
+        
         location ~ \.php$ {
             include fastcgi_params;
             fastcgi_pass unix:/var/run/php/php8.3-fpm.sock; # Adjust PHP version
@@ -68,10 +71,24 @@ server {
             fastcgi_param PATH_INFO $fastcgi_path_info;
             fastcgi_index index.php;
             
+            # Increase FastCGI buffers for large file uploads
+            fastcgi_buffer_size 128k;
+            fastcgi_buffers 4 256k;
+            fastcgi_busy_buffers_size 256k;
+            
+            # Increase timeouts for file uploads
+            fastcgi_read_timeout 300;
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            
             # Session configuration
             fastcgi_param PHP_VALUE "session.cookie_lifetime=86400
                                      session.cookie_httponly=1
-                                     session.cookie_samesite=Lax";
+                                     session.cookie_samesite=Lax
+                                     upload_max_filesize=5M
+                                     post_max_size=10M
+                                     max_execution_time=300
+                                     max_input_time=300";
         }
     }
 
