@@ -71,6 +71,12 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $filename = 'intro_image_' . time() . '_' . uniqid() . '.' . $extension;
         $filepath = $upload_dir . $filename;
         
+        // Check if upload directory is writable
+        if (!is_writable($upload_dir)) {
+            echo json_encode(['success' => false, 'message' => 'Thư mục upload không có quyền ghi. Vui lòng chmod 755 cho uploads/intro_images/']);
+            exit;
+        }
+        
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             // Delete old image if exists
             if ($id > 0 && !empty($image_url) && strpos($image_url, '/uploads/intro_images/') !== false) {
@@ -81,7 +87,7 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             }
             $image_url = '/uploads/intro_images/' . $filename;
         } else {
-            echo json_encode(['success' => false, 'message' => 'Lỗi khi upload ảnh']);
+            echo json_encode(['success' => false, 'message' => 'Lỗi khi upload ảnh. Kiểm tra quyền ghi file']);
             exit;
         }
     } else {
@@ -106,6 +112,12 @@ if (isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
         $filename = 'intro_video_' . time() . '_' . uniqid() . '.' . $extension;
         $filepath = $upload_dir . $filename;
         
+        // Check if upload directory is writable
+        if (!is_writable($upload_dir)) {
+            echo json_encode(['success' => false, 'message' => 'Thư mục upload không có quyền ghi. Vui lòng chmod 755 cho uploads/intro_videos/']);
+            exit;
+        }
+        
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             // Delete old video if exists
             if ($id > 0 && !empty($video_url) && strpos($video_url, '/uploads/intro_videos/') !== false) {
@@ -116,7 +128,7 @@ if (isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
             }
             $video_url = '/uploads/intro_videos/' . $filename;
         } else {
-            echo json_encode(['success' => false, 'message' => 'Lỗi khi upload video']);
+            echo json_encode(['success' => false, 'message' => 'Lỗi khi upload video. Kiểm tra quyền ghi file']);
             exit;
         }
     } else {
