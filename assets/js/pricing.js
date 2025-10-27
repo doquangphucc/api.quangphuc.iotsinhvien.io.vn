@@ -315,7 +315,7 @@ function renderPackages() {
                     ` : ''}
                     
                     <div class="mb-6">
-                        <div class="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent leading-tight break-words">
                             ${pkg.price > 0 ? formatPrice(pkg.price) : 'Liên hệ'}
                         </div>
                     </div>
