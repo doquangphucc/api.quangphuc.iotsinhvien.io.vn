@@ -2532,7 +2532,7 @@
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
                         warranty: "12 tháng",
-                        image: inv.image_url.startsWith('http') ? inv.image_url : '../' + inv.image_url,
+                        image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
                         phase: "1"
                     });
                 });
@@ -2543,7 +2543,7 @@
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
                         warranty: "12 tháng",
-                        image: inv.image_url.startsWith('http') ? inv.image_url : '../' + inv.image_url,
+                        image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
                         phase: "3"
                     });
                 });
@@ -2562,7 +2562,7 @@
                         capacity: capacity,
                         price: bat.price,
                         warranty: "10 năm",
-                        image: bat.image_url.startsWith('http') ? bat.image_url : '../' + bat.image_url
+                        image: bat.image_url.startsWith('http') ? bat.image_url : '/' + bat.image_url
                     });
                 });
             }
@@ -2577,7 +2577,7 @@
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
-                        image: cab.image_url.startsWith('http') ? cab.image_url : '../' + cab.image_url
+                        image: cab.image_url.startsWith('http') ? cab.image_url : '/' + cab.image_url
                     });
                 });
                 
@@ -2586,7 +2586,7 @@
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
-                        image: cab.image_url.startsWith('http') ? cab.image_url : '../' + cab.image_url
+                        image: cab.image_url.startsWith('http') ? cab.image_url : '/' + cab.image_url
                     });
                 });
             }
