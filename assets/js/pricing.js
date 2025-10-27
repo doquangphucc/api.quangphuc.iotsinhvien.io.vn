@@ -304,6 +304,11 @@ function renderPackages() {
                         <span class="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
                             ${pkg.category_name}
                         </span>
+                        ${pkg.category_badge_text ? `
+                            <span class="px-2 py-0.5 rounded text-xs font-bold ${getCategoryBadgeColorClass(pkg.category_badge_color)}">
+                                ${pkg.category_badge_text}
+                            </span>
+                        ` : ''}
                     </div>
                 ` : ''}
                 
@@ -395,6 +400,19 @@ function formatPrice(price) {
     // Round to integer and format with dots as thousand separators
     const roundedPrice = Math.round(price);
     return roundedPrice.toLocaleString('vi-VN') + '₫';
+}
+
+// Helper function to get category badge color classes
+function getCategoryBadgeColorClass(color) {
+    const colors = {
+        'blue': 'bg-blue-600 text-white',
+        'green': 'bg-green-600 text-white',
+        'red': 'bg-red-600 text-white',
+        'yellow': 'bg-yellow-600 text-white',
+        'purple': 'bg-purple-600 text-white',
+        'orange': 'bg-orange-600 text-white'
+    };
+    return colors[color] || 'bg-gray-600 text-white';
 }
 
 // Add to cart
