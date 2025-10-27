@@ -2464,33 +2464,29 @@
         }
         
         function openDichVuModal(id = null) {
-            // Reset form first
-            document.getElementById('dich_vu_id').value = id || '';
-            document.getElementById('dich_vu_name').value = '';
-            document.getElementById('dich_vu_description').value = '';
-            document.getElementById('dich_vu_logo_url').value = '';
-            document.getElementById('dich_vu_highlight_color').value = '#3FA34D';
-            document.getElementById('dich_vu_link_name').value = '';
-            document.getElementById('dich_vu_link_page').value = '';
-            document.getElementById('dich_vu_link_custom').value = '';
-            document.getElementById('dich_vu_display_order').value = '1';
-            document.getElementById('dich_vu_is_active').checked = true;
-            document.getElementById('dich_vu_logo').value = '';
-            document.getElementById('dich_vu_logo_preview').classList.add('hidden');
-            document.querySelector('input[name="dich_vu_link_type"][value="page"]').checked = true;
-            document.getElementById('dich_vu_link_page_section').classList.remove('hidden');
-            document.getElementById('dich_vu_link_custom_section').classList.add('hidden');
-            
-            // Show modal first
-            document.getElementById('dichVuModal').classList.add('show');
-            
-            if (id) {
-                document.getElementById('dichVuModalTitle').textContent = 'Sửa dịch vụ';
-                // Load data after modal is shown
-                editDichVu(id);
-            } else {
+            // Only open modal if id is null (new item)
+            if (!id) {
+                // Reset form for new item
+                document.getElementById('dich_vu_id').value = '';
+                document.getElementById('dich_vu_name').value = '';
+                document.getElementById('dich_vu_description').value = '';
+                document.getElementById('dich_vu_logo_url').value = '';
+                document.getElementById('dich_vu_highlight_color').value = '#3FA34D';
+                document.getElementById('dich_vu_link_name').value = '';
+                document.getElementById('dich_vu_link_page').value = '';
+                document.getElementById('dich_vu_link_custom').value = '';
+                document.getElementById('dich_vu_display_order').value = '1';
+                document.getElementById('dich_vu_is_active').checked = true;
+                document.getElementById('dich_vu_logo').value = '';
+                document.getElementById('dich_vu_logo_preview').classList.add('hidden');
+                document.querySelector('input[name="dich_vu_link_type"][value="page"]').checked = true;
+                document.getElementById('dich_vu_link_page_section').classList.remove('hidden');
+                document.getElementById('dich_vu_link_custom_section').classList.add('hidden');
                 document.getElementById('dichVuModalTitle').textContent = 'Thêm dịch vụ';
             }
+            
+            // Show modal
+            document.getElementById('dichVuModal').classList.add('show');
         }
         
         function closeDichVuModal() {
@@ -2522,6 +2518,12 @@
         }
         
         function editDichVu(id) {
+            // Set title for editing
+            document.getElementById('dichVuModalTitle').textContent = 'Sửa dịch vụ';
+            
+            // Show modal first
+            document.getElementById('dichVuModal').classList.add('show');
+            
             // Load and populate data
             fetch(`${API_BASE}/admin/get_dich_vu.php?t=${Date.now()}`, {
                 credentials: 'include'
