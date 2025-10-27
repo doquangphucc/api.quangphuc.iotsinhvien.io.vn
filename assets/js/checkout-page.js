@@ -12,25 +12,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     loadCities();
 });
 
-// Load order items (from cart or quick order)
+// Load order items (from cart)
 async function loadOrderItems() {
-    // Check if this is a quick order from pricing page
-    const quickOrderProduct = sessionStorage.getItem('quickOrderProduct');
-    
-    if (quickOrderProduct) {
-        // Load single product from sessionStorage
-        try {
-            const product = JSON.parse(quickOrderProduct);
-            orderItems = [product];
-            window.orderItems = orderItems; // Update global reference
-            sessionStorage.removeItem('quickOrderProduct'); // Clean up
-            renderOrderItems();
-            return;
-        } catch (e) {
-            console.error('Error parsing quick order:', e);
-        }
-    }
-    
     // Load from cart (database)
     const checkoutCartIds = sessionStorage.getItem('checkoutCartIds');
     if (checkoutCartIds) {

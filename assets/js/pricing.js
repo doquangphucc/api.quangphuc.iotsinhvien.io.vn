@@ -446,7 +446,7 @@ async function addToCart(productId) {
 }
 
 // Order now - Go directly to order page with this product
-function orderNow(productId) {
+async function orderNow(productId) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) {
         showToast('❌ Không tìm thấy sản phẩm', 'error');
@@ -463,18 +463,35 @@ function orderNow(productId) {
         return;
     }
     
-    // Store product in sessionStorage for order page
-    sessionStorage.setItem('quickOrderProduct', JSON.stringify({
-        id: product.id,
-        title: product.title,
-        price: product.category_price || product.market_price,
-        image_url: product.image_url,
-        category_name: product.category_name,
-        quantity: 1
-    }));
-    
-    // Redirect to order page
-    window.location.href = 'dat-hang.html';
+    // First, add product to cart to get cart_id
+    try {
+        const response = await fetch('../api/add_to_cart.php', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.cart_id) {
+            // Store cart_id in sessionStorage instead of product data
+            sessionStorage.setItem('checkoutCartIds', JSON.stringify([data.data.cart_id]));
+            
+            // Redirect to order page
+            window.location.href = 'dat-hang.html';
+        } else {
+            showToast('❌ ' + (data.message || 'Không thể thêm vào giỏ hàng'), 'error');
+        }
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        showToast('❌ Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+    }
 }
 
 // Contact for package
