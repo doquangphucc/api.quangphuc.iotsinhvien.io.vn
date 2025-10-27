@@ -378,7 +378,7 @@ function openTicketModal(id = null) {
         if (ticket) {
             document.getElementById('ticket_id').value = ticket.id;
             document.getElementById('ticket_user_id').value = ticket.user_id;
-            document.getElementById('ticket_type').value = ticket.ticket_type;
+            document.getElementById('ticket_type').value = 'purchase'; // Always fix to 'purchase'
             document.getElementById('ticket_status').value = ticket.status;
             document.getElementById('ticket_pre_assigned_reward_id').value = ticket.pre_assigned_reward_id || '';
             document.getElementById('ticketModalTitle').textContent = 'Sửa vé';
