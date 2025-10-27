@@ -577,13 +577,20 @@ async function saveReward(event) {
         is_active: document.getElementById('reward_is_active').checked
     };
 
+    console.log('Sending reward data:', formData);
+    
     try {
         const response = await fetch(`${API_BASE}/admin/save_reward_template.php`, {credentials: 'include', 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
         });
+        
+        console.log('Response status:', response.status);
+        
         const data = await response.json();
+        console.log('Response data:', data);
+        
         if (data.success) {
             alert(data.message);
             closeRewardModal();
@@ -594,7 +601,8 @@ async function saveReward(event) {
         }
     } catch (error) {
         console.error('Error saving reward:', error);
-        alert('Có lỗi xảy ra');
+        console.error('Error details:', error.message);
+        alert('Có lỗi xảy ra: ' + error.message);
     }
 }
 

@@ -52,10 +52,10 @@ if ($stmt->execute()) {
         'template_id' => $template_id
     ]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error]);
+    error_log("Error executing SQL: " . $stmt->error);
+    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $stmt->error]);
 }
 
 $stmt->close();
-$conn->close();
 ?>
 
