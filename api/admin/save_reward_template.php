@@ -63,7 +63,7 @@ try {
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("ssdissii", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active);
+        $stmt->bind_param("ssdsii", $reward_name, $reward_type, $reward_value, $reward_description, $reward_quantity, $is_active);
     }
 
     if (!$stmt->execute()) {
