@@ -195,11 +195,23 @@ function renderOrders(orders) {
                 `).join('')}
             </div>
             
-            ${order.order_status === 'pending' ? `
-                <button onclick="approveOrder(${order.id})" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
-                    ✓ Duyệt đơn hàng & Tặng vé quay
-                </button>
-            ` : ''}
+            <div class="mt-4 flex gap-2">
+                ${order.order_status === 'pending' ? `
+                    <button onclick="approveOrder(${order.id})" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        ✓ Duyệt đơn hàng & Tặng vé quay
+                    </button>
+                ` : ''}
+                <div class="${order.order_status === 'pending' ? 'flex-1' : 'w-full'}">
+                    <select onchange="updateOrderStatus(${order.id}, this.value)" class="w-full px-4 py-2 border rounded-lg">
+                        <option value="pending" ${order.order_status === 'pending' ? 'selected' : ''}>Chờ xử lý</option>
+                        <option value="approved" ${order.order_status === 'approved' ? 'selected' : ''}>Đã duyệt</option>
+                        <option value="processing" ${order.order_status === 'processing' ? 'selected' : ''}>Đang xử lý</option>
+                        <option value="shipped" ${order.order_status === 'shipped' ? 'selected' : ''}>Đã giao hàng</option>
+                        <option value="delivered" ${order.order_status === 'delivered' ? 'selected' : ''}>Đã nhận hàng</option>
+                        <option value="cancelled" ${order.order_status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+                    </select>
+                </div>
+            </div>
         </div>
     `).join('');
 }
@@ -209,7 +221,8 @@ function getOrderStatusClass(status) {
         'pending': 'bg-yellow-100 text-yellow-800',
         'approved': 'bg-blue-100 text-blue-800',
         'processing': 'bg-purple-100 text-purple-800',
-        'completed': 'bg-green-100 text-green-800',
+        'shipped': 'bg-indigo-100 text-indigo-800',
+        'delivered': 'bg-green-100 text-green-800',
         'cancelled': 'bg-red-100 text-red-800'
     };
     return classes[status] || 'bg-gray-100 text-gray-800';
@@ -217,10 +230,11 @@ function getOrderStatusClass(status) {
 
 function getOrderStatusText(status) {
     const texts = {
-        'pending': 'Chờ duyệt',
+        'pending': 'Chờ xử lý',
         'approved': 'Đã duyệt',
         'processing': 'Đang xử lý',
-        'completed': 'Hoàn thành',
+        'shipped': 'Đã giao hàng',
+        'delivered': 'Đã nhận hàng',
         'cancelled': 'Đã hủy'
     };
     return texts[status] || status;
@@ -241,6 +255,30 @@ async function approveOrder(orderId) {
     } catch (error) {
         console.error('Error approving order:', error);
         alert('Có lỗi xảy ra');
+    }
+}
+
+async function updateOrderStatus(orderId, newStatus) {
+    if (!confirm('Thay đổi trạng thái đơn hàng?')) {
+        // Reset dropdown to current status
+        loadOrders();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/admin/update_order_status.php`, {
+            credentials: 'include', 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_id: orderId, status: newStatus })
+        });
+        const data = await response.json();
+        showToast(data.message, data.success ? 'success' : 'error');
+        if (data.success) loadOrders();
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        showToast('Có lỗi xảy ra khi cập nhật trạng thái', 'error');
+        loadOrders();
     }
 }
 
