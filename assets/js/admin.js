@@ -371,8 +371,16 @@ function openTicketModal(id = null) {
     updateTicketRewards();
     
     if (id) {
-        // Load ticket data (need to implement)
-        document.getElementById('ticketModalTitle').textContent = 'Sửa vé';
+        // Load ticket data
+        const ticket = ticketsData.find(t => t.id == id);
+        if (ticket) {
+            document.getElementById('ticket_id').value = ticket.id;
+            document.getElementById('ticket_user_id').value = ticket.user_id;
+            document.getElementById('ticket_type').value = ticket.ticket_type;
+            document.getElementById('ticket_status').value = ticket.status;
+            document.getElementById('ticket_pre_assigned_reward_id').value = ticket.pre_assigned_reward_id || '';
+            document.getElementById('ticketModalTitle').textContent = 'Sửa vé';
+        }
     } else {
         document.getElementById('ticketModalTitle').textContent = 'Thêm vé';
     }
@@ -401,8 +409,9 @@ function updateTicketRewards() {
 
 async function saveTicket(event) {
     event.preventDefault();
+    const ticketId = document.getElementById('ticket_id').value;
     const formData = {
-        id: document.getElementById('ticket_id').value || 0,
+        id: ticketId ? parseInt(ticketId) : null,
         user_id: parseInt(document.getElementById('ticket_user_id').value),
         ticket_type: document.getElementById('ticket_type').value,
         status: document.getElementById('ticket_status').value,
