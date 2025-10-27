@@ -31,10 +31,28 @@ $display_order = intval($_POST['display_order'] ?? 0);
 $is_active = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
 $image_url = $_POST['image_url'] ?? '';
 $video_url = $_POST['video_url'] ?? '';
+$delete_image = isset($_POST['delete_image']) && $_POST['delete_image'] === '1';
+$delete_video = isset($_POST['delete_video']) && $_POST['delete_video'] === '1';
 
 if (empty($title)) {
     echo json_encode(['success' => false, 'message' => 'Tiêu đề không được để trống']);
     exit;
+}
+
+// Initialize old URLs if editing
+$old_image_url = '';
+$old_video_url = '';
+if ($id > 0) {
+    // Get current URLs to delete old files if replaced
+    $stmt = $conn->prepare("SELECT image_url, video_url FROM intro_posts WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $old_image_url = $row['image_url'];
+        $old_video_url = $row['video_url'];
+    }
+    $stmt->close();
 }
 
 // Handle image upload
@@ -105,6 +123,35 @@ if (isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
         echo json_encode(['success' => false, 'message' => 'File video không hợp lệ hoặc quá lớn (tối đa 50MB)']);
         exit;
     }
+}
+
+// Handle delete requests
+if ($delete_image) {
+    $image_url = '';
+    if (!empty($old_image_url) && strpos($old_image_url, '/uploads/intro_images/') !== false) {
+        $file_to_delete = __DIR__ . '/../../' . ltrim($old_image_url, '/');
+        if (file_exists($file_to_delete)) {
+            unlink($file_to_delete);
+        }
+    }
+}
+
+if ($delete_video) {
+    $video_url = '';
+    if (!empty($old_video_url) && strpos($old_video_url, '/uploads/intro_videos/') !== false) {
+        $file_to_delete = __DIR__ . '/../../' . ltrim($old_video_url, '/');
+        if (file_exists($file_to_delete)) {
+            unlink($file_to_delete);
+        }
+    }
+}
+
+// Use old URLs if no new file uploaded and not deleted
+if (empty($image_url) && !empty($old_image_url) && !$delete_image && $id > 0) {
+    $image_url = $old_image_url;
+}
+if (empty($video_url) && !empty($old_video_url) && !$delete_video && $id > 0) {
+    $video_url = $old_video_url;
 }
 
 // Save to database

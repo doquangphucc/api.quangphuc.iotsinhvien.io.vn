@@ -585,20 +585,26 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold mb-2">Tiêu đề bài viết *</label>
-                        <input type="text" id="intro_post_title" required class="w-full px-4 py-2 border rounded-lg" 
+                        <input type="text" name="title" id="intro_post_title" required class="w-full px-4 py-2 border rounded-lg" 
                             placeholder="Ví dụ: HC Eco System - Giải Pháp Năng Lượng Xanh">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Mô tả/Nội dung</label>
-                        <textarea id="intro_post_description" rows="4" class="w-full px-4 py-2 border rounded-lg" 
+                        <textarea name="description" id="intro_post_description" rows="4" class="w-full px-4 py-2 border rounded-lg" 
                             placeholder="Mô tả nội dung bài viết..."></textarea>
                     </div>
                     <!-- Image Section -->
                     <div>
                         <label class="block text-sm font-semibold mb-2">Ảnh đại diện</label>
-                        <input type="file" name="image" id="intro_post_image" accept="image/*" 
-                            class="w-full px-4 py-2 border rounded-lg" onchange="previewIntroPostImageFromFile(this)">
-                        <p class="text-xs text-gray-500 mt-1">Chọn ảnh từ máy tính (JPG, PNG, GIF, WEBP - tối đa 50MB)</p>
+                        <div class="space-y-2">
+                            <input type="file" name="image" id="intro_post_image" accept="image/*" 
+                                class="w-full px-4 py-2 border rounded-lg" onchange="previewIntroPostImageFromFile(this)">
+                            <p class="text-xs text-gray-500">Chọn ảnh từ máy tính (JPG, PNG, GIF, WEBP - tối đa 50MB)</p>
+                            <button type="button" id="btn_remove_image" onclick="removeIntroImage()" 
+                                class="hidden bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600">
+                                🗑️ Xóa ảnh hiện tại
+                            </button>
+                        </div>
                         <div id="intro_post_image_preview" class="mt-3 hidden">
                             <img src="" alt="Preview" class="h-32 w-32 object-cover rounded-lg border-2 border-gray-300">
                         </div>
@@ -607,9 +613,15 @@
                     <!-- Video Section -->
                     <div>
                         <label class="block text-sm font-semibold mb-2">Video</label>
-                        <input type="file" name="video" id="intro_post_video" accept="video/*" 
-                            class="w-full px-4 py-2 border rounded-lg" onchange="previewIntroPostVideoFromFile(this)">
-                        <p class="text-xs text-gray-500 mt-1">Chọn video từ máy tính (MP4, WEBM - tối đa 50MB)</p>
+                        <div class="space-y-2">
+                            <input type="file" name="video" id="intro_post_video" accept="video/*" 
+                                class="w-full px-4 py-2 border rounded-lg" onchange="previewIntroPostVideoFromFile(this)">
+                            <p class="text-xs text-gray-500">Chọn video từ máy tính (MP4, WEBM - tối đa 50MB)</p>
+                            <button type="button" id="btn_remove_video" onclick="removeIntroVideo()" 
+                                class="hidden bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600">
+                                🗑️ Xóa video hiện tại
+                            </button>
+                        </div>
                         <div id="intro_post_video_preview" class="mt-3 hidden">
                             <video controls class="h-48 w-full rounded-lg border-2 border-gray-300">
                                 <source src="" type="video/mp4">
@@ -1616,14 +1628,27 @@
                 document.getElementById('intro_post_video').value = '';
                 
                 // Show previews if URLs exist
-                if (post.image_url) previewIntroPostImage(post.image_url);
-                if (post.video_url) previewIntroPostVideo(post.video_url);
+                if (post.image_url) {
+                    previewIntroPostImage(post.image_url);
+                    document.getElementById('btn_remove_image').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn_remove_image').classList.add('hidden');
+                }
+                
+                if (post.video_url) {
+                    previewIntroPostVideo(post.video_url);
+                    document.getElementById('btn_remove_video').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn_remove_video').classList.add('hidden');
+                }
             } else {
                 document.getElementById('introPostForm').reset();
                 document.getElementById('intro_post_id').value = '';
                 // Hide previews when adding new post
                 document.getElementById('intro_post_image_preview').classList.add('hidden');
                 document.getElementById('intro_post_video_preview').classList.add('hidden');
+                document.getElementById('btn_remove_image').classList.add('hidden');
+                document.getElementById('btn_remove_video').classList.add('hidden');
             }
             
             modal.classList.add('show');
@@ -1683,7 +1708,38 @@
                 source.src = URL.createObjectURL(file);
                 video.load();
                 previewDiv.classList.remove('hidden');
+                document.getElementById('btn_remove_video').classList.remove('hidden');
             }
+        }
+        
+        function removeIntroImage() {
+            document.getElementById('intro_post_image').value = '';
+            document.getElementById('intro_post_image_preview').classList.add('hidden');
+            document.getElementById('btn_remove_image').classList.add('hidden');
+            // Add hidden input to indicate image should be deleted
+            const existingInput = document.getElementById('delete_image_flag');
+            if (existingInput) existingInput.remove();
+            const deleteFlag = document.createElement('input');
+            deleteFlag.type = 'hidden';
+            deleteFlag.id = 'delete_image_flag';
+            deleteFlag.name = 'delete_image';
+            deleteFlag.value = '1';
+            document.getElementById('introPostForm').appendChild(deleteFlag);
+        }
+        
+        function removeIntroVideo() {
+            document.getElementById('intro_post_video').value = '';
+            document.getElementById('intro_post_video_preview').classList.add('hidden');
+            document.getElementById('btn_remove_video').classList.add('hidden');
+            // Add hidden input to indicate video should be deleted
+            const existingInput = document.getElementById('delete_video_flag');
+            if (existingInput) existingInput.remove();
+            const deleteFlag = document.createElement('input');
+            deleteFlag.type = 'hidden';
+            deleteFlag.id = 'delete_video_flag';
+            deleteFlag.name = 'delete_video';
+            deleteFlag.value = '1';
+            document.getElementById('introPostForm').appendChild(deleteFlag);
         }
         
         async function uploadIntroMedia(mediaType, file) {
