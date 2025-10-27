@@ -574,7 +574,6 @@ async function saveReward(event) {
         reward_value: document.getElementById('reward_value').value || null,
         reward_description: document.getElementById('reward_description').value,
         reward_quantity: document.getElementById('reward_quantity').value || null,
-        reward_image: document.getElementById('reward_image').value,
         is_active: document.getElementById('reward_is_active').checked
     };
 
