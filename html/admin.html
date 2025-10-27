@@ -1608,10 +1608,12 @@
                 document.getElementById('intro_post_id').value = post.id;
                 document.getElementById('intro_post_title').value = post.title;
                 document.getElementById('intro_post_description').value = post.description || '';
-                document.getElementById('intro_post_image_url').value = post.image_url || '';
-                document.getElementById('intro_post_video_url').value = post.video_url || '';
                 document.getElementById('intro_post_display_order').value = post.display_order;
                 document.getElementById('intro_post_is_active').checked = post.is_active;
+                
+                // Clear file inputs when editing (no need to set value for file inputs)
+                document.getElementById('intro_post_image').value = '';
+                document.getElementById('intro_post_video').value = '';
                 
                 // Show previews if URLs exist
                 if (post.image_url) previewIntroPostImage(post.image_url);
