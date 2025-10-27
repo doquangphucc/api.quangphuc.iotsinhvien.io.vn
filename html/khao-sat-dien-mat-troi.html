@@ -2046,9 +2046,9 @@
                 if (acc.quantity > 0) {
                     accessoriesHTML += `
                         <tr>
-                            <td class="center">${acc.image.includes('../') ? 
+                            <td class="center">${(acc.image && (acc.image.includes('../') || acc.image.startsWith('/') || acc.image.startsWith('http'))) ? 
                                 `<img src="${acc.image}" alt="${acc.name}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 6px; padding: 3px; background: #f7fafc;">` : 
-                                `<span style="font-size: 30px; display: block; text-align: center; padding: 10px;">${acc.image}</span>`
+                                `<span style="font-size: 30px; display: block; text-align: center; padding: 10px;">${acc.image || '📦'}</span>`
                             }</td>
                             <td class="label-col">
                                 <div style="line-height: 1.4;">
