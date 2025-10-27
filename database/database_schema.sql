@@ -51,6 +51,24 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 -- =====================================================
+-- 3.1. BẢNG SURVEY_PRODUCT_CONFIGS (Cấu hình sản phẩm cho khảo sát)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS survey_product_configs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL COMMENT 'ID sản phẩm',
+    survey_category ENUM('solar_panel', 'inverter', 'battery', 'electrical_cabinet', 'accessory') NOT NULL COMMENT 'Loại sản phẩm trong khảo sát',
+    phase_type ENUM('1_phase', '3_phase', 'both', 'none') DEFAULT 'none' COMMENT 'Loại pha (chỉ dùng cho inverter)',
+    price_type ENUM('market_price', 'category_price') DEFAULT 'market_price' COMMENT 'Loại giá sử dụng',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Có hiển thị trong khảo sát',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    notes TEXT COMMENT 'Ghi chú',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_product_survey (product_id)
+) COMMENT='Cấu hình sản phẩm cho trang khảo sát';
+
+-- =====================================================
 -- 4. BẢNG PACKAGE_CATEGORIES (Danh mục gói)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS package_categories (

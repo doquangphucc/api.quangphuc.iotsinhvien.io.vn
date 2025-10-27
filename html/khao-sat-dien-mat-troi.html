@@ -1717,7 +1717,7 @@
                 { name: "LUXPOWER 6K (1 Pha)", power: 6000, price: 21350000, warranty: "12 tháng", image: "../assets/img/products/hybrid-gen-lb-eu-6k.png", phase: "1" },
                 { name: "LUXPOWER 8K (1 Pha)", power: 8000, price: 37250000, warranty: "12 tháng", image: "../assets/img/products/hybrid-gen-lb-eu-8k.png", phase: "1" },
                 { name: "LUXPOWER 10K (1 Pha)", power: 10000, price: 39350000, warranty: "12 tháng", image: "../assets/img/products/hybrid-gen-lb-eu-10k.png", phase: "1" },
-                { name: "LUXPOWER 12K (1 Pha)", power: 12000, price: 44350000, warranty: "12 tháng", image: "../assets/img/products/hybrid-gen-lb-eu-12k.png", phase: "1" }
+                { name: "LUXPOWER 12K (1 Pha)", power: 12000, price: 44350000, warranty: "12 tháng", image: "../assets/img/products/hybrid-lxp-12k.png", phase: "1" }
             ],
             '3': [ // 3 Pha - LUXPOWER
                 { name: "LUXPOWER 12K (3 Pha)", power: 12000, price: 48250000, warranty: "12 tháng", image: "../assets/img/products/hybrid-trip2-lb-3p-12k.png", phase: "3" },
@@ -2457,6 +2457,9 @@
 
         // Enhanced page animations and effects
         document.addEventListener('DOMContentLoaded', function() {
+            // Load survey products from API
+            loadSurveyProducts();
+            
             // Add floating elements
             createFloatingElements();
             
@@ -2466,6 +2469,128 @@
             // Add form interaction effects
             addFormEffects();
         });
+
+        // Load survey products from API and populate form
+        async function loadSurveyProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/get_survey_products_public.php`);
+                const data = await response.json();
+                
+                if (data.success && data.products) {
+                    populateSurveyForm(data.products);
+                } else {
+                    console.error('Failed to load survey products:', data.message);
+                    // Keep using hardcoded data as fallback
+                }
+            } catch (error) {
+                console.error('Error loading survey products:', error);
+                // Keep using hardcoded data as fallback
+            }
+        }
+
+        function populateSurveyForm(products) {
+            // Populate Solar Panels
+            const solarPanelSelect = document.querySelector('select[name="solarPanel"]');
+            if (solarPanelSelect && products.solar_panel) {
+                solarPanelSelect.innerHTML = '<option value="">-- Chọn loại tấm pin --</option>';
+                products.solar_panel.forEach(panel => {
+                    // Extract watt from title (e.g., "Jinko Solar 590W" -> 590)
+                    const wattMatch = panel.title.match(/(\d+)W/i);
+                    const watt = wattMatch ? wattMatch[1] : '';
+                    
+                    const option = document.createElement('option');
+                    option.value = watt;
+                    option.textContent = panel.title;
+                    option.setAttribute('data-price', panel.price);
+                    option.setAttribute('data-image', panel.image_url);
+                    solarPanelSelect.appendChild(option);
+                });
+            }
+
+            // Populate Batteries
+            const batterySelect = document.querySelector('select[name="batteryType"]');
+            if (batterySelect && products.battery) {
+                batterySelect.innerHTML = '<option value="">-- Chọn loại pin --</option>';
+                products.battery.forEach(battery => {
+                    const option = document.createElement('option');
+                    option.value = battery.title.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = battery.title;
+                    option.setAttribute('data-price', battery.price);
+                    option.setAttribute('data-image', battery.image_url);
+                    batterySelect.appendChild(option);
+                });
+            }
+
+            // Update invertersByPhase with API data
+            if (products.inverter) {
+                invertersByPhase['1'] = [];
+                invertersByPhase['3'] = [];
+                
+                products.inverter['1_phase']?.forEach(inv => {
+                    invertersByPhase['1'].push({
+                        name: inv.title,
+                        power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
+                        price: inv.price,
+                        warranty: "12 tháng",
+                        image: inv.image_url,
+                        phase: "1"
+                    });
+                });
+                
+                products.inverter['3_phase']?.forEach(inv => {
+                    invertersByPhase['3'].push({
+                        name: inv.title,
+                        power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
+                        price: inv.price,
+                        warranty: "12 tháng",
+                        image: inv.image_url,
+                        phase: "3"
+                    });
+                });
+            }
+
+            // Update batteries with API data
+            if (products.battery) {
+                batteries.length = 0;
+                products.battery.forEach(bat => {
+                    // Extract capacity from title or description
+                    const capacityMatch = bat.title.match(/(\d+\.?\d*)kWh/i);
+                    const capacity = capacityMatch ? parseFloat(capacityMatch[1]) : 0;
+                    
+                    batteries.push({
+                        name: bat.title,
+                        capacity: capacity,
+                        price: bat.price,
+                        warranty: "10 năm",
+                        image: bat.image_url
+                    });
+                });
+            }
+
+            // Update electricalCabinets with API data
+            if (products.electrical_cabinet) {
+                electricalCabinets['1'] = [];
+                electricalCabinets['3'] = [];
+                
+                products.electrical_cabinet['1_phase']?.forEach(cab => {
+                    electricalCabinets['1'].push({
+                        name: cab.title,
+                        power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
+                        price: cab.price,
+                        image: cab.image_url
+                    });
+                });
+                
+                products.electrical_cabinet['3_phase']?.forEach(cab => {
+                    electricalCabinets['3'].push({
+                        name: cab.title,
+                        power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
+                        price: cab.price,
+                        image: cab.image_url
+                    });
+                });
+            }
+        }
 
         function createFloatingElements() {
             const symbols = ['☀️', '⚡', '🔋', '🔌', '🌱', '💚'];
