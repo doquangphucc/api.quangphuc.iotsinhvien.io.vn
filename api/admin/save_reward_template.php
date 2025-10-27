@@ -31,10 +31,10 @@ if (empty($reward_name) || empty($reward_type)) {
     sendError('Tên và loại phần thưởng không được để trống.');
 }
 
-// Validate reward_type
+// Validate reward_type (must match ENUM in database)
 $valid_reward_types = ['voucher', 'cash', 'gift'];
 if (!in_array($reward_type, $valid_reward_types)) {
-    sendError('Loại phần thưởng không hợp lệ.');
+    sendError('Loại phần thưởng không hợp lệ. Chỉ chấp nhận: voucher, cash, gift.');
 }
 
 // Validate reward_value based on type
