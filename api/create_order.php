@@ -82,6 +82,13 @@ try {
     $debugStmt->execute([(int)$userId]);
     $allCartItems = $debugStmt->fetchAll(PDO::FETCH_ASSOC);
     error_log("All cart items for user " . (int)$userId . ": " . print_r($allCartItems, true));
+    
+    // Debug: Log all cart items in database (all users) to check if cart_item_id exists
+    $debugSql2 = "SELECT id, user_id, product_id, quantity FROM cart_items ORDER BY id DESC LIMIT 10";
+    $debugStmt2 = $pdo->prepare($debugSql2);
+    $debugStmt2->execute();
+    $allCartItemsAll = $debugStmt2->fetchAll(PDO::FETCH_ASSOC);
+    error_log("Last 10 cart items (all users): " . print_r($allCartItemsAll, true));
 
     if (empty($cartRows)) {
         sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
