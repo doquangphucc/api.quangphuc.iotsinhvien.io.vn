@@ -93,6 +93,11 @@ try {
 
     $db = Database::getInstance();
     $pdo = $db->getConnection();
+    
+    // Check if PDO connection is valid
+    if ($pdo === null) {
+        throw new Exception('Database connection is null');
+    }
 
     if ($id) {
         // Update existing reward template
