@@ -399,9 +399,27 @@ CREATE INDEX idx_reward_templates_type ON reward_templates(reward_type);
 CREATE INDEX idx_lottery_tickets_reward ON lottery_tickets(pre_assigned_reward_id);
 
 -- =====================================================
+-- 18. BẢNG INTRO_POSTS (Bài viết trang giới thiệu)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS intro_posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(500) NOT NULL COMMENT 'Tiêu đề bài viết',
+    description TEXT COMMENT 'Mô tả/ nội dung bài viết',
+    image_url VARCHAR(500) COMMENT 'URL ảnh đại diện',
+    video_url VARCHAR(500) COMMENT 'URL video (tùy chọn)',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Trạng thái hiển thị',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_intro_posts_active ON intro_posts(is_active);
+CREATE INDEX idx_intro_posts_display_order ON intro_posts(display_order);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 17' as info;
+SELECT 'Total tables created: 18' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 

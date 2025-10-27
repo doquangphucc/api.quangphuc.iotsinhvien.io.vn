@@ -711,19 +711,37 @@ INSERT INTO survey_product_configs (product_id, survey_category, phase_type, pri
 (19, 'electrical_cabinet', '3_phase', 'market_price', TRUE, 2, '3 pha 15kW');
 
 -- =====================================================
+-- DỮ LIỆU MẪU - INTRO_POSTS (Bài viết trang giới thiệu)
+-- =====================================================
+INSERT INTO intro_posts (id, title, description, image_url, video_url, is_active, display_order) VALUES
+(1, 'HC Eco System - Giải Pháp Năng Lượng Xanh', 
+ 'HC Eco System là đơn vị hàng đầu trong lĩnh vực cung cấp giải pháp năng lượng mặt trời tại Việt Nam. Với kinh nghiệm nhiều năm trong ngành, chúng tôi tự hào là đối tác đáng tin cậy của hàng ngàn khách hàng trên toàn quốc.',
+ NULL, NULL, TRUE, 1),
+
+(2, 'Sứ Mệnh Của Chúng Tôi',
+ 'Chúng tôi cam kết cung cấp các giải pháp năng lượng mặt trời chất lượng cao, hiệu quả và tiết kiệm chi phí. Đội ngũ chuyên nghiệp, thiết bị chính hãng và dịch vụ tận tâm.',
+ NULL, NULL, TRUE, 2),
+
+(3, 'Tầm Nhìn 2030',
+ 'Trở thành đơn vị dẫn đầu trong lĩnh vực năng lượng tái tạo tại Việt Nam, góp phần xây dựng một tương lai xanh, bền vững và thân thiện với môi trường.',
+ NULL, NULL, TRUE, 3),
+
+(4, 'Giải Pháp Cho Mọi Quy Mô',
+ 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.',
+ NULL, NULL, TRUE, 4);
+
+-- =====================================================
 -- HOÀN THÀNH IMPORT DỮ LIỆU
 -- =====================================================
 SELECT 'Sample data imported successfully!' as message;
 SELECT 'Packages: 4 packages' as info;
 SELECT 'Reward Templates: 6 templates' as info;
+SELECT 'Intro Posts: 4 posts' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
 SELECT 'Test users created:' as info;
 SELECT '  - testuser / 123456 (Regular user)' as info;
 SELECT '  - admin / admin123 (Admin user)' as info;
-SELECT '' as info;
-SELECT '⚠️ Product Categories & Products: Không có dữ liệu mẫu' as note;
-SELECT '→ Admin cần tự thêm qua giao diện quản lý tại admin.html' as note;
 SELECT '' as info;
 SELECT 'Ready for HC Eco System!' as status;
 
