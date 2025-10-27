@@ -41,12 +41,13 @@ $check_stmt->execute();
 $result = $check_stmt->get_result();
 
 if ($result->num_rows > 0) {
-    // Auto-increment display_order to next available value
-    $max_stmt = $conn->query("SELECT MAX(display_order) as max_order FROM dich_vu");
-    $max_row = $max_stmt->fetch_assoc();
-    $display_order = $max_row['max_order'] + 1;
+    $row = $result->fetch_assoc();
     $check_stmt->close();
-    $max_stmt->close();
+    echo json_encode([
+        'success' => false, 
+        'message' => "Thứ tự {$display_order} đã được sử dụng cho dịch vụ '{$row['name']}'. Vui lòng chọn thứ tự khác."
+    ]);
+    exit;
 }
 
 if ($id) {

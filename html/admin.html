@@ -387,6 +387,7 @@
                     <table class="w-full">
                         <thead class="bg-gray-100">
                             <tr>
+                                <th class="px-4 py-3 text-left">Thứ tự</th>
                                 <th class="px-4 py-3 text-left">Logo</th>
                                 <th class="px-4 py-3 text-left">Tên</th>
                                 <th class="px-4 py-3 text-left">Mô tả</th>
@@ -2445,6 +2446,7 @@
                     `<span class="text-green-600">${service.link_name || service.link_value}</span>`;
                 
                 tr.innerHTML = `
+                    <td class="px-4 py-3 font-bold text-center">${service.display_order}</td>
                     <td class="px-4 py-3">${logoHtml}</td>
                     <td class="px-4 py-3 font-semibold">${service.name}</td>
                     <td class="px-4 py-3 text-sm text-gray-600 max-w-md">${(service.description || '').substring(0, 100)}...</td>
