@@ -112,6 +112,9 @@
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('intro-posts')">
                     📝 Bài giới thiệu
                 </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('projects')">
+                    🏗️ Dự án
+                </button>
             </div>
         </div>
     </div>
@@ -337,6 +340,32 @@
                             </tr>
                         </thead>
                         <tbody id="intro-posts-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Tab -->
+        <div id="tab-projects" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Quản lý dự án</h2>
+                    <button onclick="openProjectModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm dự án
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Thứ tự</th>
+                                <th class="px-4 py-3 text-left">Tiêu đề</th>
+                                <th class="px-4 py-3 text-left">Mô tả</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-tbody-admin"></tbody>
                     </table>
                 </div>
             </div>
@@ -655,6 +684,85 @@
         </div>
     </div>
 
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="projectModalTitle">Thêm dự án</h3>
+            <form id="projectForm" onsubmit="saveProject(event)">
+                <input type="hidden" id="project_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tiêu đề dự án *</label>
+                        <input type="text" name="title" id="project_title" required class="w-full px-4 py-2 border rounded-lg" 
+                            placeholder="Ví dụ: Lắp đặt hệ thống 5kW cho gia đình tại Đà Nẵng">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                        <textarea name="description" id="project_description" rows="4" class="w-full px-4 py-2 border rounded-lg" 
+                            placeholder="Mô tả về dự án..."></textarea>
+                    </div>
+                    <!-- Image Section -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Ảnh dự án</label>
+                        <div class="space-y-2">
+                            <input type="file" name="image" id="project_image" accept="image/*" 
+                                class="w-full px-4 py-2 border rounded-lg" onchange="previewProjectImageFromFile(this)">
+                            <p class="text-xs text-gray-500">Chọn ảnh từ máy tính (JPG, PNG, GIF, WEBP - tối đa 50MB)</p>
+                            <button type="button" id="btn_remove_project_image" onclick="removeProjectImage()" 
+                                class="hidden bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600">
+                                🗑️ Xóa ảnh hiện tại
+                            </button>
+                        </div>
+                        <div id="project_image_preview" class="mt-3 hidden">
+                            <img src="" alt="Preview" class="h-32 w-32 object-cover rounded-lg border-2 border-gray-300">
+                        </div>
+                    </div>
+                    
+                    <!-- Video Section -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Video</label>
+                        <div class="space-y-2">
+                            <input type="file" name="video" id="project_video" accept="video/*" 
+                                class="w-full px-4 py-2 border rounded-lg" onchange="previewProjectVideoFromFile(this)">
+                            <p class="text-xs text-gray-500">Chọn video từ máy tính (MP4, WEBM - tối đa 50MB)</p>
+                            <button type="button" id="btn_remove_project_video" onclick="removeProjectVideo()" 
+                                class="hidden bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600">
+                                🗑️ Xóa video hiện tại
+                            </button>
+                        </div>
+                        <div id="project_video_preview" class="mt-3 hidden">
+                            <video controls class="h-48 w-full rounded-lg border-2 border-gray-300">
+                                <source src="" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ video.
+                            </video>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị *</label>
+                            <input type="number" name="display_order" id="project_display_order" value="1" min="1" required 
+                                class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="flex items-center gap-2 pt-7">
+                                <input type="checkbox" id="project_is_active" checked>
+                                <span class="font-semibold">Kích hoạt (hiển thị trên trang dự án)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        💾 Lưu dự án
+                    </button>
+                    <button type="button" onclick="closeProjectModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Package Category Modal -->
     <div id="packageCategoryModal" class="modal">
         <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
@@ -964,6 +1072,7 @@
                  case 'tickets': loadTickets(); break;
                  case 'rewards': loadRewards(); break;
                  case 'intro-posts': loadIntroPosts(); break;
+                 case 'projects': loadProjects(); break;
              }
          }
 
@@ -1890,6 +1999,271 @@
                 }
             } catch (error) {
                 console.error('Error deleting intro post:', error);
+                showToast('Có lỗi xảy ra khi xóa: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================
+        // PROJECTS MANAGEMENT
+        // ============================================
+        
+        let currentProjects = [];
+
+        async function loadProjects() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_projects.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentProjects = data.projects;
+                    displayProjects(data.projects);
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showToast('Không thể tải danh sách dự án', 'error');
+            }
+        }
+
+        function displayProjects(projects) {
+            const tbody = document.getElementById('projects-tbody-admin');
+            if (projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500">Không có dự án nào</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = projects.map(project => `
+                <tr class="border-t">
+                    <td class="px-4 py-3">${project.display_order}</td>
+                    <td class="px-4 py-3 font-semibold">${project.title}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${project.description ? project.description.substring(0, 100) + '...' : ''}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-2 py-1 rounded-full text-xs ${project.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            ${project.is_active ? 'Hiển thị' : 'Ẩn'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="openProjectModal(${project.id})" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">✏️</button>
+                        <button onclick="deleteProject(${project.id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 ml-2">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function openProjectModal(id = 0) {
+            const modal = document.getElementById('projectModal');
+            document.getElementById('projectModalTitle').textContent = id ? 'Sửa dự án' : 'Thêm dự án';
+            
+            if (id > 0) {
+                const idString = String(id);
+                
+                let project = currentProjects.find(p => String(p.id) === idString);
+                
+                if (!project) {
+                    try {
+                        const response = await fetch(`${API_BASE}/admin/get_projects.php`, {
+                            credentials: 'include'
+                        });
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            currentProjects = data.projects;
+                            project = data.projects.find(p => String(p.id) === idString);
+                        }
+                    } catch (error) {
+                        console.error('Error loading project:', error);
+                        showToast('Không thể tải thông tin dự án', 'error');
+                        return;
+                    }
+                }
+                
+                if (!project) {
+                    showToast('Không tìm thấy dự án', 'error');
+                    return;
+                }
+                
+                document.getElementById('project_id').value = project.id;
+                document.getElementById('project_title').value = project.title;
+                document.getElementById('project_description').value = project.description || '';
+                document.getElementById('project_display_order').value = project.display_order;
+                document.getElementById('project_is_active').checked = project.is_active;
+                
+                document.getElementById('project_image').value = '';
+                document.getElementById('project_video').value = '';
+                
+                if (project.image_url) {
+                    previewProjectImage(project.image_url);
+                    document.getElementById('btn_remove_project_image').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn_remove_project_image').classList.add('hidden');
+                }
+                
+                if (project.video_url) {
+                    previewProjectVideo(project.video_url);
+                    document.getElementById('btn_remove_project_video').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn_remove_project_video').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('projectForm').reset();
+                document.getElementById('project_id').value = '';
+                document.getElementById('project_image_preview').classList.add('hidden');
+                document.getElementById('project_video_preview').classList.add('hidden');
+                document.getElementById('btn_remove_project_image').classList.add('hidden');
+                document.getElementById('btn_remove_project_video').classList.add('hidden');
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').classList.remove('show');
+            document.getElementById('project_image_preview').classList.add('hidden');
+            document.getElementById('project_video_preview').classList.add('hidden');
+        }
+        
+        function previewProjectImage(imageUrl) {
+            const previewDiv = document.getElementById('project_image_preview');
+            const img = previewDiv.querySelector('img');
+            
+            if (imageUrl && imageUrl.trim()) {
+                img.src = imageUrl;
+                previewDiv.classList.remove('hidden');
+            } else {
+                previewDiv.classList.add('hidden');
+            }
+        }
+        
+        function previewProjectVideo(videoUrl) {
+            const previewDiv = document.getElementById('project_video_preview');
+            const video = previewDiv.querySelector('video');
+            
+            if (videoUrl && videoUrl.trim()) {
+                video.querySelector('source').src = videoUrl;
+                video.load();
+                previewDiv.classList.remove('hidden');
+            } else {
+                previewDiv.classList.add('hidden');
+            }
+        }
+        
+        function previewProjectImageFromFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.getElementById('project_image_preview');
+                    const img = previewDiv.querySelector('img');
+                    img.src = e.target.result;
+                    previewDiv.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function previewProjectVideoFromFile(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const previewDiv = document.getElementById('project_video_preview');
+                const video = previewDiv.querySelector('video');
+                const source = video.querySelector('source');
+                source.src = URL.createObjectURL(file);
+                video.load();
+                previewDiv.classList.remove('hidden');
+                document.getElementById('btn_remove_project_video').classList.remove('hidden');
+            }
+        }
+        
+        function removeProjectImage() {
+            document.getElementById('project_image').value = '';
+            document.getElementById('project_image_preview').classList.add('hidden');
+            document.getElementById('btn_remove_project_image').classList.add('hidden');
+            const existingInput = document.getElementById('delete_project_image_flag');
+            if (existingInput) existingInput.remove();
+            const deleteFlag = document.createElement('input');
+            deleteFlag.type = 'hidden';
+            deleteFlag.id = 'delete_project_image_flag';
+            deleteFlag.name = 'delete_image';
+            deleteFlag.value = '1';
+            document.getElementById('projectForm').appendChild(deleteFlag);
+        }
+        
+        function removeProjectVideo() {
+            document.getElementById('project_video').value = '';
+            document.getElementById('project_video_preview').classList.add('hidden');
+            document.getElementById('btn_remove_project_video').classList.add('hidden');
+            const existingInput = document.getElementById('delete_project_video_flag');
+            if (existingInput) existingInput.remove();
+            const deleteFlag = document.createElement('input');
+            deleteFlag.type = 'hidden';
+            deleteFlag.id = 'delete_project_video_flag';
+            deleteFlag.name = 'delete_video';
+            deleteFlag.value = '1';
+            document.getElementById('projectForm').appendChild(deleteFlag);
+        }
+
+        async function saveProject(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Đang lưu...';
+            
+            try {
+                const formData = new FormData(event.target);
+                
+                formData.append('id', document.getElementById('project_id').value);
+                formData.append('display_order', document.getElementById('project_display_order').value);
+                formData.append('is_active', document.getElementById('project_is_active').checked ? '1' : '0');
+                
+                const response = await fetch(`${API_BASE}/admin/save_project.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error: ' + response.status);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeProjectModal();
+                    loadProjects();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving project:', error);
+                showToast('Có lỗi xảy ra: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        async function deleteProject(id) {
+            if (!confirm('Bạn có chắc muốn xóa dự án này?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/delete_project.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadProjects();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting project:', error);
                 showToast('Có lỗi xảy ra khi xóa: ' + error.message, 'error');
             }
         }
