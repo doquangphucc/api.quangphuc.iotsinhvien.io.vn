@@ -50,7 +50,7 @@ function renderPackageCategories() {
             </td>
             <td class="px-4 py-3 font-semibold">${cat.name}</td>
             <td class="px-4 py-3">
-                ${cat.badge_text ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-${cat.badge_color}-100 text-${cat.badge_color}-800">${cat.badge_text}</span>` : '-'}
+                ${cat.badge_text ? `<span class="px-3 py-1 rounded-full text-xs font-bold" style="background-color: ${cat.badge_color || '#3B82F6'}; color: white;">${cat.badge_text}</span>` : '-'}
             </td>
             <td class="px-4 py-3 text-center">${cat.display_order}</td>
             <td class="px-4 py-3 text-center">
@@ -84,7 +84,20 @@ function openPackageCategoryModal(id = null) {
             document.getElementById('package_category_id').value = cat.id;
             document.getElementById('package_category_name').value = cat.name;
             document.getElementById('package_category_badge_text').value = cat.badge_text || '';
-            document.getElementById('package_category_badge_color').value = cat.badge_color || 'blue';
+            // Convert old text-based colors to hex if needed
+            let badgeColor = cat.badge_color || '#3B82F6';
+            if (badgeColor && !badgeColor.startsWith('#')) {
+                const colorMap = {
+                    'blue': '#3B82F6',
+                    'green': '#10B981',
+                    'red': '#EF4444',
+                    'yellow': '#FBBF24',
+                    'purple': '#8B5CF6',
+                    'orange': '#F97316'
+                };
+                badgeColor = colorMap[badgeColor] || '#3B82F6';
+            }
+            document.getElementById('package_category_badge_color').value = badgeColor;
             document.getElementById('package_category_display_order').value = cat.display_order;
             document.getElementById('package_category_is_active').checked = cat.is_active == 1;
             
@@ -320,7 +333,20 @@ async function openPackageModal(id = null) {
             document.getElementById('package_description').value = pkg.description || '';
             document.getElementById('package_price').value = pkg.price;
             document.getElementById('package_badge_text').value = pkg.badge_text || '';
-            document.getElementById('package_badge_color').value = pkg.badge_color || 'blue';
+            // Convert old text-based colors to hex if needed
+            let badgeColor = pkg.badge_color || '#10B981';
+            if (badgeColor && !badgeColor.startsWith('#')) {
+                const colorMap = {
+                    'blue': '#3B82F6',
+                    'green': '#10B981',
+                    'red': '#EF4444',
+                    'yellow': '#FBBF24',
+                    'purple': '#8B5CF6',
+                    'orange': '#F97316'
+                };
+                badgeColor = colorMap[badgeColor] || '#10B981';
+            }
+            document.getElementById('package_badge_color').value = badgeColor;
             document.getElementById('package_display_order').value = pkg.display_order;
             document.getElementById('package_is_active').checked = pkg.is_active == 1;
             document.getElementById('packageModalTitle').textContent = 'Sửa gói sản phẩm';
