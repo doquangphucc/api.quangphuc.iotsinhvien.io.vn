@@ -605,7 +605,7 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
-                                    <span>Tải ảnh lên (JPG, PNG, GIF, WEBP - tối đa 10MB)</span>
+                                    <span>Tải ảnh lên (JPG, PNG, GIF, WEBP - tối đa 50MB)</span>
                                 </label>
                                 <div id="intro_post_image_upload_status" class="text-sm mt-2"></div>
                             </div>
@@ -637,7 +637,7 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
-                                    <span>Tải video lên (MP4, WEBM - tối đa 10MB)</span>
+                                    <span>Tải video lên (MP4, WEBM - tối đa 50MB)</span>
                                 </label>
                                 <div id="intro_post_video_upload_status" class="text-sm mt-2"></div>
                             </div>
@@ -1704,10 +1704,10 @@
         async function uploadIntroMedia(mediaType, file) {
             if (!file) return;
             
-            // Validate file size (10MB max)
-            const maxSize = 10 * 1024 * 1024; // 10MB
+            // Validate file size (50MB max)
+            const maxSize = 50 * 1024 * 1024; // 50MB
             if (file.size > maxSize) {
-                showToast(`File quá lớn. Giới hạn 10MB`, 'error');
+                showToast(`File quá lớn. Giới hạn 50MB`, 'error');
                 return;
             }
             
@@ -1728,7 +1728,24 @@
                     body: formData
                 });
                 
-                const data = await response.json();
+                // Check for 413 or other HTTP errors
+                if (response.status === 413) {
+                    statusEl.innerHTML = '<span class="text-red-600">❌ File quá lớn (vượt quá 50MB)</span>';
+                    showToast('File quá lớn. Vui lòng chọn file nhỏ hơn hoặc nén file trước khi upload', 'error');
+                    return;
+                }
+                
+                // Try to parse JSON, handle HTML error pages
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    // Server returned HTML error page instead of JSON
+                    console.error('Server returned non-JSON response:', response);
+                    statusEl.innerHTML = '<span class="text-red-600">❌ Server lỗi (không trả về JSON)</span>';
+                    showToast('Server lỗi. Vui lòng thử lại sau', 'error');
+                    return;
+                }
                 
                 if (data.success) {
                     statusEl.innerHTML = '<span class="text-green-600">✅ Tải lên thành công!</span>';

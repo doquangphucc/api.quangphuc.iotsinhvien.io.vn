@@ -8,11 +8,12 @@
 ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
-// Increase upload limits
-ini_set('upload_max_filesize', '10M');
-ini_set('post_max_size', '20M');
-ini_set('max_execution_time', 300);
-ini_set('max_input_time', 300);
+// Increase upload limits for large files
+ini_set('upload_max_filesize', '50M');
+ini_set('post_max_size', '60M');
+ini_set('max_execution_time', 600);
+ini_set('max_input_time', 600);
+ini_set('memory_limit', '256M');
 
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
@@ -26,17 +27,33 @@ if (!is_admin()) {
 }
 
 // Check if file was uploaded
-if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-    echo json_encode(['success' => false, 'message' => 'Không có file được upload hoặc có lỗi xảy ra']);
+if (!isset($_FILES['file'])) {
+    echo json_encode(['success' => false, 'message' => 'Không có file được gửi lên. Có thể file quá lớn hoặc chưa chọn file']);
+    exit;
+}
+
+// Check for upload errors
+if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+    $error_messages = [
+        UPLOAD_ERR_INI_SIZE => 'File vượt quá upload_max_filesize trong php.ini',
+        UPLOAD_ERR_FORM_SIZE => 'File vượt quá MAX_FILE_SIZE trong HTML form',
+        UPLOAD_ERR_PARTIAL => 'File chỉ được upload một phần',
+        UPLOAD_ERR_NO_FILE => 'Không có file được upload',
+        UPLOAD_ERR_NO_TMP_DIR => 'Thiếu thư mục tạm',
+        UPLOAD_ERR_CANT_WRITE => 'Không thể ghi file',
+        UPLOAD_ERR_EXTENSION => 'Upload bị chặn bởi extension'
+    ];
+    $error_message = $error_messages[$_FILES['file']['error']] ?? 'Unknown error: ' . $_FILES['file']['error'];
+    echo json_encode(['success' => false, 'message' => 'Lỗi upload: ' . $error_message]);
     exit;
 }
 
 $file = $_FILES['file'];
 $media_type = $_POST['media_type'] ?? 'image'; // 'image' or 'video'
 
-// Validate file size (10MB max)
-if ($file['size'] > 10 * 1024 * 1024) {
-    echo json_encode(['success' => false, 'message' => 'File quá lớn. Giới hạn 10MB']);
+// Validate file size (50MB max)
+if ($file['size'] > 50 * 1024 * 1024) {
+    echo json_encode(['success' => false, 'message' => 'File quá lớn. Giới hạn 50MB']);
     exit;
 }
 
@@ -82,21 +99,32 @@ if (!move_uploaded_file($file['tmp_name'], $upload_path)) {
     exit;
 }
 
-// Generate URL (adjust this based on your domain setup)
-// For production, this should be: https://yourdomain.com/uploads/intro_images/filename.jpg
-$url_path = '/uploads/' . ($media_type === 'image' ? 'intro_images' : 'intro_videos') . '/' . $filename;
-
-// For local development with XAMPP/WAMP: 
-// Adjust this based on your setup
+// Generate URL
+// Production: https://your-domain.com/uploads/intro_images/filename.jpg
 $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') 
             . '://' . $_SERVER['HTTP_HOST'];
 
-// Remove any subdirectory if exists
-$script_dir = dirname(dirname(__DIR__));
-$project_root = dirname($script_dir);
-$url_path = str_replace($project_root, '', $url_path);
+// Get the directory structure
+$upload_subpath = ($media_type === 'image' ? 'intro_images' : 'intro_videos');
+$url_path = '/uploads/' . $upload_subpath . '/' . $filename;
 
-$full_url = $base_url . str_replace('\\', '/', $url_path);
+// Handle different server configurations (domain root or subdirectory)
+// If running in a subdirectory, we need to prepend it
+$document_root = $_SERVER['DOCUMENT_ROOT'] ?? '';
+$current_script = $_SERVER['SCRIPT_NAME'] ?? '';
+
+// Check if we're in a subdirectory
+$script_dir = dirname($current_script);
+if ($script_dir !== '/api/admin' && $script_dir !== '/') {
+    // We're in a subdirectory, extract the base path
+    $parts = explode('/', trim($script_dir, '/'));
+    array_pop($parts); // Remove 'api'
+    array_pop($parts); // Remove 'admin'
+    $subdir = !empty($parts) ? '/' . implode('/', $parts) : '';
+    $url_path = $subdir . $url_path;
+}
+
+$full_url = $base_url . $url_path;
 
 echo json_encode([
     'success' => true,
