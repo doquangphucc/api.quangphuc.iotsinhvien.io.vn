@@ -617,7 +617,7 @@
             container.innerHTML = categories.map((category, index) => {
                 const color = categoryColors[index % categoryColors.length];
                 const imageUrl = category.logo_url 
-                    ? (category.logo_url.startsWith('http') ? category.logo_url : '/' + category.logo_url)
+                    ? (category.logo_url.startsWith('http') ? category.logo_url : '../' + category.logo_url)
                     : null;
                 
                 return `
