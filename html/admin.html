@@ -888,11 +888,17 @@
                 return;
             }
             
-            tbody.innerHTML = categories.map(cat => `
+            tbody.innerHTML = categories.map(cat => {
+                // Fix logo URL path
+                let logoUrl = cat.logo_url;
+                if (logoUrl && !logoUrl.startsWith('http') && !logoUrl.startsWith('/')) {
+                    logoUrl = '/' + logoUrl;
+                }
+                return `
                 <tr class="border-b hover:bg-gray-50">
                     <td class="px-4 py-3">${cat.id}</td>
                     <td class="px-4 py-3">
-                        ${cat.logo_url ? `<img src="${cat.logo_url}" class="h-16 w-16 object-contain rounded border" onerror="this.src='../assets/img/logo.jpg'">` : '<span class="text-gray-400">Chưa có</span>'}
+                        ${logoUrl ? `<img src="${logoUrl}" class="h-16 w-16 object-contain rounded border" onerror="this.src='../assets/img/logo.jpg'">` : '<span class="text-gray-400">Chưa có</span>'}
                     </td>
                     <td class="px-4 py-3 font-semibold">${cat.name}</td>
                     <td class="px-4 py-3 text-center">
@@ -908,7 +914,8 @@
                         <button onclick="deleteCategory(${cat.id})" class="text-red-600 hover:underline">🗑️ Xóa</button>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function updateCategoryDropdowns() {
@@ -946,7 +953,12 @@
                     
                     // Show existing logo
                     if (cat.logo_url) {
-                        document.getElementById('category_logo_preview_img').src = cat.logo_url;
+                        // Fix logo URL path
+                        let logoUrl = cat.logo_url;
+                        if (!logoUrl.startsWith('http') && !logoUrl.startsWith('/')) {
+                            logoUrl = '/' + logoUrl;
+                        }
+                        document.getElementById('category_logo_preview_img').src = logoUrl;
                         document.getElementById('category_logo_preview').classList.remove('hidden');
                         // Remove required from file input when editing
                         document.getElementById('category_logo').removeAttribute('required');
@@ -1134,12 +1146,18 @@
                 const hasConfig = product.has_survey_config;
                 const config = product.survey_config;
                 
+                // Fix image URL path
+                let imageUrl = product.image_url;
+                if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                    imageUrl = '/' + imageUrl;
+                }
+                
                 html += `
                     <div class="border rounded-lg p-4 hover:shadow-md transition-shadow ${hasConfig ? 'bg-green-50' : 'bg-gray-50'}">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-4 flex-1">
                                 <div class="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                                    ${product.image_url ? `<img src="${product.image_url}" alt="${product.title}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-400">📦</div>'}
+                                    ${imageUrl ? `<img src="${imageUrl}" alt="${product.title}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-400">📦</div>'}
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h3 class="font-semibold text-lg truncate">${product.title}</h3>
