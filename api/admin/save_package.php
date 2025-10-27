@@ -55,6 +55,20 @@ if ($price <= 0) {
     exit;
 }
 
+// Check for duplicate display_order (except current package)
+$check_stmt = $conn->prepare("SELECT id, name FROM packages WHERE display_order = ? AND id != ?");
+$check_stmt->bind_param("ii", $display_order, $id);
+$check_stmt->execute();
+$check_result = $check_stmt->get_result();
+if ($row = $check_result->fetch_assoc()) {
+    echo json_encode([
+        'success' => false, 
+        'message' => "Thứ tự hiển thị {$display_order} đã được sử dụng bởi gói khác: \"{$row['name']}\". Vui lòng chọn thứ tự khác."
+    ]);
+    exit;
+}
+$check_stmt->close();
+
 // Start transaction
 $conn->begin_transaction();
 

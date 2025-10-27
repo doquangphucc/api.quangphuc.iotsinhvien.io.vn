@@ -63,6 +63,20 @@ if (empty($name)) {
     exit;
 }
 
+// Check for duplicate display_order (except current category)
+$check_stmt = $conn->prepare("SELECT id, name FROM product_categories WHERE display_order = ? AND id != ?");
+$check_stmt->bind_param("ii", $display_order, $id);
+$check_stmt->execute();
+$check_result = $check_stmt->get_result();
+if ($row = $check_result->fetch_assoc()) {
+    echo json_encode([
+        'success' => false, 
+        'message' => "Thứ tự hiển thị {$display_order} đã được sử dụng bởi danh mục khác: \"{$row['name']}\". Vui lòng chọn thứ tự khác."
+    ]);
+    exit;
+}
+$check_stmt->close();
+
 // Handle image upload
 if (isset($_FILES['logo'])) {
     $file = $_FILES['logo'];
