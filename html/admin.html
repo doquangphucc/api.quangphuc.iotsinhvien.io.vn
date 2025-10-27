@@ -2464,6 +2464,7 @@
         }
         
         function openDichVuModal(id = null) {
+            // Reset form first
             document.getElementById('dich_vu_id').value = id || '';
             document.getElementById('dich_vu_name').value = '';
             document.getElementById('dich_vu_description').value = '';
@@ -2480,21 +2481,20 @@
             document.getElementById('dich_vu_link_page_section').classList.remove('hidden');
             document.getElementById('dich_vu_link_custom_section').classList.add('hidden');
             
+            // Show modal first
+            document.getElementById('dichVuModal').classList.add('show');
+            
             if (id) {
                 document.getElementById('dichVuModalTitle').textContent = 'Sửa dịch vụ';
-                // Load data
-                loadDichVu().then(() => {
-                    editDichVu(id);
-                });
+                // Load data after modal is shown
+                editDichVu(id);
             } else {
                 document.getElementById('dichVuModalTitle').textContent = 'Thêm dịch vụ';
             }
-            
-            document.getElementById('dichVuModal').classList.remove('hidden');
         }
         
         function closeDichVuModal() {
-            document.getElementById('dichVuModal').classList.add('hidden');
+            document.getElementById('dichVuModal').classList.remove('show');
         }
         
         function toggleLinkType() {
@@ -2522,6 +2522,7 @@
         }
         
         function editDichVu(id) {
+            // Load and populate data
             fetch(`${API_BASE}/admin/get_dich_vu.php?t=${Date.now()}`, {
                 credentials: 'include'
             })
@@ -2557,6 +2558,10 @@
                         previewDiv.classList.remove('hidden');
                     }
                 }
+            })
+            .catch(error => {
+                console.error('Error loading dich_vu data:', error);
+                showToast('Lỗi khi tải dữ liệu dịch vụ', 'error');
             });
         }
         
