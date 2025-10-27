@@ -708,10 +708,24 @@
         // Logout
         async function logout() {
             try {
-                await fetch(`${API_BASE}/logout.php`);
-                window.location.href = 'login.html';
+                const response = await fetch(`${API_BASE}/logout.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                // Show success message if available
+                if (data.success) {
+                    showToast(data.message || 'Đăng xuất thành công', 'success');
+                }
+                
+                // Wait a bit for the toast to show
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
             } catch (error) {
                 console.error('Error logging out:', error);
+                // Even if there's an error, redirect to login
+                window.location.href = 'login.html';
             }
         }
 
