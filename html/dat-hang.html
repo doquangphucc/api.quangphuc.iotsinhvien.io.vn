@@ -586,6 +586,7 @@
                     });
 
                     const result = await response.json();
+                    console.log('API Response:', result);
 
                     if (result.success) {
                         // Clear cart
@@ -595,6 +596,7 @@
                         // Show success modal
                         document.getElementById('success-modal').classList.remove('hidden');
                     } else {
+                        console.error('API Error:', result);
                         alert(result.message || 'Có lỗi xảy ra khi đặt hàng');
                     }
                 } catch (error) {
