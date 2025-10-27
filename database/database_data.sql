@@ -700,7 +700,9 @@ INSERT INTO intro_posts (id, title, description, image_url, video_url, is_active
 (1, 'HC Eco System - Giải Pháp Năng Lượng Xanh', 'HC Eco System là đơn vị hàng đầu trong lĩnh vực cung cấp giải pháp năng lượng mặt trời tại Việt Nam. Với kinh nghiệm nhiều năm trong ngành, chúng tôi tự hào là đối tác đáng tin cậy của hàng ngàn khách hàng trên toàn quốc.', NULL, NULL, 1, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (2, 'Sứ Mệnh Của Chúng Tôi', 'Chúng tôi cam kết cung cấp các giải pháp năng lượng mặt trời chất lượng cao, hiệu quả và tiết kiệm chi phí. Đội ngũ chuyên nghiệp, thiết bị chính hãng và dịch vụ tận tâm.', NULL, NULL, 1, 2, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (3, 'Tầm Nhìn 2030', 'Trở thành đơn vị dẫn đầu trong lĩnh vực năng lượng tái tạo tại Việt Nam, góp phần xây dựng một tương lai xanh, bền vững và thân thiện với môi trường.', NULL, NULL, 1, 3, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(4, 'Giải Pháp Cho Mọi Quy Mô', 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.', NULL, NULL, 1, 4, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
+(4, 'Giải Pháp Cho Mọi Quy Mô', 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.', NULL, NULL, 1, 4, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(5, 'dddddđ', 'ffffffffffffffffffffff', '/uploads/intro_images/intro_image_1761599252_68ffdf1432557.jpg', '/uploads/intro_videos/intro_video_1761600454_68ffe3c698f1a.mp4', 1, 1, '2025-10-27 21:07:32', '2025-10-27 21:27:34'),
+(6, 'faaf', 'aaaaaaaaaa', '/uploads/intro_images/intro_image_1761600209_68ffe2d1bc014.jpg', '/uploads/intro_videos/intro_video_1761600190_68ffe2bee024b.mp4', 1, 5, '2025-10-27 21:23:10', '2025-10-27 21:23:29');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PROJECTS (Dự án)
@@ -717,7 +719,7 @@ INSERT INTO projects (id, title, description, image_url, video_url, is_active, d
 SELECT 'Sample data imported successfully!' as message;
 SELECT 'Packages: 4 packages' as info;
 SELECT 'Reward Templates: 6 templates' as info;
-SELECT 'Intro Posts: 4 posts' as info;
+SELECT 'Intro Posts: 6 posts' as info;
 SELECT 'Projects: 4 projects' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
