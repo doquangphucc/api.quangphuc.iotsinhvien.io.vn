@@ -10,11 +10,11 @@ USE nangluongmattroi;
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCT_CATEGORIES
 -- =====================================================
--- Chỉ thêm 2 danh mục giống package_categories
-INSERT INTO product_categories (id, name, logo_url, display_order, is_active) VALUES
-(1, 'Bảo Duy Solar', NULL, 1, TRUE),
-(2, 'C - Home Building', NULL, 2, TRUE),
-(3, 'Coffee', NULL, 3, TRUE);
+INSERT INTO product_categories (id, name, logo_url, display_order, is_active, created_at, updated_at) VALUES
+(1, 'Bảo Duy Solar', '/assets/img/categories/category_1761566273_68ff5e41b8ea6.jpg', 1, 1, '2025-10-27 11:31:07', '2025-10-27 11:57:53'),
+(2, 'C - Home Building', '/assets/img/categories/category_1761566279_68ff5e47a7bc2.jpg', 2, 1, '2025-10-27 11:31:07', '2025-10-27 11:57:59'),
+(3, 'Coffee', '/assets/img/categories/category_1761568681_68ff67a96c3f3.jpg', 3, 1, '2025-10-27 12:38:01', '2025-10-27 12:38:01'),
+(4, 'Phúc', '/assets/img/categories/category_1761582235_68ff9c9bed00f.jpg', 4, 1, '2025-10-27 16:23:55', '2025-10-27 16:23:55');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCTS
@@ -573,33 +573,20 @@ INSERT INTO phuong (ten_phuong, id_tinh) VALUES
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_CATEGORIES
 -- =====================================================
-INSERT INTO package_categories (id, name, logo_url, badge_text, badge_color, display_order, is_active) VALUES
-(1, 'Bảo Duy Solar', NULL, 'Hot', 'red', 1, TRUE),
-(2, 'C - Home Building', NULL, NULL, 'blue', 2, TRUE);
+INSERT INTO package_categories (id, name, logo_url, badge_text, badge_color, display_order, is_active, created_at, updated_at) VALUES
+(1, 'Bảo Duy Solar', '/assets/img/package-categories/package-category_1761566289_68ff5e518d89e.jpg', 'Siêu Hot', 'yellow', 1, 1, '2025-10-27 11:31:08', '2025-10-27 12:10:03'),
+(2, 'C - Home Building', '/assets/img/package-categories/package-category_1761566300_68ff5e5c5676c.jpg', 'New', 'blue', 2, 1, '2025-10-27 11:31:08', '2025-10-27 12:02:27'),
+(3, 'Coffee', '/assets/img/package-categories/package-category_1761568732_68ff67dcd01c8.jpg', 'Bán Chạy', 'purple', 1, 1, '2025-10-27 12:38:52', '2025-10-27 12:38:58');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGES
 -- =====================================================
-INSERT INTO packages (category_id, name, description, price, badge_text, badge_color, savings_per_month, payback_period, display_order, is_active) VALUES
-(1, 'Gói Solar 3kW - Hộ Gia Đình', 
-'Hệ thống điện mặt trời 3kW phù hợp cho gia đình 2-3 người, giúp giảm 70-80% hóa đơn điện hàng tháng.',
-145000000, 'PHỔ BIẾN', 'blue', '~2.5 triệu/tháng', '4-5 năm', 1, TRUE),
-
-(1, 'Gói Solar 5kW - Gia Đình Vừa', 
-'Hệ thống điện mặt trời 5kW phù hợp cho gia đình 4-5 người, công suất cao, tiết kiệm tối đa.',
-225000000, 'BÁN CHẠY', 'red', '~4 triệu/tháng', '4-5 năm', 2, TRUE),
-
-(1, 'Gói Solar 10kW - Doanh Nghiệp Nhỏ', 
-'Hệ thống điện mặt trời 10kW phù hợp cho cửa hàng, văn phòng nhỏ, doanh nghiệp tiết kiệm chi phí.',
-425000000, 'KHUYẾN MÃI', 'green', '~8 triệu/tháng', '4-5 năm', 3, TRUE),
-
-(1, 'Gói Solar 20kW - Nhà Xưởng', 
-'Hệ thống điện mặt trời 20kW phù hợp cho nhà xưởng, doanh nghiệp vừa, tiết kiệm năng lượng lớn.',
-785000000, 'TIẾT KIỆM', 'yellow', '~15 triệu/tháng', '4-5 năm', 4, TRUE),
-
-(2, 'Hệ Thống Điện Nhà Thông Minh', 
-'Tích hợp hệ thống điện mặt trời với hệ thống điều khiển thông minh, tự động hóa toàn bộ.',
-555000000, 'MỚI', 'purple', '~10 triệu/tháng', '4-5 năm', 1, TRUE);
+INSERT INTO packages (id, category_id, name, description, price, savings_per_month, payback_period, highlights, badge_text, badge_color, display_order, is_active, created_at, updated_at) VALUES
+(1, 1, 'Gói Solar 3kW - Hộ Gia Đình', 'Hệ thống điện mặt trời 3kW phù hợp cho gia đình 2-3 người, giúp giảm 70-80% hóa đơn điện hàng tháng.', 145000000.00, '~2.5 triệu/tháng', '4-5 năm', '[{\"title\":\"Tiết kiệm/tháng\",\"content\":\"~2.5 triệu/tháng\"},{\"title\":\"Hoàn vốn\",\"content\":\"4-5 năm\"}]', 'PHỔ BIẾN', 'red', 1, 1, '2025-10-27 11:31:09', '2025-10-27 12:03:40'),
+(2, 1, 'Gói Solar 5kW - Gia Đình Vừa', 'Hệ thống điện mặt trời 5kW phù hợp cho gia đình 4-5 người, công suất cao, tiết kiệm tối đa.', 225000000.00, '~4 triệu/tháng', '4-5 năm', NULL, 'BÁN CHẠY', 'red', 2, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(3, 1, 'Gói Solar 10kW - Doanh Nghiệp Nhỏ', 'Hệ thống điện mặt trời 10kW phù hợp cho cửa hàng, văn phòng nhỏ, doanh nghiệp tiết kiệm chi phí.', 425000000.00, '~8 triệu/tháng', '4-5 năm', NULL, 'KHUYẾN MÃI', 'green', 3, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(4, 1, 'Gói Solar 20kW - Nhà Xưởng', 'Hệ thống điện mặt trời 20kW phù hợp cho nhà xưởng, doanh nghiệp vừa, tiết kiệm năng lượng lớn.', 785000000.00, '~15 triệu/tháng', '4-5 năm', NULL, 'TIẾT KIỆM', 'yellow', 4, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(5, 2, 'Hệ Thống Điện Nhà Thông Minh', 'Tích hợp hệ thống điện mặt trời với hệ thống điều khiển thông minh, tự động hóa toàn bộ.', 555000000.00, '~10 triệu/tháng', '4-5 năm', NULL, 'MỚI', 'purple', 1, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_ITEMS
@@ -648,87 +635,72 @@ INSERT INTO package_items (package_id, item_name, item_description, display_orde
 -- =====================================================
 -- DỮ LIỆU MẪU - REWARD_TEMPLATES
 -- =====================================================
-INSERT INTO reward_templates (id, reward_name, reward_type, reward_value, reward_description, reward_quantity, reward_image, is_active) VALUES
-(1, 'Voucher giảm 500.000đ', 'voucher', 500000, 'Voucher giảm giá 500.000đ cho đơn hàng tiếp theo', NULL, NULL, TRUE),
-(2, 'Voucher giảm 1.000.000đ', 'voucher', 1000000, 'Voucher giảm giá 1.000.000đ cho đơn hàng tiếp theo', NULL, NULL, TRUE),
-(3, 'Tiền mặt 200.000đ', 'cash', 200000, 'Nhận ngay 200.000đ tiền mặt', NULL, NULL, TRUE),
-(4, 'Tiền mặt 500.000đ', 'cash', 500000, 'Nhận ngay 500.000đ tiền mặt', NULL, NULL, TRUE),
-(5, 'Chai nước giặt Omo', 'gift', NULL, 'Chai nước giặt Omo 3.8kg', 100, NULL, TRUE),
-(6, 'Bộ dụng cụ gia đình', 'gift', NULL, 'Bộ dụng cụ gia đình 10 món', 50, NULL, TRUE);
+INSERT INTO reward_templates (id, reward_name, reward_type, reward_value, reward_description, reward_quantity, reward_image, is_active, created_at, updated_at) VALUES
+(1, 'Voucher giảm 500.000đ', 'voucher', 500000.00, 'Voucher giảm giá 500.000đ cho đơn hàng tiếp theo', NULL, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(2, 'Voucher giảm 1.000.000đ', 'voucher', 1000000.00, 'Voucher giảm giá 1.000.000đ cho đơn hàng tiếp theo', NULL, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(3, 'Tiền mặt 200.000đ', 'cash', 200000.00, 'Nhận ngay 200.000đ tiền mặt', NULL, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(4, 'Tiền mặt 500.000đ', 'cash', 500000.00, 'Nhận ngay 500.000đ tiền mặt', NULL, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(5, 'Chai nước giặt Omo', 'gift', NULL, 'Chai nước giặt Omo 3.8kg', 100, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(6, 'Bộ dụng cụ gia đình', 'gift', NULL, 'Bộ dụng cụ gia đình 10 món', 50, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
 
 -- =====================================================
 -- DỮ LIỆU TEST - USER MẪU (Để test)
 -- =====================================================
 -- Tạo user test (password: 123456 - đã hash)
 -- Tạo admin user (username: admin, password: admin123)
-INSERT INTO users (id, full_name, username, phone, password, is_admin) VALUES
-(1, 'Test User', 'testuser', '0123456789', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', FALSE),
-(2, 'Admin User', 'admin', '0988919868', '$2y$10$k8S9LHvAOtxAvDFTGmV7n.cyqvIuFbnlZGzZ.DcPzpOihPfnYWbF2', TRUE);
+INSERT INTO users (id, full_name, username, phone, password, is_admin, created_at, updated_at) VALUES
+(1, 'Test User', 'testuser', '0123456789', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(2, 'Admin User', 'admin', '0988919868', '$2y$10$k8S9LHvAOtxAvDFTGmV7n.cyqvIuFbnlZGzZ.DcPzpOihPfnYWbF2', 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(3, 'Đỗ Quang Phúc', 'quangphuc', '0375779219', '$2y$10$r6M1D/MPVDVm9bXdlOaA4.NxfWO68iL2loDBpuZTySRWGnFVovhui', 0, '2025-10-27 11:57:05', '2025-10-27 11:57:05');
 
 -- Tạo lottery tickets test cho user
-INSERT INTO lottery_tickets (user_id, ticket_type, status, created_at) VALUES
-(1, 'bonus', 'active', NOW()),
-(1, 'bonus', 'active', NOW()),
-(1, 'bonus', 'active', NOW());
+INSERT INTO lottery_tickets (id, user_id, ticket_type, status, created_at) VALUES
+(1, 1, 'bonus', 'active', '2025-10-27 11:31:10'),
+(2, 1, 'bonus', 'active', '2025-10-27 11:31:10'),
+(3, 1, 'bonus', 'active', '2025-10-27 11:31:10');
 
 -- =====================================================
 -- DỮ LIỆU TEST - VOUCHERS MẪU
 -- =====================================================
-INSERT INTO vouchers (code, discount_amount, description, expires_at) VALUES
-('WELCOME500K', 500000, 'Voucher chào mừng khách hàng mới', DATE_ADD(NOW(), INTERVAL 30 DAY)),
-('NEWYEAR1M', 1000000, 'Voucher năm mới giảm 1 triệu', DATE_ADD(NOW(), INTERVAL 60 DAY));
+INSERT INTO vouchers (id, code, discount_amount, description, is_used, used_by_user_id, used_at, expires_at, created_at) VALUES
+(1, 'WELCOME500K', 500000.00, 'Voucher chào mừng khách hàng mới', 0, NULL, NULL, '2025-11-26 11:31:10', '2025-10-27 11:31:10'),
+(2, 'NEWYEAR1M', 1000000.00, 'Voucher năm mới giảm 1 triệu', 0, NULL, NULL, '2025-12-26 11:31:10', '2025-10-27 11:31:10');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - SURVEY_PRODUCT_CONFIGS (Cấu hình sản phẩm cho khảo sát)
 -- =====================================================
--- Lưu ý: Product IDs bắt đầu từ 1, cần kiểm tra lại sau khi insert products
-INSERT INTO survey_product_configs (product_id, survey_category, phase_type, price_type, is_active, display_order, notes) VALUES
--- TẤM PIN (Solar Panels)
-(1, 'solar_panel', 'none', 'market_price', TRUE, 1, 'Jinko 590W'),
-(2, 'solar_panel', 'none', 'market_price', TRUE, 2, 'Jinko 630W'),
-
--- INVERTER 1 PHA
-(5, 'inverter', '1_phase', 'market_price', TRUE, 1, 'ECO Hybrid 5kW'),
-(6, 'inverter', '1_phase', 'market_price', TRUE, 2, 'ECO Hybrid 6kW'),
-(7, 'inverter', '1_phase', 'market_price', TRUE, 3, 'ECO Hybrid 12kW'),
-(8, 'inverter', '1_phase', 'market_price', TRUE, 4, 'Hybrid GEN-LB-EU 6K'),
-(9, 'inverter', '1_phase', 'market_price', TRUE, 5, 'Hybrid GEN-LB-EU 8K'),
-(10, 'inverter', '1_phase', 'market_price', TRUE, 6, 'Hybrid GEN-LB-EU 10K'),
-(11, 'inverter', '1_phase', 'market_price', TRUE, 7, 'Hybrid LXP-12K'),
-
--- PIN LƯU TRỮ (Batteries)
-(12, 'battery', 'none', 'market_price', TRUE, 1, 'Cell BYD 173ah'),
-(13, 'battery', 'none', 'market_price', TRUE, 2, 'Cell A-Cornex 16 Cell'),
-
--- TỦ ĐIỆN 1 PHA
-(14, 'electrical_cabinet', '1_phase', 'market_price', TRUE, 1, '1 pha 6kW'),
-(15, 'electrical_cabinet', '1_phase', 'market_price', TRUE, 2, '1 pha 8kW'),
-(16, 'electrical_cabinet', '1_phase', 'market_price', TRUE, 3, '1 pha 10kW'),
-(17, 'electrical_cabinet', '1_phase', 'market_price', TRUE, 4, '1 pha 12kW'),
-
--- TỦ ĐIỆN 3 PHA
-(18, 'electrical_cabinet', '3_phase', 'market_price', TRUE, 1, '3 pha 12kW'),
-(19, 'electrical_cabinet', '3_phase', 'market_price', TRUE, 2, '3 pha 15kW');
+INSERT INTO survey_product_configs (id, product_id, survey_category, phase_type, price_type, is_active, display_order, notes, created_at, updated_at) VALUES
+(1, 1, 'solar_panel', 'none', 'market_price', 1, 1, 'Jinko 590W', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(2, 2, 'solar_panel', 'none', 'market_price', 1, 2, 'Jinko 630W', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(3, 5, 'inverter', '1_phase', 'market_price', 1, 1, 'ECO Hybrid 5kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(4, 6, 'inverter', '1_phase', 'market_price', 1, 2, 'ECO Hybrid 6kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(5, 7, 'inverter', '1_phase', 'market_price', 1, 3, 'ECO Hybrid 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(6, 8, 'inverter', '1_phase', 'market_price', 1, 4, 'Hybrid GEN-LB-EU 6K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(7, 9, 'inverter', '1_phase', 'market_price', 1, 5, 'Hybrid GEN-LB-EU 8K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(8, 10, 'inverter', '1_phase', 'market_price', 1, 6, 'Hybrid GEN-LB-EU 10K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(9, 11, 'inverter', '1_phase', 'market_price', 1, 7, 'Hybrid LXP-12K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(10, 12, 'battery', 'none', 'market_price', 1, 1, 'Cell BYD 173ah', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(11, 13, 'battery', 'none', 'market_price', 1, 2, 'Cell A-Cornex 16 Cell', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(12, 14, 'electrical_cabinet', '1_phase', 'market_price', 1, 1, '1 pha 6kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(13, 15, 'electrical_cabinet', '1_phase', 'market_price', 1, 2, '1 pha 8kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(14, 16, 'electrical_cabinet', '1_phase', 'market_price', 1, 3, '1 pha 10kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(15, 17, 'electrical_cabinet', '1_phase', 'market_price', 1, 4, '1 pha 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(16, 18, 'electrical_cabinet', '3_phase', 'market_price', 1, 1, '3 pha 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(17, 19, 'electrical_cabinet', '3_phase', 'market_price', 1, 2, '3 pha 15kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(18, 3, 'inverter', '1_phase', 'category_price', 1, 1, '', '2025-10-27 11:52:42', '2025-10-27 11:52:42'),
+(19, 4, 'inverter', '1_phase', 'category_price', 1, 1, '', '2025-10-27 12:10:31', '2025-10-27 12:10:31'),
+(20, 20, 'accessory', 'none', 'market_price', 1, 0, '', '2025-10-27 12:10:46', '2025-10-27 12:10:46'),
+(21, 21, 'accessory', 'none', 'category_price', 1, 0, '', '2025-10-27 12:10:54', '2025-10-27 12:10:54'),
+(22, 22, 'accessory', 'none', 'category_price', 1, 0, '', '2025-10-27 12:11:01', '2025-10-27 12:11:01');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - INTRO_POSTS (Bài viết trang giới thiệu)
 -- =====================================================
-INSERT INTO intro_posts (id, title, description, image_url, video_url, is_active, display_order) VALUES
-(1, 'HC Eco System - Giải Pháp Năng Lượng Xanh', 
- 'HC Eco System là đơn vị hàng đầu trong lĩnh vực cung cấp giải pháp năng lượng mặt trời tại Việt Nam. Với kinh nghiệm nhiều năm trong ngành, chúng tôi tự hào là đối tác đáng tin cậy của hàng ngàn khách hàng trên toàn quốc.',
- NULL, NULL, TRUE, 1),
-
-(2, 'Sứ Mệnh Của Chúng Tôi',
- 'Chúng tôi cam kết cung cấp các giải pháp năng lượng mặt trời chất lượng cao, hiệu quả và tiết kiệm chi phí. Đội ngũ chuyên nghiệp, thiết bị chính hãng và dịch vụ tận tâm.',
- NULL, NULL, TRUE, 2),
-
-(3, 'Tầm Nhìn 2030',
- 'Trở thành đơn vị dẫn đầu trong lĩnh vực năng lượng tái tạo tại Việt Nam, góp phần xây dựng một tương lai xanh, bền vững và thân thiện với môi trường.',
- NULL, NULL, TRUE, 3),
-
-(4, 'Giải Pháp Cho Mọi Quy Mô',
- 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.',
- NULL, NULL, TRUE, 4);
+INSERT INTO intro_posts (id, title, description, image_url, video_url, is_active, display_order, created_at, updated_at) VALUES
+(1, 'HC Eco System - Giải Pháp Năng Lượng Xanh', 'HC Eco System là đơn vị hàng đầu trong lĩnh vực cung cấp giải pháp năng lượng mặt trời tại Việt Nam. Với kinh nghiệm nhiều năm trong ngành, chúng tôi tự hào là đối tác đáng tin cậy của hàng ngàn khách hàng trên toàn quốc.', NULL, NULL, 1, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(2, 'Sứ Mệnh Của Chúng Tôi', 'Chúng tôi cam kết cung cấp các giải pháp năng lượng mặt trời chất lượng cao, hiệu quả và tiết kiệm chi phí. Đội ngũ chuyên nghiệp, thiết bị chính hãng và dịch vụ tận tâm.', NULL, NULL, 1, 2, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(3, 'Tầm Nhìn 2030', 'Trở thành đơn vị dẫn đầu trong lĩnh vực năng lượng tái tạo tại Việt Nam, góp phần xây dựng một tương lai xanh, bền vững và thân thiện với môi trường.', NULL, NULL, 1, 3, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(4, 'Giải Pháp Cho Mọi Quy Mô', 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.', NULL, NULL, 1, 4, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
 
 -- =====================================================
 -- HOÀN THÀNH IMPORT DỮ LIỆU
