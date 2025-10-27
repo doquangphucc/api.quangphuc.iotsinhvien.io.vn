@@ -115,6 +115,9 @@
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('projects')">
                     🏗️ Dự án
                 </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('dich-vu')">
+                    🔧 Dịch vụ
+                </button>
             </div>
         </div>
     </div>
@@ -366,6 +369,33 @@
                             </tr>
                         </thead>
                         <tbody id="projects-tbody-admin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dich Vu Tab -->
+        <div id="tab-dich-vu" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Quản lý dịch vụ</h2>
+                    <button onclick="openDichVuModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm dịch vụ
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Logo</th>
+                                <th class="px-4 py-3 text-left">Tên</th>
+                                <th class="px-4 py-3 text-left">Mô tả</th>
+                                <th class="px-4 py-3 text-left">Màu</th>
+                                <th class="px-4 py-3 text-left">Link</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dich-vu-tbody-admin"></tbody>
                     </table>
                 </div>
             </div>
@@ -763,6 +793,91 @@
         </div>
     </div>
 
+    <!-- Dich Vu Modal -->
+    <div id="dichVuModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="dichVuModalTitle">Thêm dịch vụ</h3>
+            <form id="dichVuForm" onsubmit="saveDichVu(event)">
+                <input type="hidden" id="dich_vu_id">
+                <input type="hidden" id="dich_vu_logo_url">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên dịch vụ *</label>
+                        <input type="text" id="dich_vu_name" required class="w-full px-4 py-2 border rounded-lg" 
+                            placeholder="Ví dụ: Bảo Duy Solar">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Logo (Ảnh) *</label>
+                        <input type="file" id="dich_vu_logo" accept="image/*" 
+                            class="w-full px-4 py-2 border rounded-lg" onchange="previewDichVuLogo(this)">
+                        <p class="text-xs text-gray-500 mt-1">Chọn ảnh logo dịch vụ (JPG, PNG, GIF - tối đa 5MB)</p>
+                        <div id="dich_vu_logo_preview" class="mt-2 hidden">
+                            <img src="" alt="Logo preview" class="h-24 w-24 object-cover border rounded-lg">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                        <textarea id="dich_vu_description" rows="4" class="w-full px-4 py-2 border rounded-lg" 
+                            placeholder="Mô tả dịch vụ..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Màu nổi bật *</label>
+                        <input type="color" id="dich_vu_highlight_color" value="#3FA34D" class="w-full h-12 border rounded-lg cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên link</label>
+                        <input type="text" id="dich_vu_link_name" class="w-full px-4 py-2 border rounded-lg" 
+                            placeholder="Ví dụ: Xem bảng giá">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Loại link</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="dich_vu_link_type" value="page" checked onchange="toggleLinkType()">
+                                <span>Chọn trang</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="dich_vu_link_type" value="custom" onchange="toggleLinkType()">
+                                <span>Nhập link tùy chỉnh</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="dich_vu_link_page_section">
+                        <label class="block text-sm font-semibold mb-2">Chọn trang</label>
+                        <select id="dich_vu_link_page" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">-- Chọn trang --</option>
+                        </select>
+                    </div>
+                    <div id="dich_vu_link_custom_section" class="hidden">
+                        <label class="block text-sm font-semibold mb-2">URL (custom)</label>
+                        <input type="text" id="dich_vu_link_custom" class="w-full px-4 py-2 border rounded-lg" 
+                            placeholder="https://example.com">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị</label>
+                            <input type="number" id="dich_vu_display_order" value="1" min="1" class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="flex items-center gap-2 pt-7">
+                                <input type="checkbox" id="dich_vu_is_active" checked>
+                                <span class="font-semibold">Kích hoạt</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        💾 Lưu dịch vụ
+                    </button>
+                    <button type="button" onclick="closeDichVuModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Package Category Modal -->
     <div id="packageCategoryModal" class="modal">
         <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
@@ -1072,9 +1187,10 @@
                  case 'tickets': loadTickets(); break;
                  case 'rewards': loadRewards(); break;
                  case 'intro-posts': loadIntroPosts(); break;
-                 case 'projects': loadProjects(); break;
-             }
-         }
+                case 'projects': loadProjects(); break;
+                case 'dich-vu': loadDichVu(); break;
+            }
+        }
 
         // Load Categories
         async function loadCategories() {
@@ -2265,6 +2381,284 @@
             } catch (error) {
                 console.error('Error deleting project:', error);
                 showToast('Có lỗi xảy ra khi xóa: ' + error.message, 'error');
+            }
+        }
+
+        // =====================================================
+        // DICH VU MANAGEMENT
+        // =====================================================
+        
+        const availablePages = [
+            { name: 'Bảng giá', value: 'pricing.html' },
+            { name: 'Liên hệ', value: 'lien-he.html' },
+            { name: 'Giới thiệu', value: 'gioi-thieu.html' },
+            { name: 'Dự án', value: 'du-an.html' },
+            { name: 'Tin tức', value: 'tin-tuc.html' },
+            { name: 'Dịch vụ', value: 'dich-vu.html' },
+            { name: 'Khảo sát', value: 'khao-sat-dien-mat-troi.html' }
+        ];
+
+        async function loadDichVu() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_dich_vu.php?t=${Date.now()}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayDichVu(data.services || []);
+                    
+                    // Populate page select
+                    const select = document.getElementById('dich_vu_link_page');
+                    select.innerHTML = '<option value="">-- Chọn trang --</option>';
+                    availablePages.forEach(page => {
+                        const option = document.createElement('option');
+                        option.value = page.value;
+                        option.textContent = page.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading dich_vu:', error);
+                showToast('Lỗi khi tải danh sách dịch vụ', 'error');
+            }
+        }
+        
+        function displayDichVu(services) {
+            const tbody = document.getElementById('dich-vu-tbody-admin');
+            tbody.innerHTML = '';
+            
+            services.forEach(service => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+                
+                const logoHtml = service.logo_url ? 
+                    `<img src="${service.logo_url}" alt="${service.name}" class="h-12 w-12 object-cover rounded">` : 
+                    '<span class="text-gray-400">N/A</span>';
+                
+                const statusHtml = service.is_active ? 
+                    '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">✓ Đang hiển thị</span>' : 
+                    '<span class="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-sm">✗ Ẩn</span>';
+                
+                const linkHtml = service.link_type === 'custom' ? 
+                    `<span class="text-blue-600">${service.link_name || service.link_value}</span>` :
+                    `<span class="text-green-600">${service.link_name || service.link_value}</span>`;
+                
+                tr.innerHTML = `
+                    <td class="px-4 py-3">${logoHtml}</td>
+                    <td class="px-4 py-3 font-semibold">${service.name}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 max-w-md">${(service.description || '').substring(0, 100)}...</td>
+                    <td class="px-4 py-3">
+                        <div class="inline-block w-8 h-8 rounded" style="background-color: ${service.highlight_color}"></div>
+                    </td>
+                    <td class="px-4 py-3">${linkHtml}</td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex gap-2 justify-center">
+                            <button onclick="editDichVu(${service.id})" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">✏️ Sửa</button>
+                            <button onclick="deleteDichVu(${service.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">🗑️ Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function openDichVuModal(id = null) {
+            document.getElementById('dich_vu_id').value = id || '';
+            document.getElementById('dich_vu_name').value = '';
+            document.getElementById('dich_vu_description').value = '';
+            document.getElementById('dich_vu_logo_url').value = '';
+            document.getElementById('dich_vu_highlight_color').value = '#3FA34D';
+            document.getElementById('dich_vu_link_name').value = '';
+            document.getElementById('dich_vu_link_page').value = '';
+            document.getElementById('dich_vu_link_custom').value = '';
+            document.getElementById('dich_vu_display_order').value = '1';
+            document.getElementById('dich_vu_is_active').checked = true;
+            document.getElementById('dich_vu_logo').value = '';
+            document.getElementById('dich_vu_logo_preview').classList.add('hidden');
+            document.querySelector('input[name="dich_vu_link_type"][value="page"]').checked = true;
+            document.getElementById('dich_vu_link_page_section').classList.remove('hidden');
+            document.getElementById('dich_vu_link_custom_section').classList.add('hidden');
+            
+            if (id) {
+                document.getElementById('dichVuModalTitle').textContent = 'Sửa dịch vụ';
+                // Load data
+                loadDichVu().then(() => {
+                    editDichVu(id);
+                });
+            } else {
+                document.getElementById('dichVuModalTitle').textContent = 'Thêm dịch vụ';
+            }
+            
+            document.getElementById('dichVuModal').classList.remove('hidden');
+        }
+        
+        function closeDichVuModal() {
+            document.getElementById('dichVuModal').classList.add('hidden');
+        }
+        
+        function toggleLinkType() {
+            const linkType = document.querySelector('input[name="dich_vu_link_type"]:checked').value;
+            if (linkType === 'page') {
+                document.getElementById('dich_vu_link_page_section').classList.remove('hidden');
+                document.getElementById('dich_vu_link_custom_section').classList.add('hidden');
+            } else {
+                document.getElementById('dich_vu_link_page_section').classList.add('hidden');
+                document.getElementById('dich_vu_link_custom_section').classList.remove('hidden');
+            }
+        }
+        
+        function previewDichVuLogo(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.getElementById('dich_vu_logo_preview');
+                    const img = previewDiv.querySelector('img');
+                    img.src = e.target.result;
+                    previewDiv.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function editDichVu(id) {
+            fetch(`${API_BASE}/admin/get_dich_vu.php?t=${Date.now()}`, {
+                credentials: 'include'
+            })
+            .then(res => res.json())
+            .then(data => {
+                const service = (data.services || []).find(s => s.id == id);
+                if (service) {
+                    document.getElementById('dich_vu_id').value = service.id;
+                    document.getElementById('dich_vu_name').value = service.name || '';
+                    document.getElementById('dich_vu_description').value = service.description || '';
+                    document.getElementById('dich_vu_logo_url').value = service.logo_url || '';
+                    document.getElementById('dich_vu_highlight_color').value = service.highlight_color || '#3FA34D';
+                    document.getElementById('dich_vu_link_name').value = service.link_name || '';
+                    document.getElementById('dich_vu_display_order').value = service.display_order || 1;
+                    document.getElementById('dich_vu_is_active').checked = service.is_active == 1;
+                    
+                    // Set link type
+                    const linkType = service.link_type || 'page';
+                    document.querySelector(`input[name="dich_vu_link_type"][value="${linkType}"]`).checked = true;
+                    toggleLinkType();
+                    
+                    if (linkType === 'page') {
+                        document.getElementById('dich_vu_link_page').value = service.link_value || '';
+                    } else {
+                        document.getElementById('dich_vu_link_custom').value = service.link_value || '';
+                    }
+                    
+                    // Show logo preview
+                    if (service.logo_url) {
+                        const previewDiv = document.getElementById('dich_vu_logo_preview');
+                        const img = previewDiv.querySelector('img');
+                        img.src = service.logo_url;
+                        previewDiv.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+        
+        async function saveDichVu(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('dich_vu_id').value;
+            const name = document.getElementById('dich_vu_name').value;
+            const description = document.getElementById('dich_vu_description').value;
+            const highlightColor = document.getElementById('dich_vu_highlight_color').value;
+            const linkName = document.getElementById('dich_vu_link_name').value;
+            const linkType = document.querySelector('input[name="dich_vu_link_type"]:checked').value;
+            const linkValue = linkType === 'page' ? 
+                document.getElementById('dich_vu_link_page').value : 
+                document.getElementById('dich_vu_link_custom').value;
+            const displayOrder = document.getElementById('dich_vu_display_order').value;
+            const isActive = document.getElementById('dich_vu_is_active').checked;
+            
+            const formData = {
+                id: id || null,
+                name,
+                description,
+                highlight_color: highlightColor,
+                link_name: linkName,
+                link_type: linkType,
+                link_value: linkValue,
+                display_order: displayOrder,
+                is_active: isActive
+            };
+            
+            // Handle logo upload
+            const logoFile = document.getElementById('dich_vu_logo').files[0];
+            let logoUrl = document.getElementById('dich_vu_logo_url').value;
+            
+            if (logoFile) {
+                const formDataUpload = new FormData();
+                formDataUpload.append('logo', logoFile);
+                
+                try {
+                    const uploadRes = await fetch(`${API_BASE}/admin/upload_logo.php`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formDataUpload
+                    });
+                    const uploadData = await uploadRes.json();
+                    if (uploadData.success) {
+                        logoUrl = uploadData.logo_url;
+                    } else {
+                        showToast('Lỗi upload logo: ' + uploadData.message, 'error');
+                        return;
+                    }
+                } catch (error) {
+                    showToast('Lỗi upload logo: ' + error.message, 'error');
+                    return;
+                }
+            }
+            
+            formData.logo_url = logoUrl;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/save_dich_vu.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeDichVuModal();
+                    loadDichVu();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving dich_vu:', error);
+                showToast('Lỗi khi lưu dịch vụ: ' + error.message, 'error');
+            }
+        }
+        
+        async function deleteDichVu(id) {
+            if (!confirm('Bạn có chắc muốn xóa dịch vụ này?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/delete_dich_vu.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadDichVu();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting dich_vu:', error);
+                showToast('Lỗi khi xóa dịch vụ: ' + error.message, 'error');
             }
         }
     </script>

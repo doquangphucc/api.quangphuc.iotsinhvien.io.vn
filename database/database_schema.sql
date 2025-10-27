@@ -435,9 +435,30 @@ CREATE INDEX idx_projects_active ON projects(is_active);
 CREATE INDEX idx_projects_display_order ON projects(display_order);
 
 -- =====================================================
+-- 20. BẢNG DICH_VU (Dịch vụ hệ sinh thái)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS dich_vu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL COMMENT 'Tên dịch vụ',
+    logo_url VARCHAR(500) COMMENT 'URL logo/ảnh dịch vụ',
+    description TEXT COMMENT 'Mô tả dịch vụ',
+    highlight_color VARCHAR(50) DEFAULT '#3FA34D' COMMENT 'Màu nổi bật (hex color)',
+    link_name VARCHAR(100) COMMENT 'Tên link hiển thị (ví dụ: "Xem bảng giá")',
+    link_type ENUM('page', 'custom') DEFAULT 'page' COMMENT 'Loại link: page hoặc custom',
+    link_value VARCHAR(500) COMMENT 'Giá trị link (tên trang hoặc URL)',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Trạng thái hiển thị',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_dich_vu_active ON dich_vu(is_active);
+CREATE INDEX idx_dich_vu_display_order ON dich_vu(display_order);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 19' as info;
+SELECT 'Total tables created: 20' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 

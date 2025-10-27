@@ -714,10 +714,19 @@ INSERT INTO projects (id, title, description, image_url, video_url, is_active, d
 (4, 'Hệ Thống Hybrid 15kW Có Pin Lưu Trữ', 'Dự án hệ thống hybrid 15kW kết hợp pin lưu trữ tại Vũng Tàu. Tự chủ năng lượng 24/7, không lo mất điện.', NULL, NULL, 1, 4, '2025-10-27 12:00:00', '2025-10-27 12:00:00');
 
 -- =====================================================
+-- DỮ LIỆU MẪU - DICH_VU
+-- =====================================================
+INSERT INTO dich_vu (id, name, logo_url, description, highlight_color, link_name, link_type, link_value, is_active, display_order, created_at, updated_at) VALUES
+(1, 'Bảo Duy Solar', '../assets/img/ecosystem/baoduy-solar-logo.jpg', 'Chuyên cung cấp giải pháp năng lượng mặt trời toàn diện cho hộ gia đình và doanh nghiệp. Lắp đặt pin năng lượng mặt trời chất lượng cao, tiết kiệm điện năng tối đa với chính sách bảo hành lâu dài.', '#FBBF24', 'Xem bảng giá', 'page', 'pricing.html', 1, 1, NOW(), NOW()),
+(2, 'HC Travel', '../assets/img/ecosystem/hc-travel-logo.jpg', 'Dịch vụ du lịch đặc biệt dành cho khách hàng lắp đặt năng lượng mặt trời. Tận hưởng những chuyến du lịch đáng nhớ với ưu đãi đặc quyền và trải nghiệm độc đáo.', '#60A5FA', 'Liên hệ ngay', 'page', 'lien-he.html', 1, 2, NOW(), NOW()),
+(3, 'HC Coffee & Restaurant', '../assets/img/ecosystem/hc-cafe-logo.jpg', 'Nhà hàng và quán cà phê phục vụ những món ăn ngon, đồ uống chất lượng cao. Môi trường thân thiện, lý tưởng cho họp mặt, làm việc và thư giãn với bạn bè, gia đình.', '#F59E0B', 'Xem thực đơn', 'page', 'pricing.html', 1, 3, NOW(), NOW()),
+(4, 'C Home Build', '../assets/img/ecosystem/c-home-logo.jpg', 'Dịch vụ xây dựng và thiết kế nhà ở hiện đại, bền vững với tiêu chuẩn cao. Tích hợp công nghệ xanh, tiết kiệm năng lượng trong từng công trình.', '#10B981', 'Xem website', 'custom', 'https://c-homebuild.com/', 1, 4, NOW(), NOW());
+
+-- =====================================================
 -- HOÀN THÀNH IMPORT DỮ LIỆU
 -- =====================================================
 SELECT 'Sample data imported successfully!' as message;
-SELECT 'Packages: 4 packages' as info;
+SELECT 'Packages: 4 packages, Services: 4 services' as info;
 SELECT 'Reward Templates: 6 templates' as info;
 SELECT 'Intro Posts: 6 posts' as info;
 SELECT 'Projects: 4 projects' as info;
