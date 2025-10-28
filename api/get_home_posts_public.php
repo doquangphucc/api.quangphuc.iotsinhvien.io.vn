@@ -15,7 +15,7 @@ try {
     // Get only active posts, ordered by display_order
     $query = "SELECT id, title, description, highlight_text, highlight_color, 
               image_url, image_position, button_text, button_url, button_color, 
-              features, display_order, section_id 
+              features, media_gallery, display_order, section_id 
               FROM home_posts 
               WHERE is_active = 1 
               ORDER BY display_order ASC, id DESC";
@@ -34,6 +34,12 @@ try {
             $features = json_decode($row['features'], true) ?? [];
         }
         
+        // Parse media_gallery JSON
+        $media_gallery = [];
+        if (!empty($row['media_gallery'])) {
+            $media_gallery = json_decode($row['media_gallery'], true) ?? [];
+        }
+        
         $posts[] = [
             'id' => (int)$row['id'],
             'title' => $row['title'],
@@ -46,6 +52,7 @@ try {
             'button_url' => $row['button_url'],
             'button_color' => $row['button_color'],
             'features' => $features,
+            'media_gallery' => $media_gallery,
             'display_order' => (int)$row['display_order'],
             'section_id' => $row['section_id']
         ];

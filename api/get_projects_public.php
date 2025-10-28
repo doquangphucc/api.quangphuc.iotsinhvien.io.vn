@@ -10,6 +10,12 @@ $result = $conn->query($sql);
 
 $projects = [];
 while ($row = $result->fetch_assoc()) {
+    // Parse media_gallery JSON
+    if (!empty($row['media_gallery'])) {
+        $row['media_gallery'] = json_decode($row['media_gallery'], true) ?? [];
+    } else {
+        $row['media_gallery'] = [];
+    }
     $projects[] = $row;
 }
 
