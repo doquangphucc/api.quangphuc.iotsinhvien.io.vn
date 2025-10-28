@@ -1026,8 +1026,55 @@
                     
                     <div>
                         <label class="block text-sm font-semibold mb-2">Link của nút</label>
-                        <input type="text" id="home_post_button_url" class="w-full px-4 py-2 border rounded-lg" 
-                            placeholder="Ví dụ: html/pricing.html">
+                        <div class="flex gap-2">
+                            <select id="home_post_button_url" class="flex-1 px-4 py-2 border rounded-lg">
+                                <option value="">-- Chọn trang --</option>
+                                <optgroup label="📄 Trang chính">
+                                    <option value="index.html">🏠 Trang chủ</option>
+                                </optgroup>
+                                <optgroup label="📁 Thông tin">
+                                    <option value="html/gioi-thieu.html">📝 Giới thiệu</option>
+                                    <option value="html/pricing.html">💰 Sản phẩm/Bảng giá</option>
+                                    <option value="html/du-an.html">🏗️ Dự án</option>
+                                    <option value="html/tin-tuc.html">📰 Tin tức</option>
+                                    <option value="html/dich-vu.html">🔧 Dịch vụ</option>
+                                    <option value="html/lien-he.html">📞 Liên hệ</option>
+                                </optgroup>
+                                <optgroup label="🔧 Chức năng">
+                                    <option value="html/khao-sat-dien-mat-troi.html">📋 Khảo sát điện mặt trời</option>
+                                    <option value="html/gio-hang.html">🛒 Giỏ hàng</option>
+                                    <option value="html/dat-hang.html">📦 Đặt hàng</option>
+                                    <option value="html/vong-quay-may-man.html">🎰 Vòng quay may mắn</option>
+                                </optgroup>
+                                <optgroup label="👤 Tài khoản">
+                                    <option value="html/login.html">🔐 Đăng nhập</option>
+                                    <option value="html/register.html">✍️ Đăng ký</option>
+                                    <option value="html/user_profile.html">👤 Trang cá nhân</option>
+                                    <option value="html/order_history.html">📋 Lịch sử đơn hàng</option>
+                                    <option value="html/survey_history.html">📊 Lịch sử khảo sát</option>
+                                    <option value="html/my-rewards.html">🎁 Phần thưởng của tôi</option>
+                                </optgroup>
+                                <optgroup label="📜 Chính sách">
+                                    <option value="html/tam-nhin-su-menh.html">🎯 Tầm nhìn & Sứ mệnh</option>
+                                    <option value="html/dieu-khoan-dieu-kien.html">📋 Điều khoản & Điều kiện</option>
+                                    <option value="html/chinh-sach-doi-tra.html">↩️ Chính sách đổi trả</option>
+                                    <option value="html/chinh-sach-bao-mat-thong-tin-ca-nhan.html">🔒 Bảo mật thông tin cá nhân</option>
+                                    <option value="html/chinh-sach-bao-mat-thong-tin-thanh-toan.html">💳 Bảo mật thông tin thanh toán</option>
+                                    <option value="html/chinh-sach-bao-hanh.html">🛡️ Chính sách bảo hành</option>
+                                    <option value="html/tro-thanh-nha-phan-phoi.html">🤝 Trở thành nhà phân phối</option>
+                                </optgroup>
+                                <optgroup label="🔗 Khác">
+                                    <option value="bao-gia-dong.html">📊 Báo giá động</option>
+                                    <option value="bao-gia-dong-fixed.html">📊 Báo giá động (Fixed)</option>
+                                </optgroup>
+                            </select>
+                            <button type="button" onclick="toggleCustomUrlInput()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm whitespace-nowrap" title="Nhập link tùy chỉnh">
+                                🔗 Tùy chỉnh
+                            </button>
+                        </div>
+                        <input type="text" id="home_post_button_url_custom" class="hidden w-full px-4 py-2 border rounded-lg mt-2" 
+                            placeholder="Nhập link tùy chỉnh (VD: https://example.com hoặc #section)">
+                        <p class="text-xs text-gray-500 mt-1">Chọn trang từ danh sách hoặc nhập link tùy chỉnh</p>
                     </div>
                     
                     <div>
@@ -3637,6 +3684,11 @@
             document.getElementById('home_post_image_url').value = '';
             document.getElementById('home_post_image_preview').classList.add('hidden');
             
+            // Reset URL input (show select, hide custom)
+            document.getElementById('home_post_button_url').classList.remove('hidden');
+            document.getElementById('home_post_button_url_custom').classList.add('hidden');
+            document.getElementById('home_post_button_url_custom').value = '';
+            
             // Reset feature inputs to default 3
             const container = document.getElementById('home_post_features_container');
             container.innerHTML = `
@@ -3694,7 +3746,31 @@
                         document.getElementById('home_post_image_url').value = post.image_url;
                         document.getElementById('home_post_image_position').value = post.image_position;
                         document.getElementById('home_post_button_text').value = post.button_text || '';
-                        document.getElementById('home_post_button_url').value = post.button_url || '';
+                        
+                        // Set button URL (check if it's in dropdown or custom)
+                        const selectEl = document.getElementById('home_post_button_url');
+                        const customInputEl = document.getElementById('home_post_button_url_custom');
+                        const buttonUrl = post.button_url || '';
+                        
+                        // Try to find in select options
+                        const matchingOption = Array.from(selectEl.options).find(opt => opt.value === buttonUrl);
+                        if (matchingOption) {
+                            // URL exists in dropdown
+                            selectEl.value = buttonUrl;
+                            customInputEl.classList.add('hidden');
+                            selectEl.classList.remove('hidden');
+                        } else if (buttonUrl) {
+                            // Custom URL not in dropdown
+                            customInputEl.value = buttonUrl;
+                            selectEl.classList.add('hidden');
+                            customInputEl.classList.remove('hidden');
+                        } else {
+                            // No URL
+                            selectEl.value = '';
+                            customInputEl.classList.add('hidden');
+                            selectEl.classList.remove('hidden');
+                        }
+                        
                         document.getElementById('home_post_button_color').value = post.button_color || '#3FA34D';
                         document.getElementById('home_post_display_order').value = post.display_order;
                         document.getElementById('home_post_is_active').checked = post.is_active;
@@ -3767,6 +3843,33 @@
             button.closest('.feature-item').remove();
         }
         
+        // Toggle between select and custom URL input
+        function toggleCustomUrlInput() {
+            const selectEl = document.getElementById('home_post_button_url');
+            const customInputEl = document.getElementById('home_post_button_url_custom');
+            
+            if (customInputEl.classList.contains('hidden')) {
+                // Switch to custom input
+                customInputEl.classList.remove('hidden');
+                selectEl.classList.add('hidden');
+                // Transfer value if exists
+                if (selectEl.value && !customInputEl.value) {
+                    customInputEl.value = selectEl.value;
+                }
+                customInputEl.focus();
+            } else {
+                // Switch back to select
+                customInputEl.classList.add('hidden');
+                selectEl.classList.remove('hidden');
+                // Try to match custom value with select options
+                const customValue = customInputEl.value;
+                const matchingOption = Array.from(selectEl.options).find(opt => opt.value === customValue);
+                if (matchingOption) {
+                    selectEl.value = customValue;
+                }
+            }
+        }
+        
         // Save home post
         async function saveHomePost(event) {
             event.preventDefault();
@@ -3805,6 +3908,19 @@
                 return;
             }
             
+            // Get button URL (from select or custom input)
+            const selectEl = document.getElementById('home_post_button_url');
+            const customInputEl = document.getElementById('home_post_button_url_custom');
+            let buttonUrl = '';
+            
+            if (customInputEl.classList.contains('hidden')) {
+                // Using select dropdown
+                buttonUrl = selectEl.value;
+            } else {
+                // Using custom input
+                buttonUrl = customInputEl.value;
+            }
+            
             // Collect features
             const features = [];
             document.querySelectorAll('.feature-text').forEach(input => {
@@ -3823,7 +3939,7 @@
                 image_url: imageUrl,
                 image_position: document.getElementById('home_post_image_position').value,
                 button_text: document.getElementById('home_post_button_text').value,
-                button_url: document.getElementById('home_post_button_url').value,
+                button_url: buttonUrl,
                 button_color: document.getElementById('home_post_button_color').value,
                 features: features,
                 display_order: parseInt(document.getElementById('home_post_display_order').value),
