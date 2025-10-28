@@ -52,8 +52,8 @@ function renderHomePosts(posts) {
 // Create a single post element
 function createPostElement(post, index) {
     const div = document.createElement('div');
-    // Add card styling: background, shadow, padding, rounded corners, and margin
-    div.className = `bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 lg:p-12 ${index > 0 ? 'mt-12' : ''}`;
+    // Simple spacing between posts - no background, no border, no shadow
+    div.className = index > 0 ? 'mt-20' : '';
     
     // Use hex colors directly (default to green if not set)
     const highlightColor = post.highlight_color || '#3FA34D';
