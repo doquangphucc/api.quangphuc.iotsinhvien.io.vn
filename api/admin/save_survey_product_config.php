@@ -74,7 +74,7 @@ try {
                 WHERE product_id = ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssiiisi", 
+        $stmt->bind_param("sssiisi",
             $survey_category, 
             $phase_type, 
             $price_type, 
