@@ -2672,7 +2672,23 @@
                 } else {
                     document.getElementById('btn_remove_video').classList.add('hidden');
                 }
+                
+                // Initialize Media Gallery for editing
+                if (!window.introPostMediaGallery) {
+                    window.introPostMediaGallery = initMediaGallery(
+                        'intro_post_media_gallery_container',
+                        API_BASE + '/admin/upload_intro_media.php'
+                    );
+                }
+                
+                // Load media gallery
+                if (post.media_gallery) {
+                    window.introPostMediaGallery.loadFromJSON(post.media_gallery);
+                } else {
+                    window.introPostMediaGallery.loadFromJSON('[]');
+                }
             } else {
+                // Adding new post
                 document.getElementById('introPostForm').reset();
                 document.getElementById('intro_post_id').value = '';
                 // Hide previews when adding new post
@@ -2680,20 +2696,14 @@
                 document.getElementById('intro_post_video_preview').classList.add('hidden');
                 document.getElementById('btn_remove_image').classList.add('hidden');
                 document.getElementById('btn_remove_video').classList.add('hidden');
-            }
-            
-            // Initialize Media Gallery
-            if (!window.introPostMediaGallery) {
-                window.introPostMediaGallery = initMediaGallery(
-                    'intro_post_media_gallery_container',
-                    API_BASE + '/admin/upload_intro_media.php'
-                );
-            }
-            
-            // Load media gallery if editing
-            if (id > 0 && post && post.media_gallery) {
-                window.introPostMediaGallery.loadFromJSON(post.media_gallery);
-            } else {
+                
+                // Initialize Media Gallery for new post
+                if (!window.introPostMediaGallery) {
+                    window.introPostMediaGallery = initMediaGallery(
+                        'intro_post_media_gallery_container',
+                        API_BASE + '/admin/upload_intro_media.php'
+                    );
+                }
                 window.introPostMediaGallery.loadFromJSON('[]');
             }
             
@@ -3047,27 +3057,37 @@
                 } else {
                     document.getElementById('btn_remove_project_video').classList.add('hidden');
                 }
+                
+                // Initialize Media Gallery for editing
+                if (!window.projectMediaGallery) {
+                    window.projectMediaGallery = initMediaGallery(
+                        'project_media_gallery_container',
+                        API_BASE + '/admin/upload_project_media.php'
+                    );
+                }
+                
+                // Load media gallery
+                if (project.media_gallery) {
+                    window.projectMediaGallery.loadFromJSON(project.media_gallery);
+                } else {
+                    window.projectMediaGallery.loadFromJSON('[]');
+                }
             } else {
+                // Adding new project
                 document.getElementById('projectForm').reset();
                 document.getElementById('project_id').value = '';
                 document.getElementById('project_image_preview').classList.add('hidden');
                 document.getElementById('project_video_preview').classList.add('hidden');
                 document.getElementById('btn_remove_project_image').classList.add('hidden');
                 document.getElementById('btn_remove_project_video').classList.add('hidden');
-            }
-            
-            // Initialize Media Gallery
-            if (!window.projectMediaGallery) {
-                window.projectMediaGallery = initMediaGallery(
-                    'project_media_gallery_container',
-                    API_BASE + '/admin/upload_project_media.php'
-                );
-            }
-            
-            // Load media gallery if editing
-            if (id > 0 && project && project.media_gallery) {
-                window.projectMediaGallery.loadFromJSON(project.media_gallery);
-            } else {
+                
+                // Initialize Media Gallery for new project
+                if (!window.projectMediaGallery) {
+                    window.projectMediaGallery = initMediaGallery(
+                        'project_media_gallery_container',
+                        API_BASE + '/admin/upload_project_media.php'
+                    );
+                }
                 window.projectMediaGallery.loadFromJSON('[]');
             }
             
@@ -4043,8 +4063,12 @@
                         }
                         
                         // Load media gallery
-                        if (window.homePostMediaGallery && post.media_gallery) {
-                            window.homePostMediaGallery.loadFromJSON(post.media_gallery);
+                        if (window.homePostMediaGallery) {
+                            if (post.media_gallery) {
+                                window.homePostMediaGallery.loadFromJSON(post.media_gallery);
+                            } else {
+                                window.homePostMediaGallery.loadFromJSON('[]');
+                            }
                         }
                     }
                 }
