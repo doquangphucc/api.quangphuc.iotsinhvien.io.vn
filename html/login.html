@@ -354,12 +354,27 @@
                     messageBox.classList.remove('hidden');
                     messageBox.classList.add('bg-green-100', 'text-green-700', 'border-2', 'border-green-300');
                     
-                    // Check if user is admin and redirect accordingly
-                    setTimeout(() => {
-                        if (data.data.user.is_admin === 1 || data.data.user.is_admin === true) {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = '../index.html';
+                    // Check if user has admin access (is_admin or has permissions)
+                    setTimeout(async () => {
+                        try {
+                            const accessCheck = await fetch('../api/check_admin_access.php', {
+                                credentials: 'include'
+                            });
+                            const accessData = await accessCheck.json();
+                            
+                            if (accessData.success && accessData.has_access) {
+                                window.location.href = 'admin.html';
+                            } else {
+                                window.location.href = '../index.html';
+                            }
+                        } catch (error) {
+                            console.error('Error checking admin access:', error);
+                            // Fallback: check is_admin
+                            if (data.data.user.is_admin === 1 || data.data.user.is_admin === true) {
+                                window.location.href = 'admin.html';
+                            } else {
+                                window.location.href = '../index.html';
+                            }
                         }
                     }, 1000);
                 } catch (error) {
