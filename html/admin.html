@@ -1416,21 +1416,36 @@
     <script src="../assets/js/admin-products.js"></script>
     <script src="../assets/js/admin-packages.js"></script>
     <script>
-        // Check admin access
+        // Check admin access (check both is_admin and permissions)
         async function checkAdmin() {
             try {
-                const response = await fetch(`${API_BASE}/admin/check_admin.php?t=${Date.now()}`, {
+                const response = await fetch(`${API_BASE}/check_admin_access.php?t=${Date.now()}`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
-                if (!data.success) {
+                
+                // Check if user has admin access (is_admin or has permissions)
+                if (!data.success || !data.has_access) {
                     window.location.href = 'login.html';
                     return false;
                 }
-                document.getElementById('admin-name').textContent = data.user.full_name;
+                
+                // Get user info to display name
+                try {
+                    const userResponse = await fetch(`${API_BASE}/get_user_info.php`, {
+                        credentials: 'include'
+                    });
+                    const userData = await userResponse.json();
+                    if (userData.success && userData.user) {
+                        document.getElementById('admin-name').textContent = userData.user.full_name;
+                    }
+                } catch (err) {
+                    console.error('Error getting user info:', err);
+                }
+                
                 return true;
             } catch (error) {
-                console.error('Error checking admin:', error);
+                console.error('Error checking admin access:', error);
                 window.location.href = 'login.html';
                 return false;
             }
@@ -1818,19 +1833,30 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
-            const isAdmin = await checkAdmin();
-            if (isAdmin) {
-                                 // Load permissions first
-                 if (typeof loadPermissions === 'function') {
-                     await loadPermissions();
-                 }
-                 
-                 await loadCategories();
-                 await loadUsers();
-                 await loadRewardTemplates();
-                 
-                 // Don't force show categories - let applyPermissions() show first available tab
-                 // showTab('categories');
+            const hasAccess = await checkAdmin();
+            if (hasAccess) {
+                // Load permissions first
+                if (typeof loadPermissions === 'function') {
+                    await loadPermissions();
+                }
+                
+                // Load data based on permissions
+                // Categories is usually the first tab, load it if user has view permission
+                if (typeof hasPermission === 'function' && hasPermission('categories', 'view')) {
+                    await loadCategories();
+                }
+                
+                // Only load users if full admin
+                if (typeof isFullAdmin !== 'undefined' && isFullAdmin) {
+                    await loadUsers();
+                }
+                
+                // Load reward templates if user has permission to rewards
+                if (typeof hasPermission === 'function' && hasPermission('rewards', 'view')) {
+                    await loadRewardTemplates();
+                }
+                
+                // applyPermissions() already shows first available tab
             }
         });
         // ============================================
