@@ -456,9 +456,29 @@ CREATE INDEX idx_dich_vu_active ON dich_vu(is_active);
 CREATE INDEX idx_dich_vu_display_order ON dich_vu(display_order);
 
 -- =====================================================
+-- 21. BẢNG USER_PERMISSIONS (Phân quyền user)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS user_permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL COMMENT 'ID người dùng',
+    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu)',
+    can_view BOOLEAN DEFAULT FALSE COMMENT 'Quyền xem',
+    can_create BOOLEAN DEFAULT FALSE COMMENT 'Quyền tạo mới',
+    can_edit BOOLEAN DEFAULT FALSE COMMENT 'Quyền sửa',
+    can_delete BOOLEAN DEFAULT FALSE COMMENT 'Quyền xóa',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_permission (user_id, permission_key)
+) COMMENT='Lưu quyền truy cập các module của user';
+
+CREATE INDEX idx_user_permissions_user ON user_permissions(user_id);
+CREATE INDEX idx_user_permissions_key ON user_permissions(permission_key);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 20' as info;
+SELECT 'Total tables created: 21' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 

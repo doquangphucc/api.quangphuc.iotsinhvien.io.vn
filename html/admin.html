@@ -93,7 +93,7 @@
     <!-- Navigation Tabs -->
     <div class="bg-white border-b">
         <div class="container mx-auto px-4">
-            <div class="flex gap-2 overflow-x-auto py-2">
+            <div class="flex flex-wrap gap-2 py-2">
                 <button class="tab-button active px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('categories')">
                     📁 Danh mục SP
                 </button>
@@ -123,6 +123,9 @@
                 </button>
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('dich-vu')">
                     🔧 Dịch vụ
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('users')">
+                    👥 Quản lý User
                 </button>
             </div>
         </div>
@@ -403,6 +406,34 @@
                             </tr>
                         </thead>
                         <tbody id="dich-vu-tbody-admin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Quản lý người dùng</h2>
+                    <button onclick="openUserModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm người dùng
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">ID</th>
+                                <th class="px-4 py-3 text-left">Họ tên</th>
+                                <th class="px-4 py-3 text-left">Username</th>
+                                <th class="px-4 py-3 text-left">Số điện thoại</th>
+                                <th class="px-4 py-3 text-center">Vai trò</th>
+                                <th class="px-4 py-3 text-center">Ngày tạo</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody"></tbody>
                     </table>
                 </div>
             </div>
@@ -885,6 +916,303 @@
         </div>
     </div>
 
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="userModalTitle">Thêm người dùng</h3>
+            <form id="userForm" onsubmit="saveUser(event)">
+                <input type="hidden" id="user_id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- Thông tin cơ bản -->
+                    <div class="col-span-2 border-b pb-4">
+                        <h4 class="font-bold text-lg mb-3">📝 Thông tin cơ bản</h4>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Họ tên *</label>
+                        <input type="text" id="user_full_name" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Username *</label>
+                        <input type="text" id="user_username" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Số điện thoại *</label>
+                        <input type="tel" id="user_phone" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mật khẩu <span id="password-label-suffix">*</span></label>
+                        <input type="password" id="user_password" class="w-full px-4 py-2 border rounded-lg" placeholder="Để trống nếu không đổi mật khẩu">
+                        <p class="text-xs text-gray-500 mt-1">Tối thiểu 6 ký tự</p>
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="user_is_admin" onchange="toggleAdminPermissions()">
+                            <span class="font-semibold">👑 Quyền Admin (Full quyền truy cập tất cả)</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Phân quyền chi tiết -->
+                    <div class="col-span-2 border-b pb-4 mt-4" id="permissions-section">
+                        <h4 class="font-bold text-lg mb-3">🔐 Phân quyền module (chỉ áp dụng khi KHÔNG phải Admin)</h4>
+                        <p class="text-sm text-gray-600 mb-4">Chọn các quyền truy cập cho từng module</p>
+                    </div>
+                    
+                    <div class="col-span-2" id="permissions-grid">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Danh mục SP -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">📁 Danh mục SP</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="categories" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="categories" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="categories" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="categories" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Sản phẩm -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">📦 Sản phẩm</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="products" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="products" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="products" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="products" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Khảo sát -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">📋 Khảo sát</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="survey" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="survey" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="survey" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="survey" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Gói sản phẩm -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🎁 Gói sản phẩm</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="packages" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="packages" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="packages" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="packages" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Đơn hàng -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🛒 Đơn hàng</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="orders" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="orders" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="orders" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="orders" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Vé quay -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🎫 Vé quay</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="tickets" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="tickets" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="tickets" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="tickets" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Phần thưởng -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🎁 Phần thưởng</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="rewards" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="rewards" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="rewards" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="rewards" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Bài giới thiệu -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">📝 Bài giới thiệu</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="intro-posts" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="intro-posts" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="intro-posts" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="intro-posts" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Dự án -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🏗️ Dự án</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="projects" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="projects" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="projects" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="projects" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Dịch vụ -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🔧 Dịch vụ</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="dich-vu" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="dich-vu" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="dich-vu" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="dich-vu" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                            <p class="text-sm text-blue-800"><strong>💡 Lưu ý:</strong> Khi check "Quyền Admin", user sẽ có toàn quyền truy cập tất cả module và phân quyền chi tiết sẽ bị bỏ qua.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        💾 Lưu
+                    </button>
+                    <button type="button" onclick="closeUserModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Package Category Modal -->
     <div id="packageCategoryModal" class="modal">
         <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
@@ -1179,6 +1507,7 @@
                  case 'intro-posts': loadIntroPosts(); break;
                 case 'projects': loadProjects(); break;
                 case 'dich-vu': loadDichVu(); break;
+                case 'users': loadUsersManagement(); break;
             }
         }
 
@@ -2379,7 +2708,7 @@
         // =====================================================
         
         const availablePages = [
-            { name: 'Bảng giá', value: 'pricing.html' },
+            { name: 'Sản phẩm', value: 'pricing.html' },
             { name: 'Liên hệ', value: 'lien-he.html' },
             { name: 'Giới thiệu', value: 'gioi-thieu.html' },
             { name: 'Dự án', value: 'du-an.html' },
@@ -2657,6 +2986,245 @@
             } catch (error) {
                 console.error('Error deleting dich_vu:', error);
                 showToast('Lỗi khi xóa dịch vụ: ' + error.message, 'error');
+            }
+        }
+
+        // =====================================================
+        // USER MANAGEMENT
+        // =====================================================
+        
+        let allUsersData = [];
+        
+        async function loadUsersManagement() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_all_users.php?t=${Date.now()}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    allUsersData = data.users || [];
+                    displayUsers(allUsersData);
+                } else {
+                    showToast(data.message || 'Không thể tải danh sách users', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showToast('Lỗi khi tải danh sách users', 'error');
+            }
+        }
+        
+        function displayUsers(users) {
+            const tbody = document.getElementById('users-tbody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-500">Chưa có người dùng nào</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => {
+                const role = user.is_admin ? 
+                    '<span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">👑 Admin</span>' :
+                    '<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">👤 User</span>';
+                
+                const createdDate = new Date(user.created_at).toLocaleDateString('vi-VN');
+                
+                return `
+                    <tr class="border-t hover:bg-gray-50">
+                        <td class="px-4 py-3">${user.id}</td>
+                        <td class="px-4 py-3 font-semibold">${user.full_name}</td>
+                        <td class="px-4 py-3">${user.username}</td>
+                        <td class="px-4 py-3">${user.phone}</td>
+                        <td class="px-4 py-3 text-center">${role}</td>
+                        <td class="px-4 py-3 text-center text-sm text-gray-600">${createdDate}</td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="editUser(${user.id})" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 mr-2">✏️ Sửa</button>
+                            <button onclick="deleteUser(${user.id})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">🗑️ Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function openUserModal(userId = null) {
+            const modal = document.getElementById('userModal');
+            const form = document.getElementById('userForm');
+            form.reset();
+            
+            // Reset all permission checkboxes
+            document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = false);
+            
+            if (userId) {
+                document.getElementById('userModalTitle').textContent = 'Sửa người dùng';
+                document.getElementById('password-label-suffix').textContent = '';
+                document.getElementById('user_password').removeAttribute('required');
+                document.getElementById('user_password').placeholder = 'Để trống nếu không đổi mật khẩu';
+                
+                const user = allUsersData.find(u => u.id == userId);
+                if (user) {
+                    document.getElementById('user_id').value = user.id;
+                    document.getElementById('user_full_name').value = user.full_name;
+                    document.getElementById('user_username').value = user.username;
+                    document.getElementById('user_phone').value = user.phone;
+                    document.getElementById('user_is_admin').checked = user.is_admin == 1;
+                    
+                    toggleAdminPermissions();
+                    
+                    // Load permissions if not admin
+                    if (user.is_admin != 1) {
+                        loadUserPermissions(userId);
+                    }
+                }
+            } else {
+                document.getElementById('userModalTitle').textContent = 'Thêm người dùng';
+                document.getElementById('password-label-suffix').textContent = '*';
+                document.getElementById('user_password').setAttribute('required', 'required');
+                document.getElementById('user_password').placeholder = 'Nhập mật khẩu';
+                document.getElementById('user_is_admin').checked = false;
+                toggleAdminPermissions();
+            }
+            
+            modal.classList.add('show');
+        }
+        
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+        
+        function toggleAdminPermissions() {
+            const isAdmin = document.getElementById('user_is_admin').checked;
+            const permissionsGrid = document.getElementById('permissions-grid');
+            const permissionsSection = document.getElementById('permissions-section');
+            
+            if (isAdmin) {
+                permissionsGrid.style.opacity = '0.5';
+                permissionsGrid.style.pointerEvents = 'none';
+                permissionsSection.querySelector('h4').innerHTML = '🔐 Phân quyền module <span class="text-red-600">(ĐÃ TẮT vì đang ở chế độ Admin)</span>';
+            } else {
+                permissionsGrid.style.opacity = '1';
+                permissionsGrid.style.pointerEvents = 'auto';
+                permissionsSection.querySelector('h4').textContent = '🔐 Phân quyền module (chỉ áp dụng khi KHÔNG phải Admin)';
+            }
+        }
+        
+        async function loadUserPermissions(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_user_permissions.php?user_id=${userId}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.success && data.permissions) {
+                    data.permissions.forEach(perm => {
+                        if (perm.can_view) {
+                            const cb = document.querySelector(`.permission-checkbox[data-module="${perm.permission_key}"][data-action="view"]`);
+                            if (cb) cb.checked = true;
+                        }
+                        if (perm.can_create) {
+                            const cb = document.querySelector(`.permission-checkbox[data-module="${perm.permission_key}"][data-action="create"]`);
+                            if (cb) cb.checked = true;
+                        }
+                        if (perm.can_edit) {
+                            const cb = document.querySelector(`.permission-checkbox[data-module="${perm.permission_key}"][data-action="edit"]`);
+                            if (cb) cb.checked = true;
+                        }
+                        if (perm.can_delete) {
+                            const cb = document.querySelector(`.permission-checkbox[data-module="${perm.permission_key}"][data-action="delete"]`);
+                            if (cb) cb.checked = true;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading user permissions:', error);
+            }
+        }
+        
+        async function saveUser(event) {
+            event.preventDefault();
+            
+            const userId = document.getElementById('user_id').value;
+            const fullName = document.getElementById('user_full_name').value;
+            const username = document.getElementById('user_username').value;
+            const phone = document.getElementById('user_phone').value;
+            const password = document.getElementById('user_password').value;
+            const isAdmin = document.getElementById('user_is_admin').checked;
+            
+            // Validate password for new user
+            if (!userId && (!password || password.length < 6)) {
+                showToast('Mật khẩu phải có ít nhất 6 ký tự', 'error');
+                return;
+            }
+            
+            // Collect permissions
+            const permissions = {};
+            if (!isAdmin) {
+                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'rewards', 'intro-posts', 'projects', 'dich-vu'];
+                modules.forEach(module => {
+                    permissions[module] = {
+                        can_view: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="view"]`)?.checked || false,
+                        can_create: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="create"]`)?.checked || false,
+                        can_edit: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="edit"]`)?.checked || false,
+                        can_delete: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="delete"]`)?.checked || false
+                    };
+                });
+            }
+            
+            const userData = {
+                id: userId || null,
+                full_name: fullName,
+                username: username,
+                phone: phone,
+                password: password || null,
+                is_admin: isAdmin,
+                permissions: permissions
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/save_user.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeUserModal();
+                    loadUsersManagement();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving user:', error);
+                showToast('Lỗi khi lưu user: ' + error.message, 'error');
+            }
+        }
+        
+        function editUser(userId) {
+            openUserModal(userId);
+        }
+        
+        async function deleteUser(userId) {
+            if (!await customConfirm('Bạn có chắc muốn xóa người dùng này? Tất cả dữ liệu liên quan sẽ bị xóa.')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/delete_user.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: userId })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadUsersManagement();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showToast('Lỗi khi xóa user: ' + error.message, 'error');
             }
         }
     </script>
