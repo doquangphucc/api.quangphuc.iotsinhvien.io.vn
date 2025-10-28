@@ -103,16 +103,22 @@ async function saveProduct(event) {
             body: JSON.stringify(formData)
         });
         const data = await response.json();
-        if (data.success) {
-            alert(data.message);
-            closeProductModal();
-            loadProducts();
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
         } else {
             alert(data.message);
         }
+        if (data.success) {
+            closeProductModal();
+            loadProducts();
+        }
     } catch (error) {
         console.error('Error saving product:', error);
-        alert('Có lỗi xảy ra');
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
     }
 }
 
@@ -130,11 +136,19 @@ async function deleteProduct(id) {
             body: JSON.stringify({ id })
         });
         const data = await response.json();
-        alert(data.message);
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
+        } else {
+            alert(data.message);
+        }
         if (data.success) loadProducts();
     } catch (error) {
         console.error('Error deleting product:', error);
-        alert('Có lỗi xảy ra');
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
     }
 }
 
@@ -254,11 +268,19 @@ async function approveOrder(orderId) {
             body: JSON.stringify({ order_id: orderId })
         });
         const data = await response.json();
-        alert(data.message);
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
+        } else {
+            alert(data.message);
+        }
         if (data.success) loadOrders();
     } catch (error) {
         console.error('Error approving order:', error);
-        alert('Có lỗi xảy ra');
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
     }
 }
 
@@ -427,16 +449,22 @@ async function saveTicket(event) {
             body: JSON.stringify(formData)
         });
         const data = await response.json();
-        if (data.success) {
-            alert(data.message);
-            closeTicketModal();
-            loadTickets();
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
         } else {
             alert(data.message);
         }
+        if (data.success) {
+            closeTicketModal();
+            loadTickets();
+        }
     } catch (error) {
         console.error('Error saving ticket:', error);
-        alert('Có lỗi xảy ra');
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
     }
 }
 
@@ -455,11 +483,19 @@ async function deleteTicket(id) {
             body: JSON.stringify({ id })
         });
         const data = await response.json();
-        alert(data.message);
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
+        } else {
+            alert(data.message);
+        }
         if (data.success) loadTickets();
     } catch (error) {
         console.error('Error deleting ticket:', error);
-        alert('Có lỗi xảy ra');
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
     }
 }
 
@@ -590,18 +626,24 @@ async function saveReward(event) {
         const data = await response.json();
         console.log('Response data:', data);
         
-        if (data.success) {
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
+        } else {
             alert(data.message);
+        }
+        if (data.success) {
             closeRewardModal();
             loadRewards();
             loadRewardTemplates(); // Reload for dropdowns
-        } else {
-            alert(data.message);
         }
     } catch (error) {
         console.error('Error saving reward:', error);
         console.error('Error details:', error.message);
-        alert('Có lỗi xảy ra: ' + error.message);
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra: ' + error.message, 'error');
+        } else {
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
     }
 }
 
@@ -619,14 +661,22 @@ async function deleteReward(id) {
             body: JSON.stringify({ id })
         });
         const data = await response.json();
-        alert(data.message);
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
+        } else {
+            alert(data.message);
+        }
         if (data.success) {
             loadRewards();
             loadRewardTemplates();
         }
     } catch (error) {
         console.error('Error deleting reward:', error);
-        alert('Có lỗi xảy ra');
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
     }
 }
 
