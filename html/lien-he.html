@@ -672,7 +672,10 @@
                                 ${channel.description ? `<p class="text-sm text-gray-600 dark:text-gray-400">${channel.description}</p>` : ''}
                             </div>
                         </div>
-                        <a href="${url}" ${isExternal ? 'target="_blank"' : ''} class="text-xl font-semibold hover:underline block mb-4" style="color: ${channel.color}; filter: brightness(0.7);">
+                        <a href="${url}" ${isExternal ? 'target="_blank"' : ''} 
+                           class="text-xl font-semibold hover:underline block mb-4" 
+                           style="color: ${channel.color}; filter: brightness(0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                           title="${channel.content}">
                             ${channel.content}
                         </a>
                         <a href="${url}" ${isExternal ? 'target="_blank"' : ''} class="inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all w-full justify-center" 
