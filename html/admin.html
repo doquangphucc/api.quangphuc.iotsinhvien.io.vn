@@ -1417,7 +1417,7 @@
         }
 
         async function deleteCategory(id) {
-            if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
+            if (!await customConfirm('Bạn có chắc muốn xóa danh mục này?')) return;
             
             try {
                 const response = await fetch(`${API_BASE}/admin/delete_category.php`, {
@@ -1680,7 +1680,7 @@
          }
         
         async function deleteSurveyConfig(productId) {
-            if (!confirm('Bạn có chắc muốn xóa cấu hình khảo sát này?')) return;
+            if (!await customConfirm('Bạn có chắc muốn xóa cấu hình khảo sát này?')) return;
             
             try {
                 const response = await fetch(`${API_BASE}/admin/delete_survey_product_config.php`, {
@@ -2086,7 +2086,7 @@
         }
 
         async function deleteIntroPost(id) {
-            if (!confirm('Bạn có chắc muốn xóa bài viết này?')) return;
+            if (!await customConfirm('Bạn có chắc muốn xóa bài viết này?')) return;
             
             try {
                 const response = await fetch(`${API_BASE}/admin/delete_intro_post.php`, {
@@ -2351,7 +2351,7 @@
         }
 
         async function deleteProject(id) {
-            if (!confirm('Bạn có chắc muốn xóa dự án này?')) return;
+            if (!await customConfirm('Bạn có chắc muốn xóa dự án này?')) return;
             
             try {
                 const response = await fetch(`${API_BASE}/admin/delete_project.php`, {
@@ -2637,7 +2637,7 @@
         }
         
         async function deleteDichVu(id) {
-            if (!confirm('Bạn có chắc muốn xóa dịch vụ này?')) return;
+            if (!await customConfirm('Bạn có chắc muốn xóa dịch vụ này?')) return;
             
             try {
                 const response = await fetch(`${API_BASE}/admin/delete_dich_vu.php`, {
@@ -2661,8 +2661,68 @@
         }
     </script>
 
+    <!-- Custom Confirm Modal -->
+    <div id="customConfirmModal" class="modal" style="display: none;">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800" id="customConfirmTitle">Xác nhận</h3>
+            </div>
+            <p class="text-gray-700 text-lg mb-8" id="customConfirmMessage"></p>
+            <div class="flex gap-3">
+                <button id="customConfirmCancel" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                    Hủy
+                </button>
+                <button id="customConfirmOk" class="flex-1 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-20 right-4 z-[9999] space-y-3"></div>
+
+    <!-- Custom Confirm Function -->
+    <script>
+        // Global function for custom confirm
+        async function customConfirm(message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customConfirmModal');
+                const messageEl = document.getElementById('customConfirmMessage');
+                const titleEl = document.getElementById('customConfirmTitle');
+                const cancelBtn = document.getElementById('customConfirmCancel');
+                const okBtn = document.getElementById('customConfirmOk');
+                
+                messageEl.textContent = message;
+                
+                // Show modal
+                modal.classList.add('show');
+                modal.style.display = 'flex';
+                
+                const cleanup = () => {
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                    cancelBtn.onclick = null;
+                    okBtn.onclick = null;
+                };
+                
+                cancelBtn.onclick = () => {
+                    cleanup();
+                    resolve(false);
+                };
+                
+                okBtn.onclick = () => {
+                    cleanup();
+                    resolve(true);
+                };
+            });
+        }
+    </script>
 </body>
 </html>
 

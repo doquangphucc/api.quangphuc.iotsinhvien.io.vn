@@ -127,7 +127,7 @@ function editProduct(id) {
 }
 
 async function deleteProduct(id) {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+    if (!await customConfirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/delete_product.php`, {credentials: 'include', 
@@ -259,7 +259,7 @@ function getOrderStatusText(status) {
 }
 
 async function approveOrder(orderId) {
-    if (!confirm('Duyệt đơn hàng này? Khách hàng sẽ nhận được 1 vé quay may mắn.')) return;
+    if (!await customConfirm('Duyệt đơn hàng này? Khách hàng sẽ nhận được 1 vé quay may mắn.')) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/approve_order.php`, {credentials: 'include', 
@@ -285,7 +285,7 @@ async function approveOrder(orderId) {
 }
 
 async function updateOrderStatus(orderId, newStatus) {
-    if (!confirm('Thay đổi trạng thái đơn hàng?')) {
+    if (!await customConfirm('Thay đổi trạng thái đơn hàng?')) {
         // Reset dropdown to current status
         loadOrders();
         return;
@@ -474,7 +474,7 @@ function editTicket(id) {
 }
 
 async function deleteTicket(id) {
-    if (!confirm('Bạn có chắc muốn xóa vé này?')) return;
+    if (!await customConfirm('Bạn có chắc muốn xóa vé này?')) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/delete_ticket.php`, {credentials: 'include', 
@@ -652,7 +652,7 @@ function editReward(id) {
 }
 
 async function deleteReward(id) {
-    if (!confirm('Bạn có chắc muốn xóa phần thưởng này?')) return;
+    if (!await customConfirm('Bạn có chắc muốn xóa phần thưởng này?')) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/delete_reward_template.php`, {credentials: 'include', 
