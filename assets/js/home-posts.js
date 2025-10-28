@@ -79,16 +79,16 @@ function createPostElement(post, index) {
     // Content section HTML
     const contentHTML = `
         <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}">
-            ${post.highlight_text ? `<span style="color: ${highlightColor};" class="font-semibold uppercase tracking-wider">${escapeHtml(post.highlight_text)}</span>` : ''}
-            <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-6">${escapeHtml(post.title)}</h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-6">${escapeHtml(post.description)}</p>
+            ${post.highlight_text ? `<span style="color: ${highlightColor};" class="font-bold text-base uppercase tracking-wider">${escapeHtml(post.highlight_text)}</span>` : ''}
+            <h3 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-green-600 via-green-500 to-emerald-600 bg-clip-text text-transparent dark:from-green-400 dark:via-green-300 dark:to-emerald-400 mt-4 mb-6 leading-tight">${escapeHtml(post.title)}</h3>
+            <p class="text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">${escapeHtml(post.description)}</p>
             ${featuresHTML ? `<ul class="space-y-3 mb-8">${featuresHTML}</ul>` : ''}
             ${post.button_text && post.button_url ? `
                 <a href="${escapeHtml(post.button_url)}" 
                    style="background-color: ${buttonColor};" 
                    onmouseover="this.style.backgroundColor='${buttonHoverColor}'" 
                    onmouseout="this.style.backgroundColor='${buttonColor}'"
-                   class="inline-block text-white font-semibold px-8 py-3 rounded-full transition-all duration-300">
+                   class="inline-block text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 shadow-lg text-lg">
                     ${escapeHtml(post.button_text)}
                 </a>
             ` : ''}
@@ -97,8 +97,8 @@ function createPostElement(post, index) {
     
     // Image section HTML
     const imageHTML = `
-        <div class="${isImageLeft ? 'order-2 lg:order-1' : 'order-2'}">
-            <img src="${escapeHtml(post.image_url)}" alt="${escapeHtml(post.title)}" class="rounded-3xl shadow-2xl w-full">
+        <div class="${isImageLeft ? 'order-2 lg:order-1' : 'order-2'} flex items-center justify-center">
+            <img src="${escapeHtml(post.image_url)}" alt="${escapeHtml(post.title)}" class="rounded-3xl shadow-2xl w-full max-w-md lg:max-w-lg object-contain">
         </div>
     `;
     
