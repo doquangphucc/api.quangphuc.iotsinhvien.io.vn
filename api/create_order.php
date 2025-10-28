@@ -69,7 +69,9 @@ try {
     }
 
     $placeholders = implode(',', array_fill(0, count($cartItemIds), '?'));
-    $sql = "SELECT c.id AS cart_item_id, c.user_id, c.product_id, c.quantity, p.title as name, p.market_price as price, p.image_url
+    $sql = "SELECT c.id AS cart_item_id, c.user_id, c.product_id, c.quantity, p.title as name, 
+                   COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
+                   p.image_url
             FROM cart_items c
             JOIN products p ON c.product_id = p.id
             WHERE c.user_id = ? AND c.id IN ($placeholders)";

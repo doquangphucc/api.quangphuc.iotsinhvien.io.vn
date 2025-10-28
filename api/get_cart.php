@@ -13,7 +13,12 @@ try {
     $db = Database::getInstance();
     $pdo = $db->getConnection();
 
-    $sql = "SELECT c.id, c.product_id, c.quantity, p.title as name, p.market_price as price, p.image_url, p.technical_description as specifications FROM cart_items c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?";
+    $sql = "SELECT c.id, c.product_id, c.quantity, p.title as name, 
+                   COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
+                   p.image_url, p.technical_description as specifications 
+            FROM cart_items c 
+            JOIN products p ON c.product_id = p.id 
+            WHERE c.user_id = ?";
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId]);
