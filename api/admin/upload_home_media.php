@@ -79,13 +79,22 @@ $video_dir = $base_dir . '/home_videos';
 
 // Create directories if they don't exist
 if (!is_dir($base_dir)) {
-    mkdir($base_dir, 0755, true);
+    if (!mkdir($base_dir, 0755, true)) {
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục uploads. Kiểm tra quyền ghi: ' . $base_dir]);
+        exit;
+    }
 }
 if (!is_dir($image_dir)) {
-    mkdir($image_dir, 0755, true);
+    if (!mkdir($image_dir, 0755, true)) {
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục home_images. Kiểm tra quyền ghi: ' . $image_dir]);
+        exit;
+    }
 }
 if (!is_dir($video_dir)) {
-    mkdir($video_dir, 0755, true);
+    if (!mkdir($video_dir, 0755, true)) {
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục home_videos. Kiểm tra quyền ghi: ' . $video_dir]);
+        exit;
+    }
 }
 
 // Generate unique filename
@@ -93,9 +102,35 @@ $filename = uniqid('home_', true) . '_' . time() . '.' . $file_extension;
 $upload_dir = $media_type === 'image' ? $image_dir : $video_dir;
 $upload_path = $upload_dir . '/' . $filename;
 
+// Check if directory is writable
+if (!is_writable($upload_dir)) {
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Thư mục không có quyền ghi. Chạy: chmod 755 ' . basename($upload_dir) . '/',
+        'debug' => [
+            'dir' => $upload_dir,
+            'exists' => is_dir($upload_dir),
+            'writable' => is_writable($upload_dir),
+            'permissions' => substr(sprintf('%o', fileperms($upload_dir)), -4)
+        ]
+    ]);
+    exit;
+}
+
 // Move uploaded file
 if (!move_uploaded_file($file['tmp_name'], $upload_path)) {
-    echo json_encode(['success' => false, 'message' => 'Lỗi khi lưu file. Vui lòng thử lại']);
+    $error_detail = error_get_last();
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Lỗi khi lưu file. Kiểm tra permissions thư mục: chmod 755 ' . basename($upload_dir) . '/',
+        'debug' => [
+            'tmp_file' => $file['tmp_name'],
+            'target_path' => $upload_path,
+            'tmp_exists' => file_exists($file['tmp_name']),
+            'dir_writable' => is_writable($upload_dir),
+            'error' => $error_detail
+        ]
+    ]);
     exit;
 }
 
