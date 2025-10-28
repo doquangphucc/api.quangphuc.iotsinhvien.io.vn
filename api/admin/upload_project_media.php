@@ -100,8 +100,14 @@ if (!move_uploaded_file($file['tmp_name'], $upload_path)) {
 }
 
 // Generate URL
-$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') 
-            . '://' . $_SERVER['HTTP_HOST'];
+// Check if behind proxy (nginx, cloudflare) using X-Forwarded-Proto header
+$protocol = 'https'; // Force HTTPS for production
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+    $protocol = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+} elseif (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    $protocol = 'https';
+}
+$base_url = $protocol . '://' . $_SERVER['HTTP_HOST'];
 
 // Get the directory structure
 $upload_subpath = ($media_type === 'image' ? 'project_images' : 'project_videos');
