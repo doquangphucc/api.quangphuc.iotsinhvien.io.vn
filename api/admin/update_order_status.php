@@ -15,8 +15,8 @@ require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập'], JSON_UNESCAPED_UNICODE);
+if (!hasPermission($conn, 'orders', 'edit')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền cập nhật đơn hàng'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 

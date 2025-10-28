@@ -18,8 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+$data = json_decode(file_get_contents('php://input'), true);
+$id = isset($data['id']) ? intval($data['id']) : 0;
+$required_action = $id > 0 ? 'edit' : 'create';
+
+if (!hasPermission($conn, 'rewards', $required_action)) {
+    echo json_encode(['success' => false, 'message' => "Bạn không có quyền {$required_action} phần thưởng"]);
     exit;
 }
 

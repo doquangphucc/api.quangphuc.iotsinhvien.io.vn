@@ -7,8 +7,8 @@ require_once __DIR__ . '/permission_helper.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+if (!hasPermission($conn, 'projects', 'delete')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa dự án']);
     exit;
 }
 

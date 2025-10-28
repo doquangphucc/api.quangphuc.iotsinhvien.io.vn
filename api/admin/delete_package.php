@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+if (!hasPermission($conn, 'packages', 'delete')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa gói sản phẩm']);
     exit;
 }
 

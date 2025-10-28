@@ -10,8 +10,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+if (!hasPermission($conn, 'survey', 'delete')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa khảo sát']);
     exit;
 }
 

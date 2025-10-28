@@ -11,8 +11,8 @@ header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Check admin access
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+if (!hasPermission($conn, 'dich-vu', 'view')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xem dịch vụ']);
     exit;
 }
 

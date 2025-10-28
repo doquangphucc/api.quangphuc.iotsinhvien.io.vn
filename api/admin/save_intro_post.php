@@ -19,8 +19,11 @@ require_once __DIR__ . '/permission_helper.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+$required_action = $id > 0 ? 'edit' : 'create';
+
+if (!hasPermission($conn, 'intro-posts', $required_action)) {
+    echo json_encode(['success' => false, 'message' => "Bạn không có quyền {$required_action} bài giới thiệu"]);
     exit;
 }
 

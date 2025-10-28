@@ -18,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+if (!hasPermission($conn, 'packages', 'view')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xem gói sản phẩm']);
     exit;
 }
 
