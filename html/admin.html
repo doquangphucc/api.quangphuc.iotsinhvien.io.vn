@@ -802,6 +802,15 @@
                             </video>
                         </div>
                     </div>
+                    
+                    <!-- Media Gallery Section -->
+                    <div class="border-t pt-4 mt-4">
+                        <h4 class="text-lg font-bold mb-3">📸 Thư viện Media (Nhiều ảnh/video)</h4>
+                        <p class="text-sm text-gray-600 mb-3">Thêm nhiều ảnh và video cho bài viết. Có thể sắp xếp thứ tự hiển thị.</p>
+                        <input type="hidden" id="intro_post_media_gallery">
+                        <div id="intro_post_media_gallery_container"></div>
+                    </div>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị *</label>
@@ -881,6 +890,15 @@
                             </video>
                         </div>
                     </div>
+                    
+                    <!-- Media Gallery Section -->
+                    <div class="border-t pt-4 mt-4">
+                        <h4 class="text-lg font-bold mb-3">📸 Thư viện Media (Nhiều ảnh/video)</h4>
+                        <p class="text-sm text-gray-600 mb-3">Thêm nhiều ảnh và video cho dự án. Có thể sắp xếp thứ tự hiển thị.</p>
+                        <input type="hidden" id="project_media_gallery">
+                        <div id="project_media_gallery_container"></div>
+                    </div>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold mb-2">Thứ tự hiển thị *</label>
@@ -1146,6 +1164,17 @@
                         <button type="button" onclick="addFeature()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                             ➕ Thêm feature
                         </button>
+                    </div>
+                    
+                    <!-- Media Gallery Section -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg mb-3">📸 Thư viện Media (Nhiều ảnh/video)</h4>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-gray-600 mb-3">Thêm nhiều ảnh và video cho bài đăng. Có thể sắp xếp thứ tự hiển thị.</p>
+                        <input type="hidden" id="home_post_media_gallery">
+                        <div id="home_post_media_gallery_container"></div>
                     </div>
                     
                     <!-- Display Settings -->
@@ -1815,6 +1844,7 @@
     <script src="../assets/js/admin.js"></script>
     <script src="../assets/js/admin-products.js"></script>
     <script src="../assets/js/admin-packages.js"></script>
+    <script src="../assets/js/admin-media-gallery.js"></script>
     <script>
         // Check admin access (check both is_admin and permissions)
         async function checkAdmin() {
@@ -2652,6 +2682,21 @@
                 document.getElementById('btn_remove_video').classList.add('hidden');
             }
             
+            // Initialize Media Gallery
+            if (!window.introPostMediaGallery) {
+                window.introPostMediaGallery = initMediaGallery(
+                    'intro_post_media_gallery_container',
+                    API_BASE + '/admin/upload_intro_media.php'
+                );
+            }
+            
+            // Load media gallery if editing
+            if (id > 0 && post && post.media_gallery) {
+                window.introPostMediaGallery.loadFromJSON(post.media_gallery);
+            } else {
+                window.introPostMediaGallery.loadFromJSON('[]');
+            }
+            
             modal.classList.add('show');
         }
 
@@ -2843,6 +2888,11 @@
                 formData.append('display_order', document.getElementById('intro_post_display_order').value);
                 formData.append('is_active', document.getElementById('intro_post_is_active').checked ? '1' : '0');
                 
+                // Add media gallery JSON
+                if (window.introPostMediaGallery) {
+                    formData.append('media_gallery', window.introPostMediaGallery.toJSON());
+                }
+                
                 const response = await fetch(`${API_BASE}/admin/save_intro_post.php`, {
                     method: 'POST',
                     credentials: 'include',
@@ -3006,6 +3056,21 @@
                 document.getElementById('btn_remove_project_video').classList.add('hidden');
             }
             
+            // Initialize Media Gallery
+            if (!window.projectMediaGallery) {
+                window.projectMediaGallery = initMediaGallery(
+                    'project_media_gallery_container',
+                    API_BASE + '/admin/upload_project_media.php'
+                );
+            }
+            
+            // Load media gallery if editing
+            if (id > 0 && project && project.media_gallery) {
+                window.projectMediaGallery.loadFromJSON(project.media_gallery);
+            } else {
+                window.projectMediaGallery.loadFromJSON('[]');
+            }
+            
             modal.classList.add('show');
         }
 
@@ -3108,6 +3173,11 @@
                 formData.append('id', document.getElementById('project_id').value);
                 formData.append('display_order', document.getElementById('project_display_order').value);
                 formData.append('is_active', document.getElementById('project_is_active').checked ? '1' : '0');
+                
+                // Add media gallery JSON
+                if (window.projectMediaGallery) {
+                    formData.append('media_gallery', window.projectMediaGallery.toJSON());
+                }
                 
                 const response = await fetch(`${API_BASE}/admin/save_project.php`, {
                     method: 'POST',
@@ -3886,6 +3956,19 @@
                 document.getElementById('home_post_display_order').value = '0';
             }
             
+            // Initialize Media Gallery
+            if (!window.homePostMediaGallery) {
+                window.homePostMediaGallery = initMediaGallery(
+                    'home_post_media_gallery_container',
+                    API_BASE + '/admin/upload_home_media.php'
+                );
+            } else {
+                // Reset if adding new post
+                if (!postId) {
+                    window.homePostMediaGallery.loadFromJSON('[]');
+                }
+            }
+            
             modal.classList.add('show');
         }
         
@@ -3957,6 +4040,11 @@
                                     ➕ Thêm feature
                                 </button>
                             `;
+                        }
+                        
+                        // Load media gallery
+                        if (window.homePostMediaGallery && post.media_gallery) {
+                            window.homePostMediaGallery.loadFromJSON(post.media_gallery);
                         }
                     }
                 }
@@ -4104,7 +4192,8 @@
                 features: features,
                 display_order: parseInt(document.getElementById('home_post_display_order').value),
                 is_active: document.getElementById('home_post_is_active').checked,
-                section_id: document.getElementById('home_post_section_id').value
+                section_id: document.getElementById('home_post_section_id').value,
+                media_gallery: window.homePostMediaGallery ? window.homePostMediaGallery.toJSON() : '[]'
             };
             
             try {
