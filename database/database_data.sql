@@ -655,24 +655,14 @@ INSERT INTO users (id, full_name, username, phone, password, is_admin, created_a
 (3, 'Đỗ Quang Phúc', 'quangphuc', '0375779219', '$2y$10$r6M1D/MPVDVm9bXdlOaA4.NxfWO68iL2loDBpuZTySRWGnFVovhui', 0, '2025-10-27 11:57:05', '2025-10-27 11:57:05'),
 (4, 'Nguyễn Minh Hải', 'hainm', '1234567899', '$2y$10$mjReWJD1Izqe1NrwrqqXkeyylvCl/YP68tGYc/pQbY/tj/Ojx/wfy', 1, '2025-10-28 14:22:57', '2025-10-28 14:24:56');
 
--- Tạo lottery tickets test cho user
-INSERT INTO lottery_tickets (id, user_id, order_id, ticket_type, status, pre_assigned_reward_id, created_at, expires_at) VALUES
-(1, 1, NULL, 'bonus', 'active', NULL, '2025-10-27 11:31:10', NULL),
-(2, 1, NULL, 'bonus', 'active', NULL, '2025-10-27 11:31:10', NULL),
-(4, 2, 1, 'purchase', 'used', 2, '2025-10-28 00:28:18', NULL),
-(5, 2, 2, 'purchase', 'used', 7, '2025-10-28 00:39:00', NULL),
-(6, 2, 4, 'purchase', 'active', NULL, '2025-10-28 16:34:03', NULL),
-(7, 3, 5, 'purchase', 'active', NULL, '2025-10-28 16:35:08', NULL),
-(8, 3, 6, 'purchase', 'active', NULL, '2025-10-28 16:37:36', NULL),
-(9, 3, 7, 'purchase', 'active', NULL, '2025-10-28 16:37:39', NULL),
-(10, 4, 3, 'purchase', 'active', NULL, '2025-10-28 16:38:42', NULL);
+-- Lottery tickets sẽ được tạo tự động khi user đặt hàng hoặc nhận thưởng
+-- Không cần dữ liệu mẫu
 
 -- =====================================================
 -- DỮ LIỆU TEST - LOTTERY REWARDS (Phần thưởng vòng quay)
 -- =====================================================
-INSERT INTO lottery_rewards (id, user_id, reward_template_id, reward_name, reward_type, reward_value, reward_description, voucher_code, reward_image, status, ticket_id, won_at, used_at, expires_at, notes, created_at, updated_at) VALUES
-(1, 2, 2, 'Voucher giảm 1.000.000đ', 'voucher', 1000000.00, 'Voucher giảm giá 1.000.000đ cho đơn hàng tiếp theo', 'VC6900104027C86', NULL, 'used', 4, '2025-10-28 00:37:20', '2025-10-28 00:37:48', '2025-11-27 00:37:20', NULL, '2025-10-28 00:37:20', '2025-10-28 00:37:48'),
-(2, 2, 7, 'Voucher giam 1 trieu', 'voucher', 1000000.00, 'cho 0988919868', 'VC6900D9CE9EC07', NULL, 'pending', 5, '2025-10-28 14:57:18', NULL, '2025-11-27 14:57:18', NULL, '2025-10-28 14:57:18', '2025-10-28 14:57:18');
+-- Phần thưởng sẽ được tạo tự động khi user quay và trúng thưởng
+-- Không cần dữ liệu mẫu
 
 -- =====================================================
 -- DỮ LIỆU TEST - VOUCHERS MẪU
