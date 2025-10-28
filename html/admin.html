@@ -4354,6 +4354,164 @@
                 showToast('Lỗi khi xóa kênh liên hệ: ' + error.message, 'error');
             }
         }
+        
+        // ========================================
+        // ORDERS MANAGEMENT
+        // ========================================
+        
+        async function loadOrders() {
+            try {
+                const status = document.getElementById('order-status-filter').value;
+                const url = `${API_BASE}/admin/get_orders.php${status ? '?status=' + status : ''}`;
+                
+                const response = await fetch(url, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load orders');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderOrders(data.orders);
+                } else {
+                    showToast(data.message || 'Không thể tải đơn hàng', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                showToast('Lỗi khi tải đơn hàng', 'error');
+            }
+        }
+        
+        function renderOrders(orders) {
+            const container = document.getElementById('orders-list');
+            
+            if (!orders || orders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <p class="text-xl mb-2">📦</p>
+                        <p>Không có đơn hàng nào</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = orders.map(order => {
+                const statusBadge = getOrderStatusBadge(order.order_status);
+                const date = new Date(order.created_at).toLocaleDateString('vi-VN');
+                const totalAmount = Math.round(order.total_amount).toLocaleString('vi-VN');
+                
+                // Render vouchers list
+                let vouchersHtml = '';
+                if (order.vouchers && order.vouchers.length > 0) {
+                    vouchersHtml = `
+                        <div class="mt-2">
+                            <span class="text-sm text-gray-600 font-semibold">Vouchers (${order.vouchers.length}):</span>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${order.vouchers.map(v => `
+                                    <span class="inline-block px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-semibold">
+                                        ${v.voucher_code} (-${Math.round(v.discount_amount).toLocaleString('vi-VN')}₫)
+                                    </span>
+                                `).join('')}
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">
+                                <strong>Tổng giảm giá:</strong> <span class="text-green-600 font-semibold">-${Math.round(order.discount_amount || 0).toLocaleString('vi-VN')}₫</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="border rounded-lg p-4 mb-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg">Đơn hàng #${order.id}</h3>
+                                <p class="text-sm text-gray-600">Khách hàng: ${order.full_name}</p>
+                                <p class="text-sm text-gray-600">SĐT: ${order.phone}</p>
+                                <p class="text-sm text-gray-600">Ngày đặt: ${date}</p>
+                            </div>
+                            <div class="text-right">
+                                ${statusBadge}
+                                <p class="text-xl font-bold text-purple-600 mt-2">${totalAmount}₫</p>
+                            </div>
+                        </div>
+                        
+                        ${vouchersHtml}
+                        
+                        <div class="border-t pt-3 mt-3">
+                            <p class="text-sm text-gray-600 mb-2"><strong>Sản phẩm (${order.items ? order.items.length : 0}):</strong></p>
+                            <div class="space-y-1">
+                                ${order.items && order.items.length > 0 ? order.items.map(item => `
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-700">${item.product_name} (x${item.quantity})</span>
+                                        <span class="font-semibold">${Math.round(item.price * item.quantity).toLocaleString('vi-VN')}₫</span>
+                                    </div>
+                                `).join('') : '<p class="text-gray-500 text-sm">Không có sản phẩm</p>'}
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mt-4">
+                            ${order.order_status === 'pending' ? `
+                                <button onclick="approveOrder(${order.id})" class="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                    ✅ Duyệt đơn
+                                </button>
+                            ` : ''}
+                            <button onclick="viewOrderDetail(${order.id})" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                👁️ Chi tiết
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getOrderStatusBadge(status) {
+            const statusMap = {
+                'pending': { text: 'Chờ xử lý', color: 'bg-yellow-100 text-yellow-800' },
+                'approved': { text: 'Đã duyệt', color: 'bg-blue-100 text-blue-800' },
+                'processing': { text: 'Đang xử lý', color: 'bg-purple-100 text-purple-800' },
+                'shipping': { text: 'Đang giao', color: 'bg-cyan-100 text-cyan-800' },
+                'shipped': { text: 'Đã giao', color: 'bg-indigo-100 text-indigo-800' },
+                'delivered': { text: 'Đã nhận', color: 'bg-green-100 text-green-800' },
+                'cancelled': { text: 'Đã hủy', color: 'bg-red-100 text-red-800' }
+            };
+            
+            const info = statusMap[status] || { text: 'Không rõ', color: 'bg-gray-100 text-gray-800' };
+            return `<span class="px-3 py-1 rounded-full text-sm font-semibold ${info.color}">${info.text}</span>`;
+        }
+        
+        async function approveOrder(orderId) {
+            if (!confirm('Bạn có chắc muốn duyệt đơn hàng này?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/approve_order.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ order_id: orderId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Đơn hàng đã được duyệt!', 'success');
+                    loadOrders();
+                } else {
+                    showToast(data.message || 'Không thể duyệt đơn hàng', 'error');
+                }
+            } catch (error) {
+                console.error('Error approving order:', error);
+                showToast('Lỗi khi duyệt đơn hàng', 'error');
+            }
+        }
+        
+        function viewOrderDetail(orderId) {
+            window.open(`order_detail.html?id=${orderId}`, '_blank');
+        }
     </script>
 </body>
 </html>

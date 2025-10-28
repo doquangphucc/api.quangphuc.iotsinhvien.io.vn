@@ -41,6 +41,15 @@ while ($row = $result->fetch_assoc()) {
     }
     $row['items'] = $items;
     
+    // Get order vouchers
+    $vouchers_sql = "SELECT * FROM order_vouchers WHERE order_id = $order_id";
+    $vouchers_result = $conn->query($vouchers_sql);
+    $vouchers = [];
+    while ($voucher = $vouchers_result->fetch_assoc()) {
+        $vouchers[] = $voucher;
+    }
+    $row['vouchers'] = $vouchers;
+    
     $orders[] = $row;
 }
 
