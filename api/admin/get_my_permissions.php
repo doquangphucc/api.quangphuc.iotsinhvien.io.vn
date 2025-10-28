@@ -29,7 +29,7 @@ try {
     
     // Nếu là full admin, trả về full quyền
     if ($is_admin == 1) {
-        $modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home'];
+        $modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home', 'contacts'];
         $permissions = [];
         
         foreach ($modules as $module) {

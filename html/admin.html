@@ -127,6 +127,9 @@
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="home" onclick="showTab('home')">
                     🏠 Trang chủ
                 </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="contacts" onclick="showTab('contacts')">
+                    📞 Liên hệ
+                </button>
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="users" onclick="showTab('users')">
                     👥 Quản lý User
                 </button>
@@ -438,6 +441,41 @@
                             </tr>
                         </thead>
                         <tbody id="home-posts-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacts Tab -->
+        <div id="tab-contacts" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Quản lý kênh liên hệ</h2>
+                    <button onclick="openContactModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm kênh liên hệ
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 border text-left">ID</th>
+                                <th class="px-4 py-2 border text-left">Tên</th>
+                                <th class="px-4 py-2 border text-left">Mô tả</th>
+                                <th class="px-4 py-2 border text-left">Nội dung</th>
+                                <th class="px-4 py-2 border text-left">Danh mục</th>
+                                <th class="px-4 py-2 border text-left">Màu</th>
+                                <th class="px-4 py-2 border text-left">Thứ tự</th>
+                                <th class="px-4 py-2 border text-center">Trạng thái</th>
+                                <th class="px-4 py-2 border text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contacts-table-body">
+                            <tr>
+                                <td colspan="9" class="text-center py-4">Đang tải...</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -1143,6 +1181,89 @@
         </div>
     </div>
 
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="contactModalTitle">Thêm kênh liên hệ</h3>
+            <form id="contactForm" onsubmit="saveContact(event)">
+                <input type="hidden" id="contact_id">
+                
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <!-- Tên -->
+                    <div>
+                        <label class="block font-semibold mb-2">Tên kênh <span class="text-red-500">*</span></label>
+                        <input type="text" id="contact_name" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: Hotline, Zalo" required>
+                    </div>
+                    
+                    <!-- Danh mục -->
+                    <div>
+                        <label class="block font-semibold mb-2">Danh mục <span class="text-red-500">*</span></label>
+                        <select id="contact_category" class="w-full px-4 py-2 border rounded-lg" required onchange="updateContactPreview()">
+                            <option value="">-- Chọn danh mục --</option>
+                            <option value="phone">📞 Số điện thoại (Gọi ngay)</option>
+                            <option value="zalo">💬 Zalo (Chat Zalo)</option>
+                            <option value="email">✉️ Email (Gửi Email)</option>
+                            <option value="facebook">📘 Facebook (Theo dõi Facebook)</option>
+                            <option value="tiktok">🎵 TikTok (Theo dõi TikTok)</option>
+                            <option value="youtube">📺 YouTube (Xem kênh YouTube)</option>
+                            <option value="website">🌐 Website (Truy cập Website)</option>
+                        </select>
+                        <p class="text-sm text-gray-500 mt-1">
+                            <span id="category_hint">Chọn danh mục để xem icon và button text tự động</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Mô tả -->
+                    <div>
+                        <label class="block font-semibold mb-2">Mô tả</label>
+                        <input type="text" id="contact_description" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: Hỗ trợ 24/7">
+                    </div>
+                    
+                    <!-- Nội dung -->
+                    <div>
+                        <label class="block font-semibold mb-2">Nội dung <span class="text-red-500">*</span></label>
+                        <input type="text" id="contact_content" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 0969397434" required>
+                        <p class="text-sm text-gray-500 mt-1" id="content_hint">
+                            Nhập số điện thoại, email, link hoặc username
+                        </p>
+                    </div>
+                    
+                    <!-- Màu -->
+                    <div>
+                        <label class="block font-semibold mb-2">Màu nền card</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="contact_color" class="h-10 w-20 border rounded-lg cursor-pointer" value="#16a34a">
+                            <span id="contact_color_display" class="text-sm font-mono">#16a34a</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Thứ tự hiển thị -->
+                    <div>
+                        <label class="block font-semibold mb-2">Thứ tự hiển thị</label>
+                        <input type="number" id="contact_display_order" class="w-full px-4 py-2 border rounded-lg" value="0" min="0">
+                    </div>
+                    
+                    <!-- Trạng thái -->
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="contact_is_active" checked class="w-4 h-4">
+                            <span class="font-semibold">Hiển thị</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        ✅ Lưu
+                    </button>
+                    <button type="button" onclick="closeContactModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- User Modal -->
     <div id="userModal" class="modal">
         <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -1439,6 +1560,29 @@
                                     </label>
                                     <label class="flex items-center gap-2">
                                         <input type="checkbox" class="permission-checkbox" data-module="home" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Liên hệ -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">📞 Liên hệ</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="contacts" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="contacts" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="contacts" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="contacts" data-action="delete">
                                         <span class="text-sm">🗑️ Xóa</span>
                                     </label>
                                 </div>
@@ -1782,6 +1926,7 @@
                 case 'projects': loadProjects(); break;
                 case 'dich-vu': loadDichVu(); break;
                 case 'home': loadHomePosts(); break;
+                case 'contacts': loadContacts(); break;
                 case 'users': loadUsersManagement(); break;
             }
         }
@@ -3984,6 +4129,199 @@
                 }
             } catch (error) {
                 showToast('Lỗi khi xóa bài đăng: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // CONTACTS MANAGEMENT
+        // ============================================================
+        
+        // Category metadata - icons and button texts
+        const contactCategoryMeta = {
+            phone: { icon: '📞', buttonText: 'Gọi Ngay', urlPrefix: 'tel:' },
+            zalo: { icon: '💬', buttonText: 'Chat Zalo', urlPrefix: 'https://zalo.me/' },
+            email: { icon: '✉️', buttonText: 'Gửi Email', urlPrefix: 'mailto:' },
+            facebook: { icon: '📘', buttonText: 'Theo Dõi Facebook', urlPrefix: '' },
+            tiktok: { icon: '🎵', buttonText: 'Theo Dõi TikTok', urlPrefix: '' },
+            youtube: { icon: '📺', buttonText: 'Xem Kênh YouTube', urlPrefix: '' },
+            website: { icon: '🌐', buttonText: 'Truy Cập Website', urlPrefix: '' }
+        };
+        
+        async function loadContacts() {
+            try {
+                const response = await fetch('../api/admin/get_contact_channels.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderContactsTable(data.channels);
+                } else {
+                    showToast(data.message || 'Lỗi khi tải danh sách kênh liên hệ', 'error');
+                }
+            } catch (error) {
+                showToast('Lỗi khi tải danh sách kênh liên hệ: ' + error.message, 'error');
+            }
+        }
+        
+        function renderContactsTable(channels) {
+            const tbody = document.getElementById('contacts-table-body');
+            
+            if (!channels || channels.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-gray-500">Chưa có kênh liên hệ nào</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = channels.map(channel => {
+                const categoryMeta = contactCategoryMeta[channel.category] || { icon: '📦', buttonText: 'Mở' };
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 border">${channel.id}</td>
+                        <td class="px-4 py-2 border font-semibold">${escapeHtml(channel.name)}</td>
+                        <td class="px-4 py-2 border text-sm text-gray-600">${escapeHtml(channel.description || '')}</td>
+                        <td class="px-4 py-2 border text-sm">${escapeHtml(channel.content)}</td>
+                        <td class="px-4 py-2 border">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded text-sm">
+                                ${categoryMeta.icon} ${channel.category}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 border">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded border" style="background-color: ${channel.color}"></div>
+                                <span class="text-xs font-mono">${channel.color}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-2 border text-center">${channel.display_order}</td>
+                        <td class="px-4 py-2 border text-center">
+                            <span class="px-2 py-1 rounded text-xs ${channel.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
+                                ${channel.is_active ? '✓ Hiển thị' : '✗ Ẩn'}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 border text-center">
+                            <button onclick='editContact(${JSON.stringify(channel)})' class="text-blue-600 hover:text-blue-800 mr-2">✏️</button>
+                            <button onclick="deleteContact(${channel.id})" class="text-red-600 hover:text-red-800">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function openContactModal() {
+            document.getElementById('contactModalTitle').textContent = 'Thêm kênh liên hệ';
+            document.getElementById('contactForm').reset();
+            document.getElementById('contact_id').value = '';
+            document.getElementById('contact_color').value = '#16a34a';
+            document.getElementById('contact_color_display').textContent = '#16a34a';
+            document.getElementById('contact_is_active').checked = true;
+            document.getElementById('category_hint').textContent = 'Chọn danh mục để xem icon và button text tự động';
+            document.getElementById('contactModal').classList.add('active');
+        }
+        
+        function editContact(channel) {
+            document.getElementById('contactModalTitle').textContent = 'Sửa kênh liên hệ';
+            document.getElementById('contact_id').value = channel.id;
+            document.getElementById('contact_name').value = channel.name;
+            document.getElementById('contact_description').value = channel.description || '';
+            document.getElementById('contact_content').value = channel.content;
+            document.getElementById('contact_category').value = channel.category;
+            document.getElementById('contact_color').value = channel.color;
+            document.getElementById('contact_color_display').textContent = channel.color;
+            document.getElementById('contact_display_order').value = channel.display_order;
+            document.getElementById('contact_is_active').checked = channel.is_active;
+            updateContactPreview();
+            document.getElementById('contactModal').classList.add('active');
+        }
+        
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.remove('active');
+        }
+        
+        function updateContactPreview() {
+            const category = document.getElementById('contact_category').value;
+            const categoryHint = document.getElementById('category_hint');
+            const contentHint = document.getElementById('content_hint');
+            
+            if (category && contactCategoryMeta[category]) {
+                const meta = contactCategoryMeta[category];
+                categoryHint.innerHTML = `<strong>${meta.icon} Icon tự động</strong> • Button: "<em>${meta.buttonText}</em>"`;
+                
+                // Update content hint based on category
+                if (category === 'phone') {
+                    contentHint.textContent = 'Nhập số điện thoại (VD: 0969397434)';
+                } else if (category === 'zalo') {
+                    contentHint.textContent = 'Nhập số Zalo (VD: 0969397434)';
+                } else if (category === 'email') {
+                    contentHint.textContent = 'Nhập địa chỉ email (VD: contact@example.com)';
+                } else if (category === 'tiktok') {
+                    contentHint.textContent = 'Nhập username TikTok (VD: @username hoặc link đầy đủ)';
+                } else {
+                    contentHint.textContent = 'Nhập link đầy đủ (VD: https://...)';
+                }
+            } else {
+                categoryHint.textContent = 'Chọn danh mục để xem icon và button text tự động';
+                contentHint.textContent = 'Nhập số điện thoại, email, link hoặc username';
+            }
+        }
+        
+        // Update color display when color picker changes
+        document.getElementById('contact_color')?.addEventListener('input', function() {
+            document.getElementById('contact_color_display').textContent = this.value;
+        });
+        
+        async function saveContact(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('contact_id').value;
+            const formData = new FormData();
+            
+            if (id) formData.append('id', id);
+            formData.append('name', document.getElementById('contact_name').value);
+            formData.append('description', document.getElementById('contact_description').value);
+            formData.append('content', document.getElementById('contact_content').value);
+            formData.append('category', document.getElementById('contact_category').value);
+            formData.append('color', document.getElementById('contact_color').value);
+            formData.append('display_order', document.getElementById('contact_display_order').value);
+            formData.append('is_active', document.getElementById('contact_is_active').checked ? 1 : 0);
+            
+            try {
+                const response = await fetch('../api/admin/save_contact_channel.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeContactModal();
+                    loadContacts();
+                } else {
+                    showToast(data.message || 'Lỗi khi lưu kênh liên hệ', 'error');
+                }
+            } catch (error) {
+                showToast('Lỗi khi lưu kênh liên hệ: ' + error.message, 'error');
+            }
+        }
+        
+        async function deleteContact(id) {
+            const confirmed = await customConfirm('Bạn có chắc chắn muốn xóa kênh liên hệ này?');
+            if (!confirmed) return;
+            
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+                
+                const response = await fetch('../api/admin/delete_contact_channel.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadContacts();
+                } else {
+                    showToast(data.message || 'Lỗi khi xóa kênh liên hệ', 'error');
+                }
+            } catch (error) {
+                showToast('Lỗi khi xóa kênh liên hệ: ' + error.message, 'error');
             }
         }
     </script>

@@ -777,8 +777,22 @@ INSERT INTO dich_vu (id, name, logo_url, description, highlight_color, link_name
 SELECT 'Sample data imported successfully!' as message;
 SELECT 'Packages: 4 packages, Services: 4 services' as info;
 SELECT 'Reward Templates: 6 templates' as info;
+-- =====================================================
+-- DATA FOR CONTACT_CHANNELS
+-- =====================================================
+INSERT INTO contact_channels (id, name, description, content, category, color, display_order, is_active) VALUES
+(1, 'Hotline', 'Hỗ trợ 24/7', '0969397434', 'phone', '#16a34a', 1, 1),
+(2, 'Hotline phụ', 'Hỗ trợ 24/7', '0988919868', 'phone', '#16a34a', 2, 1),
+(3, 'Zalo', 'Chat trực tuyến (Chính)', '0969397434', 'zalo', '#2563eb', 3, 1),
+(4, 'Zalo phụ', 'Chat trực tuyến', '0988919868', 'zalo', '#2563eb', 4, 1),
+(5, 'Email', 'Phản hồi trong 24h', 'hcecosystem@gmail.com', 'email', '#9333ea', 5, 1),
+(6, 'Facebook', 'Theo dõi tin tức', 'https://www.facebook.com/hceco.io.vn', 'facebook', '#1d4ed8', 6, 1),
+(7, 'TikTok', 'Video về năng lượng', '@hc.channal', 'tiktok', '#ec4899', 7, 1),
+(8, 'Website', 'Mã số thuế: 0123456789', 'https://hcecosystem.vn', 'website', '#4b5563', 8, 1);
+
 SELECT 'Intro Posts: 6 posts' as info;
 SELECT 'Projects: 4 projects' as info;
+SELECT 'Contact Channels: 8 channels' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
 SELECT 'Test users created:' as info;

@@ -461,7 +461,7 @@ CREATE INDEX idx_dich_vu_display_order ON dich_vu(display_order);
 CREATE TABLE IF NOT EXISTS user_permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL COMMENT 'ID người dùng',
-    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu, users, home)',
+    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu, users, home, contacts)',
     can_view BOOLEAN DEFAULT FALSE COMMENT 'Quyền xem',
     can_create BOOLEAN DEFAULT FALSE COMMENT 'Quyền tạo mới',
     can_edit BOOLEAN DEFAULT FALSE COMMENT 'Quyền sửa',
@@ -502,9 +502,29 @@ CREATE INDEX idx_home_posts_display_order ON home_posts(display_order);
 CREATE INDEX idx_home_posts_section ON home_posts(section_id);
 
 -- =====================================================
+-- 23. BẢNG CONTACT_CHANNELS (Kênh liên hệ)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS contact_channels (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL COMMENT 'Tên kênh (VD: Hotline, Zalo)',
+    description VARCHAR(255) DEFAULT NULL COMMENT 'Mô tả (VD: Hỗ trợ 24/7)',
+    content TEXT NOT NULL COMMENT 'Nội dung (Số điện thoại, email, link, username...)',
+    category ENUM('phone', 'zalo', 'email', 'facebook', 'tiktok', 'youtube', 'website') NOT NULL COMMENT 'Danh mục kênh liên hệ',
+    color VARCHAR(50) DEFAULT '#16a34a' COMMENT 'Màu nền card dạng hex (VD: #16a34a)',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Trạng thái hiển thị',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT='Quản lý các kênh liên hệ hiển thị trên trang liên hệ';
+
+CREATE INDEX idx_contact_channels_active ON contact_channels(is_active);
+CREATE INDEX idx_contact_channels_display_order ON contact_channels(display_order);
+CREATE INDEX idx_contact_channels_category ON contact_channels(category);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 22' as info;
+SELECT 'Total tables created: 23' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 
