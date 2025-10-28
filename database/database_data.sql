@@ -12,8 +12,8 @@ USE nangluongmattroi;
 -- =====================================================
 INSERT INTO product_categories (id, name, logo_url, display_order, is_active, created_at, updated_at) VALUES
 (1, 'Bảo Duy Solar', '/assets/img/categories/category_1761566273_68ff5e41b8ea6.jpg', 1, 1, '2025-10-27 11:31:07', '2025-10-27 11:57:53'),
-(2, 'C - Home Building', '/assets/img/categories/category_1761566279_68ff5e47a7bc2.jpg', 2, 1, '2025-10-27 11:31:07', '2025-10-27 11:57:59'),
-(3, 'Coffee', '/assets/img/categories/category_1761568681_68ff67a96c3f3.jpg', 3, 1, '2025-10-27 12:38:01', '2025-10-27 12:38:01'),
+(2, 'C - Home Building', '/assets/img/categories/category_1761661939_6900d3f33b569.jpg', 2, 1, '2025-10-27 11:31:07', '2025-10-28 14:32:19'),
+(3, 'HC - Coffee & Restaurant', '/assets/img/categories/category_1761661942_6900d3f643960.jpg', 3, 1, '2025-10-27 12:38:01', '2025-10-28 14:32:22'),
 (4, 'Phúc', '/assets/img/categories/category_1761582235_68ff9c9bed00f.jpg', 4, 1, '2025-10-27 16:23:55', '2025-10-27 16:23:55');
 
 -- =====================================================
@@ -47,7 +47,7 @@ Thông số kỹ thuật:
 - Bảo hành: 15 năm sản phẩm, 30 năm công suất',
 'assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png', TRUE),
 
-(1, 'ECO Hybrid 5kW (Bản mới 2025)', 16500000, 18975000,
+(1, 'ECO Hybrid 5kW (Bản mới 2025)', 16500000, 14500000,
 'Thương hiệu: LuxPower
 Model: SNA5000WPV
 
@@ -56,9 +56,9 @@ Thông số kỹ thuật:
 - Điện áp: 1 pha
 - Hỗ trợ pin lithium và ắc quy
 - Bảo hành: 5 năm',
-'assets/img/products/eco-hybrid-5kw-sna5000wpv.png', TRUE),
+'/assets/img/products/luxpower-6kw-gen.png', TRUE),
 
-(1, 'ECO Hybrid 6kW', 17500000, 20125000,
+(1, 'ECO Hybrid 6kW', 20125000, 14500000,
 'Thương hiệu: LuxPower
 Model: SNA6000WPV
 
@@ -67,7 +67,7 @@ Thông số kỹ thuật:
 - Điện áp: 1 pha
 - Hỗ trợ pin lithium và ắc quy
 - Bảo hành: 5 năm',
-'assets/img/products/eco-hybrid-6kw-sna6000wpv.png', TRUE),
+'/assets/img/products/luxpower-6kw-gen.png', TRUE),
 
 (1, 'ECO Hybrid 12kW', 35500000, 40825000,
 'Thương hiệu: LuxPower
@@ -574,19 +574,19 @@ INSERT INTO phuong (ten_phuong, id_tinh) VALUES
 -- DỮ LIỆU MẪU - PACKAGE_CATEGORIES
 -- =====================================================
 INSERT INTO package_categories (id, name, logo_url, badge_text, badge_color, display_order, is_active, created_at, updated_at) VALUES
-(1, 'Bảo Duy Solar', '/assets/img/package-categories/package-category_1761566289_68ff5e518d89e.jpg', 'Siêu Hot', 'yellow', 1, 1, '2025-10-27 11:31:08', '2025-10-27 12:10:03'),
-(2, 'C - Home Building', '/assets/img/package-categories/package-category_1761566300_68ff5e5c5676c.jpg', 'New', 'blue', 2, 1, '2025-10-27 11:31:08', '2025-10-27 12:02:27'),
-(3, 'Coffee', '/assets/img/package-categories/package-category_1761568732_68ff67dcd01c8.jpg', 'Bán Chạy', 'purple', 1, 1, '2025-10-27 12:38:52', '2025-10-27 12:38:58');
+(1, 'Bảo Duy Solar', '/assets/img/package-categories/package-category_1761566289_68ff5e518d89e.jpg', 'Siêu Hot', '#fb8b23', 1, 1, '2025-10-27 11:31:08', '2025-10-27 23:48:10'),
+(2, 'C - Home Building', '/assets/img/package-categories/package-category_1761566300_68ff5e5c5676c.jpg', 'New', '#568de6', 2, 1, '2025-10-27 11:31:08', '2025-10-27 23:48:21'),
+(3, 'Coffee', '/assets/img/package-categories/package-category_1761568732_68ff67dcd01c8.jpg', 'Bán Chạy', '#5ff7ec', 3, 1, '2025-10-27 12:38:52', '2025-10-27 23:48:15');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGES
 -- =====================================================
 INSERT INTO packages (id, category_id, name, description, price, savings_per_month, payback_period, highlights, badge_text, badge_color, display_order, is_active, created_at, updated_at) VALUES
-(1, 1, 'Gói Solar 3kW - Hộ Gia Đình', 'Hệ thống điện mặt trời 3kW phù hợp cho gia đình 2-3 người, giúp giảm 70-80% hóa đơn điện hàng tháng.', 145000000.00, '~2.5 triệu/tháng', '4-5 năm', '[{\"title\":\"Tiết kiệm/tháng\",\"content\":\"~2.5 triệu/tháng\"},{\"title\":\"Hoàn vốn\",\"content\":\"4-5 năm\"}]', 'PHỔ BIẾN', 'red', 1, 1, '2025-10-27 11:31:09', '2025-10-27 12:03:40'),
+(1, 1, 'Gói Solar 3kW - Hộ Gia Đình', 'Hệ thống điện mặt trời 3kW phù hợp cho gia đình 2-3 người, giúp giảm 70-80% hóa đơn điện hàng tháng.', 145000000.00, '~2.5 triệu/tháng', '4-5 năm', '[{\"title\":\"Tiết kiệm/tháng\",\"content\":\"~2.5 triệu/tháng\"},{\"title\":\"Hoàn vốn\",\"content\":\"4-5 năm\"}]', 'PHỔ BIẾN', '#ff0a0a', 1, 1, '2025-10-27 11:31:09', '2025-10-27 23:48:57'),
 (2, 1, 'Gói Solar 5kW - Gia Đình Vừa', 'Hệ thống điện mặt trời 5kW phù hợp cho gia đình 4-5 người, công suất cao, tiết kiệm tối đa.', 225000000.00, '~4 triệu/tháng', '4-5 năm', NULL, 'BÁN CHẠY', 'red', 2, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (3, 1, 'Gói Solar 10kW - Doanh Nghiệp Nhỏ', 'Hệ thống điện mặt trời 10kW phù hợp cho cửa hàng, văn phòng nhỏ, doanh nghiệp tiết kiệm chi phí.', 425000000.00, '~8 triệu/tháng', '4-5 năm', NULL, 'KHUYẾN MÃI', 'green', 3, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (4, 1, 'Gói Solar 20kW - Nhà Xưởng', 'Hệ thống điện mặt trời 20kW phù hợp cho nhà xưởng, doanh nghiệp vừa, tiết kiệm năng lượng lớn.', 785000000.00, '~15 triệu/tháng', '4-5 năm', NULL, 'TIẾT KIỆM', 'yellow', 4, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(5, 2, 'Hệ Thống Điện Nhà Thông Minh', 'Tích hợp hệ thống điện mặt trời với hệ thống điều khiển thông minh, tự động hóa toàn bộ.', 555000000.00, '~10 triệu/tháng', '4-5 năm', NULL, 'MỚI', 'purple', 1, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
+(5, 2, 'Hệ Thống Điện Nhà Thông Minh', 'Tích hợp hệ thống điện mặt trời với hệ thống điều khiển thông minh, tự động hóa toàn bộ.', 555000000.00, '~10 triệu/tháng', '4-5 năm', '[{\"title\":\"Tiết kiệm/tháng\",\"content\":\"~10 triệu/tháng\"},{\"title\":\"Hoàn vốn\",\"content\":\"4-5 năm\"}]', 'MỚI', '#8b5cf6', 7, 1, '2025-10-27 11:31:09', '2025-10-27 23:48:42');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGE_ITEMS
@@ -641,7 +641,8 @@ INSERT INTO reward_templates (id, reward_name, reward_type, reward_value, reward
 (3, 'Tiền mặt 200.000đ', 'cash', 200000.00, 'Nhận ngay 200.000đ tiền mặt', NULL, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (4, 'Tiền mặt 500.000đ', 'cash', 500000.00, 'Nhận ngay 500.000đ tiền mặt', NULL, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (5, 'Chai nước giặt Omo', 'gift', NULL, 'Chai nước giặt Omo 3.8kg', 100, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(6, 'Bộ dụng cụ gia đình', 'gift', NULL, 'Bộ dụng cụ gia đình 10 món', 50, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09');
+(6, 'Bộ dụng cụ gia đình', 'gift', NULL, 'Bộ dụng cụ gia đình 10 món', 50, NULL, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(7, 'Voucher giam 1 trieu', 'voucher', 1000000.00, 'cho 0988919868', NULL, NULL, 1, '2025-10-28 14:55:38', '2025-10-28 14:55:38');
 
 -- =====================================================
 -- DỮ LIỆU TEST - USER MẪU (Để test)
@@ -651,27 +652,85 @@ INSERT INTO reward_templates (id, reward_name, reward_type, reward_value, reward
 INSERT INTO users (id, full_name, username, phone, password, is_admin, created_at, updated_at) VALUES
 (1, 'Test User', 'testuser', '0123456789', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
 (2, 'Admin User', 'admin', '0988919868', '$2y$10$k8S9LHvAOtxAvDFTGmV7n.cyqvIuFbnlZGzZ.DcPzpOihPfnYWbF2', 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(3, 'Đỗ Quang Phúc', 'quangphuc', '0375779219', '$2y$10$r6M1D/MPVDVm9bXdlOaA4.NxfWO68iL2loDBpuZTySRWGnFVovhui', 0, '2025-10-27 11:57:05', '2025-10-27 11:57:05');
+(3, 'Đỗ Quang Phúc', 'quangphuc', '0375779219', '$2y$10$r6M1D/MPVDVm9bXdlOaA4.NxfWO68iL2loDBpuZTySRWGnFVovhui', 0, '2025-10-27 11:57:05', '2025-10-27 11:57:05'),
+(4, 'Nguyễn Minh Hải', 'hainm', '1234567899', '$2y$10$mjReWJD1Izqe1NrwrqqXkeyylvCl/YP68tGYc/pQbY/tj/Ojx/wfy', 1, '2025-10-28 14:22:57', '2025-10-28 14:24:56');
 
 -- Tạo lottery tickets test cho user
-INSERT INTO lottery_tickets (id, user_id, ticket_type, status, created_at) VALUES
-(1, 1, 'bonus', 'active', '2025-10-27 11:31:10'),
-(2, 1, 'bonus', 'active', '2025-10-27 11:31:10'),
-(3, 1, 'bonus', 'active', '2025-10-27 11:31:10');
+INSERT INTO lottery_tickets (id, user_id, order_id, ticket_type, status, pre_assigned_reward_id, created_at, expires_at) VALUES
+(1, 1, NULL, 'bonus', 'active', NULL, '2025-10-27 11:31:10', NULL),
+(2, 1, NULL, 'bonus', 'active', NULL, '2025-10-27 11:31:10', NULL),
+(4, 2, 1, 'purchase', 'used', 2, '2025-10-28 00:28:18', NULL),
+(5, 2, 2, 'purchase', 'used', 7, '2025-10-28 00:39:00', NULL),
+(6, 2, 4, 'purchase', 'active', NULL, '2025-10-28 16:34:03', NULL),
+(7, 3, 5, 'purchase', 'active', NULL, '2025-10-28 16:35:08', NULL),
+(8, 3, 6, 'purchase', 'active', NULL, '2025-10-28 16:37:36', NULL),
+(9, 3, 7, 'purchase', 'active', NULL, '2025-10-28 16:37:39', NULL),
+(10, 4, 3, 'purchase', 'active', NULL, '2025-10-28 16:38:42', NULL);
+
+-- =====================================================
+-- DỮ LIỆU TEST - LOTTERY REWARDS (Phần thưởng vòng quay)
+-- =====================================================
+INSERT INTO lottery_rewards (id, user_id, reward_template_id, reward_name, reward_type, reward_value, reward_description, voucher_code, reward_image, status, ticket_id, won_at, used_at, expires_at, notes, created_at, updated_at) VALUES
+(1, 2, 2, 'Voucher giảm 1.000.000đ', 'voucher', 1000000.00, 'Voucher giảm giá 1.000.000đ cho đơn hàng tiếp theo', 'VC6900104027C86', NULL, 'used', 4, '2025-10-28 00:37:20', '2025-10-28 00:37:48', '2025-11-27 00:37:20', NULL, '2025-10-28 00:37:20', '2025-10-28 00:37:48'),
+(2, 2, 7, 'Voucher giam 1 trieu', 'voucher', 1000000.00, 'cho 0988919868', 'VC6900D9CE9EC07', NULL, 'pending', 5, '2025-10-28 14:57:18', NULL, '2025-11-27 14:57:18', NULL, '2025-10-28 14:57:18', '2025-10-28 14:57:18');
 
 -- =====================================================
 -- DỮ LIỆU TEST - VOUCHERS MẪU
 -- =====================================================
 INSERT INTO vouchers (id, code, discount_amount, description, is_used, used_by_user_id, used_at, expires_at, created_at) VALUES
 (1, 'WELCOME500K', 500000.00, 'Voucher chào mừng khách hàng mới', 0, NULL, NULL, '2025-11-26 11:31:10', '2025-10-27 11:31:10'),
-(2, 'NEWYEAR1M', 1000000.00, 'Voucher năm mới giảm 1 triệu', 0, NULL, NULL, '2025-12-26 11:31:10', '2025-10-27 11:31:10');
+(2, 'NEWYEAR1M', 1000000.00, 'Voucher năm mới giảm 1 triệu', 0, NULL, NULL, '2025-12-26 11:31:10', '2025-10-27 11:31:10'),
+(3, 'VC6900104027C86', 1000000.00, 'Voucher giảm 1.000.000đ - Từ vòng quay may mắn', 0, NULL, NULL, '2025-11-27 08:37:20', '2025-10-28 00:37:20'),
+(4, 'VC6900D9CE9EC07', 1000000.00, 'Voucher giam 1 trieu - Từ vòng quay may mắn', 0, NULL, NULL, '2025-11-27 22:57:18', '2025-10-28 14:57:18');
+
+-- =====================================================
+-- DỮ LIỆU TEST - CART ITEMS (Giỏ hàng)
+-- =====================================================
+INSERT INTO cart_items (id, user_id, product_id, quantity, created_at, updated_at) VALUES
+(4, 2, 1, 1, '2025-10-28 14:57:47', '2025-10-28 14:57:47');
+
+-- =====================================================
+-- DỮ LIỆU TEST - ORDERS (Đơn hàng)
+-- =====================================================
+INSERT INTO orders (id, user_id, full_name, phone, email, city, district, ward, address, notes, subtotal, voucher_code, discount_amount, total_amount, order_status, approved_by, approved_at, created_at) VALUES
+(1, 2, 'ĐỖ QUANG PHÚC', '0375779219', 'doquangphuc21@gmail.com', 'Tỉnh Yên Bái', 'Thị xã Nghĩa Lộ', 'Xã Phù Nham', 'Lê Đỉnh, Điện Ngọc, Điện Bàn, Quảng Nam', '', 1950000.00, NULL, 0.00, 1950000.00, 'approved', 2, '2025-10-28 00:28:18', '2025-10-28 00:02:26'),
+(2, 2, 'ĐỖ QUANG PHÚC', '0375779219', 'doquangphuc21@gmail.com', 'Tỉnh Hoà Bình', 'Huyện Yên Thủy', 'Xã Đoàn Kết', 'Lê Đỉnh, Điện Ngọc, Điện Bàn, Quảng Nam', '', 1950000.00, 'VC6900104027C86', 1000000.00, 950000.00, 'approved', 2, '2025-10-28 00:39:00', '2025-10-28 00:37:48'),
+(3, 4, 'hai', '0987955829', 'onemusicdanang@gmail.com', 'Thành phố Đà Nẵng', 'Quận Sơn Trà', 'Phường Thọ Quang', '93 Võ Duy Ninh, Phường Thọ Quang, Sơn Trà, Đà Nẵng', '', 40250000.00, NULL, 0.00, 40250000.00, 'approved', 2, '2025-10-28 16:38:42', '2025-10-28 14:46:53'),
+(4, 2, 'ĐỖ QUANG PHÚC', '0375779219', 'doquangphuc21@gmail.com', 'Tỉnh Cao Bằng', 'Huyện Bảo Lạc', 'Xã Hưng Đạo', 'Lê Đỉnh, Điện Ngọc, Điện Bàn, Quảng Nam', '', 1500000.00, NULL, 0.00, 1500000.00, 'approved', 2, '2025-10-28 16:34:03', '2025-10-28 16:33:41'),
+(5, 3, 'ĐỖ QUANG PHÚC', '0375779219', 'doquangphuc21@gmail.com', 'Tỉnh Cao Bằng', 'Huyện Bảo Lạc', 'Xã Hồng An', 'Lê Đỉnh, Điện Ngọc, Điện Bàn, Quảng Nam', '', 1950000.00, NULL, 0.00, 1950000.00, 'approved', 2, '2025-10-28 16:35:08', '2025-10-28 16:34:48'),
+(6, 3, 'ĐỖ QUANG PHÚC', '0375779219', 'doquangphuc21@gmail.com', 'Tỉnh Cao Bằng', 'Huyện Bảo Lạc', 'Xã Phan Thanh', 'Lê Đỉnh, Điện Ngọc, Điện Bàn, Quảng Nam', '', 20125000.00, NULL, 0.00, 20125000.00, 'approved', 2, '2025-10-28 16:37:36', '2025-10-28 16:36:31'),
+(7, 3, 'ĐỖ QUANG PHÚC', '0375779219', 'doquangphuc21@gmail.com', 'Tỉnh Cao Bằng', 'Huyện Hạ Lang', 'Xã An Lạc', 'Lê Đỉnh, Điện Ngọc, Điện Bàn, Quảng Nam', '', 40250000.00, NULL, 0.00, 40250000.00, 'approved', 2, '2025-10-28 16:37:39', '2025-10-28 16:36:53');
+
+-- =====================================================
+-- DỮ LIỆU TEST - ORDER ITEMS (Chi tiết đơn hàng)
+-- =====================================================
+INSERT INTO order_items (id, order_id, product_id, product_name, quantity, price, image_url) VALUES
+(1, 1, 2, 'Tấm Pin Jinko Solar 630W Tiger Neo', 1, 1950000.00, '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png'),
+(2, 2, 2, 'Tấm Pin Jinko Solar 630W Tiger Neo', 1, 1950000.00, '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png'),
+(3, 3, 4, 'ECO Hybrid 6kW', 2, 20125000.00, '..//assets/img/products/luxpower-6kw-gen.png'),
+(4, 4, 35, 'CT Ngoài LuxPower SNA 6kW', 1, 1500000.00, '../assets/img/products/ct-ngoai-luxpower-sna-6kw.png'),
+(5, 5, 2, 'Tấm Pin Jinko Solar 630W Tiger Neo', 1, 1950000.00, '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png'),
+(6, 6, 4, 'ECO Hybrid 6kW', 1, 20125000.00, '..//assets/img/products/luxpower-6kw-gen.png'),
+(7, 7, 4, 'ECO Hybrid 6kW', 2, 20125000.00, '..//assets/img/products/luxpower-6kw-gen.png');
+
+-- =====================================================
+-- DỮ LIỆU TEST - SOLAR SURVEYS (Khảo sát điện mặt trời)
+-- =====================================================
+INSERT INTO solar_surveys (id, user_id, full_name, phone, region, phase, solar_panel_type, monthly_bill, usage_time, created_at, updated_at) VALUES
+(1, 2, 'Admin User', '0988919868', 'mien-bac', 3, 630, 2500000.00, 'balanced', '2025-10-28 00:04:38', '2025-10-28 00:04:38');
+
+-- =====================================================
+-- DỮ LIỆU TEST - SURVEY RESULTS (Kết quả khảo sát)
+-- =====================================================
+INSERT INTO survey_results (id, survey_id, monthly_kwh, sun_hours, region_name, panel_id, panel_name, panel_power, panel_price, panels_needed, panel_cost, energy_per_panel_per_day, total_capacity, inverter_id, inverter_name, inverter_capacity, inverter_price, cabinet_id, cabinet_name, cabinet_capacity, cabinet_price, battery_needed, battery_type, battery_id, battery_name, battery_capacity, battery_quantity, battery_unit_price, battery_cost, bach_z_qty, bach_z_price, bach_z_cost, clip_qty, clip_price, clip_cost, jack_mc4_qty, jack_mc4_price, jack_mc4_cost, dc_cable_length, dc_cable_price, dc_cable_cost, accessories_cost, labor_cost, total_cost_without_battery, total_cost, bill_breakdown, created_at) VALUES
+(1, 1, 1000.00, 4.5, 'Miền Bắc', 2, 'Pin mặt trời 630W', 0.630, 2800000.00, 12, 33600000.00, 2.835, 7.56, 1, 'Inverter Luxpower', 6.00, 15000000.00, 1, 'Tủ điện', 6.00, 2000000.00, 0.00, '8cell', 1, 'Pin lưu trữ 8 cell', 8.30, 0, 15000000.00, 0.00, 12, 50000.00, 600000.00, 48, 10000.00, 480000.00, 24, 15000.00, 360000.00, 120, 20000.00, 2400000.00, 6000000.00, 3600000.00, 60200000.00, 60200000.00, '[]', '2025-10-28 00:04:38');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - SURVEY_PRODUCT_CONFIGS (Cấu hình sản phẩm cho khảo sát)
 -- =====================================================
 INSERT INTO survey_product_configs (id, product_id, survey_category, phase_type, price_type, is_active, display_order, notes, created_at, updated_at) VALUES
 (1, 1, 'solar_panel', 'none', 'market_price', 1, 1, 'Jinko 590W', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(2, 2, 'solar_panel', 'none', 'market_price', 1, 2, 'Jinko 630W', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
+(2, 2, 'solar_panel', 'none', 'market_price', 1, 2, 'Jinko 630W', '2025-10-27 11:31:10', '2025-10-28 00:20:56'),
 (3, 5, 'inverter', '1_phase', 'market_price', 1, 1, 'ECO Hybrid 5kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
 (4, 6, 'inverter', '1_phase', 'market_price', 1, 2, 'ECO Hybrid 6kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
 (5, 7, 'inverter', '1_phase', 'market_price', 1, 3, 'ECO Hybrid 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
