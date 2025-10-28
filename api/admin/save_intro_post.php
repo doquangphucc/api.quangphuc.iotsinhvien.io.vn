@@ -34,6 +34,7 @@ $description = $_POST['description'] ?? '';
 $is_active = isset($_POST['is_active']) ? intval($_POST['is_active']) : 1;
 $image_url = $_POST['image_url'] ?? '';
 $video_url = $_POST['video_url'] ?? '';
+$media_gallery = $_POST['media_gallery'] ?? '[]'; // NEW: Media gallery JSON
 $delete_image = isset($_POST['delete_image']) && $_POST['delete_image'] === '1';
 $delete_video = isset($_POST['delete_video']) && $_POST['delete_video'] === '1';
 
@@ -202,12 +203,12 @@ if (empty($video_url) && !empty($old_video_url) && !$delete_video && $id > 0) {
 // Save to database
 if ($id > 0) {
     // Update existing post
-    $stmt = $conn->prepare("UPDATE intro_posts SET title = ?, description = ?, image_url = ?, video_url = ?, display_order = ?, is_active = ? WHERE id = ?");
-    $stmt->bind_param("ssssiii", $title, $description, $image_url, $video_url, $display_order, $is_active, $id);
+    $stmt = $conn->prepare("UPDATE intro_posts SET title = ?, description = ?, image_url = ?, video_url = ?, media_gallery = ?, display_order = ?, is_active = ? WHERE id = ?");
+    $stmt->bind_param("sssssiii", $title, $description, $image_url, $video_url, $media_gallery, $display_order, $is_active, $id);
 } else {
     // Insert new post
-    $stmt = $conn->prepare("INSERT INTO intro_posts (title, description, image_url, video_url, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssii", $title, $description, $image_url, $video_url, $display_order, $is_active);
+    $stmt = $conn->prepare("INSERT INTO intro_posts (title, description, image_url, video_url, media_gallery, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssii", $title, $description, $image_url, $video_url, $media_gallery, $display_order, $is_active);
 }
 
 if ($stmt->execute()) {

@@ -23,6 +23,7 @@ $button_text = trim($data['button_text'] ?? '');
 $button_url = trim($data['button_url'] ?? '');
 $button_color = trim($data['button_color'] ?? 'green');
 $features = $data['features'] ?? [];
+$media_gallery = $data['media_gallery'] ?? '[]'; // NEW: Media gallery JSON
 $display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
 $is_active = isset($data['is_active']) ? (bool)$data['is_active'] : true;
 $section_id = trim($data['section_id'] ?? 'solutions');
@@ -75,12 +76,13 @@ try {
             button_url = ?, 
             button_color = ?, 
             features = ?, 
+            media_gallery = ?,
             display_order = ?, 
             is_active = ?,
             section_id = ?
             WHERE id = ?");
         
-        $stmt->bind_param("ssssssssssissi", 
+        $stmt->bind_param("sssssssssssissi", 
             $title, 
             $description, 
             $highlight_text, 
@@ -91,6 +93,7 @@ try {
             $button_url, 
             $button_color, 
             $features_json, 
+            $media_gallery,
             $display_order, 
             $is_active,
             $section_id,
@@ -115,10 +118,10 @@ try {
         // Create new post
         $stmt = $conn->prepare("INSERT INTO home_posts 
             (title, description, highlight_text, highlight_color, image_url, image_position, 
-             button_text, button_url, button_color, features, display_order, is_active, section_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+             button_text, button_url, button_color, features, media_gallery, display_order, is_active, section_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
-        $stmt->bind_param("ssssssssssiis", 
+        $stmt->bind_param("sssssssssssiis", 
             $title, 
             $description, 
             $highlight_text, 
@@ -129,6 +132,7 @@ try {
             $button_url, 
             $button_color, 
             $features_json, 
+            $media_gallery,
             $display_order, 
             $is_active,
             $section_id
