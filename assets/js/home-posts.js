@@ -1,17 +1,6 @@
 // Home Posts Dynamic Rendering
 // Load and render home posts from database
 
-// Color mapping for Tailwind classes
-const colorMap = {
-    'green': { text: 'text-green-600', bg: 'bg-green-600', hover: 'hover:bg-green-700' },
-    'blue': { text: 'text-blue-600', bg: 'bg-blue-600', hover: 'hover:bg-blue-700' },
-    'red': { text: 'text-red-600', bg: 'bg-red-600', hover: 'hover:bg-red-700' },
-    'yellow': { text: 'text-yellow-600', bg: 'bg-yellow-600', hover: 'hover:bg-yellow-700' },
-    'purple': { text: 'text-purple-600', bg: 'bg-purple-600', hover: 'hover:bg-purple-700' },
-    'orange': { text: 'text-orange-600', bg: 'bg-orange-600', hover: 'hover:bg-orange-700' },
-    'amber': { text: 'text-amber-600', bg: 'bg-amber-600', hover: 'hover:bg-amber-700' }
-};
-
 // Load home posts from API
 async function loadHomePosts() {
     try {
@@ -65,8 +54,12 @@ function createPostElement(post, index) {
     const div = document.createElement('div');
     div.className = index > 0 ? 'mt-16' : '';
     
-    const highlightColor = colorMap[post.highlight_color] || colorMap['green'];
-    const buttonColor = colorMap[post.button_color] || colorMap['green'];
+    // Use hex colors directly (default to green if not set)
+    const highlightColor = post.highlight_color || '#3FA34D';
+    const buttonColor = post.button_color || '#3FA34D';
+    
+    // Calculate hover color (slightly darker)
+    const buttonHoverColor = darkenColor(buttonColor, 10);
     
     // Determine layout based on image position
     const isImageLeft = post.image_position === 'left';
@@ -87,12 +80,16 @@ function createPostElement(post, index) {
     // Content section HTML
     const contentHTML = `
         <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}">
-            ${post.highlight_text ? `<span class="${highlightColor.text} font-semibold uppercase tracking-wider">${escapeHtml(post.highlight_text)}</span>` : ''}
+            ${post.highlight_text ? `<span style="color: ${highlightColor};" class="font-semibold uppercase tracking-wider">${escapeHtml(post.highlight_text)}</span>` : ''}
             <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-6">${escapeHtml(post.title)}</h3>
             <p class="text-gray-600 dark:text-gray-300 mb-6">${escapeHtml(post.description)}</p>
             ${featuresHTML ? `<ul class="space-y-3 mb-8">${featuresHTML}</ul>` : ''}
             ${post.button_text && post.button_url ? `
-                <a href="${escapeHtml(post.button_url)}" class="inline-block ${buttonColor.bg} text-white font-semibold px-8 py-3 rounded-full ${buttonColor.hover} transition-all duration-300">
+                <a href="${escapeHtml(post.button_url)}" 
+                   style="background-color: ${buttonColor};" 
+                   onmouseover="this.style.backgroundColor='${buttonHoverColor}'" 
+                   onmouseout="this.style.backgroundColor='${buttonColor}'"
+                   class="inline-block text-white font-semibold px-8 py-3 rounded-full transition-all duration-300">
                     ${escapeHtml(post.button_text)}
                 </a>
             ` : ''}
@@ -121,6 +118,25 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Darken a hex color by a percentage
+function darkenColor(hex, percent) {
+    // Remove # if present
+    hex = hex.replace('#', '');
+    
+    // Convert to RGB
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+    
+    // Darken
+    r = Math.max(0, Math.floor(r * (100 - percent) / 100));
+    g = Math.max(0, Math.floor(g * (100 - percent) / 100));
+    b = Math.max(0, Math.floor(b * (100 - percent) / 100));
+    
+    // Convert back to hex
+    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
 // Initialize when DOM is ready

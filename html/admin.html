@@ -986,15 +986,8 @@
                     
                     <div>
                         <label class="block text-sm font-semibold mb-2">Màu Highlight</label>
-                        <select id="home_post_highlight_color" class="w-full px-4 py-2 border rounded-lg">
-                            <option value="green">🟢 Xanh lá (Green)</option>
-                            <option value="blue">🔵 Xanh dương (Blue)</option>
-                            <option value="red">🔴 Đỏ (Red)</option>
-                            <option value="yellow">🟡 Vàng (Yellow)</option>
-                            <option value="purple">🟣 Tím (Purple)</option>
-                            <option value="orange">🟠 Cam (Orange)</option>
-                            <option value="amber">🟠 Hổ phách (Amber)</option>
-                        </select>
+                        <input type="color" id="home_post_highlight_color" value="#3FA34D" class="w-full h-12 border rounded-lg cursor-pointer">
+                        <p class="text-xs text-gray-500 mt-1">Chọn màu cho văn bản highlight</p>
                     </div>
                     
                     <!-- Image Section -->
@@ -1039,15 +1032,8 @@
                     
                     <div>
                         <label class="block text-sm font-semibold mb-2">Màu nút</label>
-                        <select id="home_post_button_color" class="w-full px-4 py-2 border rounded-lg">
-                            <option value="green">🟢 Xanh lá (Green)</option>
-                            <option value="blue">🔵 Xanh dương (Blue)</option>
-                            <option value="red">🔴 Đỏ (Red)</option>
-                            <option value="yellow">🟡 Vàng (Yellow)</option>
-                            <option value="purple">🟣 Tím (Purple)</option>
-                            <option value="orange">🟠 Cam (Orange)</option>
-                            <option value="amber">🟠 Hổ phách (Amber)</option>
-                        </select>
+                        <input type="color" id="home_post_button_color" value="#3FA34D" class="w-full h-12 border rounded-lg cursor-pointer">
+                        <p class="text-xs text-gray-500 mt-1">Chọn màu nền cho nút CTA</p>
                     </div>
                     
                     <!-- Features Section -->
@@ -3608,6 +3594,14 @@
                     ? '<span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Hiển thị</span>'
                     : '<span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">Ẩn</span>';
                 
+                // Create color swatch for highlight
+                const highlightDisplay = post.highlight_text 
+                    ? `<div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded border" style="background-color: ${post.highlight_color}"></div>
+                        <span class="text-xs">${post.highlight_text}</span>
+                       </div>`
+                    : '-';
+                
                 row.innerHTML = `
                     <td class="px-4 py-3 text-center">${post.display_order}</td>
                     <td class="px-4 py-3">
@@ -3618,7 +3612,7 @@
                         <div class="text-sm text-gray-500">${post.description.substring(0, 60)}...</div>
                     </td>
                     <td class="px-4 py-3">
-                        ${post.highlight_text ? `<span class="px-2 py-1 bg-${post.highlight_color}-100 text-${post.highlight_color}-800 rounded text-xs">${post.highlight_text}</span>` : '-'}
+                        ${highlightDisplay}
                     </td>
                     <td class="px-4 py-3 text-center">${positionEmoji} ${post.image_position === 'left' ? 'Trái' : 'Phải'}</td>
                     <td class="px-4 py-3 text-center">${post.section_id}</td>
@@ -3673,8 +3667,8 @@
                 // Add mode
                 document.getElementById('homePostModalTitle').textContent = 'Thêm bài đăng trang chủ';
                 document.getElementById('home_post_is_active').checked = true;
-                document.getElementById('home_post_highlight_color').value = 'green';
-                document.getElementById('home_post_button_color').value = 'green';
+                document.getElementById('home_post_highlight_color').value = '#3FA34D'; // Green default
+                document.getElementById('home_post_button_color').value = '#3FA34D'; // Green default
                 document.getElementById('home_post_image_position').value = 'right';
                 document.getElementById('home_post_section_id').value = 'solutions';
                 document.getElementById('home_post_display_order').value = '0';
@@ -3696,12 +3690,12 @@
                         document.getElementById('home_post_title').value = post.title;
                         document.getElementById('home_post_description').value = post.description;
                         document.getElementById('home_post_highlight_text').value = post.highlight_text || '';
-                        document.getElementById('home_post_highlight_color').value = post.highlight_color || 'green';
+                        document.getElementById('home_post_highlight_color').value = post.highlight_color || '#3FA34D';
                         document.getElementById('home_post_image_url').value = post.image_url;
                         document.getElementById('home_post_image_position').value = post.image_position;
                         document.getElementById('home_post_button_text').value = post.button_text || '';
                         document.getElementById('home_post_button_url').value = post.button_url || '';
-                        document.getElementById('home_post_button_color').value = post.button_color || 'green';
+                        document.getElementById('home_post_button_color').value = post.button_color || '#3FA34D';
                         document.getElementById('home_post_display_order').value = post.display_order;
                         document.getElementById('home_post_is_active').checked = post.is_active;
                         document.getElementById('home_post_section_id').value = post.section_id || 'solutions';
