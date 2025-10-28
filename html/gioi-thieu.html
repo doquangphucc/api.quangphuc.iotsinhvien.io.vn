@@ -1506,6 +1506,42 @@
                 const darkBgColors = ['dark:bg-gray-900', 'dark:bg-gray-800'];
                 const colorIndex = index % 2;
                 
+                // Generate media gallery HTML
+                let mediaGalleryHtml = '';
+                if (post.media_gallery && post.media_gallery.length > 0) {
+                    mediaGalleryHtml = `
+                        <div class="mt-6">
+                            <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">📸 Thư viện Media</h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    `;
+                    
+                    post.media_gallery.forEach((media, idx) => {
+                        if (media.type === 'image') {
+                            mediaGalleryHtml += `
+                                <div class="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow cursor-pointer" onclick="openMediaLightbox('${media.url}', 'image')">
+                                    <img src="${media.url}" alt="Media ${idx + 1}" class="w-full h-32 object-cover" onerror="this.parentElement.style.display='none'">
+                                </div>
+                            `;
+                        } else if (media.type === 'video') {
+                            mediaGalleryHtml += `
+                                <div class="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow relative">
+                                    <video class="w-full h-32 object-cover cursor-pointer" onclick="openMediaLightbox('${media.url}', 'video')">
+                                        <source src="${media.url}" type="video/mp4">
+                                    </video>
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <span class="text-white text-4xl opacity-70">▶️</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    mediaGalleryHtml += `
+                            </div>
+                        </div>
+                    `;
+                }
+                
                 html += `
                     <div class="${bgColors[colorIndex]} ${darkBgColors[colorIndex]} rounded-2xl p-8 shadow-lg">
                         <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">${post.title}</h3>
@@ -1519,6 +1555,7 @@
                                 </video>
                             </div>
                         ` : ''}
+                        ${mediaGalleryHtml}
                     </div>
                 `;
             });
@@ -1533,6 +1570,37 @@
         
         // Load intro posts when page loads
         window.addEventListener('DOMContentLoaded', loadIntroPosts);
+        
+        // Lightbox functions for media gallery
+        function openMediaLightbox(url, type) {
+            const lightbox = document.getElementById('media-lightbox');
+            const lightboxImage = document.getElementById('lightbox-image');
+            const lightboxVideo = document.getElementById('lightbox-video');
+            
+            if (type === 'image') {
+                lightboxImage.src = url;
+                lightboxImage.classList.remove('hidden');
+                lightboxVideo.classList.add('hidden');
+                lightboxVideo.pause();
+            } else if (type === 'video') {
+                lightboxVideo.querySelector('source').src = url;
+                lightboxVideo.load();
+                lightboxVideo.classList.remove('hidden');
+                lightboxImage.classList.add('hidden');
+            }
+            
+            lightbox.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMediaLightbox() {
+            const lightbox = document.getElementById('media-lightbox');
+            const lightboxVideo = document.getElementById('lightbox-video');
+            
+            lightbox.classList.add('hidden');
+            lightboxVideo.pause();
+            document.body.style.overflow = 'auto';
+        }
     </script>
 
     <!-- Ecosystem Logos Carousel -->
@@ -1575,6 +1643,18 @@
             setInterval(slideNext, 2000);
         })();
     </script>
+
+    <!-- Media Lightbox Modal -->
+    <div id="media-lightbox" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onclick="closeMediaLightbox()">
+        <button onclick="closeMediaLightbox()" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
+        <div class="max-w-6xl w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
+            <img id="lightbox-image" class="hidden max-w-full max-h-full rounded-lg" alt="Media preview">
+            <video id="lightbox-video" controls class="hidden max-w-full max-h-full rounded-lg">
+                <source src="" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+        </div>
+    </div>
 </body>
 </html>
 

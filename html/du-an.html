@@ -635,6 +635,37 @@
             lightbox.classList.remove('active');
             document.body.style.overflow = 'auto';
         }
+        
+        // Lightbox for media gallery (supports both image and video)
+        function openMediaLightbox(url, type) {
+            const lightbox = document.getElementById('media-gallery-lightbox');
+            const lightboxImage = document.getElementById('media-lightbox-image');
+            const lightboxVideo = document.getElementById('media-lightbox-video');
+            
+            if (type === 'image') {
+                lightboxImage.src = url;
+                lightboxImage.classList.remove('hidden');
+                lightboxVideo.classList.add('hidden');
+                lightboxVideo.pause();
+            } else if (type === 'video') {
+                lightboxVideo.querySelector('source').src = url;
+                lightboxVideo.load();
+                lightboxVideo.classList.remove('hidden');
+                lightboxImage.classList.add('hidden');
+            }
+            
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMediaLightbox() {
+            const lightbox = document.getElementById('media-gallery-lightbox');
+            const lightboxVideo = document.getElementById('media-lightbox-video');
+            
+            lightboxVideo.pause();
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
         // Load and display projects from API
         async function loadProjects() {
@@ -745,11 +776,48 @@
                 `;
             }
             
+            // Generate media gallery HTML
+            let mediaGalleryHtml = '';
+            if (project.media_gallery && project.media_gallery.length > 0) {
+                mediaGalleryHtml = `
+                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">📸 Thư viện Media (${project.media_gallery.length})</h4>
+                        <div class="grid grid-cols-3 gap-2">
+                `;
+                
+                project.media_gallery.forEach((media, idx) => {
+                    if (media.type === 'image') {
+                        mediaGalleryHtml += `
+                            <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow cursor-pointer" onclick="openMediaLightbox('${media.url}', 'image')">
+                                <img src="${media.url}" alt="Media ${idx + 1}" class="w-full h-24 object-cover" onerror="this.parentElement.style.display='none'">
+                            </div>
+                        `;
+                    } else if (media.type === 'video') {
+                        mediaGalleryHtml += `
+                            <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow relative cursor-pointer" onclick="openMediaLightbox('${media.url}', 'video')">
+                                <video class="w-full h-24 object-cover">
+                                    <source src="${media.url}" type="video/mp4">
+                                </video>
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black bg-opacity-20">
+                                    <span class="text-white text-2xl">▶️</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                mediaGalleryHtml += `
+                        </div>
+                    </div>
+                `;
+            }
+            
             card.innerHTML = `
                 ${mediaContent}
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">${project.title}</h3>
                     ${project.description ? `<p class="text-gray-600 dark:text-gray-300 mb-4">${project.description}</p>` : ''}
+                    ${mediaGalleryHtml}
                 </div>
             `;
             
@@ -809,6 +877,25 @@
             setInterval(slideNext, 2000);
         })();
     </script>
+
+    <!-- Media Gallery Lightbox (for image and video thumbnails) -->
+    <div id="media-gallery-lightbox" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300" onclick="closeMediaLightbox()">
+        <button onclick="closeMediaLightbox()" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
+        <div class="max-w-6xl w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
+            <img id="media-lightbox-image" class="hidden max-w-full max-h-full rounded-lg" alt="Media preview">
+            <video id="media-lightbox-video" controls class="hidden max-w-full max-h-full rounded-lg">
+                <source src="" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+        </div>
+    </div>
+    
+    <style>
+        #media-gallery-lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
 </body>
 </html>
 
