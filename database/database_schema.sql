@@ -461,7 +461,7 @@ CREATE INDEX idx_dich_vu_display_order ON dich_vu(display_order);
 CREATE TABLE IF NOT EXISTS user_permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL COMMENT 'ID người dùng',
-    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu)',
+    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu, users, home)',
     can_view BOOLEAN DEFAULT FALSE COMMENT 'Quyền xem',
     can_create BOOLEAN DEFAULT FALSE COMMENT 'Quyền tạo mới',
     can_edit BOOLEAN DEFAULT FALSE COMMENT 'Quyền sửa',
@@ -476,9 +476,35 @@ CREATE INDEX idx_user_permissions_user ON user_permissions(user_id);
 CREATE INDEX idx_user_permissions_key ON user_permissions(permission_key);
 
 -- =====================================================
+-- 22. BẢNG HOME_POSTS (Bài đăng trang chủ)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS home_posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL COMMENT 'Tiêu đề bài đăng',
+    description TEXT NOT NULL COMMENT 'Nội dung mô tả',
+    highlight_text VARCHAR(100) DEFAULT NULL COMMENT 'Văn bản highlight (VD: GIẢI PHÁP GIA ĐÌNH)',
+    highlight_color VARCHAR(50) DEFAULT 'green' COMMENT 'Màu highlight: green, blue, red, yellow, purple, orange, amber',
+    image_url VARCHAR(500) NOT NULL COMMENT 'Đường dẫn ảnh bài đăng',
+    image_position ENUM('left', 'right') DEFAULT 'right' COMMENT 'Vị trí ảnh: left (trái) hoặc right (phải)',
+    button_text VARCHAR(100) DEFAULT NULL COMMENT 'Văn bản nút CTA',
+    button_url VARCHAR(500) DEFAULT NULL COMMENT 'Link của nút CTA',
+    button_color VARCHAR(50) DEFAULT 'green' COMMENT 'Màu nút: green, blue, red, yellow, purple, orange, amber',
+    features TEXT COMMENT 'JSON array của các tính năng: [{"text":"Feature 1"},{"text":"Feature 2"}]',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Trạng thái hiển thị',
+    section_id VARCHAR(50) DEFAULT 'solutions' COMMENT 'ID của section trong HTML',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT='Quản lý bài đăng hiển thị trên trang chủ';
+
+CREATE INDEX idx_home_posts_active ON home_posts(is_active);
+CREATE INDEX idx_home_posts_display_order ON home_posts(display_order);
+CREATE INDEX idx_home_posts_section ON home_posts(section_id);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 21' as info;
+SELECT 'Total tables created: 22' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 
