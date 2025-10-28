@@ -1300,6 +1300,10 @@
                                     <input type="radio" name="phase" value="3" />
                                     <span>3 Pha</span>
                                 </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="phase" value="both" />
+                                    <span>Cả 2</span>
+                                </label>
                             </div>
         </div>
 
@@ -1737,6 +1741,9 @@
             '3': [ // 3 Pha - LUXPOWER
                 { name: "LUXPOWER 12K (3 Pha)", power: 12000, price: 48250000, warranty: "12 tháng", image: "../assets/img/products/hybrid-trip2-lb-3p-12k.png", phase: "3" },
                 { name: "LUXPOWER 15K (3 Pha)", power: 15000, price: 51250000, warranty: "12 tháng", image: "../assets/img/products/hybrid-trip2-lb-3p-15k.png", phase: "3" }
+            ],
+            'both': [ // Cả 2 - LUXPOWER
+                { name: "LUXPOWER 12K (Cả 2 Pha)", power: 12000, price: 46300000, warranty: "12 tháng", image: "../assets/img/products/hybrid-lxp-12k.png", phase: "both" }
             ]
         };
 
@@ -1760,6 +1767,9 @@
             '3': [ // 3 Pha
                 { name: "Tủ Điện Hybrid 3 Pha 12kW", power: 12000, price: 2850000, image: "../assets/img/products/electrical-cabinet.jpg" },
                 { name: "Tủ Điện Hybrid 3 Pha 15kW", power: 15000, price: 3100000, image: "../assets/img/products/electrical-cabinet.jpg" }
+            ],
+            'both': [ // Cả 2
+                { name: "Tủ Điện Hybrid Cả 2 Pha 12kW", power: 12000, price: 2725000, image: "../assets/img/products/electrical-cabinet.jpg" }
             ]
         };
 
@@ -2121,7 +2131,7 @@
                                 </tr>
                                 <tr>
                                     <td class="label-col">Loại điện</td>
-                                    <td class="value-col">${result.phase} pha</td>
+                                    <td class="value-col">${result.phase === 'both' ? 'Cả 2 pha' : result.phase + ' pha'}</td>
                                 </tr>
                                 <tr>
                                     <td class="label-col">Thời gian sử dụng điện</td>
@@ -2267,14 +2277,14 @@
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(63,163,77,0.1); border-radius: 6px; border-left: 3px solid #3FA34D;">
                                                 <small style="color: #4a5568; font-weight: 600;">📊 Thông số kỹ thuật:</small><br>
                                                 <small style="color: #718096;">• Công suất: ${result.selectedInverter.power}W</small><br>
-                                                <small style="color: #718096;">• Loại điện: ${result.selectedInverter.phase === '1' ? '1 Pha' : '3 Pha'}</small><br>
+                                                <small style="color: #718096;">• Loại điện: ${result.selectedInverter.phase === '1' ? '1 Pha' : result.selectedInverter.phase === '3' ? '3 Pha' : 'Cả 2 Pha'}</small><br>
                                                 <small style="color: #718096;">• Bảo hành: ${result.selectedInverter.warranty}</small>
                                             </div>
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(33,150,243,0.1); border-radius: 6px; border-left: 3px solid #2196f3;">
                                                 <small style="color: #4a5568; font-weight: 600;">🎯 Tại sao chọn biến tần này:</small><br>
                                                 <small style="color: #718096;">• Hệ thống cần: ${result.systemSizeKw}kWp</small><br>
                                                 <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (≥ ${result.systemSizeKw}kWp)</small><br>
-                                                <small style="color: #718096;">• Phù hợp với loại điện ${result.selectedInverter.phase === '1' ? '1 pha' : '3 pha'} đã chọn</small>
+                                                <small style="color: #718096;">• Phù hợp với loại điện ${result.selectedInverter.phase === '1' ? '1 pha' : result.selectedInverter.phase === '3' ? '3 pha' : 'cả 2 pha'} đã chọn</small>
                                             </div>
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
                                         </div>
@@ -2550,6 +2560,7 @@
             if (products.inverter) {
                 invertersByPhase['1'] = [];
                 invertersByPhase['3'] = [];
+                invertersByPhase['both'] = [];
                 
                 products.inverter['1_phase']?.forEach(inv => {
                     invertersByPhase['1'].push({
@@ -2570,6 +2581,17 @@
                         warranty: "12 tháng",
                         image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
                         phase: "3"
+                    });
+                });
+                
+                products.inverter['both']?.forEach(inv => {
+                    invertersByPhase['both'].push({
+                        name: inv.title,
+                        power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
+                        price: inv.price,
+                        warranty: "12 tháng",
+                        image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
+                        phase: "both"
                     });
                 });
             }
@@ -2596,6 +2618,7 @@
             if (products.electrical_cabinet) {
                 electricalCabinets['1'] = [];
                 electricalCabinets['3'] = [];
+                electricalCabinets['both'] = [];
                 
                 products.electrical_cabinet['1_phase']?.forEach(cab => {
                     electricalCabinets['1'].push({
@@ -2608,6 +2631,15 @@
                 
                 products.electrical_cabinet['3_phase']?.forEach(cab => {
                     electricalCabinets['3'].push({
+                        name: cab.title,
+                        power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
+                        price: cab.price,
+                        image: cab.image_url.startsWith('http') ? cab.image_url : '/' + cab.image_url
+                    });
+                });
+                
+                products.electrical_cabinet['both']?.forEach(cab => {
+                    electricalCabinets['both'].push({
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,

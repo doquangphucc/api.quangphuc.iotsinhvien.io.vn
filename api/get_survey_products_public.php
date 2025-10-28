@@ -61,12 +61,14 @@ try {
         'solar_panel' => [],
         'inverter' => [
             '1_phase' => [],
-            '3_phase' => []
+            '3_phase' => [],
+            'both' => []
         ],
         'battery' => [],
         'electrical_cabinet' => [
             '1_phase' => [],
-            '3_phase' => []
+            '3_phase' => [],
+            'both' => []
         ],
         'accessory' => []
     ];
@@ -80,6 +82,8 @@ try {
                 $grouped[$cat]['1_phase'][] = $product;
             } elseif ($phase === '3_phase') {
                 $grouped[$cat]['3_phase'][] = $product;
+            } elseif ($phase === 'both') {
+                $grouped[$cat]['both'][] = $product;
             }
         } else {
             $grouped[$cat][] = $product;
