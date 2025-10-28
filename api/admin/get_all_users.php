@@ -37,6 +37,8 @@ try {
     
     $users = [];
     while ($row = mysqli_fetch_assoc($result)) {
+        // Convert is_admin to integer for proper boolean check in JavaScript
+        $row['is_admin'] = (int)$row['is_admin'];
         $users[] = $row;
     }
     
