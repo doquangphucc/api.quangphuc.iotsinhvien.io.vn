@@ -13,15 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
-
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
-    exit;
-}
+require_once __DIR__ . '/permission_helper.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 $id = isset($data['id']) ? intval($data['id']) : 0;
+$required_action = $id > 0 ? 'edit' : 'create';
+
+if (!hasPermission($conn, 'products', $required_action)) {
+    echo json_encode(['success' => false, 'message' => "Bạn không có quyền {$required_action} sản phẩm"]);
+    exit;
+}
 $category_id = intval($data['category_id'] ?? 0);
 $title = $data['title'] ?? '';
 $market_price = floatval($data['market_price'] ?? 0);

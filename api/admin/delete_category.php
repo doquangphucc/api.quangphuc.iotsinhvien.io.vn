@@ -13,9 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+// Check delete permission
+if (!hasPermission($conn, 'categories', 'delete')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa danh mục']);
     exit;
 }
 

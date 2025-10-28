@@ -7,6 +7,7 @@ ini_set('log_errors', 1);
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 
 // Set headers first
 header('Content-Type: application/json; charset=utf-8');

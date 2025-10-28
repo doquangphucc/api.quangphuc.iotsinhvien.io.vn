@@ -15,6 +15,7 @@ ini_set('max_input_time', 300);
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 
 // Handle CORS properly for same-origin with credentials
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -32,21 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Debug: Show all session info
-$debug_info = [
-    'session_id' => session_id(),
-    'session_name' => session_name(),
-    'session_data' => $_SESSION,
-    'cookies' => $_COOKIE,
-    'http_cookie' => $_SERVER['HTTP_COOKIE'] ?? 'NONE',
-    'is_admin_check' => is_admin()
-];
+// Check permission - edit for existing category, create for new
+$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+$required_action = $id > 0 ? 'edit' : 'create';
 
-if (!is_admin()) {
+if (!hasPermission($conn, 'categories', $required_action)) {
     echo json_encode([
         'success' => false, 
-        'message' => 'Không có quyền truy cập',
-        'debug' => $debug_info
+        'message' => "Bạn không có quyền {$required_action} danh mục"
     ]);
     exit;
 }
