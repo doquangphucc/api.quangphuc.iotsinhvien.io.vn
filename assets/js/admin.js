@@ -90,37 +90,43 @@ function applyButtonPermissions(module) {
     const tab = document.getElementById(`tab-${module}`);
     if (!tab) return;
     
-    // Hide/show "Add" buttons based on can_create
-    const addButtons = tab.querySelectorAll('button[onclick*="open"][onclick*="Modal()"], button[onclick*="open"][onclick*="Modal(null)"]');
-    addButtons.forEach(button => {
-        if (!hasPermission(module, 'create')) {
-            button.style.display = 'none';
-        } else {
-            button.style.display = '';
-        }
-    });
+    // Get all buttons in the tab
+    const allButtons = tab.querySelectorAll('button');
     
-    // Hide/show "Edit" buttons based on can_edit
-    const editButtons = tab.querySelectorAll('button[onclick*="edit"], button:has(.edit-icon), button:contains("✏️ Sửa")');
-    editButtons.forEach(button => {
-        if (!hasPermission(module, 'edit')) {
-            button.style.display = 'none';
-            button.disabled = true;
-        } else {
-            button.style.display = '';
-            button.disabled = false;
+    allButtons.forEach(button => {
+        const onclickAttr = button.getAttribute('onclick') || '';
+        const buttonText = button.textContent || '';
+        
+        // Check for "Add/Create" buttons
+        if (onclickAttr.includes('Modal()') || onclickAttr.includes('Modal(null)') || 
+            buttonText.includes('Thêm') || buttonText.includes('➕')) {
+            if (!hasPermission(module, 'create')) {
+                button.style.display = 'none';
+            } else {
+                button.style.display = '';
+            }
         }
-    });
-    
-    // Hide/show "Delete" buttons based on can_delete
-    const deleteButtons = tab.querySelectorAll('button[onclick*="delete"], button:has(.delete-icon), button:contains("🗑️ Xóa")');
-    deleteButtons.forEach(button => {
-        if (!hasPermission(module, 'delete')) {
-            button.style.display = 'none';
-            button.disabled = true;
-        } else {
-            button.style.display = '';
-            button.disabled = false;
+        
+        // Check for "Edit" buttons
+        if (onclickAttr.includes('edit') || buttonText.includes('Sửa') || buttonText.includes('✏️')) {
+            if (!hasPermission(module, 'edit')) {
+                button.style.display = 'none';
+                button.disabled = true;
+            } else {
+                button.style.display = '';
+                button.disabled = false;
+            }
+        }
+        
+        // Check for "Delete" buttons
+        if (onclickAttr.includes('delete') || buttonText.includes('Xóa') || buttonText.includes('🗑️')) {
+            if (!hasPermission(module, 'delete')) {
+                button.style.display = 'none';
+                button.disabled = true;
+            } else {
+                button.style.display = '';
+                button.disabled = false;
+            }
         }
     });
 }
