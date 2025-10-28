@@ -24,10 +24,13 @@ try {
         exit;
     }
     
-    // Lấy danh sách users
-    $query = "SELECT id, full_name, username, phone, is_admin, created_at, updated_at 
-              FROM users 
-              ORDER BY is_admin DESC, created_at DESC";
+    // Lấy danh sách users kèm số lượng quyền
+    $query = "SELECT u.id, u.full_name, u.username, u.phone, u.is_admin, u.created_at, u.updated_at,
+              COUNT(DISTINCT up.permission_key) as permission_count
+              FROM users u
+              LEFT JOIN user_permissions up ON u.id = up.user_id
+              GROUP BY u.id
+              ORDER BY u.is_admin DESC, u.created_at DESC";
     
     $result = mysqli_query($conn, $query);
     
@@ -39,6 +42,7 @@ try {
     while ($row = mysqli_fetch_assoc($result)) {
         // Convert is_admin to integer for proper boolean check in JavaScript
         $row['is_admin'] = (int)$row['is_admin'];
+        $row['permission_count'] = (int)$row['permission_count'];
         $users[] = $row;
     }
     
