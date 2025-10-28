@@ -102,11 +102,48 @@ function createPostElement(post, index) {
         </div>
     `;
     
+    // Media Gallery HTML
+    let mediaGalleryHTML = '';
+    if (post.media_gallery && post.media_gallery.length > 0) {
+        mediaGalleryHTML = `
+            <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-4">📸 Thư viện Media (${post.media_gallery.length})</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        `;
+        
+        post.media_gallery.forEach((media, idx) => {
+            if (media.type === 'image') {
+                mediaGalleryHTML += `
+                    <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer" onclick="openHomeMediaLightbox('${escapeHtml(media.url)}', 'image')">
+                        <img src="${escapeHtml(media.url)}" alt="Media ${idx + 1}" class="w-full h-40 object-cover" onerror="this.parentElement.style.display='none'">
+                    </div>
+                `;
+            } else if (media.type === 'video') {
+                mediaGalleryHTML += `
+                    <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow relative cursor-pointer" onclick="openHomeMediaLightbox('${escapeHtml(media.url)}', 'video')">
+                        <video class="w-full h-40 object-cover">
+                            <source src="${escapeHtml(media.url)}" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black bg-opacity-30">
+                            <span class="text-white text-4xl">▶️</span>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        mediaGalleryHTML += `
+                </div>
+            </div>
+        `;
+    }
+    
     // Complete post HTML
     div.innerHTML = `
         <div class="grid lg:grid-cols-2 gap-12 items-center">
             ${isImageLeft ? imageHTML + contentHTML : contentHTML + imageHTML}
         </div>
+        ${mediaGalleryHTML}
     `;
     
     return div;
@@ -136,6 +173,63 @@ function darkenColor(hex, percent) {
     
     // Convert back to hex
     return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+// Lightbox functions for home media gallery
+function openHomeMediaLightbox(url, type) {
+    let lightbox = document.getElementById('home-media-lightbox');
+    
+    // Create lightbox if it doesn't exist
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'home-media-lightbox';
+        lightbox.className = 'fixed inset-0 bg-black bg-opacity-95 z-50 hidden items-center justify-center p-4';
+        lightbox.onclick = closeHomeMediaLightbox;
+        lightbox.innerHTML = `
+            <button onclick="closeHomeMediaLightbox()" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
+            <div class="max-w-6xl w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
+                <img id="home-lightbox-image" class="hidden max-w-full max-h-full rounded-lg" alt="Media preview">
+                <video id="home-lightbox-video" controls class="hidden max-w-full max-h-full rounded-lg">
+                    <source src="" type="video/mp4">
+                    Trình duyệt của bạn không hỗ trợ video.
+                </video>
+            </div>
+        `;
+        document.body.appendChild(lightbox);
+    }
+    
+    const lightboxImage = document.getElementById('home-lightbox-image');
+    const lightboxVideo = document.getElementById('home-lightbox-video');
+    
+    if (type === 'image') {
+        lightboxImage.src = url;
+        lightboxImage.classList.remove('hidden');
+        lightboxVideo.classList.add('hidden');
+        lightboxVideo.pause();
+    } else if (type === 'video') {
+        lightboxVideo.querySelector('source').src = url;
+        lightboxVideo.load();
+        lightboxVideo.classList.remove('hidden');
+        lightboxImage.classList.add('hidden');
+    }
+    
+    lightbox.classList.remove('hidden');
+    lightbox.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeHomeMediaLightbox() {
+    const lightbox = document.getElementById('home-media-lightbox');
+    const lightboxVideo = document.getElementById('home-lightbox-video');
+    
+    if (lightbox) {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+    }
+    if (lightboxVideo) {
+        lightboxVideo.pause();
+    }
+    document.body.style.overflow = 'auto';
 }
 
 // Initialize when DOM is ready
