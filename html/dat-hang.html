@@ -289,12 +289,10 @@
 
                         <!-- Voucher Section -->
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Mã giảm giá</label>
-                            <select id="voucher-select" 
-                                    class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 outline-none"
-                                    onchange="selectVoucher(this.value)">
-                                <option value="">-- Chọn voucher giảm giá --</option>
-                            </select>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Mã giảm giá (có thể chọn nhiều)</label>
+                            <div id="voucher-list" class="space-y-2 max-h-60 overflow-y-auto border-2 border-gray-200 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-700">
+                                <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">Đang tải vouchers...</p>
+                            </div>
                             <div id="voucher-message" class="mt-2 text-sm hidden"></div>
                         </div>
 
@@ -462,8 +460,8 @@
             window.location.href = 'pricing.html';
         }
 
-        // Voucher Management
-        let appliedVoucher = null;
+        // Voucher Management (Multiple Selection)
+        let selectedVouchers = [];  // Changed to array
         let availableVouchers = [];
 
         // Load available vouchers on page load
@@ -476,71 +474,80 @@
 
                 if (data.success && data.data.vouchers) {
                     availableVouchers = data.data.vouchers;
-                    renderVoucherSelect();
+                    renderVoucherList();
                 }
             } catch (error) {
                 console.error('Error loading vouchers:', error);
             }
         }
 
-        // Render vouchers into select dropdown
-        function renderVoucherSelect() {
-            const select = document.getElementById('voucher-select');
-            
-            // Clear existing options except the first one
-            while (select.children.length > 1) {
-                select.removeChild(select.lastChild);
-            }
+        // Render vouchers as checkbox list
+        function renderVoucherList() {
+            const listContainer = document.getElementById('voucher-list');
             
             if (availableVouchers.length === 0) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'Bạn chưa có voucher nào';
-                option.disabled = true;
-                select.appendChild(option);
+                listContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">Bạn chưa có voucher nào</p>';
                 return;
             }
             
+            listContainer.innerHTML = '';
             availableVouchers.forEach((voucher, index) => {
-                const option = document.createElement('option');
-                option.value = index;
                 const discountText = Math.round(voucher.discount_amount).toLocaleString('vi-VN') + '₫';
-                option.textContent = `${voucher.name} - Giảm ${discountText}`;
-                select.appendChild(option);
+                
+                const voucherItem = document.createElement('div');
+                voucherItem.className = 'flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors';
+                voucherItem.innerHTML = `
+                    <input type="checkbox" 
+                           id="voucher-${index}" 
+                           value="${index}"
+                           onchange="toggleVoucher(${index})"
+                           class="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                    <label for="voucher-${index}" class="flex-1 cursor-pointer">
+                        <div class="font-semibold text-gray-800 dark:text-white">${voucher.name}</div>
+                        <div class="text-sm text-green-600 dark:text-green-400">Giảm ${discountText}</div>
+                        ${voucher.description ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">${voucher.description}</div>` : ''}
+                    </label>
+                `;
+                listContainer.appendChild(voucherItem);
             });
         }
 
-        // Handle voucher selection
-        function selectVoucher(index) {
+        // Toggle voucher selection
+        function toggleVoucher(index) {
+            const voucher = availableVouchers[index];
+            const checkbox = document.getElementById(`voucher-${index}`);
             const messageEl = document.getElementById('voucher-message');
             
-            if (index === '' || index === null) {
-                appliedVoucher = null;
-                messageEl.classList.add('hidden');
-                updateTotals();
-                return;
+            if (checkbox.checked) {
+                // Add to selected
+                selectedVouchers.push({
+                    code: voucher.code || voucher.id.toString(),
+                    discount_amount: voucher.discount_amount,
+                    name: voucher.name
+                });
+            } else {
+                // Remove from selected
+                selectedVouchers = selectedVouchers.filter(v => v.code !== (voucher.code || voucher.id.toString()));
             }
             
-            const selectedVoucher = availableVouchers[index];
-            if (selectedVoucher) {
-                appliedVoucher = {
-                    code: selectedVoucher.code || selectedVoucher.id.toString(),
-                    discount_amount: selectedVoucher.discount_amount,
-                    description: selectedVoucher.description
-                };
-                
-                const discountText = Math.round(selectedVoucher.discount_amount).toLocaleString('vi-VN') + '₫';
-                messageEl.textContent = `✓ Đã chọn voucher: ${selectedVoucher.name} - Giảm ${discountText}`;
-                messageEl.className = 'mt-2 text-sm text-green-600';
+            // Update message
+            if (selectedVouchers.length > 0) {
+                const totalDiscount = selectedVouchers.reduce((sum, v) => sum + v.discount_amount, 0);
+                const discountText = Math.round(totalDiscount).toLocaleString('vi-VN') + '₫';
+                messageEl.textContent = `✓ Đã chọn ${selectedVouchers.length} voucher - Tổng giảm: ${discountText}`;
+                messageEl.className = 'mt-2 text-sm text-green-600 font-semibold';
                 messageEl.classList.remove('hidden');
-                updateTotals();
+            } else {
+                messageEl.classList.add('hidden');
             }
+            
+            updateTotals();
         }
 
         // Load vouchers on page load
         loadVouchers();
 
-        // Update totals to include discount
+        // Update totals to include discount from multiple vouchers
         function updateTotals() {
             const subtotalEl = document.getElementById('subtotal');
             const discountEl = document.getElementById('discount');
@@ -551,16 +558,17 @@
             const subtotalText = subtotalEl.textContent.replace(/[^\d]/g, '');
             const subtotal = parseInt(subtotalText) || 0;
             
-            let discount = 0;
-            if (appliedVoucher) {
-                discount = appliedVoucher.discount_amount;
-                discountEl.textContent = '-' + Math.round(discount).toLocaleString('vi-VN') + '₫';
+            // Calculate total discount from all selected vouchers
+            let totalDiscount = 0;
+            if (selectedVouchers.length > 0) {
+                totalDiscount = selectedVouchers.reduce((sum, voucher) => sum + voucher.discount_amount, 0);
+                discountEl.textContent = '-' + Math.round(totalDiscount).toLocaleString('vi-VN') + '₫';
                 discountRow.classList.remove('hidden');
             } else {
                 discountRow.classList.add('hidden');
             }
             
-            const finalTotal = Math.max(0, subtotal - discount);
+            const finalTotal = Math.max(0, subtotal - totalDiscount);
             totalEl.textContent = Math.round(finalTotal).toLocaleString('vi-VN') + '₫';
         }
 
@@ -608,7 +616,7 @@
                 const orderData = {
                     customer: customerData,
                     items: items,
-                    voucher_code: appliedVoucher ? appliedVoucher.code : ''
+                    voucher_codes: selectedVouchers.map(v => v.code)  // Send array of voucher codes
                 };
 
                 // Debug: Log the data being sent

@@ -31,9 +31,13 @@ try {
 
     // Get order items
     $items = $db->select('order_items', ['order_id' => $orderId], '*');
+    
+    // Get order vouchers
+    $vouchers = $db->select('order_vouchers', ['order_id' => $orderId], '*');
 
-    // Attach items to order
+    // Attach items and vouchers to order
     $order['items'] = $items;
+    $order['vouchers'] = $vouchers;
 
     sendSuccess(['order' => $order], 'Lấy chi tiết đơn hàng thành công');
 
