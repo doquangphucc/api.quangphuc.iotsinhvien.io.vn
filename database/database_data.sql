@@ -778,6 +778,13 @@ SELECT 'Sample data imported successfully!' as message;
 SELECT 'Packages: 4 packages, Services: 4 services' as info;
 SELECT 'Reward Templates: 6 templates' as info;
 -- =====================================================
+-- DATA FOR HOME_POSTS (Bài đăng trang chủ)
+-- =====================================================
+INSERT INTO home_posts (id, title, description, highlight_text, highlight_color, image_url, image_position, button_text, button_url, button_color, features, display_order, is_active, section_id, created_at, updated_at) VALUES
+(1, 'Xây Dựng Tổ Ấm', 'Gói 10 Tỷ', 'Giải Pháp Tối Ưu', '#2ef548', '/assets/img/home/home_1761681208_69011f38a5b88.jpg', 'left', 'Xem Bảng Giá', 'html/pricing.html', '#b6df20', '[{\"text\":\"Giá Tốt\"},{\"text\":\"Bảo Hành 10 năm\"},{\"text\":\"Yên Tâm Sử Dụng\"}]', 1, 1, 'solutions', '2025-10-28 19:53:28', '2025-10-28 20:24:41'),
+(2, 'Du Lịch Trọn Gói', 'Hà Giang', 'Gói Tiết Kiệm', '#21c4b9', '/assets/img/home/home_1761682214_690123266d165.jpg', 'right', 'Xem Bảng Giá', 'html/pricing.html', '#35e34c', '[{\"text\":\"Giá Tốt\"},{\"text\":\"Bảo Hành 10 năm\"},{\"text\":\"Yên Tâm Sử Dụng\"}]', 1, 1, 'solutions', '2025-10-28 20:10:14', '2025-10-28 20:24:33');
+
+-- =====================================================
 -- DATA FOR CONTACT_CHANNELS
 -- =====================================================
 INSERT INTO contact_channels (id, name, description, content, category, color, display_order, is_active) VALUES
@@ -792,6 +799,7 @@ INSERT INTO contact_channels (id, name, description, content, category, color, d
 
 SELECT 'Intro Posts: 6 posts' as info;
 SELECT 'Projects: 4 projects' as info;
+SELECT 'Home Posts: 2 posts' as info;
 SELECT 'Contact Channels: 8 channels' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
