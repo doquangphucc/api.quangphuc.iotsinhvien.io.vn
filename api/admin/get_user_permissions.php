@@ -10,7 +10,7 @@ header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Credentials: true');
 
 require_once '../config.php';
-require_once '../connect.php';
+require_once '../db_mysqli.php';
 require_once '../session.php';
 
 try {
