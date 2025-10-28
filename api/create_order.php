@@ -23,9 +23,15 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 // --- Input Validation ---
 $customer = $input['customer'] ?? null;
 $itemsRaw = $input['items'] ?? null;
-$voucherCode = $input['voucher_code'] ?? '';
+$voucherCodes = $input['voucher_codes'] ?? [];  // Changed to array
+
+// Support legacy single voucher_code
+if (empty($voucherCodes) && !empty($input['voucher_code'])) {
+    $voucherCodes = [$input['voucher_code']];
+}
 
 error_log("Items raw: " . print_r($itemsRaw, true));
+error_log("Voucher codes: " . print_r($voucherCodes, true));
 
 $requiredCustomerKeys = ['fullname', 'phone', 'address', 'city_name', 'district_name', 'ward_name'];
 if (!$customer || count(array_diff($requiredCustomerKeys, array_keys($customer))) > 0) {
@@ -133,39 +139,57 @@ try {
         sendError('Giỏ hàng không hợp lệ.');
     }
 
-    // --- Check and apply voucher if provided ---
-    $discountAmount = 0;
-    $voucherCodeToSave = null;
-    $rewardId = null;
+    // --- Check and apply multiple vouchers if provided ---
+    $totalDiscount = 0;
+    $validatedVouchers = [];
     
-    if (!empty($voucherCode)) {
-        // First try to find in lottery_rewards (reward-based vouchers)
-        $rewardSql = "SELECT * FROM lottery_rewards WHERE (voucher_code = ? OR id = ?) AND user_id = ? AND reward_type = 'voucher' AND status = 'pending' AND (expires_at IS NULL OR expires_at > NOW())";
-        $rewardStmt = $pdo->prepare($rewardSql);
-        $rewardStmt->execute([trim($voucherCode), intval($voucherCode), (int)$userId]);
-        $reward = $rewardStmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($reward) {
-            $discountAmount = (float)$reward['reward_value'];
-            $voucherCodeToSave = $reward['voucher_code'] ?: $reward['id'];
-            $rewardId = (int)$reward['id'];
-        } else {
-            // Fallback to vouchers table (legacy system)
-            $voucherSql = "SELECT * FROM vouchers WHERE code = ? AND is_used = 0 AND (expires_at IS NULL OR expires_at > NOW())";
-            $voucherStmt = $pdo->prepare($voucherSql);
-            $voucherStmt->execute([trim($voucherCode)]);
-            $voucher = $voucherStmt->fetch(PDO::FETCH_ASSOC);
+    if (!empty($voucherCodes) && is_array($voucherCodes)) {
+        foreach ($voucherCodes as $voucherCode) {
+            if (empty($voucherCode)) continue;
             
-            if ($voucher) {
-                $discountAmount = (float)$voucher['discount_amount'];
-                $voucherCodeToSave = $voucher['code'];
+            $voucherCode = trim($voucherCode);
+            $voucherData = null;
+            
+            // First try to find in lottery_rewards (reward-based vouchers)
+            $rewardSql = "SELECT * FROM lottery_rewards WHERE (voucher_code = ? OR id = ?) AND user_id = ? AND reward_type = 'voucher' AND status = 'pending' AND (expires_at IS NULL OR expires_at > NOW())";
+            $rewardStmt = $pdo->prepare($rewardSql);
+            $rewardStmt->execute([$voucherCode, intval($voucherCode), (int)$userId]);
+            $reward = $rewardStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($reward) {
+                $voucherData = [
+                    'source' => 'reward',
+                    'id' => (int)$reward['id'],
+                    'code' => $reward['voucher_code'] ?: $reward['id'],
+                    'discount' => (float)$reward['reward_value']
+                ];
             } else {
-                sendError('Mã voucher không hợp lệ hoặc đã hết hạn.');
+                // Fallback to vouchers table (legacy system)
+                $voucherSql = "SELECT * FROM vouchers WHERE code = ? AND is_used = 0 AND (expires_at IS NULL OR expires_at > NOW())";
+                $voucherStmt = $pdo->prepare($voucherSql);
+                $voucherStmt->execute([$voucherCode]);
+                $voucher = $voucherStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($voucher) {
+                    $voucherData = [
+                        'source' => 'voucher',
+                        'id' => (int)$voucher['id'],
+                        'code' => $voucher['code'],
+                        'discount' => (float)$voucher['discount_amount']
+                    ];
+                }
+            }
+            
+            if ($voucherData) {
+                $validatedVouchers[] = $voucherData;
+                $totalDiscount += $voucherData['discount'];
+            } else {
+                sendError("Mã voucher '{$voucherCode}' không hợp lệ hoặc đã hết hạn.");
             }
         }
     }
     
-    $finalTotal = max(0, $calculatedTotal - $discountAmount);
+    $finalTotal = max(0, $calculatedTotal - $totalDiscount);
 
     // --- Transactional Database Operations ---
     $pdo->beginTransaction();
@@ -182,26 +206,38 @@ try {
         'address'         => sanitizeInput($customer['address']),
         'notes'           => sanitizeInput($customer['notes'] ?? ''),
         'subtotal'        => $calculatedTotal,
-        'voucher_code'    => $voucherCodeToSave,
-        'discount_amount' => $discountAmount,
+        'voucher_code'    => null,  // Keep null for backward compatibility
+        'discount_amount' => $totalDiscount,
         'total_amount'    => $finalTotal,
         'order_status'    => 'pending' // Chờ admin duyệt
     ];
 
     $orderId = $db->insert('orders', $orderData);
     
-    // Mark voucher/reward as used if applicable
-    if ($voucherCodeToSave) {
-        if ($rewardId) {
-            // Mark lottery reward as used
-            $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
-            $updateRewardStmt = $pdo->prepare($updateRewardSql);
-            $updateRewardStmt->execute([$rewardId]);
-        } else {
-            // Mark voucher as used (legacy)
-            $updateVoucherSql = "UPDATE vouchers SET is_used = 1, used_by_user_id = ?, used_at = NOW() WHERE code = ?";
-            $updateVoucherStmt = $pdo->prepare($updateVoucherSql);
-            $updateVoucherStmt->execute([(int)$userId, $voucherCodeToSave]);
+    // Insert validated vouchers into order_vouchers table and mark as used
+    if (!empty($validatedVouchers)) {
+        $insertVoucherSql = "INSERT INTO order_vouchers (order_id, voucher_id, voucher_code, discount_amount) VALUES (?, ?, ?, ?)";
+        $insertVoucherStmt = $pdo->prepare($insertVoucherSql);
+        
+        foreach ($validatedVouchers as $voucher) {
+            // Insert into order_vouchers
+            $insertVoucherStmt->execute([
+                $orderId,
+                $voucher['id'],
+                $voucher['code'],
+                $voucher['discount']
+            ]);
+            
+            // Mark voucher/reward as used
+            if ($voucher['source'] === 'reward') {
+                $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
+                $updateRewardStmt = $pdo->prepare($updateRewardSql);
+                $updateRewardStmt->execute([$voucher['id']]);
+            } else {
+                $updateVoucherSql = "UPDATE vouchers SET is_used = 1, used_by_user_id = ?, used_at = NOW() WHERE id = ?";
+                $updateVoucherStmt = $pdo->prepare($updateVoucherSql);
+                $updateVoucherStmt->execute([(int)$userId, $voucher['id']]);
+            }
         }
     }
 
@@ -234,7 +270,8 @@ try {
     sendSuccess([
         'order_id' => $orderId,
         'total_amount' => $finalTotal,
-        'discount_amount' => $discountAmount
+        'discount_amount' => $totalDiscount,
+        'vouchers_used' => count($validatedVouchers)
     ], 'Đặt hàng thành công! Đơn hàng của bạn đang chờ xác nhận.');
 
 } catch (Exception $e) {
