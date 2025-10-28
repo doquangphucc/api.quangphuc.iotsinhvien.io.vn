@@ -4,6 +4,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 
 // Check authentication and permissions
 if (!isAdminLoggedIn()) {
@@ -12,7 +13,7 @@ if (!isAdminLoggedIn()) {
 }
 
 $action = isset($_POST['id']) && $_POST['id'] ? 'edit' : 'create';
-if (!hasPermission('contacts', $action)) {
+if (!hasPermission($conn, 'contacts', $action)) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền ' . ($action === 'edit' ? 'sửa' : 'tạo') . ' kênh liên hệ']);
     exit;
 }

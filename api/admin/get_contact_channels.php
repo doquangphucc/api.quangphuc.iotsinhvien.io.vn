@@ -4,6 +4,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 
 // Check authentication and permissions
 if (!isAdminLoggedIn()) {
@@ -11,7 +12,7 @@ if (!isAdminLoggedIn()) {
     exit;
 }
 
-if (!hasPermission('contacts', 'view')) {
+if (!hasPermission($conn, 'contacts', 'view')) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xem kênh liên hệ']);
     exit;
 }
