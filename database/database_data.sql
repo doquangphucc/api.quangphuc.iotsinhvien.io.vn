@@ -797,10 +797,22 @@ INSERT INTO contact_channels (id, name, description, content, category, color, d
 (7, 'TikTok', 'Video về năng lượng', '@hc.channal', 'tiktok', '#ec4899', 7, 1),
 (8, 'Website', 'Mã số thuế: 0123456789', 'https://hcecosystem.vn', 'website', '#4b5563', 8, 1);
 
+-- =====================================================
+-- DATA FOR ELECTRICITY_PRICES (Bảng giá điện EVN)
+-- =====================================================
+INSERT INTO electricity_prices (id, tier, tier_name, kwh_from, kwh_to, price_no_vat, price_with_vat, effective_date, is_active, notes) VALUES
+(1, 1, 'Bậc 1: 0-50 kWh', 0, 50, 1984.00, 2143.00, '2025-05-10', 1, 'Bậc tiêu thụ thấp nhất'),
+(2, 2, 'Bậc 2: 51-100 kWh', 51, 100, 2050.00, 2214.00, '2025-05-10', 1, 'Bậc tiêu thụ trung bình thấp'),
+(3, 3, 'Bậc 3: 101-200 kWh', 101, 200, 2380.00, 2570.00, '2025-05-10', 1, 'Bậc tiêu thụ trung bình'),
+(4, 4, 'Bậc 4: 201-300 kWh', 201, 300, 2930.00, 3164.00, '2025-05-10', 1, 'Bậc tiêu thụ cao'),
+(5, 5, 'Bậc 5: 301-400 kWh', 301, 400, 3270.00, 3532.00, '2025-05-10', 1, 'Bậc tiêu thụ rất cao'),
+(6, 6, 'Bậc 6: Từ 401 kWh', 401, NULL, 3460.00, 3737.00, '2025-05-10', 1, 'Bậc tiêu thụ cao nhất (không giới hạn)');
+
 SELECT 'Intro Posts: 6 posts' as info;
 SELECT 'Projects: 4 projects' as info;
 SELECT 'Home Posts: 2 posts' as info;
 SELECT 'Contact Channels: 8 channels' as info;
+SELECT 'Electricity Prices: 6 tiers' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
 SELECT 'Test users created:' as info;

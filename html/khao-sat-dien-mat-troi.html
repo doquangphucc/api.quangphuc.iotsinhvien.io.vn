@@ -1743,15 +1743,16 @@
         })();
 
 
-        // Sản phẩm điện có VAT 8% (giá sau thuế) - Áp dụng từ 10/5/2025
-        const electricityPrices = {
-            1: { price: 2143, range: 50, name: 'Bậc 1 (0-50 kWh)' },      // 2.143đ/kWh
+        // Sản phẩm điện có VAT 8% (giá sau thuế) - Load từ API
+        let electricityPrices = {
+            1: { price: 2143, range: 50, name: 'Bậc 1 (0-50 kWh)' },      // 2.143đ/kWh - Default
             2: { price: 2214, range: 50, name: 'Bậc 2 (51-100 kWh)' },    // 2.214đ/kWh
             3: { price: 2570, range: 100, name: 'Bậc 3 (101-200 kWh)' },  // 2.570đ/kWh
             4: { price: 3164, range: 100, name: 'Bậc 4 (201-300 kWh)' },  // 3.164đ/kWh
             5: { price: 3532, range: 100, name: 'Bậc 5 (301-400 kWh)' },  // 3.532đ/kWh
             6: { price: 3737, range: Infinity, name: 'Bậc 6 (Từ 401 kWh)' } // 3.737đ/kWh
         };
+        let electricityPricesEffectiveDate = '2025-05-10'; // Default date
 
         // Danh sách inverter theo pha (Giá lắp đặt trọn gói - Từ trang sản phẩm)
         const invertersByPhase = {
@@ -2202,7 +2203,7 @@
                             </table>
                             <div style="margin-top: 0.6rem; font-size: 0.8rem; color: #718096; display: flex; align-items: start; gap: 0.3rem;">
                                 <span>💡</span>
-                                <span>Tính toán dựa trên bảng giá điện sinh hoạt EVN áp dụng từ 10/5/2025 (đã bao gồm VAT 8%)</span>
+                                <span>Tính toán dựa trên bảng giá điện sinh hoạt EVN áp dụng từ ${new Date(electricityPricesEffectiveDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })} (đã bao gồm VAT 8%)</span>
                             </div>
         </div>
                         
@@ -2462,7 +2463,7 @@
                     
                     <div class="summary-notes">
                         <div class="note-item">Giá thiết bị là giá lắp đặt trọn gói (đã bao gồm VAT)</div>
-                        <div class="note-item">Tính toán dựa trên bảng giá điện EVN áp dụng từ 10/5/2025</div>
+                        <div class="note-item">Tính toán dựa trên bảng giá điện EVN áp dụng từ ${new Date(electricityPricesEffectiveDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
                         <div class="note-item">Bảo hành tấm pin 12 năm, hiệu suất sau 25-30 năm ≥ 80%</div>
                     </div>
         </div>
@@ -2505,6 +2506,9 @@
 
         // Enhanced page animations and effects
         document.addEventListener('DOMContentLoaded', function() {
+            // Load electricity prices from API
+            loadElectricityPricesData();
+            
             // Load survey products from API
             loadSurveyProducts();
             
@@ -2517,6 +2521,67 @@
             // Add form interaction effects
             addFormEffects();
         });
+
+        // Load electricity prices from API
+        async function loadElectricityPricesData() {
+            try {
+                const response = await fetch(`${API_BASE}/get_electricity_prices_public.php`);
+                const data = await response.json();
+                
+                if (data.success && data.prices && data.prices.length > 0) {
+                    // Convert API data to format used by calculator
+                    electricityPrices = {};
+                    data.prices.forEach(price => {
+                        const range = price.kwh_to ? (price.kwh_to - price.kwh_from) : Infinity;
+                        electricityPrices[price.tier] = {
+                            price: price.price_with_vat,
+                            range: range,
+                            name: price.tier_name
+                        };
+                    });
+                    
+                    // Update effective date
+                    if (data.prices[0].effective_date) {
+                        electricityPricesEffectiveDate = data.prices[0].effective_date;
+                    }
+                    
+                    // Update the displayed table
+                    updateElectricityPricesTable(data.prices);
+                    
+                    console.log('Electricity prices loaded from API:', electricityPrices);
+                } else {
+                    console.log('Using default electricity prices');
+                }
+            } catch (error) {
+                console.error('Error loading electricity prices:', error);
+                console.log('Using default electricity prices');
+            }
+        }
+        
+        // Update the electricity prices table in HTML
+        function updateElectricityPricesTable(prices) {
+            const tableHTML = prices.map(price => `
+                <tr style="border-bottom: 1px solid rgba(226,232,240,0.5);">
+                    <td style="padding: 0.4rem 0.5rem; color: #4a5568;">${price.tier_name}</td>
+                    <td style="padding: 0.4rem 0.5rem; text-align: right; color: #718096;">${price.price_no_vat.toLocaleString()}đ/kWh</td>
+                    <td style="padding: 0.4rem 0.5rem; text-align: right; font-weight: 600; color: #3FA34D;">${price.price_with_vat.toLocaleString()}đ/kWh</td>
+                </tr>
+            `).join('');
+            
+            // Find the table tbody and update it
+            const tbody = document.querySelector('table tbody');
+            if (tbody) {
+                tbody.innerHTML = tableHTML;
+            }
+            
+            // Update the effective date text
+            const dateText = document.querySelector('div[style*="font-size: 0.75rem"]');
+            if (dateText && electricityPricesEffectiveDate) {
+                const date = new Date(electricityPricesEffectiveDate);
+                const formattedDate = date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                dateText.innerHTML = `Áp dụng từ ${formattedDate}`;
+            }
+        }
 
         // Load survey products from API and populate form
         async function loadSurveyProducts() {

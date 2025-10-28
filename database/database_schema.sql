@@ -542,9 +542,31 @@ CREATE INDEX idx_contact_channels_display_order ON contact_channels(display_orde
 CREATE INDEX idx_contact_channels_category ON contact_channels(category);
 
 -- =====================================================
+-- 24. BẢNG ELECTRICITY_PRICES (Bảng giá điện EVN)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS electricity_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tier INT NOT NULL COMMENT 'Bậc thang (1-6)',
+    tier_name VARCHAR(100) NOT NULL COMMENT 'Tên bậc (VD: Bậc 1: 0-50 kWh)',
+    kwh_from INT NOT NULL COMMENT 'Từ kWh',
+    kwh_to INT DEFAULT NULL COMMENT 'Đến kWh (NULL nếu không giới hạn)',
+    price_no_vat DECIMAL(10, 2) NOT NULL COMMENT 'Giá chưa VAT (VNĐ/kWh)',
+    price_with_vat DECIMAL(10, 2) NOT NULL COMMENT 'Giá đã bao gồm VAT 8% (VNĐ/kWh)',
+    effective_date DATE NOT NULL COMMENT 'Ngày áp dụng',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Đang áp dụng',
+    notes TEXT COMMENT 'Ghi chú',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT='Bảng giá điện sinh hoạt EVN theo bậc thang';
+
+CREATE INDEX idx_electricity_prices_tier ON electricity_prices(tier);
+CREATE INDEX idx_electricity_prices_active ON electricity_prices(is_active);
+CREATE INDEX idx_electricity_prices_effective_date ON electricity_prices(effective_date);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 23' as info;
+SELECT 'Total tables created: 24' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 
