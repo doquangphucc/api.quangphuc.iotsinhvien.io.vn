@@ -297,6 +297,47 @@
                     </div>
         </div>
 
+                <!-- Voucher Info -->
+                <div id="voucherInfoSection" class="bg-green-50 dark:bg-green-900/20 border-2 border-green-300 dark:border-green-700 rounded-3xl p-6 shadow-xl hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h2 class="text-xl font-bold text-green-800 dark:text-green-300">Voucher đã áp dụng</h2>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl p-4">
+                            <span class="text-gray-600 dark:text-gray-400">Mã voucher:</span>
+                            <span id="voucherCode" class="font-bold text-green-700 dark:text-green-400 text-lg">-</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl p-4">
+                            <span class="text-gray-600 dark:text-gray-400">Số tiền giảm:</span>
+                            <span id="discountAmount" class="font-bold text-red-600 dark:text-red-400 text-lg">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Breakdown -->
+                <div id="priceBreakdownSection" class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Chi tiết thanh toán</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Tạm tính:</span>
+                            <span id="subtotalInfo" class="font-semibold text-gray-800 dark:text-white">-</span>
+                        </div>
+                        <div id="discountRow" class="flex justify-between hidden">
+                            <span class="text-gray-600 dark:text-gray-400">Giảm giá:</span>
+                            <span id="discountInfo" class="font-semibold text-green-600 dark:text-green-400">-</span>
+                        </div>
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-3">
+                            <div class="flex justify-between">
+                                <span class="text-lg font-bold text-gray-800 dark:text-white">Tổng cộng:</span>
+                                <span id="totalAmountInfo" class="text-xl font-bold text-purple-600 dark:text-purple-400">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Actions -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl">
                     <div class="flex gap-4">
@@ -470,6 +511,26 @@
                 document.getElementById('customerNotes').style.display = 'block';
                 document.getElementById('customerNotesText').textContent = order.notes;
             }
+            
+            // Voucher Info
+            if (order.voucher_code) {
+                const voucherSection = document.getElementById('voucherInfoSection');
+                voucherSection.classList.remove('hidden');
+                document.getElementById('voucherCode').textContent = order.voucher_code;
+                document.getElementById('discountAmount').textContent = order.discount_amount ? `-${Math.round(order.discount_amount).toLocaleString('vi-VN')}đ` : '0đ';
+            } else {
+                document.getElementById('voucherInfoSection').classList.add('hidden');
+            }
+            
+            // Price Breakdown
+            document.getElementById('subtotalInfo').textContent = order.subtotal ? `${Math.round(order.subtotal).toLocaleString('vi-VN')}đ` : '0đ';
+            if (order.discount_amount && order.discount_amount > 0) {
+                document.getElementById('discountRow').classList.remove('hidden');
+                document.getElementById('discountInfo').textContent = `-${Math.round(order.discount_amount).toLocaleString('vi-VN')}đ`;
+            } else {
+                document.getElementById('discountRow').classList.add('hidden');
+            }
+            document.getElementById('totalAmountInfo').textContent = order.total_amount ? `${Math.round(order.total_amount).toLocaleString('vi-VN')}đ` : '0đ';
             
             // Products
             displayProducts(order.items || []);
