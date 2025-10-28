@@ -6,6 +6,125 @@ let rewardTemplatesData = [];
 let usersData = [];
 let ticketsData = [];
 
+// Permissions Management
+let userPermissions = {};
+let isFullAdmin = false;
+
+// Load user permissions
+async function loadPermissions() {
+    try {
+        const response = await fetch(`${API_BASE}/admin/get_my_permissions.php`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            userPermissions = data.permissions;
+            isFullAdmin = data.is_full_admin;
+            applyPermissions();
+        } else {
+            console.error('Failed to load permissions:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading permissions:', error);
+    }
+}
+
+// Apply permissions to UI
+function applyPermissions() {
+    // Hide/show tab buttons based on can_view permission
+    document.querySelectorAll('.tab-button[data-module]').forEach(button => {
+        const module = button.getAttribute('data-module');
+        
+        // User management is always for full admin only
+        if (module === 'users') {
+            if (!isFullAdmin) {
+                button.style.display = 'none';
+            }
+            return;
+        }
+        
+        // Check view permission for other modules
+        if (!isFullAdmin && (!userPermissions[module] || !userPermissions[module].can_view)) {
+            button.style.display = 'none';
+        } else {
+            button.style.display = '';
+        }
+    });
+    
+    // Show first visible tab
+    const firstVisibleButton = document.querySelector('.tab-button[data-module]:not([style*="display: none"])');
+    if (firstVisibleButton) {
+        const firstModule = firstVisibleButton.getAttribute('data-module');
+        showTab(firstModule);
+    }
+}
+
+// Check if user has specific permission
+function hasPermission(module, action = 'view') {
+    if (isFullAdmin) return true;
+    if (!userPermissions[module]) return false;
+    
+    switch (action) {
+        case 'view': return userPermissions[module].can_view;
+        case 'create': return userPermissions[module].can_create;
+        case 'edit': return userPermissions[module].can_edit;
+        case 'delete': return userPermissions[module].can_delete;
+        default: return false;
+    }
+}
+
+// Show permission denied message
+function showPermissionDenied(action = 'thực hiện hành động này') {
+    if (typeof showToast === 'function') {
+        showToast(`Bạn không có quyền ${action}`, 'error');
+    } else {
+        alert(`Bạn không có quyền ${action}`);
+    }
+}
+
+// Apply button permissions for current tab
+function applyButtonPermissions(module) {
+    if (module === 'users') return; // User management is full admin only
+    
+    const tab = document.getElementById(`tab-${module}`);
+    if (!tab) return;
+    
+    // Hide/show "Add" buttons based on can_create
+    const addButtons = tab.querySelectorAll('button[onclick*="open"][onclick*="Modal()"], button[onclick*="open"][onclick*="Modal(null)"]');
+    addButtons.forEach(button => {
+        if (!hasPermission(module, 'create')) {
+            button.style.display = 'none';
+        } else {
+            button.style.display = '';
+        }
+    });
+    
+    // Hide/show "Edit" buttons based on can_edit
+    const editButtons = tab.querySelectorAll('button[onclick*="edit"], button:has(.edit-icon), button:contains("✏️ Sửa")');
+    editButtons.forEach(button => {
+        if (!hasPermission(module, 'edit')) {
+            button.style.display = 'none';
+            button.disabled = true;
+        } else {
+            button.style.display = '';
+            button.disabled = false;
+        }
+    });
+    
+    // Hide/show "Delete" buttons based on can_delete
+    const deleteButtons = tab.querySelectorAll('button[onclick*="delete"], button:has(.delete-icon), button:contains("🗑️ Xóa")');
+    deleteButtons.forEach(button => {
+        if (!hasPermission(module, 'delete')) {
+            button.style.display = 'none';
+            button.disabled = true;
+        } else {
+            button.style.display = '';
+            button.disabled = false;
+        }
+    });
+}
+
 // Products Functions
 async function loadProducts() {
     const categoryId = document.getElementById('product-category-filter')?.value || '';

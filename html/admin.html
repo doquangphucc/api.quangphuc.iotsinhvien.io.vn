@@ -94,37 +94,37 @@
     <div class="bg-white border-b">
         <div class="container mx-auto px-4">
             <div class="flex flex-wrap gap-2 py-2">
-                <button class="tab-button active px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('categories')">
+                <button class="tab-button active px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="categories" onclick="showTab('categories')">
                     📁 Danh mục SP
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('products')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="products" onclick="showTab('products')">
                     📦 Sản phẩm
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('survey')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="survey" onclick="showTab('survey')">
                     📋 Khảo sát
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('packages')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="packages" onclick="showTab('packages')">
                     🎁 Gói sản phẩm
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('orders')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="orders" onclick="showTab('orders')">
                     🛒 Đơn hàng
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('tickets')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="tickets" onclick="showTab('tickets')">
                     🎫 Vé quay
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('rewards')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="rewards" onclick="showTab('rewards')">
                     🎁 Phần thưởng
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('intro-posts')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="intro-posts" onclick="showTab('intro-posts')">
                     📝 Bài giới thiệu
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('projects')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="projects" onclick="showTab('projects')">
                     🏗️ Dự án
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('dich-vu')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="dich-vu" onclick="showTab('dich-vu')">
                     🔧 Dịch vụ
                 </button>
-                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" onclick="showTab('users')">
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="users" onclick="showTab('users')">
                     👥 Quản lý User
                 </button>
             </div>
@@ -1482,6 +1482,12 @@
 
         // Tab Management
         function showTab(tabName) {
+            // Check permission before switching tab
+            if (tabName !== 'users' && typeof hasPermission === 'function' && !hasPermission(tabName, 'view')) {
+                showPermissionDenied('xem module này');
+                return;
+            }
+            
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
@@ -1491,6 +1497,9 @@
             if (activeButton) {
                 activeButton.classList.add('active');
             }
+            
+            // Apply button permissions for this tab
+            applyButtonPermissions(tabName);
             
                          // Load data for the tab
              switch(tabName) {
@@ -1811,10 +1820,17 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const isAdmin = await checkAdmin();
             if (isAdmin) {
-                                 await loadCategories();
+                                 // Load permissions first
+                 if (typeof loadPermissions === 'function') {
+                     await loadPermissions();
+                 }
+                 
+                 await loadCategories();
                  await loadUsers();
                  await loadRewardTemplates();
-                 showTab('categories');
+                 
+                 // Don't force show categories - let applyPermissions() show first available tab
+                 // showTab('categories');
             }
         });
         // ============================================
