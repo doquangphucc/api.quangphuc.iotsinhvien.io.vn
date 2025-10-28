@@ -1,9 +1,14 @@
 <?php
 // Save or update survey product configuration
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 
+// Set headers first
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
@@ -15,10 +20,15 @@ try {
         exit;
     }
 
-    $data = json_decode(file_get_contents('php://input'), true);
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
 
     if (!$data) {
-        echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ'], JSON_UNESCAPED_UNICODE);
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Dữ liệu không hợp lệ',
+            'debug' => ['raw_input' => substr($json, 0, 100)]
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -106,9 +116,20 @@ try {
     $stmt->close();
     $conn->close();
 } catch (Exception $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Lỗi: ' . $e->getMessage()
+        'message' => 'Lỗi hệ thống: ' . $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ], JSON_UNESCAPED_UNICODE);
+} catch (Error $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Lỗi PHP: ' . $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
     ], JSON_UNESCAPED_UNICODE);
 }
 ?>
