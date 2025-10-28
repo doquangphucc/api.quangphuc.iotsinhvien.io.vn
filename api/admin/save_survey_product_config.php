@@ -9,99 +9,106 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
-    exit;
-}
+try {
+    if (!is_admin()) {
+        echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
-$data = json_decode(file_get_contents('php://input'), true);
+    $data = json_decode(file_get_contents('php://input'), true);
 
-if (!$data) {
-    echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-    exit;
-}
+    if (!$data) {
+        echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
-$product_id = isset($data['product_id']) ? intval($data['product_id']) : 0;
-$survey_category = isset($data['survey_category']) ? $data['survey_category'] : '';
-$phase_type = isset($data['phase_type']) ? $data['phase_type'] : 'none';
-$price_type = isset($data['price_type']) ? $data['price_type'] : 'market_price';
-$is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
-$display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
-$notes = isset($data['notes']) ? $data['notes'] : '';
+    $product_id = isset($data['product_id']) ? intval($data['product_id']) : 0;
+    $survey_category = isset($data['survey_category']) ? $data['survey_category'] : '';
+    $phase_type = isset($data['phase_type']) ? $data['phase_type'] : 'none';
+    $price_type = isset($data['price_type']) ? $data['price_type'] : 'market_price';
+    $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
+    $display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
+    $notes = isset($data['notes']) ? $data['notes'] : '';
 
-if (!$product_id || !$survey_category) {
-    echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc']);
-    exit;
-}
+    if (!$product_id || !$survey_category) {
+        echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
-// Validate survey_category
-$valid_categories = ['solar_panel', 'inverter', 'battery', 'electrical_cabinet', 'accessory'];
-if (!in_array($survey_category, $valid_categories)) {
-    echo json_encode(['success' => false, 'message' => 'Loại sản phẩm không hợp lệ']);
-    exit;
-}
+    // Validate survey_category
+    $valid_categories = ['solar_panel', 'inverter', 'battery', 'electrical_cabinet', 'accessory'];
+    if (!in_array($survey_category, $valid_categories)) {
+        echo json_encode(['success' => false, 'message' => 'Loại sản phẩm không hợp lệ'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
-// Check if config already exists
-$checkSql = "SELECT id FROM survey_product_configs WHERE product_id = ?";
-$stmt = $conn->prepare($checkSql);
-$stmt->bind_param("i", $product_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$existing = $result->fetch_assoc();
-$stmt->close();
+    // Check if config already exists
+    $checkSql = "SELECT id FROM survey_product_configs WHERE product_id = ?";
+    $stmt = $conn->prepare($checkSql);
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $existing = $result->fetch_assoc();
+    $stmt->close();
 
-if ($existing) {
-    // Update existing config
-    $sql = "UPDATE survey_product_configs 
-            SET survey_category = ?, 
-                phase_type = ?, 
-                price_type = ?, 
-                is_active = ?, 
-                display_order = ?, 
-                notes = ?,
-                updated_at = NOW()
-            WHERE product_id = ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssiiisi", 
-        $survey_category, 
-        $phase_type, 
-        $price_type, 
-        $is_active, 
-        $display_order, 
-        $notes,
-        $product_id
-    );
-} else {
-    // Insert new config
-    $sql = "INSERT INTO survey_product_configs 
-            (product_id, survey_category, phase_type, price_type, is_active, display_order, notes) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isssiis", 
-        $product_id, 
-        $survey_category, 
-        $phase_type, 
-        $price_type, 
-        $is_active, 
-        $display_order, 
-        $notes
-    );
-}
+    if ($existing) {
+        // Update existing config
+        $sql = "UPDATE survey_product_configs 
+                SET survey_category = ?, 
+                    phase_type = ?, 
+                    price_type = ?, 
+                    is_active = ?, 
+                    display_order = ?, 
+                    notes = ?,
+                    updated_at = NOW()
+                WHERE product_id = ?";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssiiisi", 
+            $survey_category, 
+            $phase_type, 
+            $price_type, 
+            $is_active, 
+            $display_order, 
+            $notes,
+            $product_id
+        );
+    } else {
+        // Insert new config
+        $sql = "INSERT INTO survey_product_configs 
+                (product_id, survey_category, phase_type, price_type, is_active, display_order, notes) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isssiis", 
+            $product_id, 
+            $survey_category, 
+            $phase_type, 
+            $price_type, 
+            $is_active, 
+            $display_order, 
+            $notes
+        );
+    }
 
-if ($stmt->execute()) {
+    if ($stmt->execute()) {
+        echo json_encode([
+            'success' => true, 
+            'message' => $existing ? 'Đã cập nhật cấu hình' : 'Đã thêm cấu hình mới'
+        ], JSON_UNESCAPED_UNICODE);
+    } else {
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Lỗi: ' . $stmt->error
+        ], JSON_UNESCAPED_UNICODE);
+    }
+
+    $stmt->close();
+    $conn->close();
+} catch (Exception $e) {
     echo json_encode([
-        'success' => true, 
-        'message' => $existing ? 'Đã cập nhật cấu hình' : 'Đã thêm cấu hình mới'
-    ]);
-} else {
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Lỗi: ' . $stmt->error
-    ]);
+        'success' => false,
+        'message' => 'Lỗi: ' . $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
 }
-
-$stmt->close();
-$conn->close();
 ?>
