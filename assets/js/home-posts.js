@@ -25,17 +25,15 @@ function renderHomePosts(posts) {
     // Find the container where posts should be inserted
     let postsContainer = solutionsSection.querySelector('.home-posts-container');
     
-    // If container doesn't exist, create it after the header
+    // If container doesn't exist, create it at the END of the container (after static posts)
     if (!postsContainer) {
         postsContainer = document.createElement('div');
-        postsContainer.className = 'home-posts-container';
+        postsContainer.className = 'home-posts-container mt-20'; // Add top margin to separate from static posts
         
-        // Find the header div
-        const header = solutionsSection.querySelector('.text-center.mb-12');
-        if (header) {
-            header.after(postsContainer);
-        } else {
-            solutionsSection.querySelector('.container').appendChild(postsContainer);
+        // Append to the end of the main container (after static posts)
+        const mainContainer = solutionsSection.querySelector('.container');
+        if (mainContainer) {
+            mainContainer.appendChild(postsContainer);
         }
     }
     
