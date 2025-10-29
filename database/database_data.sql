@@ -697,11 +697,11 @@ INSERT INTO orders (id, user_id, full_name, phone, email, city, district, ward, 
 INSERT INTO order_items (id, order_id, product_id, product_name, quantity, price, image_url) VALUES
 (1, 1, 2, 'Tấm Pin Jinko Solar 630W Tiger Neo', 1, 1950000.00, '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png'),
 (2, 2, 2, 'Tấm Pin Jinko Solar 630W Tiger Neo', 1, 1950000.00, '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png'),
-(3, 3, 4, 'ECO Hybrid 6kW', 2, 20125000.00, '..//assets/img/products/luxpower-6kw-gen.png'),
+(3, 3, 4, 'ECO Hybrid 6kW', 2, 20125000.00, '../assets/img/products/luxpower-6kw-gen.png'),
 (4, 4, 35, 'CT Ngoài LuxPower SNA 6kW', 1, 1500000.00, '../assets/img/products/ct-ngoai-luxpower-sna-6kw.png'),
 (5, 5, 2, 'Tấm Pin Jinko Solar 630W Tiger Neo', 1, 1950000.00, '../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png'),
-(6, 6, 4, 'ECO Hybrid 6kW', 1, 20125000.00, '..//assets/img/products/luxpower-6kw-gen.png'),
-(7, 7, 4, 'ECO Hybrid 6kW', 2, 20125000.00, '..//assets/img/products/luxpower-6kw-gen.png');
+(6, 6, 4, 'ECO Hybrid 6kW', 1, 20125000.00, '../assets/img/products/luxpower-6kw-gen.png'),
+(7, 7, 4, 'ECO Hybrid 6kW', 2, 20125000.00, '../assets/img/products/luxpower-6kw-gen.png');
 
 -- =====================================================
 -- DỮ LIỆU TEST - SOLAR SURVEYS (Khảo sát điện mặt trời)
