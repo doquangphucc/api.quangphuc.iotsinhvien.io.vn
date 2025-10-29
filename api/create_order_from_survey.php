@@ -53,18 +53,21 @@ try {
     $stmt = $pdo->prepare("
         INSERT INTO orders (
             user_id, 
-            fullname, 
+            full_name, 
             phone, 
             email,
-            city_name,
-            district_name,
-            ward_name,
+            city,
+            district,
+            ward,
             address, 
             notes,
-            total, 
-            status,
+            subtotal,
+            voucher_code,
+            discount_amount,
+            total_amount, 
+            order_status,
             created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 0, ?, 'pending', NOW())
     ");
     
     $stmt->execute([
@@ -72,11 +75,12 @@ try {
         $customer['fullname'],
         $customer['phone'],
         $customer['email'] ?? null,
-        $customer['city_name'] ?? null,
-        $customer['district_name'] ?? null,
-        $customer['ward_name'] ?? null,
+        $customer['city_name'] ?? '',
+        $customer['district_name'] ?? '',
+        $customer['ward_name'] ?? '',
         $customer['address'],
         $customer['notes'] ?? null,
+        $total,
         $total
     ]);
     
@@ -90,8 +94,8 @@ try {
             product_name,
             quantity,
             price,
-            created_at
-        ) VALUES (?, ?, ?, ?, ?, NOW())
+            image_url
+        ) VALUES (?, ?, ?, ?, ?, ?)
     ");
     
     foreach ($items as $item) {
@@ -106,7 +110,8 @@ try {
             $productId,
             $item['title'] ?? $item['name'] ?? 'Unknown',
             $item['quantity'] ?? 1,
-            $item['price'] ?? 0
+            $item['price'] ?? 0,
+            $item['image_url'] ?? null
         ]);
     }
     
