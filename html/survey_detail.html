@@ -376,6 +376,7 @@
     <script>
         let surveyData = null;
         let surveyId = null;
+        let surveyProducts = null; // Cache survey products for image fallback
         
         // Get survey ID from URL parameters
         document.addEventListener('DOMContentLoaded', async () => {
@@ -385,6 +386,18 @@
             if (!surveyId) {
                 showError('Không tìm thấy ID khảo sát');
                 return;
+            }
+            
+            // Load survey products for image fallback (same as khao-sat-dien-mat-troi.html)
+            try {
+                const productsResponse = await fetch('../api/get_survey_products_public.php');
+                const productsData = await productsResponse.json();
+                if (productsData.success && productsData.products) {
+                    surveyProducts = productsData.products;
+                    console.log('Loaded survey products for image fallback');
+                }
+            } catch (err) {
+                console.error('Error loading survey products:', err);
             }
             
             await loadSurveyDetail(surveyId);
@@ -461,6 +474,45 @@
             console.log('populateSurveyData - batteryImage:', r?.batteryImage);
             console.log('populateSurveyData - cabinetImage:', r?.cabinetImage);
             
+            // Helper function to find image from survey products (fallback)
+            function findImageFromProductsForDisplay(productName, category, phaseType = null) {
+                if (!surveyProducts) return null;
+                
+                let productsToSearch = [];
+                
+                if (category === 'solar_panel' && surveyProducts.solar_panel) {
+                    productsToSearch = surveyProducts.solar_panel;
+                } else if (category === 'inverter' && surveyProducts.inverter) {
+                    const phaseKey = phaseType === 1 ? '1_phase' : phaseType === 3 ? '3_phase' : 'both';
+                    productsToSearch = [
+                        ...(surveyProducts.inverter[phaseKey] || []),
+                        ...(surveyProducts.inverter['both'] || [])
+                    ];
+                } else if (category === 'battery' && surveyProducts.battery) {
+                    productsToSearch = surveyProducts.battery;
+                } else if (category === 'electrical_cabinet' && surveyProducts.electrical_cabinet) {
+                    const phaseKey = phaseType === 1 ? '1_phase' : phaseType === 3 ? '3_phase' : 'both';
+                    productsToSearch = [
+                        ...(surveyProducts.electrical_cabinet[phaseKey] || []),
+                        ...(surveyProducts.electrical_cabinet['both'] || [])
+                    ];
+                }
+                
+                // Find product by matching title
+                const found = productsToSearch.find(p => {
+                    const titleLower = (p.title || '').toLowerCase();
+                    const nameLower = (productName || '').toLowerCase();
+                    return titleLower.includes(nameLower) || nameLower.includes(titleLower);
+                });
+                
+                if (found && found.image_url) {
+                    console.log(`Found image from survey products for display '${productName}':`, found.image_url);
+                    return found.image_url;
+                }
+                
+                return null;
+            }
+            
             // Helper function to fix image URL path for survey_detail.html
             function fixImageUrlForDetailPage(imageUrl) {
                 if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined' || imageUrl.trim() === '') {
@@ -491,6 +543,22 @@
                 return '../assets/img/products/' + imageUrl;
             }
             
+            // Helper to get image URL with fallback
+            function getImageUrlForDisplay(apiImage, productName, category, phaseType = null) {
+                // First, try API image
+                if (apiImage && apiImage !== 'null' && apiImage.trim() !== '') {
+                    return fixImageUrlForDetailPage(apiImage);
+                }
+                
+                // Fallback: find from survey products
+                const fallbackImage = findImageFromProductsForDisplay(productName, category, phaseType);
+                if (fallbackImage) {
+                    return fixImageUrlForDetailPage(fallbackImage);
+                }
+                
+                return null;
+            }
+            
             // Build products table
             const productsTableBody = document.getElementById('productsTableBody');
             let totalAmount = 0;
@@ -503,7 +571,7 @@
                     warranty: '12 năm',
                     unit: 'Tấm',
                     qty: Number(r?.panelsNeeded ?? 0),
-                    image: fixImageUrlForDetailPage(r?.panelImage),
+                    image: getImageUrlForDisplay(r?.panelImage, r?.panelName, 'solar_panel'),
                     unitPrice: Number(r?.panelPrice ?? 0),
                     totalPrice: Number(r?.panelCost ?? 0)
                 },
@@ -513,7 +581,7 @@
                     warranty: '5 năm',
                     unit: 'Bộ',
                     qty: 1,
-                    image: fixImageUrlForDetailPage(r?.inverterImage),
+                    image: getImageUrlForDisplay(r?.inverterImage, r?.inverterName, 'inverter', survey.phase),
                     unitPrice: Number(r?.inverterPrice ?? 0),
                     totalPrice: Number(r?.inverterPrice ?? 0)
                 },
@@ -523,7 +591,7 @@
                     warranty: '10 năm',
                     unit: 'Bộ',
                     qty: Number(r?.batteryQuantity ?? 1),
-                    image: fixImageUrlForDetailPage(r?.batteryImage),
+                    image: getImageUrlForDisplay(r?.batteryImage, r?.batteryName, 'battery'),
                     unitPrice: Number(r?.batteryUnitPrice ?? 0),
                     totalPrice: Number(r?.batteryCost ?? 0)
                 },
@@ -533,7 +601,7 @@
                     warranty: '3 năm',
                     unit: 'Tủ',
                     qty: 1,
-                    image: fixImageUrlForDetailPage(r?.cabinetImage),
+                    image: getImageUrlForDisplay(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
                     unitPrice: Number(r?.cabinetPrice ?? 0),
                     totalPrice: Number(r?.cabinetPrice ?? 0)
                 },
@@ -702,7 +770,7 @@
         }
         
         // Function to prepare survey package from detail page and go to checkout
-        function buyPackageFromDetail() {
+        async function buyPackageFromDetail() {
             console.log('buyPackageFromDetail function called');
             
             if (!surveyData) {
@@ -725,15 +793,68 @@
                 // Calculate system size from panels
                 const systemSizeKw = r?.totalCapacity || 0;
                 const panelCount = r?.panelsNeeded || 0;
+                
+                // Load survey products from API (same as khao-sat-dien-mat-troi.html)
+                // This ensures we can find images even if API response has null images
+                let surveyProducts = null;
+                try {
+                    const productsResponse = await fetch('../api/get_survey_products_public.php');
+                    const productsData = await productsResponse.json();
+                    if (productsData.success && productsData.products) {
+                        surveyProducts = productsData.products;
+                        console.log('Loaded survey products for fallback:', surveyProducts);
+                    }
+                } catch (err) {
+                    console.error('Error loading survey products:', err);
+                }
 
-                // Helper function to fix image URL path
+                // Helper function to find image from survey products (same logic as khao-sat-dien-mat-troi.html)
+                function findImageFromProducts(productName, category, phaseType = null) {
+                    if (!surveyProducts) return null;
+                    
+                    let productsToSearch = [];
+                    
+                    if (category === 'solar_panel' && surveyProducts.solar_panel) {
+                        productsToSearch = surveyProducts.solar_panel;
+                    } else if (category === 'inverter' && surveyProducts.inverter) {
+                        const phaseKey = phaseType === 1 ? '1_phase' : phaseType === 3 ? '3_phase' : 'both';
+                        productsToSearch = [
+                            ...(surveyProducts.inverter[phaseKey] || []),
+                            ...(surveyProducts.inverter['both'] || [])
+                        ];
+                    } else if (category === 'battery' && surveyProducts.battery) {
+                        productsToSearch = surveyProducts.battery;
+                    } else if (category === 'electrical_cabinet' && surveyProducts.electrical_cabinet) {
+                        const phaseKey = phaseType === 1 ? '1_phase' : phaseType === 3 ? '3_phase' : 'both';
+                        productsToSearch = [
+                            ...(surveyProducts.electrical_cabinet[phaseKey] || []),
+                            ...(surveyProducts.electrical_cabinet['both'] || [])
+                        ];
+                    }
+                    
+                    // Find product by matching title
+                    const found = productsToSearch.find(p => {
+                        const titleLower = (p.title || '').toLowerCase();
+                        const nameLower = (productName || '').toLowerCase();
+                        return titleLower.includes(nameLower) || nameLower.includes(titleLower);
+                    });
+                    
+                    if (found && found.image_url) {
+                        console.log(`Found image from survey products for '${productName}':`, found.image_url);
+                        return found.image_url;
+                    }
+                    
+                    return null;
+                }
+                
+                // Helper function to fix image URL path (same as khao-sat-dien-mat-troi.html)
                 function fixImageUrl(imageUrl) {
                     // Debug: log original imageUrl
                     console.log('fixImageUrl input:', imageUrl);
                     
                     if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined' || imageUrl.trim() === '') {
                         console.log('fixImageUrl: returning null for empty imageUrl');
-                        return null; // Return null if no image, let checkout-page.js handle fallback
+                        return null;
                     }
                     
                     // If already absolute URL, return as is
@@ -742,30 +863,32 @@
                         return imageUrl;
                     }
                     
-                    // If starts with /assets, convert to relative path for dat-hang.html
-                    if (imageUrl.startsWith('/assets/')) {
-                        const result = '..' + imageUrl;
-                        console.log('fixImageUrl: root-relative path, converted to:', result);
-                        return result;
+                    // Remove leading '../', '..//', './', etc. (same as khao-sat-dien-mat-troi.html)
+                    imageUrl = imageUrl.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
+                    
+                    // Add leading slash if not present (same as khao-sat-dien-mat-troi.html)
+                    if (!imageUrl.startsWith('/')) {
+                        imageUrl = '/' + imageUrl;
                     }
                     
-                    // If starts with assets/ (no leading slash), add ../
-                    if (imageUrl.startsWith('assets/')) {
-                        const result = '../' + imageUrl;
-                        console.log('fixImageUrl: assets path, converted to:', result);
-                        return result;
+                    console.log('fixImageUrl: final result:', imageUrl);
+                    return imageUrl;
+                }
+                
+                // Helper to get image with fallback
+                function getImageUrl(apiImage, productName, category, phaseType = null) {
+                    // First, try API image
+                    if (apiImage && apiImage !== 'null' && apiImage.trim() !== '') {
+                        return fixImageUrl(apiImage);
                     }
                     
-                    // If already relative path, return as is
-                    if (imageUrl.startsWith('../')) {
-                        console.log('fixImageUrl: already relative, returning as is');
-                        return imageUrl;
+                    // Fallback: find from survey products
+                    const fallbackImage = findImageFromProducts(productName, category, phaseType);
+                    if (fallbackImage) {
+                        return fixImageUrl(fallbackImage);
                     }
                     
-                    // Otherwise, assume it's relative to assets
-                    const result = '../assets/img/products/' + imageUrl;
-                    console.log('fixImageUrl: assumed relative to assets, converted to:', result);
-                    return result;
+                    return null;
                 }
 
                 // Prepare survey package data with all items
@@ -778,7 +901,7 @@
                             title: r?.panelName || 'Tấm Pin',
                             price: Number(r?.panelPrice || 0),
                             quantity: panelCount,
-                            image_url: fixImageUrl(r?.panelImage)
+                            image_url: getImageUrl(r?.panelImage, r?.panelName, 'solar_panel')
                         },
                         // Inverter
                         {
@@ -786,7 +909,7 @@
                             title: r?.inverterName || 'Inverter',
                             price: Number(r?.inverterPrice || 0),
                             quantity: 1,
-                            image_url: fixImageUrl(r?.inverterImage),
+                            image_url: getImageUrl(r?.inverterImage, r?.inverterName, 'inverter', survey.phase),
                             isVirtual: true
                         },
                         // Pin lưu trữ
@@ -795,7 +918,7 @@
                             title: r?.batteryName || 'Pin lưu trữ',
                             price: Number(r?.batteryUnitPrice || 0),
                             quantity: Number(r?.batteryQuantity || 1),
-                            image_url: fixImageUrl(r?.batteryImage)
+                            image_url: getImageUrl(r?.batteryImage, r?.batteryName, 'battery')
                         }
                     ],
                     // Add all accessories as separate items
@@ -806,7 +929,7 @@
                             title: r?.cabinetName || 'Tủ điện',
                             price: Number(r?.cabinetPrice || 0),
                             quantity: 1,
-                            image_url: fixImageUrl(r?.cabinetImage),
+                            image_url: getImageUrl(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
                             isVirtual: true
                         },
                         // Vật tư và phụ kiện đi kèm (tổng)
