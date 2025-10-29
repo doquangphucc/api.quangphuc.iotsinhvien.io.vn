@@ -3170,74 +3170,80 @@
         }
 
         function collectCalculationResults() {
-            // Try to get results from global variables or DOM
-            if (typeof window.surveyResults !== 'undefined') {
-                console.log('Using global surveyResults:', window.surveyResults);
-                return window.surveyResults;
+            // Try to get results from global variables (from calculateSolarSystem)
+            if (window.currentSurveyResult) {
+                console.log('Using currentSurveyResult:', window.currentSurveyResult);
+                const result = window.currentSurveyResult;
+                
+                // Transform to old format for API
+                return {
+                    monthlyKWh: result.monthlyKwh,
+                    sunHours: result.peakSunHours,
+                    panelsNeeded: result.panelCount,
+                    panelCost: result.panelTotalPrice,
+                    panelInfo: {
+                        id: result.solarPanelProductId,
+                        name: result.solarPanelName,
+                        power: result.solarPanelWatt / 1000, // Convert to kW
+                        price: result.solarPanelPrice
+                    },
+                    energyPerPanelPerDay: result.actualDailyKwh / result.panelCount,
+                    totalCapacity: result.systemSizeWatt / 1000, // Convert to kW
+                    inverter: {
+                        id: 0,
+                        name: result.selectedInverter.name,
+                        capacity: result.selectedInverter.power / 1000,
+                        price: result.selectedInverter.price
+                    },
+                    cabinet: {
+                        id: 0,
+                        name: result.accessories.find(a => a.name.includes('Tủ Điện'))?.name || 'Tủ điện',
+                        capacity: result.systemSizeKw,
+                        price: result.accessories.find(a => a.name.includes('Tủ Điện'))?.totalPrice || 0
+                    },
+                    batteryNeeded: result.batteryCapacityNeeded,
+                    totalCost: result.totalPrice,
+                    batteryOptions: [
+                        {
+                            id: result.batteryProductId,
+                            name: result.selectedBattery.name,
+                            capacity: result.selectedBattery.capacity,
+                            quantity: 1,
+                            price: result.selectedBattery.price,
+                            totalCost: result.selectedBattery.price
+                        }
+                    ],
+                    accessories: {
+                        bachZ: {
+                            qty: result.accessories.find(a => a.name.includes('Bách Z'))?.quantity || 0,
+                            price: result.accessories.find(a => a.name.includes('Bách Z'))?.price || 0,
+                            cost: result.accessories.find(a => a.name.includes('Bách Z'))?.totalPrice || 0
+                        },
+                        clip: {
+                            qty: result.accessories.find(a => a.name.includes('Kẹp Biên'))?.quantity || 0,
+                            price: result.accessories.find(a => a.name.includes('Kẹp Biên'))?.price || 0,
+                            cost: result.accessories.find(a => a.name.includes('Kẹp Biên'))?.totalPrice || 0
+                        },
+                        jackMC4: {
+                            qty: result.accessories.find(a => a.name.includes('MC4'))?.quantity || 0,
+                            price: result.accessories.find(a => a.name.includes('MC4'))?.price || 0,
+                            cost: result.accessories.find(a => a.name.includes('MC4'))?.totalPrice || 0
+                        }
+                    },
+                    dcCable: {
+                        length: result.accessories.find(a => a.name.includes('Dây Điện'))?.quantity || 100,
+                        price: result.accessories.find(a => a.name.includes('Dây Điện'))?.price || 0,
+                        cost: result.accessories.find(a => a.name.includes('Dây Điện'))?.totalPrice || 0
+                    },
+                    accessoriesCost: result.accessoriesTotal,
+                    laborCost: result.accessories.find(a => a.name.includes('Công Thợ'))?.totalPrice || 0,
+                    billBreakdown: []
+                };
             }
 
-            // Fallback: Calculate based on form data
-            console.log('Calculating results from form data...');
-            
-            // Get form data
-            const region = document.querySelector('select[name="region"]')?.value || '';
-            const phase = parseInt(document.querySelector('input[name="phase"]:checked')?.value || '1');
-            const solarPanel = parseInt(document.querySelector('select[name="solarPanel"]')?.value || '590');
-            const monthlyBill = parseFloat(document.getElementById('monthlyBillInput')?.value?.replace(/[^\d]/g, '') || '0');
-            const usageTime = document.querySelector('select[name="usageTime"]')?.value || '';
-
-            // Get solar panel info
-            const panelInfoMap = {
-                '590': { id: 1, name: 'Pin mặt trời 590W', power: 0.590, price: 2500000 },
-                '630': { id: 2, name: 'Pin mặt trời 630W', power: 0.630, price: 2800000 }
-            };
-            const panelInfo = panelInfoMap[solarPanel] || panelInfoMap['590'];
-
-            // Calculate based on monthly bill
-            const monthlyKWh = calculateMonthlyKWh(monthlyBill, region);
-            const sunHours = getSunHours(region);
-            const panelsNeeded = calculatePanelsNeeded(monthlyKWh, panelInfo.power, sunHours);
-            const panelCost = panelsNeeded * panelInfo.price;
-            const totalCapacity = panelsNeeded * panelInfo.power;
-            const energyPerPanelPerDay = panelInfo.power * sunHours;
-
-            // Calculate other costs
-            const inverterCost = 15000000; // Fixed cost
-            const cabinetCost = 2000000;   // Fixed cost
-            const accessoriesCost = panelsNeeded * 500000; // Estimate
-            const laborCost = panelsNeeded * 300000; // Estimate
-            const totalCostWithoutBattery = panelCost + inverterCost + cabinetCost + accessoriesCost + laborCost;
-            const totalCost = totalCostWithoutBattery; // No battery for now
-
-            const results = {
-                monthlyKWh: monthlyKWh,
-                sunHours: sunHours,
-                panelsNeeded: panelsNeeded,
-                panelCost: panelCost,
-                panelInfo: panelInfo,
-                energyPerPanelPerDay: energyPerPanelPerDay,
-                totalCapacity: totalCapacity,
-                inverter: { id: 1, name: 'Inverter Luxpower', capacity: 6.0, price: inverterCost },
-                cabinet: { id: 1, name: 'Tủ điện', capacity: 6.0, price: cabinetCost },
-                batteryNeeded: 0,
-                totalCost: totalCost,
-                batteryOptions: [
-                    { id: 1, name: 'Pin lưu trữ 8 cell', capacity: 8.3, quantity: 0, price: 15000000, totalCost: 0 },
-                    { id: 2, name: 'Pin lưu trữ 16 cell', capacity: 16.6, quantity: 0, price: 25000000, totalCost: 0 }
-                ],
-                accessories: {
-                    bachZ: { qty: panelsNeeded, price: 50000, cost: panelsNeeded * 50000 },
-                    clip: { qty: panelsNeeded * 4, price: 10000, cost: panelsNeeded * 4 * 10000 },
-                    jackMC4: { qty: panelsNeeded * 2, price: 15000, cost: panelsNeeded * 2 * 15000 }
-                },
-                dcCable: { length: panelsNeeded * 10, price: 20000, cost: panelsNeeded * 10 * 20000 },
-                accessoriesCost: accessoriesCost,
-                laborCost: laborCost,
-                billBreakdown: []
-            };
-
-            console.log('Calculated results:', results);
-            return results;
+            // Fallback: Show error if no results available
+            console.error('No survey results available');
+            return null;
         }
 
         // Helper functions for calculations
