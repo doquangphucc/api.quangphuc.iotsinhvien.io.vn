@@ -3286,8 +3286,8 @@
             }, 5000);
         }
 
-        // Function to add survey package to cart and go to checkout
-        async function buyPackage() {
+        // Function to prepare survey package and go to checkout
+        function buyPackage() {
             console.log('buyPackage function called');
             
             if (!window.currentSurveyResult) {
@@ -3296,55 +3296,79 @@
             }
 
             const result = window.currentSurveyResult;
+            const formData = window.currentFormData;
             
             try {
-                // Check if ShoppingCart is available
-                if (!window.ShoppingCart) {
-                    showNotification('❌ Lỗi: Không thể truy cập giỏ hàng', 'error');
-                    return;
-                }
+                showNotification('⏳ Đang chuẩn bị gói khảo sát...', 'info');
 
-                showNotification('⏳ Đang thêm sản phẩm vào giỏ hàng...', 'info');
-
-                // Clear cart first
-                window.ShoppingCart.clearCart();
-
-                // Add solar panel
-                if (result.solarPanelProductId) {
-                    await window.ShoppingCart.addItem(result.solarPanelProductId, result.panelCount);
-                    console.log(`Added ${result.panelCount} solar panels (ID: ${result.solarPanelProductId})`);
-                }
-
-                // Add battery
-                if (result.batteryProductId) {
-                    await window.ShoppingCart.addItem(result.batteryProductId, 1);
-                    console.log(`Added 1 battery (ID: ${result.batteryProductId})`);
-                }
-
-                // Note: Inverter, cabinet, and accessories might not have product IDs in the system
-                // They are configured from survey_product_configs table
-                // We'll add a note in localStorage for the checkout page
-                const surveyNote = {
+                // Prepare survey package data with all items
+                const surveyPackage = {
                     fromSurvey: true,
-                    inverter: result.selectedInverter.name,
-                    invertorPrice: result.selectedInverter.price,
-                    cabinet: result.accessories.find(a => a.name.includes('Tủ Điện'))?.name || 'Tủ điện',
-                    cabinetPrice: result.accessories.find(a => a.name.includes('Tủ Điện'))?.totalPrice || 0,
-                    totalEstimate: result.totalPrice,
+                    items: [
+                        // Tấm pin
+                        {
+                            id: result.solarPanelProductId,
+                            title: result.solarPanelName,
+                            price: result.solarPanelPrice,
+                            quantity: result.panelCount,
+                            image_url: result.solarPanelImage
+                        },
+                        // Inverter
+                        {
+                            id: 'inverter_' + Date.now(),
+                            title: result.selectedInverter.name,
+                            price: result.selectedInverter.price,
+                            quantity: 1,
+                            image_url: result.selectedInverter.image,
+                            isVirtual: true
+                        },
+                        // Pin lưu trữ
+                        {
+                            id: result.batteryProductId,
+                            title: result.selectedBattery.name,
+                            price: result.selectedBattery.price,
+                            quantity: 1,
+                            image_url: result.selectedBattery.image
+                        }
+                    ],
+                    // Add all accessories
+                    accessories: result.accessories.map(acc => ({
+                        id: 'accessory_' + acc.name.replace(/\s+/g, '_'),
+                        title: acc.name,
+                        price: acc.price,
+                        quantity: acc.quantity,
+                        image_url: acc.image,
+                        isVirtual: true
+                    })),
+                    // Summary info
+                    summary: {
+                        inverter: result.selectedInverter.name,
+                        invertorPrice: result.selectedInverter.price,
+                        cabinet: result.accessories.find(a => a.name.includes('Tủ Điện'))?.name || 'Tủ điện',
+                        cabinetPrice: result.accessories.find(a => a.name.includes('Tủ Điện'))?.totalPrice || 0,
+                        totalEstimate: result.totalPrice,
+                        systemSizeKw: result.systemSizeKw,
+                        panelCount: result.panelCount,
+                        region: formData.region,
+                        phase: formData.phase
+                    },
                     note: `Gói khảo sát điện mặt trời - ${result.systemSizeKw}kWp - ${result.panelCount} tấm pin - Inverter: ${result.selectedInverter.name} - Pin: ${result.selectedBattery.name}`
                 };
-                localStorage.setItem('surveyPackageNote', JSON.stringify(surveyNote));
 
-                showNotification('✅ Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                // Save to localStorage
+                localStorage.setItem('surveyPackage', JSON.stringify(surveyPackage));
+                console.log('Survey package saved to localStorage:', surveyPackage);
+
+                showNotification('✅ Đã chuẩn bị gói khảo sát!', 'success');
                 
                 // Redirect to checkout page after a short delay
                 setTimeout(() => {
                     window.location.href = 'dat-hang.html';
-                }, 1500);
+                }, 1000);
 
             } catch (error) {
-                console.error('Error adding package to cart:', error);
-                showNotification('❌ Lỗi khi thêm vào giỏ hàng: ' + error.message, 'error');
+                console.error('Error preparing package:', error);
+                showNotification('❌ Lỗi khi chuẩn bị gói: ' + error.message, 'error');
             }
         }
     </script>

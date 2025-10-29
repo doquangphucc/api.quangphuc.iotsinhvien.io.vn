@@ -10,11 +10,22 @@ window.orderItems = orderItems;
 document.addEventListener('DOMContentLoaded', async function() {
     await loadOrderItems();
     loadCities();
-    checkSurveyPackage();
 });
 
-// Load order items (from cart)
+// Load order items (from cart or survey package)
 async function loadOrderItems() {
+    // Check if coming from survey page first
+    const surveyPackage = localStorage.getItem('surveyPackage');
+    if (surveyPackage) {
+        try {
+            const packageData = JSON.parse(surveyPackage);
+            loadSurveyPackage(packageData);
+            return;
+        } catch (e) {
+            console.error('Error loading survey package:', e);
+        }
+    }
+    
     // Load from cart (database)
     const checkoutCartIds = sessionStorage.getItem('checkoutCartIds');
     if (checkoutCartIds) {
@@ -31,6 +42,59 @@ async function loadOrderItems() {
     // If no items, show empty state
     if (orderItems.length === 0) {
         window.orderItems = orderItems; // Update global reference
+        showEmptyOrder();
+    }
+}
+
+// Load survey package from localStorage
+function loadSurveyPackage(packageData) {
+    try {
+        console.log('Loading survey package:', packageData);
+        
+        // Combine main items and accessories
+        const allItems = [
+            ...packageData.items,
+            ...packageData.accessories
+        ];
+        
+        // Convert to orderItems format
+        orderItems = allItems.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: parseFloat(item.price),
+            image_url: item.image_url || '../assets/img/logo.jpg',
+            quantity: item.quantity,
+            isVirtual: item.isVirtual || false
+        }));
+        
+        window.orderItems = orderItems;
+        renderOrderItems();
+        
+        // Display survey banner with summary info
+        if (packageData.summary) {
+            displaySurveyBanner({
+                note: packageData.note,
+                inverter: packageData.summary.inverter,
+                cabinet: packageData.summary.cabinet,
+                totalEstimate: packageData.summary.totalEstimate
+            });
+        }
+        
+        // Add note to notes field
+        const notesField = document.getElementById('notes');
+        if (notesField && packageData.note) {
+            notesField.value = packageData.note;
+        }
+        
+        showToast('✅ Đã tải gói khảo sát điện mặt trời', 'success');
+        
+        // Clear localStorage after loading
+        localStorage.removeItem('surveyPackage');
+        
+    } catch (error) {
+        console.error('Error loading survey package:', error);
+        orderItems = [];
+        window.orderItems = orderItems;
         showEmptyOrder();
     }
 }
@@ -319,35 +383,6 @@ function showToast(message, type = 'info') {
         toast.style.opacity = '0';
         toast.addEventListener('transitionend', () => toast.remove());
     }, 3000);
-}
-
-// Check if user came from survey page
-function checkSurveyPackage() {
-    const surveyNote = localStorage.getItem('surveyPackageNote');
-    
-    if (surveyNote) {
-        try {
-            const note = JSON.parse(surveyNote);
-            
-            // Add survey note to notes field
-            const notesField = document.getElementById('notes');
-            if (notesField && note.note) {
-                notesField.value = note.note;
-            }
-            
-            // Show notification
-            showToast('✅ Đã thêm gói khảo sát điện mặt trời vào đơn hàng', 'success');
-            
-            // Display special banner
-            displaySurveyBanner(note);
-            
-            // Clear the note after displaying
-            localStorage.removeItem('surveyPackageNote');
-            
-        } catch (error) {
-            console.error('Error parsing survey note:', error);
-        }
-    }
 }
 
 // Display survey package banner
