@@ -2472,7 +2472,7 @@
                 
             } catch (error) {
                 console.error('Error loading survey history:', error);
-                showNotification('Lỗi khi tải lịch sử khảo sát: ' + error.message, 'error');
+                alert('Lỗi khi tải lịch sử khảo sát: ' + error.message);
             }
         }
         
@@ -2518,7 +2518,6 @@
                         </td>
                         <td class="px-4 py-3 border">
                             <div class="text-sm">📞 ${survey.phone}</div>
-                            ${survey.email ? `<div class="text-sm text-gray-500">✉️ ${survey.email}</div>` : ''}
                         </td>
                         <td class="px-4 py-3 border text-center">${survey.region_name}</td>
                         <td class="px-4 py-3 border text-center">
