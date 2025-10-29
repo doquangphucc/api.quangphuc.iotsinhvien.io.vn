@@ -2025,14 +2025,6 @@
                     displayName = acc.name;
                 }
                 
-                // Extract cabinet info robustly from accessories (case-insensitive)
-                const cabinetItem = Array.isArray(result.accessories)
-                    ? result.accessories.find(a => /tủ\s*điện/i.test(a.name || ''))
-                    : null;
-                const cabinetName = cabinetItem?.name || 'Tủ điện';
-                const cabinetPrice = (cabinetItem && (cabinetItem.totalPrice ?? cabinetItem.price)) ?
-                    Number(cabinetItem.totalPrice ?? cabinetItem.price) : 0;
-
                 return {
                     ...acc,
                     name: displayName,
