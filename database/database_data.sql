@@ -11,10 +11,10 @@ USE nangluongmattroi;
 -- DỮ LIỆU MẪU - PRODUCT_CATEGORIES
 -- =====================================================
 INSERT INTO product_categories (id, name, logo_url, display_order, is_active, created_at, updated_at) VALUES
-(1, 'Bảo Duy Solar', '/assets/img/categories/category_1761566273_68ff5e41b8ea6.jpg', 1, 1, '2025-10-27 11:31:07', '2025-10-27 11:57:53'),
-(2, 'C - Home Building', '/assets/img/categories/category_1761661939_6900d3f33b569.jpg', 2, 1, '2025-10-27 11:31:07', '2025-10-28 14:32:19'),
-(3, 'HC - Coffee & Restaurant', '/assets/img/categories/category_1761661942_6900d3f643960.jpg', 3, 1, '2025-10-27 12:38:01', '2025-10-28 14:32:22'),
-(4, 'Phúc', '/assets/img/categories/category_1761582235_68ff9c9bed00f.jpg', 4, 1, '2025-10-27 16:23:55', '2025-10-27 16:23:55');
+(1, 'Bảo Duy Solar', '/assets/img/categories/category_1761694964_690154f4117b8.jpg', 1, 1, '2025-10-27 11:31:07', '2025-10-28 23:42:44'),
+(2, 'C - Home Building', '/assets/img/categories/category_1761694975_690154ffe28bd.jpg', 2, 1, '2025-10-27 11:31:07', '2025-10-28 23:42:55'),
+(3, 'HC - Coffee & Restaurant', '/assets/img/categories/category_1761694990_6901550e031fa.jpg', 3, 1, '2025-10-27 12:38:01', '2025-10-28 23:43:10'),
+(4, 'HC - Travel', '/assets/img/categories/category_1761695000_69015518e7924.jpg', 4, 1, '2025-10-27 16:23:55', '2025-10-28 23:43:32');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PRODUCTS
@@ -574,9 +574,9 @@ INSERT INTO phuong (ten_phuong, id_tinh) VALUES
 -- DỮ LIỆU MẪU - PACKAGE_CATEGORIES
 -- =====================================================
 INSERT INTO package_categories (id, name, logo_url, badge_text, badge_color, display_order, is_active, created_at, updated_at) VALUES
-(1, 'Bảo Duy Solar', '/assets/img/package-categories/package-category_1761566289_68ff5e518d89e.jpg', 'Siêu Hot', '#fb8b23', 1, 1, '2025-10-27 11:31:08', '2025-10-27 23:48:10'),
-(2, 'C - Home Building', '/assets/img/package-categories/package-category_1761566300_68ff5e5c5676c.jpg', 'New', '#568de6', 2, 1, '2025-10-27 11:31:08', '2025-10-27 23:48:21'),
-(3, 'Coffee', '/assets/img/package-categories/package-category_1761568732_68ff67dcd01c8.jpg', 'Bán Chạy', '#5ff7ec', 3, 1, '2025-10-27 12:38:52', '2025-10-27 23:48:15');
+(1, 'Bảo Duy Solar', '/assets/img/package-categories/package-category_1761695061_690155556371e.jpg', 'Siêu Hot', '#fb8b23', 1, 1, '2025-10-27 11:31:08', '2025-10-28 23:44:21'),
+(2, 'C - Home Building', '/assets/img/package-categories/package-category_1761695069_6901555d9710f.jpg', 'New', '#568de6', 2, 1, '2025-10-27 11:31:08', '2025-10-28 23:44:29'),
+(3, 'Coffee', '/assets/img/package-categories/package-category_1761695078_69015566d7908.jpg', 'Bán Chạy', '#5ff7ec', 3, 1, '2025-10-27 12:38:52', '2025-10-28 23:44:38');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PACKAGES
@@ -745,22 +745,22 @@ INSERT INTO survey_product_configs (id, product_id, survey_category, phase_type,
 -- =====================================================
 -- DỮ LIỆU MẪU - INTRO_POSTS (Bài viết trang giới thiệu)
 -- =====================================================
-INSERT INTO intro_posts (id, title, description, image_url, video_url, is_active, display_order, created_at, updated_at) VALUES
-(1, 'HC Eco System - Giải Pháp Năng Lượng Xanh', 'HC Eco System là đơn vị hàng đầu trong lĩnh vực cung cấp giải pháp năng lượng mặt trời tại Việt Nam. Với kinh nghiệm nhiều năm trong ngành, chúng tôi tự hào là đối tác đáng tin cậy của hàng ngàn khách hàng trên toàn quốc.', NULL, NULL, 1, 1, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(2, 'Sứ Mệnh Của Chúng Tôi', 'Chúng tôi cam kết cung cấp các giải pháp năng lượng mặt trời chất lượng cao, hiệu quả và tiết kiệm chi phí. Đội ngũ chuyên nghiệp, thiết bị chính hãng và dịch vụ tận tâm.', NULL, NULL, 1, 2, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(3, 'Tầm Nhìn 2030', 'Trở thành đơn vị dẫn đầu trong lĩnh vực năng lượng tái tạo tại Việt Nam, góp phần xây dựng một tương lai xanh, bền vững và thân thiện với môi trường.', NULL, NULL, 1, 3, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(4, 'Giải Pháp Cho Mọi Quy Mô', 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.', NULL, NULL, 1, 4, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
-(5, 'dddddđ', 'ffffffffffffffffffffff', '/uploads/intro_images/intro_image_1761599252_68ffdf1432557.jpg', '/uploads/intro_videos/intro_video_1761600454_68ffe3c698f1a.mp4', 1, 1, '2025-10-27 21:07:32', '2025-10-27 21:27:34'),
-(6, 'faaf', 'aaaaaaaaaa', '/uploads/intro_images/intro_image_1761600209_68ffe2d1bc014.jpg', '/uploads/intro_videos/intro_video_1761600190_68ffe2bee024b.mp4', 1, 5, '2025-10-27 21:23:10', '2025-10-27 21:23:29');
+INSERT INTO intro_posts (id, title, description, image_url, video_url, media_gallery, is_active, display_order, created_at, updated_at) VALUES
+(1, 'HC Eco System - Giải Pháp Năng Lượng Xanh', 'HC Eco System là đơn vị hàng đầu trong lĩnh vực cung cấp giải pháp năng lượng mặt trời tại Việt Nam. Với kinh nghiệm nhiều năm trong ngành, chúng tôi tự hào là đối tác đáng tin cậy của hàng ngàn khách hàng trên toàn quốc.', '/uploads/intro_images/intro_image_1761695233_6901560173ebd.jpg', '/uploads/intro_videos/intro_video_1761695233_6901560173ee4.mp4', '[{\"type\":\"image\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/intro_images/intro_690155f042c3a0.88497178_1761695216.jpg\",\"order\":1},{\"type\":\"image\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/intro_images/intro_690155f380aa26.57052331_1761695219.jpg\",\"order\":2},{\"type\":\"video\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/intro_videos/intro_690155f6a8a480.00200483_1761695222.mp4\",\"order\":3},{\"type\":\"video\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/intro_videos/intro_690155f9d71b54.51943691_1761695225.mp4\",\"order\":4}]', 1, 6, '2025-10-27 11:31:09', '2025-10-28 23:47:13'),
+(2, 'Sứ Mệnh Của Chúng Tôi', 'Chúng tôi cam kết cung cấp các giải pháp năng lượng mặt trời chất lượng cao, hiệu quả và tiết kiệm chi phí. Đội ngũ chuyên nghiệp, thiết bị chính hãng và dịch vụ tận tâm.', NULL, NULL, NULL, 1, 2, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(3, 'Tầm Nhìn 2030', 'Trở thành đơn vị dẫn đầu trong lĩnh vực năng lượng tái tạo tại Việt Nam, góp phần xây dựng một tương lai xanh, bền vững và thân thiện với môi trường.', NULL, NULL, NULL, 1, 3, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(4, 'Giải Pháp Cho Mọi Quy Mô', 'Từ hộ gia đình nhỏ với hệ thống 3kW đến doanh nghiệp lớn với công suất 500kW+, chúng tôi có giải pháp phù hợp cho mọi nhu cầu.', NULL, NULL, NULL, 1, 4, '2025-10-27 11:31:09', '2025-10-27 11:31:09'),
+(5, 'dddddđ', 'ffffffffffffffffffffff', '/uploads/intro_images/intro_image_1761599252_68ffdf1432557.jpg', '/uploads/intro_videos/intro_video_1761600454_68ffe3c698f1a.mp4', NULL, 1, 1, '2025-10-27 21:07:32', '2025-10-27 21:27:34'),
+(6, 'faaf', 'aaaaaaaaaa', '/uploads/intro_images/intro_image_1761600209_68ffe2d1bc014.jpg', '/uploads/intro_videos/intro_video_1761600190_68ffe2bee024b.mp4', NULL, 1, 5, '2025-10-27 21:23:10', '2025-10-27 21:23:29');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - PROJECTS (Dự án)
 -- =====================================================
-INSERT INTO projects (id, title, description, image_url, video_url, is_active, display_order, created_at, updated_at) VALUES
-(1, 'Lắp Đặt Hệ Thống 5kW Tại Gia Đình Sài Gòn', 'Hệ thống điện mặt trời 5kW cho gia đình tại Quận 7, TP. Hồ Chí Minh. Sử dụng công nghệ pin cao cấp từ Jinko Solar và inverter Growatt.', NULL, NULL, 1, 1, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
-(2, 'Dự Án Điện Mặt Trời 10kW Cho Shop Coffee', 'Lắp đặt hệ thống 10kW cho cửa hàng coffee shop tại Đà Nẵng. Giúp giảm hơn 80% chi phí điện hàng tháng.', NULL, NULL, 1, 2, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
-(3, 'Hệ Thống 20kW Cho Nhà Xưởng', 'Dự án lắp đặt 20kW trên mái nhà xưởng tại Bình Dương. Công suất lớn đáp ứng nhu cầu sản xuất và còn dư điện bán lưới.', NULL, NULL, 1, 3, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
-(4, 'Hệ Thống Hybrid 15kW Có Pin Lưu Trữ', 'Dự án hệ thống hybrid 15kW kết hợp pin lưu trữ tại Vũng Tàu. Tự chủ năng lượng 24/7, không lo mất điện.', NULL, NULL, 1, 4, '2025-10-27 12:00:00', '2025-10-27 12:00:00');
+INSERT INTO projects (id, title, description, image_url, video_url, media_gallery, is_active, display_order, created_at, updated_at) VALUES
+(1, 'Lắp Đặt Hệ Thống 5kW Tại Gia Đình Sài Gòn', 'Hệ thống điện mặt trời 5kW cho gia đình tại Quận 7, TP. Hồ Chí Minh. Sử dụng công nghệ pin cao cấp từ Jinko Solar và inverter Growatt.', '/uploads/project_images/project_image_1761695201_690155e11d9a9.jpg', '/uploads/project_videos/project_video_1761695201_690155e11d9d2.mp4', '[{\"type\":\"image\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/project_images/project_690155d4e56574.18828422_1761695188.jpg\",\"order\":1},{\"type\":\"image\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/project_images/project_690155d7e077b7.91443021_1761695191.jpg\",\"order\":2},{\"type\":\"video\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/project_videos/project_690155dbf35db8.02372283_1761695195.mp4\",\"order\":3},{\"type\":\"video\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/project_videos/project_690155df797f00.16373158_1761695199.mp4\",\"order\":4}]', 1, 1, '2025-10-27 12:00:00', '2025-10-28 23:46:41'),
+(2, 'Dự Án Điện Mặt Trời 10kW Cho Shop Coffee', 'Lắp đặt hệ thống 10kW cho cửa hàng coffee shop tại Đà Nẵng. Giúp giảm hơn 80% chi phí điện hàng tháng.', NULL, NULL, NULL, 1, 2, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
+(3, 'Hệ Thống 20kW Cho Nhà Xưởng', 'Dự án lắp đặt 20kW trên mái nhà xưởng tại Bình Dương. Công suất lớn đáp ứng nhu cầu sản xuất và còn dư điện bán lưới.', NULL, NULL, NULL, 1, 3, '2025-10-27 12:00:00', '2025-10-27 12:00:00'),
+(4, 'Hệ Thống Hybrid 15kW Có Pin Lưu Trữ', 'Dự án hệ thống hybrid 15kW kết hợp pin lưu trữ tại Vũng Tàu. Tự chủ năng lượng 24/7, không lo mất điện.', NULL, NULL, NULL, 1, 4, '2025-10-27 12:00:00', '2025-10-27 12:00:00');
 
 -- =====================================================
 -- DỮ LIỆU MẪU - DICH_VU
@@ -780,9 +780,9 @@ SELECT 'Reward Templates: 6 templates' as info;
 -- =====================================================
 -- DATA FOR HOME_POSTS (Bài đăng trang chủ)
 -- =====================================================
-INSERT INTO home_posts (id, title, description, highlight_text, highlight_color, image_url, image_position, button_text, button_url, button_color, features, display_order, is_active, section_id, created_at, updated_at) VALUES
-(1, 'Xây Dựng Tổ Ấm', 'Gói 10 Tỷ', 'Giải Pháp Tối Ưu', '#2ef548', '/assets/img/home/home_1761681208_69011f38a5b88.jpg', 'left', 'Xem Bảng Giá', 'html/pricing.html', '#b6df20', '[{\"text\":\"Giá Tốt\"},{\"text\":\"Bảo Hành 10 năm\"},{\"text\":\"Yên Tâm Sử Dụng\"}]', 1, 1, 'solutions', '2025-10-28 19:53:28', '2025-10-28 20:24:41'),
-(2, 'Du Lịch Trọn Gói', 'Hà Giang', 'Gói Tiết Kiệm', '#21c4b9', '/assets/img/home/home_1761682214_690123266d165.jpg', 'right', 'Xem Bảng Giá', 'html/pricing.html', '#35e34c', '[{\"text\":\"Giá Tốt\"},{\"text\":\"Bảo Hành 10 năm\"},{\"text\":\"Yên Tâm Sử Dụng\"}]', 1, 1, 'solutions', '2025-10-28 20:10:14', '2025-10-28 20:24:33');
+INSERT INTO home_posts (id, title, description, highlight_text, highlight_color, image_url, image_position, button_text, button_url, button_color, features, media_gallery, display_order, is_active, section_id, created_at, updated_at) VALUES
+(1, 'Xây Dựng Tổ Ấm', 'Gói 10 Tỷ', 'Giải Pháp Tối Ưu', '#2ef548', '/assets/img/home/home_1761695132_6901559cdc38e.jpg', 'left', 'Xem Bảng Giá', 'html/pricing.html', '#b6df20', '[{\"text\":\"Giá Tốt\"},{\"text\":\"Bảo Hành 10 năm\"},{\"text\":\"Yên Tâm Sử Dụng\"}]', '[]', 1, 1, 'solutions', '2025-10-28 19:53:28', '2025-10-28 23:45:32'),
+(2, 'Du Lịch Trọn Gói', 'Hà Giang', 'Gói Tiết Kiệm', '#21c4b9', '/assets/img/home/home_1761695124_690155945bdeb.jpg', 'right', 'Xem Bảng Giá', 'html/pricing.html', '#35e34c', '[{\"text\":\"Giá Tốt\"},{\"text\":\"Bảo Hành 10 năm\"},{\"text\":\"Yên Tâm Sử Dụng\"}]', '[{\"type\":\"image\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/home_images/home_690155b0a904c1.99610869_1761695152.jpg\",\"order\":1},{\"type\":\"image\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/home_images/home_690155b5b1c554.57140385_1761695157.jpg\",\"order\":2},{\"type\":\"video\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/home_videos/home_690155b9b1cdc6.79866448_1761695161.mp4\",\"order\":3},{\"type\":\"video\",\"url\":\"https://api.quangphuc.iotsinhvien.io.vn/uploads/home_videos/home_690155be022c21.54257669_1761695166.mp4\",\"order\":4}]', 1, 1, 'solutions', '2025-10-28 20:10:14', '2025-10-28 23:46:07');
 
 -- =====================================================
 -- DATA FOR CONTACT_CHANNELS
