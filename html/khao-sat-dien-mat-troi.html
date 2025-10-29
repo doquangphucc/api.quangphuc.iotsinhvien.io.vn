@@ -1307,24 +1307,26 @@
                             </div>
         </div>
 
-                        <!-- Loại tấm pin -->
+                        <!-- Loại tấm pin (Load động từ admin) -->
                         <div class="form-group">
                             <label>Chọn Loại Tấm Pin *</label>
                             <select name="solarPanel" required>
-                                <option value="">-- Chọn loại tấm pin --</option>
-                                <option value="590" data-price="1800000" data-image="../assets/img/products/tam-pin-jinko-solar-590w-tiger-neo.jpg">Jinko Solar 590W Tiger Neo - 2,583m² / tấm pin</option>
-                                <option value="630" data-price="1950000" data-image="../assets/img/products/tam-pin-jinko-solar-630w-tiger-neo.png">Jinko Solar 630W Tiger Neo - 2,702m² / tấm pin</option>
+                                <option value="">-- Đang tải dữ liệu... --</option>
                             </select>
+                            <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+                                💡 Danh sách được quản lý trong Admin → Tab Khảo Sát → Loại: Tấm Pin
+                            </small>
                         </div>
 
-                        <!-- Loại pin -->
+                        <!-- Loại pin (Load động từ admin) -->
                         <div class="form-group">
                             <label>Chọn Loại Pin *</label>
                             <select name="batteryType" required>
-                                <option value="">-- Chọn loại pin --</option>
-                                <option value="acornex" data-price="0" data-image="../assets/img/products/pin-luu-tru-acornex.jpg">PIN LƯU TRỮ A-CORNEX - 16.3kWh (315Ah @ 52V)</option>
-                                <option value="byd" data-price="0" data-image="../assets/img/products/pin-luu-tru-byd.jpg">PIN LƯU TRỮ BYD - 8.8kWh @ 51.2V (173Ah)</option>
+                                <option value="">-- Đang tải dữ liệu... --</option>
                             </select>
+                            <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+                                💡 Danh sách được quản lý trong Admin → Tab Khảo Sát → Loại: Pin Lưu Trữ
+                            </small>
                         </div>
         </div>
 
@@ -2602,19 +2604,21 @@
         }
 
         function populateSurveyForm(products) {
-            // Populate Solar Panels
+            // Populate Solar Panels (Tấm Pin)
             const solarPanelSelect = document.querySelector('select[name="solarPanel"]');
             if (solarPanelSelect && products.solar_panel) {
                 solarPanelSelect.innerHTML = '<option value="">-- Chọn loại tấm pin --</option>';
                 products.solar_panel.forEach(panel => {
                     // Extract watt from title (e.g., "Jinko Solar 590W" -> 590)
                     const wattMatch = panel.title.match(/(\d+)W/i);
-                    const watt = wattMatch ? wattMatch[1] : '';
+                    const watt = wattMatch ? wattMatch[1] : panel.product_id;
                     
                     const option = document.createElement('option');
                     option.value = watt;
                     option.textContent = panel.title;
+                    option.setAttribute('data-product-id', panel.product_id);
                     option.setAttribute('data-price', panel.price);
+                    option.setAttribute('data-watt', watt);
                     // Fix image URL path
                     let imageUrl = panel.image_url;
                     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
@@ -2623,17 +2627,21 @@
                     option.setAttribute('data-image', imageUrl);
                     solarPanelSelect.appendChild(option);
                 });
+                console.log('✅ Đã load', products.solar_panel.length, 'loại tấm pin từ admin');
             }
 
-            // Populate Batteries
+            // Populate Batteries (Pin Lưu Trữ)
             const batterySelect = document.querySelector('select[name="batteryType"]');
             if (batterySelect && products.battery) {
-                batterySelect.innerHTML = '<option value="">-- Chọn loại pin --</option>';
+                batterySelect.innerHTML = '<option value="">-- Chọn loại pin lưu trữ --</option>';
                 products.battery.forEach(battery => {
+                    // Use product_id as value for better tracking
                     const option = document.createElement('option');
-                    option.value = battery.title.toLowerCase().replace(/\s+/g, '-');
+                    option.value = battery.product_id;
                     option.textContent = battery.title;
+                    option.setAttribute('data-product-id', battery.product_id);
                     option.setAttribute('data-price', battery.price);
+                    option.setAttribute('data-capacity', battery.title); // Store full title for later use
                     // Fix image URL path
                     let imageUrl = battery.image_url;
                     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
@@ -2642,6 +2650,7 @@
                     option.setAttribute('data-image', imageUrl);
                     batterySelect.appendChild(option);
                 });
+                console.log('✅ Đã load', products.battery.length, 'loại pin lưu trữ từ admin');
             }
 
             // Update invertersByPhase with API data
