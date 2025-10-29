@@ -647,6 +647,12 @@
             const survey = surveyData;
             const r = survey.results;
             
+            // Debug: Log image URLs from API response
+            console.log('API Response - panelImage:', r?.panelImage);
+            console.log('API Response - inverterImage:', r?.inverterImage);
+            console.log('API Response - batteryImage:', r?.batteryImage);
+            console.log('API Response - cabinetImage:', r?.cabinetImage);
+            
             try {
                 showNotification('⏳ Đang chuẩn bị gói khảo sát...', 'info');
 
@@ -656,30 +662,44 @@
 
                 // Helper function to fix image URL path
                 function fixImageUrl(imageUrl) {
-                    if (!imageUrl) return null;
+                    // Debug: log original imageUrl
+                    console.log('fixImageUrl input:', imageUrl);
+                    
+                    if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined' || imageUrl.trim() === '') {
+                        console.log('fixImageUrl: returning null for empty imageUrl');
+                        return null; // Return null if no image, let checkout-page.js handle fallback
+                    }
                     
                     // If already absolute URL, return as is
                     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                        console.log('fixImageUrl: absolute URL, returning as is');
                         return imageUrl;
                     }
                     
                     // If starts with /assets, convert to relative path for dat-hang.html
                     if (imageUrl.startsWith('/assets/')) {
-                        return '..' + imageUrl;
+                        const result = '..' + imageUrl;
+                        console.log('fixImageUrl: root-relative path, converted to:', result);
+                        return result;
                     }
                     
                     // If starts with assets/ (no leading slash), add ../
                     if (imageUrl.startsWith('assets/')) {
-                        return '../' + imageUrl;
+                        const result = '../' + imageUrl;
+                        console.log('fixImageUrl: assets path, converted to:', result);
+                        return result;
                     }
                     
                     // If already relative path, return as is
                     if (imageUrl.startsWith('../')) {
+                        console.log('fixImageUrl: already relative, returning as is');
                         return imageUrl;
                     }
                     
                     // Otherwise, assume it's relative to assets
-                    return '../assets/img/products/' + imageUrl;
+                    const result = '../assets/img/products/' + imageUrl;
+                    console.log('fixImageUrl: assumed relative to assets, converted to:', result);
+                    return result;
                 }
 
                 // Prepare survey package data with all items

@@ -58,14 +58,27 @@ function loadSurveyPackage(packageData) {
         ];
         
         // Convert to orderItems format
-        orderItems = allItems.map(item => ({
-            id: item.id,
-            title: item.title,
-            price: parseFloat(item.price),
-            image_url: item.image_url || '../assets/img/logo.jpg',
-            quantity: item.quantity,
-            isVirtual: item.isVirtual || false
-        }));
+        orderItems = allItems.map(item => {
+            // Debug: log image_url for each item
+            console.log(`Item: ${item.title}, image_url:`, item.image_url);
+            
+            // Process image_url - if null, empty, or undefined, use fallback
+            let imageUrl = item.image_url;
+            if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined') {
+                imageUrl = '../assets/img/logo.jpg';
+            }
+            
+            return {
+                id: item.id,
+                title: item.title,
+                price: parseFloat(item.price),
+                image_url: imageUrl,
+                quantity: item.quantity,
+                isVirtual: item.isVirtual || false
+            };
+        });
+        
+        console.log('Processed orderItems:', orderItems);
         
         window.orderItems = orderItems;
         renderOrderItems();
