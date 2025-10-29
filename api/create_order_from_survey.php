@@ -104,6 +104,10 @@ try {
         
         error_log("Inserting item: Order={$orderId}, Product={$productId}, Name=" . ($item['title'] ?? 'Unknown') . ", Image={$imageUrl}");
         
+        // Normalize numeric fields
+        $quantity = isset($item['quantity']) ? intval($item['quantity']) : 1;
+        if ($quantity <= 0) { $quantity = 1; }
+        $priceEach = isset($item['price']) ? floatval($item['price']) : 0;
         // Try to insert with image_url first
         try {
             $stmt = $pdo->prepare("
@@ -121,8 +125,8 @@ try {
                 $orderId,
                 $productId,
                 $item['title'] ?? $item['name'] ?? 'Unknown',
-                $item['quantity'] ?? 1,
-                $item['price'] ?? 0,
+                $quantity,
+                $priceEach,
                 $imageUrl
             ]);
             
@@ -145,8 +149,8 @@ try {
                 $orderId,
                 $productId,
                 $item['title'] ?? $item['name'] ?? 'Unknown',
-                $item['quantity'] ?? 1,
-                $item['price'] ?? 0
+                $quantity,
+                $priceEach
             ]);
             
             error_log("Successfully inserted without image_url");
