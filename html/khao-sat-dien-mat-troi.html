@@ -1300,10 +1300,6 @@
                                     <input type="radio" name="phase" value="3" />
                                     <span>3 Pha</span>
                                 </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="phase" value="both" />
-                                    <span>Cả 2</span>
-                                </label>
                             </div>
         </div>
 
@@ -1885,8 +1881,23 @@
             const roofArea = (panelCount * 2.8).toFixed(1);
             
             // Chọn inverter phù hợp theo pha đã chọn
+            // Logic: Nếu chọn 1 pha → lấy inverter 1 pha HOẶC both, nếu chọn 3 pha → lấy inverter 3 pha HOẶC both
             let selectedInverter;
-            const availableInverters = invertersByPhase[formData.phase] || [];
+            let availableInverters = [];
+            
+            if (formData.phase === '1') {
+                // Lấy cả inverter 1 pha và both
+                availableInverters = [
+                    ...(invertersByPhase['1'] || []),
+                    ...(invertersByPhase['both'] || [])
+                ];
+            } else if (formData.phase === '3') {
+                // Lấy cả inverter 3 pha và both
+                availableInverters = [
+                    ...(invertersByPhase['3'] || []),
+                    ...(invertersByPhase['both'] || [])
+                ];
+            }
             
             if (availableInverters.length > 0) {
                 // Tìm inverter có công suất phù hợp (lớn hơn hoặc bằng hệ thống)
@@ -1921,8 +1932,23 @@
             const selectedBattery = batteries.find(bat => bat.capacity >= batteryCapacityNeeded) || batteries[0];
             
             // Chọn tủ điện phù hợp với biến tần
+            // Logic tương tự inverter: nếu chọn 1 pha → lấy tủ 1 pha hoặc both, nếu chọn 3 pha → lấy tủ 3 pha hoặc both
             let selectedCabinet;
-            const availableCabinets = electricalCabinets[formData.phase] || [];
+            let availableCabinets = [];
+            
+            if (formData.phase === '1') {
+                // Lấy cả tủ điện 1 pha và both
+                availableCabinets = [
+                    ...(electricalCabinets['1'] || []),
+                    ...(electricalCabinets['both'] || [])
+                ];
+            } else if (formData.phase === '3') {
+                // Lấy cả tủ điện 3 pha và both
+                availableCabinets = [
+                    ...(electricalCabinets['3'] || []),
+                    ...(electricalCabinets['both'] || [])
+                ];
+            }
             
             if (availableCabinets.length > 0) {
                 // Tìm tủ điện có công suất phù hợp với biến tần
