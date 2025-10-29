@@ -87,34 +87,81 @@ try {
     $orderId = $pdo->lastInsertId();
     
     // Add order items (including virtual items)
-    // Note: Explicitly specify columns to avoid order mismatch
-    $stmt = $pdo->prepare("
-        INSERT INTO order_items (
-            order_id,
-            product_id,
-            product_name,
-            quantity,
-            price
-        ) VALUES (?, ?, ?, ?, ?)
-    ");
+    // First, let's check if image_url column exists by trying to query the table structure
+    try {
+        $checkStmt = $pdo->query("SHOW COLUMNS FROM order_items LIKE 'image_url'");
+        $hasImageUrl = $checkStmt->rowCount() > 0;
+        error_log("order_items table has image_url column: " . ($hasImageUrl ? 'YES' : 'NO'));
+    } catch (Exception $e) {
+        error_log("Error checking for image_url column: " . $e->getMessage());
+        $hasImageUrl = false;
+    }
     
-    foreach ($items as $item) {
-        // For virtual items (isVirtual = true or id is string), use NULL for product_id
-        $productId = null;
-        if (!empty($item['product_id']) && is_numeric($item['product_id'])) {
-            $productId = intval($item['product_id']);
+    if ($hasImageUrl) {
+        $stmt = $pdo->prepare("
+            INSERT INTO order_items (
+                order_id,
+                product_id,
+                product_name,
+                quantity,
+                price,
+                image_url
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        
+        foreach ($items as $item) {
+            $productId = null;
+            if (!empty($item['product_id']) && is_numeric($item['product_id'])) {
+                $productId = intval($item['product_id']);
+            }
+            
+            $imageUrl = $item['image_url'] ?? null;
+            if ($imageUrl && is_string($imageUrl)) {
+                // Clean image URL - convert absolute paths to relative
+                if ($imageUrl[0] === '/') {
+                    $imageUrl = '..' . $imageUrl;
+                }
+            }
+            
+            error_log("Inserting item: Order={$orderId}, Product={$productId}, Name=" . ($item['title'] ?? 'Unknown') . ", Image={$imageUrl}");
+            
+            $stmt->execute([
+                $orderId,
+                $productId,
+                $item['title'] ?? $item['name'] ?? 'Unknown',
+                $item['quantity'] ?? 1,
+                $item['price'] ?? 0,
+                $imageUrl
+            ]);
         }
+    } else {
+        // Fallback: insert without image_url
+        $stmt = $pdo->prepare("
+            INSERT INTO order_items (
+                order_id,
+                product_id,
+                product_name,
+                quantity,
+                price
+            ) VALUES (?, ?, ?, ?, ?)
+        ");
         
-        // Debug logging
-        error_log("Inserting order item - Order ID: {$orderId}, Product ID: {$productId}, Name: " . ($item['title'] ?? 'Unknown'));
-        
-        $stmt->execute([
-            $orderId,
-            $productId,
-            $item['title'] ?? $item['name'] ?? 'Unknown',
-            $item['quantity'] ?? 1,
-            $item['price'] ?? 0
-        ]);
+        foreach ($items as $item) {
+            $productId = null;
+            if (!empty($item['product_id']) && is_numeric($item['product_id'])) {
+                $productId = intval($item['product_id']);
+            }
+            
+            error_log("Inserting item (no image): Order={$orderId}, Product={$productId}, Name=" . ($item['title'] ?? 'Unknown'));
+            
+            $stmt->execute([
+                $orderId,
+                $productId,
+                $item['title'] ?? $item['name'] ?? 'Unknown',
+                $item['quantity'] ?? 1,
+                $item['price'] ?? 0
+            ]);
+        }
     }
     
     // Handle vouchers if provided
