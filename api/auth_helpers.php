@@ -6,21 +6,26 @@
 // Only keep admin-specific functions here
 
 function is_admin() {
-    global $conn;
-    
     if (!isset($_SESSION['user_id'])) {
         return false;
     }
     
-    $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT is_admin FROM users WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    $stmt->close();
-    
-    return $user && $user['is_admin'];
+    try {
+        // Use Database class (PDO) for compatibility with connect.php
+        require_once __DIR__ . '/connect.php';
+        $db = Database::getInstance();
+        $pdo = $db->getConnection();
+        
+        $user_id = $_SESSION['user_id'];
+        $stmt = $pdo->prepare("SELECT is_admin FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $user && $user['is_admin'] == 1;
+    } catch (Exception $e) {
+        error_log("is_admin() error: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
