@@ -2796,7 +2796,7 @@
                 products.solar_panel.forEach(panel => {
                     // Extract watt from title (e.g., "Jinko Solar 590W" -> 590)
                     const wattMatch = panel.title.match(/(\d+)W/i);
-                    const watt = wattMatch ? wattMatch[1] : panel.product_id;
+                    const watt = wattMatch ? wattMatch[1] : panel.id;
                     
                     // Create formatted display text with tech specs
                     const displayText = formatDisplayText(panel.title, panel.technical_description);
@@ -2804,7 +2804,7 @@
                     const option = document.createElement('option');
                     option.value = watt;
                     option.textContent = displayText;
-                    option.setAttribute('data-product-id', panel.product_id);
+                    option.setAttribute('data-product-id', panel.id);
                     option.setAttribute('data-price', panel.price);
                     option.setAttribute('data-watt', watt);
                     option.setAttribute('data-title', panel.title); // Store original title
@@ -2824,9 +2824,9 @@
                     
                     // Use product_id as value for better tracking
                     const option = document.createElement('option');
-                    option.value = battery.product_id;
+                    option.value = battery.id;
                     option.textContent = displayText;
-                    option.setAttribute('data-product-id', battery.product_id);
+                    option.setAttribute('data-product-id', battery.id);
                     option.setAttribute('data-price', battery.price);
                     option.setAttribute('data-capacity', battery.title); // Store original title
                     option.setAttribute('data-title', battery.title); // Store original title
