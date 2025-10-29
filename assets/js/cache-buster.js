@@ -113,6 +113,8 @@ async function injectContactFABs() {
 
     let hotlineNumber = null;
     let zaloNumber = null;
+    let hotlineColor = '#16a34a';
+    let zaloColor = '#2563eb';
 
     try {
         const res = await fetch('../api/get_contact_channels_public.php');
@@ -125,6 +127,8 @@ async function injectContactFABs() {
             zalos.sort((a,b)=> (a.display_order||999)-(b.display_order||999));
             hotlineNumber = (phones[0]?.content || '').replace(/\D/g,'') || null;
             zaloNumber = (zalos[0]?.content || '').replace(/\D/g,'') || hotlineNumber || null;
+            if (phones[0]?.color) hotlineColor = phones[0].color;
+            if (zalos[0]?.color) zaloColor = zalos[0].color;
         }
     } catch (e) {
         console.warn('Could not load contact channels, fallback to defaults');
@@ -133,6 +137,19 @@ async function injectContactFABs() {
     // Fallback default (matches DB seed) if API not reachable
     if (!hotlineNumber) hotlineNumber = '0969397434';
     if (!zaloNumber) zaloNumber = hotlineNumber;
+
+    // Utilities
+    const lighten = (hex, amt=20) => {
+        try {
+            hex = hex.replace('#','');
+            if (hex.length === 3) hex = hex.split('').map(x=>x+x).join('');
+            const num = parseInt(hex,16);
+            let r = Math.min(255, (num>>16) + amt);
+            let g = Math.min(255, ((num>>8)&0x00FF) + amt);
+            let b = Math.min(255, (num&0x0000FF) + amt);
+            return '#' + [r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+        } catch(_) { return hex; }
+    };
 
     // Create container
     const container = document.createElement('div');
@@ -143,7 +160,7 @@ async function injectContactFABs() {
     ].join(';');
 
     // Common button factory
-    function createFab({ id, bg, icon, label, href, aria }) {
+    function createFab({ id, bg, icon, label, href, aria, rotate=false }) {
         const a = document.createElement('a');
         a.id = id;
         a.href = href;
@@ -160,13 +177,16 @@ async function injectContactFABs() {
         a.addEventListener('mouseleave', ()=>{ a.style.transform=''; a.style.boxShadow='0 10px 20px rgba(0,0,0,0.2)'; });
         // Tooltip
         a.title = label;
+        if (rotate) {
+            a.classList.add('fab-rotate');
+        }
         return a;
     }
 
     // Hotline FAB (tel:)
     const hotlineFab = createFab({
         id: 'fab-hotline',
-        bg: 'linear-gradient(135deg,#16a34a,#22c55e)',
+        bg: `linear-gradient(135deg, ${hotlineColor}, ${lighten(hotlineColor, 30)})`,
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.09 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.81.3 1.6.52 2.36a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.72-1.72a2 2 0 0 1 2.11-.45c.76.22 1.55.4 2.36.52A2 2 0 0 1 22 16.92z"/></svg>',
         label: `Hotline ${hotlineNumber}`,
         href: `tel:${hotlineNumber}`,
@@ -176,15 +196,28 @@ async function injectContactFABs() {
     // Zalo FAB
     const zaloFab = createFab({
         id: 'fab-zalo',
-        bg: 'linear-gradient(135deg,#2563eb,#1d4ed8)',
-        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.94 2 10.8c0 2.63 1.35 4.97 3.52 6.53L4.8 22l3.66-1.94c1.08.3 2.24.47 3.54.47 5.52 0 10-3.94 10-8.8S17.52 2 12 2zm-3.5 5.5h7v2h-7v-2zm0 3.5h7v2h-7v-2z"/></svg>',
+        bg: `linear-gradient(135deg, ${zaloColor}, ${lighten(zaloColor, 30)})`,
+        // Zalo recognizable icon: chat bubble with "Zalo" text
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48" fill="none"><rect rx="10" ry="10" width="48" height="48" fill="white" opacity="0.15"/><path d="M8 18c0-5 4-9 9-9h14c5 0 9 4 9 9v6c0 5-4 9-9 9h-8l-5.5 4.2c-1.1.83-2.5-.34-2.1-1.6L16 33h-1c-5 0-7-4-7-9v-6z" fill="white" opacity="0.95"/><text x="14" y="29" font-size="12" font-weight="700" fill="#1d4ed8" font-family="Arial, Helvetica, sans-serif">Zalo</text></svg>',
         label: 'Chat Zalo',
         href: `https://zalo.me/${zaloNumber}`,
-        aria: 'Chat Zalo'
+        aria: 'Chat Zalo',
+        rotate: true
     });
 
     // Position above existing cart FAB if present
     // Our container starts at bottom:150px (above many page FABs). If a page has more FABs, developers can adjust easily.
+    // Add simple rotating animation style once
+    if (!document.getElementById('fab-rotate-style')) {
+        const style = document.createElement('style');
+        style.id = 'fab-rotate-style';
+        style.textContent = `
+            .fab-rotate { animation: fabspin 8s linear infinite; }
+            @keyframes fabspin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        `;
+        document.head.appendChild(style);
+    }
+
     container.appendChild(zaloFab);
     container.appendChild(hotlineFab);
     document.body.appendChild(container);
