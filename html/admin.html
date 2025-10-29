@@ -209,6 +209,47 @@
 
         <!-- Survey Products Tab -->
         <div id="tab-survey" class="tab-content hidden">
+            <!-- Survey Regions Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">🗺️ Quản Lý Khu Vực</h2>
+                        <p class="text-sm text-gray-600 mt-1">Quản lý các khu vực khảo sát (Miền Bắc, Miền Trung, Miền Nam)</p>
+                    </div>
+                    <button onclick="saveSurveyRegions()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        💾 Lưu khu vực
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left border">Mã khu vực</th>
+                                <th class="px-4 py-3 text-left border">Tên khu vực</th>
+                                <th class="px-4 py-3 text-left border">Nội dung hiển thị</th>
+                                <th class="px-4 py-3 text-center border">Số giờ nắng/ngày</th>
+                                <th class="px-4 py-3 text-center border">Thứ tự</th>
+                                <th class="px-4 py-3 text-center border">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="survey-regions-tbody">
+                            <!-- Regions will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                    <p class="text-sm text-blue-800">
+                        <strong>💡 Lưu ý:</strong> 
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li><strong>Mã khu vực:</strong> Không thay đổi (mien-bac, mien-trung, mien-nam)</li>
+                            <li><strong>Nội dung hiển thị:</strong> Văn bản mà người dùng thấy trong dropdown (VD: "Miền Bắc (4,4 giờ nắng/ngày)")</li>
+                            <li><strong>Số giờ nắng:</strong> Số liệu để tính toán công suất hệ thống</li>
+                            <li>Thay đổi sẽ ảnh hưởng đến trang khảo sát điện mặt trời</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+
             <!-- Electricity Prices Section -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <div class="flex justify-between items-center mb-6">
@@ -1994,6 +2035,7 @@
                  case 'categories': loadCategories(); break;
                  case 'products': loadProducts(); break;
                  case 'survey': 
+                     loadSurveyRegions();
                      loadElectricityPrices(); 
                      loadSurveyProducts(); 
                      break;
@@ -2556,6 +2598,144 @@
             } catch (error) {
                 console.error('Error deleting survey config:', error);
                 showToast('Có lỗi xảy ra khi xóa: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================
+        // SURVEY REGIONS MANAGEMENT
+        // ============================================
+        
+        async function loadSurveyRegions() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_survey_regions.php`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load survey regions');
+                }
+                
+                const data = await response.json();
+                if (data.success) {
+                    displaySurveyRegions(data.regions);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading survey regions:', error);
+                showToast('Có lỗi khi tải danh sách khu vực', 'error');
+            }
+        }
+        
+        function displaySurveyRegions(regions) {
+            const tbody = document.getElementById('survey-regions-tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = regions.map(region => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 border">
+                        <input type="text" 
+                               class="w-full px-2 py-1 border rounded bg-gray-100" 
+                               value="${region.region_code}" 
+                               data-id="${region.id}" 
+                               data-field="region_code" 
+                               readonly 
+                               title="Mã khu vực không được thay đổi" />
+                    </td>
+                    <td class="px-4 py-3 border">
+                        <input type="text" 
+                               class="w-full px-2 py-1 border rounded" 
+                               value="${region.region_name}" 
+                               data-id="${region.id}" 
+                               data-field="region_name" 
+                               placeholder="VD: Miền Bắc" />
+                    </td>
+                    <td class="px-4 py-3 border">
+                        <input type="text" 
+                               class="w-full px-2 py-1 border rounded" 
+                               value="${region.display_content}" 
+                               data-id="${region.id}" 
+                               data-field="display_content" 
+                               placeholder="VD: Miền Bắc (4,4 giờ nắng/ngày)" />
+                    </td>
+                    <td class="px-4 py-3 border text-center">
+                        <input type="number" 
+                               class="w-24 px-2 py-1 border rounded text-center" 
+                               value="${region.sun_hours}" 
+                               data-id="${region.id}" 
+                               data-field="sun_hours" 
+                               step="0.1" 
+                               min="0" 
+                               max="12" />
+                    </td>
+                    <td class="px-4 py-3 border text-center">
+                        <input type="number" 
+                               class="w-20 px-2 py-1 border rounded text-center" 
+                               value="${region.display_order}" 
+                               data-id="${region.id}" 
+                               data-field="display_order" 
+                               min="0" />
+                    </td>
+                    <td class="px-4 py-3 border text-center">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" 
+                                   class="form-checkbox h-5 w-5 text-green-600" 
+                                   ${region.is_active ? 'checked' : ''} 
+                                   data-id="${region.id}" 
+                                   data-field="is_active" />
+                            <span class="ml-2 text-sm">${region.is_active ? 'Hiển thị' : 'Ẩn'}</span>
+                        </label>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function saveSurveyRegions() {
+            try {
+                // Collect all data from inputs
+                const regions = [];
+                const rows = document.querySelectorAll('#survey-regions-tbody tr');
+                
+                rows.forEach(row => {
+                    const id = row.querySelector('input[data-field="region_code"]').getAttribute('data-id');
+                    const region_code = row.querySelector('input[data-field="region_code"]').value;
+                    const region_name = row.querySelector('input[data-field="region_name"]').value;
+                    const display_content = row.querySelector('input[data-field="display_content"]').value;
+                    const sun_hours = parseFloat(row.querySelector('input[data-field="sun_hours"]').value);
+                    const display_order = parseInt(row.querySelector('input[data-field="display_order"]').value);
+                    const is_active = row.querySelector('input[data-field="is_active"]').checked;
+                    
+                    regions.push({
+                        id: parseInt(id),
+                        region_code,
+                        region_name,
+                        display_content,
+                        sun_hours,
+                        display_order,
+                        is_active
+                    });
+                });
+                
+                // Send to API
+                const response = await fetch(`${API_BASE}/admin/save_survey_regions.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ regions })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadSurveyRegions(); // Reload to show updated data
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving survey regions:', error);
+                showToast('Có lỗi khi lưu danh sách khu vực', 'error');
             }
         }
 

@@ -808,11 +808,20 @@ INSERT INTO electricity_prices (id, tier, tier_name, kwh_from, kwh_to, price_no_
 (5, 5, 'Bậc 5: 301-400 kWh', 301, 400, 3270.00, 3532.00, '2025-05-10', 1, 'Bậc tiêu thụ rất cao'),
 (6, 6, 'Bậc 6: Từ 401 kWh', 401, NULL, 3460.00, 3737.00, '2025-05-10', 1, 'Bậc tiêu thụ cao nhất (không giới hạn)');
 
+-- =====================================================
+-- DATA FOR SURVEY_REGIONS (Khu vực khảo sát)
+-- =====================================================
+INSERT INTO survey_regions (id, region_code, region_name, display_content, sun_hours, display_order, is_active, notes) VALUES
+(1, 'mien-bac', 'Miền Bắc', 'Miền Bắc (4,4 giờ nắng/ngày)', 4.4, 1, 1, 'Khu vực phía Bắc Việt Nam'),
+(2, 'mien-trung', 'Miền Trung', 'Miền Trung (6,3 giờ nắng/ngày)', 6.3, 2, 1, 'Khu vực miền Trung Việt Nam'),
+(3, 'mien-nam', 'Miền Nam', 'Miền Nam (6,3 giờ nắng/ngày)', 6.3, 3, 1, 'Khu vực phía Nam Việt Nam');
+
 SELECT 'Intro Posts: 6 posts' as info;
 SELECT 'Projects: 4 projects' as info;
 SELECT 'Home Posts: 2 posts' as info;
 SELECT 'Contact Channels: 8 channels' as info;
 SELECT 'Electricity Prices: 6 tiers' as info;
+SELECT 'Survey Regions: 3 regions' as info;
 SELECT 'Provinces: 61 provinces/cities' as info;
 SELECT 'Districts: Sample districts for major cities' as info;
 SELECT 'Test users created:' as info;

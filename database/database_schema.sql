@@ -564,9 +564,29 @@ CREATE INDEX idx_electricity_prices_active ON electricity_prices(is_active);
 CREATE INDEX idx_electricity_prices_effective_date ON electricity_prices(effective_date);
 
 -- =====================================================
+-- 25. BẢNG SURVEY_REGIONS (Khu vực khảo sát)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS survey_regions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    region_code VARCHAR(50) NOT NULL UNIQUE COMMENT 'Mã khu vực (mien-bac, mien-trung, mien-nam)',
+    region_name VARCHAR(100) NOT NULL COMMENT 'Tên khu vực (Miền Bắc, Miền Trung, Miền Nam)',
+    display_content VARCHAR(255) NOT NULL COMMENT 'Nội dung hiển thị cho user (VD: Miền Bắc (4,4 giờ nắng/ngày))',
+    sun_hours DECIMAL(3, 1) NOT NULL COMMENT 'Số giờ nắng trung bình/ngày để tính toán',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Đang sử dụng',
+    notes TEXT COMMENT 'Ghi chú',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT='Quản lý khu vực khảo sát điện mặt trời';
+
+CREATE INDEX idx_survey_regions_code ON survey_regions(region_code);
+CREATE INDEX idx_survey_regions_active ON survey_regions(is_active);
+CREATE INDEX idx_survey_regions_order ON survey_regions(display_order);
+
+-- =====================================================
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 24' as info;
+SELECT 'Total tables created: 25' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 
