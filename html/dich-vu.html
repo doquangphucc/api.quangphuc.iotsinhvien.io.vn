@@ -171,7 +171,7 @@
                     <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Sản phẩm</a>
                     <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
                     <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
-                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200 bg-white dark:bg-gray-700">Dịch vụ</a>
+                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dịch vụ</a>
                     <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
                 </nav>
 
@@ -196,7 +196,7 @@
                 <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Sản phẩm</a>
                 <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
                 <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
-                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700">Dịch vụ</a>
+                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dịch vụ</a>
                 <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
                 
                 <!-- Mobile Auth Buttons -->
@@ -213,10 +213,10 @@
         <div class="container mx-auto max-w-7xl">
             <!-- Page Header -->
             <div class="text-center mb-16">
-                <h1 class="text-5xl font-bold text-gray-800 dark:text-white mb-4">
+                <h1 class="text-5xl font-bold text-white mb-4" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);">
                     Dịch Vụ Hệ Sinh Thái
                 </h1>
-                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                <p class="text-xl text-white max-w-3xl mx-auto" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);">
                     Tổng hợp đầy đủ các dịch vụ của HC Eco System - Hệ sinh thái bền vững với đa dạng giải pháp cho cuộc sống hiện đại
                 </p>
             </div>
@@ -309,28 +309,7 @@
             }
         });
 
-        // Highlight active navigation item based on current page
-        (function() {
-            const currentPath = window.location.pathname;
-            const currentPage = currentPath.split('/').pop() || 'index.html';
-            
-            // Select all nav links (both desktop and mobile)
-            const navLinks = document.querySelectorAll('nav a[href*=".html"]');
-            
-            navLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                const linkPage = href.split('/').pop();
-                
-                const isActive = linkPage === currentPage;
-                
-                if (isActive) {
-                    // Remove default classes
-                    link.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-white', 'dark:hover:bg-gray-700', 'hover:bg-gray-100');
-                    // Add active classes
-                    link.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
-                }
-            });
-        })();
+        // Removed navigation highlighting as requested by user
     </script>
 
     <!-- Slideshow Scripts -->
