@@ -214,22 +214,22 @@ function renderProducts() {
                     ` : ''}
                     
                     <!-- Pricing -->
-                    <div class="border-t-2 border-dashed border-gray-200 dark:border-gray-700 pt-2 mb-2 space-y-1.5">
+                    <div class="border-t border-dashed border-gray-200 dark:border-gray-700 pt-1 mb-1 space-y-0.5">
                         <!-- Market Price -->
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-400">💰 Giá thị trường:</span>
-                            <span class="text-sm font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                            <span class="text-[9px] font-semibold text-gray-600 dark:text-gray-400">💰 Giá thị trường:</span>
+                            <span class="text-[10px] font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                                 ${formatPrice(product.market_price)}
                             </span>
                         </div>
                         
                         <!-- Category Price -->
                         ${product.category_price ? `
-                            <div class="flex justify-between items-center bg-blue-50 dark:bg-blue-900/20 rounded-lg p-1.5 -mx-1">
-                                <span class="text-[10px] font-semibold text-blue-700 dark:text-blue-400">
+                            <div class="flex justify-between items-center bg-blue-50 dark:bg-blue-900/20 rounded p-1 -mx-0.5">
+                                <span class="text-[9px] font-semibold text-blue-700 dark:text-blue-400">
                                     ⭐ Giá ${product.category_name}:
                                 </span>
-                                <span class="text-sm font-bold text-blue-600 dark:text-blue-400">
+                                <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400">
                                     ${formatPrice(product.category_price)}
                                 </span>
                             </div>
@@ -237,25 +237,27 @@ function renderProducts() {
                     </div>
                     
                     <!-- Action Buttons -->
-                    <div class="space-y-1.5">
+                    <div class="flex gap-1">
                         <!-- Add to Cart Button -->
                         <button onclick="addToCart(${product.id})" 
-                                class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-1.5 text-xs rounded-lg hover:from-green-700 hover:to-green-800 transition-all shadow hover:shadow-md transform hover:scale-105 flex items-center justify-center gap-1"
+                                class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-1 text-[10px] rounded hover:from-green-700 hover:to-green-800 transition-all shadow hover:shadow-md transform hover:scale-105 flex items-center justify-center gap-0.5"
                                 ${!product.is_active ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}>
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
-                            Thêm vào giỏ hàng
+                            <span class="hidden sm:inline">Thêm vào giỏ hàng</span>
+                            <span class="sm:hidden">Thêm</span>
                         </button>
                         
                         <!-- Order Now Button -->
                         <button onclick="orderNow(${product.id})" 
-                                class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-1.5 text-xs rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow hover:shadow-md transform hover:scale-105 flex items-center justify-center gap-1"
+                                class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-1 text-[10px] rounded hover:from-orange-600 hover:to-red-600 transition-all shadow hover:shadow-md transform hover:scale-105 flex items-center justify-center gap-0.5"
                                 ${!product.is_active ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}>
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
-                            Đặt hàng ngay
+                            <span class="hidden sm:inline">Đặt hàng ngay</span>
+                            <span class="sm:hidden">Đặt</span>
                         </button>
                     </div>
                 </div>
