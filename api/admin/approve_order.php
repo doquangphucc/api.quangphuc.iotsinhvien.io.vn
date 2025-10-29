@@ -53,17 +53,39 @@ try {
     $stmt->bind_param("ii", $admin_id, $order_id);
     $stmt->execute();
     
-    // Add lottery ticket for user
-    $user_id = $order['user_id'];
-    $stmt = $conn->prepare("INSERT INTO lottery_tickets (user_id, order_id, ticket_type, status) VALUES (?, ?, 'purchase', 'active')");
-    $stmt->bind_param("ii", $user_id, $order_id);
+    // Calculate total product quantity in order
+    $stmt = $conn->prepare("SELECT SUM(quantity) as total_quantity FROM order_items WHERE order_id = ?");
+    $stmt->bind_param("i", $order_id);
     $stmt->execute();
+    $result = $stmt->get_result();
+    $quantity_data = $result->fetch_assoc();
+    $total_quantity = intval($quantity_data['total_quantity'] ?? 0);
+    
+    // Create lottery tickets based on total product quantity
+    // Each product quantity = 1 lottery ticket
+    $user_id = $order['user_id'];
+    $tickets_created = 0;
+    
+    if ($total_quantity > 0) {
+        $stmt = $conn->prepare("INSERT INTO lottery_tickets (user_id, order_id, ticket_type, status) VALUES (?, ?, 'purchase', 'active')");
+        $stmt->bind_param("ii", $user_id, $order_id);
+        
+        for ($i = 0; $i < $total_quantity; $i++) {
+            $stmt->execute();
+            $tickets_created++;
+        }
+    }
     
     $conn->commit();
     
+    $ticket_message = $tickets_created > 0 
+        ? "và đã tặng {$tickets_created} vé quay may mắn" 
+        : "";
+    
     echo json_encode([
         'success' => true,
-        'message' => 'Duyệt đơn hàng thành công và đã tặng vé quay may mắn'
+        'message' => "Duyệt đơn hàng thành công {$ticket_message}",
+        'tickets_created' => $tickets_created
     ]);
     
 } catch (Exception $e) {
