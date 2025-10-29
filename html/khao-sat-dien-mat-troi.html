@@ -2603,6 +2603,45 @@
             }
         }
 
+        // Helper function to create display text from technical description
+        function formatDisplayText(title, technicalDescription) {
+            if (!technicalDescription) return title;
+            
+            // Extract key info from technical description
+            const specs = [];
+            
+            // Extract capacity (Dung lượng)
+            const capacityMatch = technicalDescription.match(/Dung lượng:\s*([^\n]+)/i);
+            if (capacityMatch) {
+                specs.push(capacityMatch[1].trim());
+            }
+            
+            // Extract voltage (Điện áp)
+            const voltageMatch = technicalDescription.match(/Điện áp[^\n]*:\s*([^\n]+)/i);
+            if (voltageMatch && !specs.length) { // Only add voltage if no capacity found
+                specs.push(voltageMatch[1].trim());
+            }
+            
+            // Extract power (Công suất)
+            const powerMatch = technicalDescription.match(/Công suất:\s*([^\n]+)/i);
+            if (powerMatch && !specs.length) { // Only add power if no other specs found
+                specs.push(powerMatch[1].trim());
+            }
+            
+            // Extract efficiency (Hiệu suất)
+            const efficiencyMatch = technicalDescription.match(/Hiệu suất:\s*([^\n]+)/i);
+            if (efficiencyMatch && specs.length > 0) { // Add efficiency as 2nd spec if we have 1st spec
+                specs.push(efficiencyMatch[1].trim());
+            }
+            
+            // Format display text
+            if (specs.length > 0) {
+                return `${title} (${specs.slice(0, 2).join(' | ')})`; // Max 2 specs to keep it readable
+            }
+            
+            return title;
+        }
+
         function populateSurveyForm(products) {
             // Populate Solar Panels (Tấm Pin)
             const solarPanelSelect = document.querySelector('select[name="solarPanel"]');
@@ -2613,12 +2652,16 @@
                     const wattMatch = panel.title.match(/(\d+)W/i);
                     const watt = wattMatch ? wattMatch[1] : panel.product_id;
                     
+                    // Create formatted display text with tech specs
+                    const displayText = formatDisplayText(panel.title, panel.technical_description);
+                    
                     const option = document.createElement('option');
                     option.value = watt;
-                    option.textContent = panel.title;
+                    option.textContent = displayText;
                     option.setAttribute('data-product-id', panel.product_id);
                     option.setAttribute('data-price', panel.price);
                     option.setAttribute('data-watt', watt);
+                    option.setAttribute('data-title', panel.title); // Store original title
                     // Fix image URL path
                     let imageUrl = panel.image_url;
                     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
@@ -2635,13 +2678,17 @@
             if (batterySelect && products.battery) {
                 batterySelect.innerHTML = '<option value="">-- Chọn loại pin lưu trữ --</option>';
                 products.battery.forEach(battery => {
+                    // Create formatted display text with tech specs
+                    const displayText = formatDisplayText(battery.title, battery.technical_description);
+                    
                     // Use product_id as value for better tracking
                     const option = document.createElement('option');
                     option.value = battery.product_id;
-                    option.textContent = battery.title;
+                    option.textContent = displayText;
                     option.setAttribute('data-product-id', battery.product_id);
                     option.setAttribute('data-price', battery.price);
-                    option.setAttribute('data-capacity', battery.title); // Store full title for later use
+                    option.setAttribute('data-capacity', battery.title); // Store original title
+                    option.setAttribute('data-title', battery.title); // Store original title
                     // Fix image URL path
                     let imageUrl = battery.image_url;
                     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
