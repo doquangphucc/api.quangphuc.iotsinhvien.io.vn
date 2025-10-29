@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
-    product_id INT NOT NULL,
+    product_id INT NULL COMMENT 'NULL for virtual items from survey',
     product_name VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
     price DECIMAL(15, 2) NOT NULL,

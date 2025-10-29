@@ -601,29 +601,57 @@
                     notes: document.getElementById('notes').value
                 };
 
-                // Prepare order data - API expects items with cart_item_id
-                const items = cart.map(item => ({
-                    cart_item_id: item.cart_id || item.id,
-                    product_id: item.id,
-                    quantity: item.quantity,
-                    price: item.price
-                }));
+                // Check if this is a survey package order (contains virtual items)
+                const hasVirtualItems = cart.some(item => item.isVirtual || !item.cart_id);
                 
-                console.log('Cart items:', cart);
-                console.log('Mapped items:', items);
-                console.log('First item structure:', items[0]);
+                let orderData, apiEndpoint;
                 
-                const orderData = {
-                    customer: customerData,
-                    items: items,
-                    voucher_codes: selectedVouchers.map(v => v.code)  // Send array of voucher codes
-                };
+                if (hasVirtualItems) {
+                    // Survey package order - send items with full info
+                    console.log('Detected survey package order');
+                    
+                    const items = cart.map(item => ({
+                        product_id: (item.id && typeof item.id === 'number') ? item.id : null,
+                        title: item.title,
+                        quantity: item.quantity,
+                        price: item.price,
+                        isVirtual: item.isVirtual || false
+                    }));
+                    
+                    orderData = {
+                        customer: customerData,
+                        items: items,
+                        voucher_codes: selectedVouchers.map(v => v.code)
+                    };
+                    
+                    apiEndpoint = '../api/create_order_from_survey.php';
+                    
+                } else {
+                    // Regular cart order - use cart_item_id
+                    console.log('Regular cart order');
+                    
+                    const items = cart.map(item => ({
+                        cart_item_id: item.cart_id || item.id,
+                        product_id: item.id,
+                        quantity: item.quantity,
+                        price: item.price
+                    }));
+                    
+                    orderData = {
+                        customer: customerData,
+                        items: items,
+                        voucher_codes: selectedVouchers.map(v => v.code)
+                    };
+                    
+                    apiEndpoint = '../api/create_order.php';
+                }
 
                 // Debug: Log the data being sent
                 console.log('Order data being sent:', orderData);
+                console.log('API endpoint:', apiEndpoint);
 
                 try {
-                    const response = await fetch('../api/create_order.php', {
+                    const response = await fetch(apiEndpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(orderData)
