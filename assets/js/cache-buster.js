@@ -177,9 +177,6 @@ async function injectContactFABs() {
         a.addEventListener('mouseleave', ()=>{ a.style.transform=''; a.style.boxShadow='0 10px 20px rgba(0,0,0,0.2)'; });
         // Tooltip
         a.title = label;
-        if (rotate) {
-            a.classList.add('fab-rotate');
-        }
         return a;
     }
 
@@ -201,23 +198,11 @@ async function injectContactFABs() {
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48" fill="none"><rect rx="10" ry="10" width="48" height="48" fill="white" opacity="0.15"/><path d="M8 18c0-5 4-9 9-9h14c5 0 9 4 9 9v6c0 5-4 9-9 9h-8l-5.5 4.2c-1.1.83-2.5-.34-2.1-1.6L16 33h-1c-5 0-7-4-7-9v-6z" fill="white" opacity="0.95"/><text x="14" y="29" font-size="12" font-weight="700" fill="#1d4ed8" font-family="Arial, Helvetica, sans-serif">Zalo</text></svg>',
         label: 'Chat Zalo',
         href: `https://zalo.me/${zaloNumber}`,
-        aria: 'Chat Zalo',
-        rotate: true
+        aria: 'Chat Zalo'
     });
 
     // Position above existing cart FAB if present
     // Our container starts at bottom:150px (above many page FABs). If a page has more FABs, developers can adjust easily.
-    // Add simple rotating animation style once
-    if (!document.getElementById('fab-rotate-style')) {
-        const style = document.createElement('style');
-        style.id = 'fab-rotate-style';
-        style.textContent = `
-            .fab-rotate { animation: fabspin 8s linear infinite; }
-            @keyframes fabspin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        `;
-        document.head.appendChild(style);
-    }
-
     container.appendChild(zaloFab);
     container.appendChild(hotlineFab);
     document.body.appendChild(container);
