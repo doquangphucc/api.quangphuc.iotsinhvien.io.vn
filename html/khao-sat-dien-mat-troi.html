@@ -1862,6 +1862,7 @@
             const solarPanelWatt = parseInt(selectedOption.value);
             const solarPanelPrice = parseInt(selectedOption.getAttribute('data-price'));
             const solarPanelImage = selectedOption.getAttribute('data-image');
+            const solarPanelProductId = parseInt(selectedOption.getAttribute('data-product-id'));
             
             // Điều chỉnh giờ nắng theo khu vực
             let peakSunHours = 4.4; // Mặc định
@@ -1930,6 +1931,11 @@
             
             // Chọn pin lưu trữ phù hợp
             const selectedBattery = batteries.find(bat => bat.capacity >= batteryCapacityNeeded) || batteries[0];
+            
+            // Lấy battery product_id từ select option
+            const batterySelect = document.querySelector('select[name="batteryType"]');
+            const selectedBatteryOption = batterySelect.options[batterySelect.selectedIndex];
+            const batteryProductId = parseInt(selectedBatteryOption.getAttribute('data-product-id'));
             
             // Chọn tủ điện phù hợp với biến tần
             // Logic tương tự inverter: nếu chọn 1 pha → lấy tủ 1 pha hoặc both, nếu chọn 3 pha → lấy tủ 3 pha hoặc both
@@ -2035,10 +2041,12 @@
                 solarPanelWatt,
                 solarPanelPrice,
                 solarPanelImage,
+                solarPanelProductId, // Product ID của tấm pin
                 panelTotalPrice,
                 roofArea,
                 selectedInverter,
                 selectedBattery,
+                batteryProductId, // Product ID của pin lưu trữ
                 batteryCapacityNeeded,
                 batteryRatio,
                 actualDailyKwh,
@@ -2521,10 +2529,13 @@
                     </div>
         </div>
 
-                <!-- Nút lưu báo giá -->
-                <div style="text-align: center; margin-top: 2rem;">
+                <!-- Nút lưu báo giá và mua gói -->
+                <div style="text-align: center; margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                     <button id="saveSurveyBtn" style="background: linear-gradient(135deg, #56ab2f 0%, #3FA34D 100%); color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(63,163,77,0.4); transition: all 0.3s;">
                         📤 Gửi Cho Đơn Vị Tư Vấn Và Lưu Báo Giá
+                    </button>
+                    <button id="buyPackageBtn" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.4); transition: all 0.3s;">
+                        🛒 Mua Gói Này
                     </button>
                 </div>
             `;
@@ -2534,6 +2545,10 @@
             
             // Scroll to results
             resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Store result for later use
+            window.currentSurveyResult = result;
+            window.currentFormData = formData;
             
             // Add event listener to save button (after it's created)
             const saveSurveyBtn = document.getElementById('saveSurveyBtn');
@@ -2545,6 +2560,18 @@
                 });
             } else {
                 console.error('Save button still not found after creation!');
+            }
+            
+            // Add event listener to buy package button
+            const buyPackageBtn = document.getElementById('buyPackageBtn');
+            if (buyPackageBtn) {
+                console.log('Buy package button found, adding event listener');
+                buyPackageBtn.addEventListener('click', function(e) {
+                    console.log('Buy package button clicked!', e);
+                    buyPackage();
+                });
+            } else {
+                console.error('Buy package button not found after creation!');
             }
         }
 
@@ -3219,6 +3246,68 @@
             setTimeout(() => {
                 notification.remove();
             }, 5000);
+        }
+
+        // Function to add survey package to cart and go to checkout
+        async function buyPackage() {
+            console.log('buyPackage function called');
+            
+            if (!window.currentSurveyResult) {
+                showNotification('⚠️ Vui lòng tính toán báo giá trước khi mua', 'error');
+                return;
+            }
+
+            const result = window.currentSurveyResult;
+            
+            try {
+                // Check if ShoppingCart is available
+                if (!window.ShoppingCart) {
+                    showNotification('❌ Lỗi: Không thể truy cập giỏ hàng', 'error');
+                    return;
+                }
+
+                showNotification('⏳ Đang thêm sản phẩm vào giỏ hàng...', 'info');
+
+                // Clear cart first
+                window.ShoppingCart.clearCart();
+
+                // Add solar panel
+                if (result.solarPanelProductId) {
+                    await window.ShoppingCart.addItem(result.solarPanelProductId, result.panelCount);
+                    console.log(`Added ${result.panelCount} solar panels (ID: ${result.solarPanelProductId})`);
+                }
+
+                // Add battery
+                if (result.batteryProductId) {
+                    await window.ShoppingCart.addItem(result.batteryProductId, 1);
+                    console.log(`Added 1 battery (ID: ${result.batteryProductId})`);
+                }
+
+                // Note: Inverter, cabinet, and accessories might not have product IDs in the system
+                // They are configured from survey_product_configs table
+                // We'll add a note in localStorage for the checkout page
+                const surveyNote = {
+                    fromSurvey: true,
+                    inverter: result.selectedInverter.name,
+                    invertorPrice: result.selectedInverter.price,
+                    cabinet: result.accessories.find(a => a.name.includes('Tủ Điện'))?.name || 'Tủ điện',
+                    cabinetPrice: result.accessories.find(a => a.name.includes('Tủ Điện'))?.totalPrice || 0,
+                    totalEstimate: result.totalPrice,
+                    note: `Gói khảo sát điện mặt trời - ${result.systemSizeKw}kWp - ${result.panelCount} tấm pin - Inverter: ${result.selectedInverter.name} - Pin: ${result.selectedBattery.name}`
+                };
+                localStorage.setItem('surveyPackageNote', JSON.stringify(surveyNote));
+
+                showNotification('✅ Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                
+                // Redirect to checkout page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'dat-hang.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error adding package to cart:', error);
+                showNotification('❌ Lỗi khi thêm vào giỏ hàng: ' + error.message, 'error');
+            }
         }
     </script>
 

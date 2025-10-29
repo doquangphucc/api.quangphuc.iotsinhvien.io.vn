@@ -10,6 +10,7 @@ window.orderItems = orderItems;
 document.addEventListener('DOMContentLoaded', async function() {
     await loadOrderItems();
     loadCities();
+    checkSurveyPackage();
 });
 
 // Load order items (from cart)
@@ -318,5 +319,84 @@ function showToast(message, type = 'info') {
         toast.style.opacity = '0';
         toast.addEventListener('transitionend', () => toast.remove());
     }, 3000);
+}
+
+// Check if user came from survey page
+function checkSurveyPackage() {
+    const surveyNote = localStorage.getItem('surveyPackageNote');
+    
+    if (surveyNote) {
+        try {
+            const note = JSON.parse(surveyNote);
+            
+            // Add survey note to notes field
+            const notesField = document.getElementById('notes');
+            if (notesField && note.note) {
+                notesField.value = note.note;
+            }
+            
+            // Show notification
+            showToast('✅ Đã thêm gói khảo sát điện mặt trời vào đơn hàng', 'success');
+            
+            // Display special banner
+            displaySurveyBanner(note);
+            
+            // Clear the note after displaying
+            localStorage.removeItem('surveyPackageNote');
+            
+        } catch (error) {
+            console.error('Error parsing survey note:', error);
+        }
+    }
+}
+
+// Display survey package banner
+function displaySurveyBanner(note) {
+    const container = document.querySelector('.lg\\:col-span-2'); // Find the left column
+    if (!container) return;
+    
+    const banner = document.createElement('div');
+    banner.className = 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 mb-6';
+    banner.innerHTML = `
+        <div class="flex gap-4">
+            <div class="flex-shrink-0">
+                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-bold text-blue-900 dark:text-blue-100 text-lg mb-2">
+                    📦 Gói Khảo Sát Điện Mặt Trời
+                </h3>
+                <p class="text-blue-800 dark:text-blue-200 text-sm mb-3">
+                    ${note.note}
+                </p>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg">
+                        <div class="text-blue-600 dark:text-blue-400 font-semibold mb-1">Inverter</div>
+                        <div class="text-gray-700 dark:text-gray-300">${note.inverter}</div>
+                    </div>
+                    <div class="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg">
+                        <div class="text-blue-600 dark:text-blue-400 font-semibold mb-1">Tủ điện</div>
+                        <div class="text-gray-700 dark:text-gray-300">${note.cabinet}</div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-blue-200 dark:border-blue-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-blue-700 dark:text-blue-300 font-semibold">Tổng ước tính:</span>
+                        <span class="text-blue-900 dark:text-blue-100 font-bold text-xl">${formatPrice(note.totalEstimate)}</span>
+                    </div>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                        💡 Giá cuối cùng sẽ được xác nhận sau khi bộ phận kinh doanh liên hệ với bạn
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Insert banner before the first form section
+    container.insertBefore(banner, container.firstChild);
 }
 
