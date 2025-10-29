@@ -654,6 +654,34 @@
                 const systemSizeKw = r?.totalCapacity || 0;
                 const panelCount = r?.panelsNeeded || 0;
 
+                // Helper function to fix image URL path
+                function fixImageUrl(imageUrl) {
+                    if (!imageUrl) return null;
+                    
+                    // If already absolute URL, return as is
+                    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                        return imageUrl;
+                    }
+                    
+                    // If starts with /assets, convert to relative path for dat-hang.html
+                    if (imageUrl.startsWith('/assets/')) {
+                        return '..' + imageUrl;
+                    }
+                    
+                    // If starts with assets/ (no leading slash), add ../
+                    if (imageUrl.startsWith('assets/')) {
+                        return '../' + imageUrl;
+                    }
+                    
+                    // If already relative path, return as is
+                    if (imageUrl.startsWith('../')) {
+                        return imageUrl;
+                    }
+                    
+                    // Otherwise, assume it's relative to assets
+                    return '../assets/img/products/' + imageUrl;
+                }
+
                 // Prepare survey package data with all items
                 const surveyPackage = {
                     fromSurvey: true,
@@ -664,7 +692,7 @@
                             title: r?.panelName || 'Tấm Pin',
                             price: Number(r?.panelPrice || 0),
                             quantity: panelCount,
-                            image_url: null // API doesn't return image
+                            image_url: fixImageUrl(r?.panelImage)
                         },
                         // Inverter
                         {
@@ -672,7 +700,7 @@
                             title: r?.inverterName || 'Inverter',
                             price: Number(r?.inverterPrice || 0),
                             quantity: 1,
-                            image_url: null,
+                            image_url: fixImageUrl(r?.inverterImage),
                             isVirtual: true
                         },
                         // Pin lưu trữ
@@ -681,7 +709,7 @@
                             title: r?.batteryName || 'Pin lưu trữ',
                             price: Number(r?.batteryUnitPrice || 0),
                             quantity: Number(r?.batteryQuantity || 1),
-                            image_url: null
+                            image_url: fixImageUrl(r?.batteryImage)
                         }
                     ],
                     // Add all accessories as separate items
@@ -692,7 +720,7 @@
                             title: r?.cabinetName || 'Tủ điện',
                             price: Number(r?.cabinetPrice || 0),
                             quantity: 1,
-                            image_url: null,
+                            image_url: fixImageUrl(r?.cabinetImage),
                             isVirtual: true
                         },
                         // Vật tư và phụ kiện đi kèm (tổng)

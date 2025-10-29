@@ -24,7 +24,7 @@ try {
     // Check if user is admin
     $isAdmin = is_admin();
     
-    // Get survey data
+    // Get survey data with product images
     $sql = "SELECT 
                 s.id,
                 s.user_id,
@@ -78,9 +78,17 @@ try {
                 r.accessories_cost,
                 r.labor_cost,
                 r.total_cost_without_battery,
-                r.total_cost
+                r.total_cost,
+                p_panel.image_url as panel_image_url,
+                p_inverter.image_url as inverter_image_url,
+                p_battery.image_url as battery_image_url,
+                p_cabinet.image_url as cabinet_image_url
             FROM solar_surveys s
             LEFT JOIN survey_results r ON s.id = r.survey_id
+            LEFT JOIN products p_panel ON r.panel_id > 0 AND r.panel_id = p_panel.id
+            LEFT JOIN products p_inverter ON r.inverter_id > 0 AND r.inverter_id = p_inverter.id
+            LEFT JOIN products p_battery ON r.battery_id > 0 AND r.battery_id = p_battery.id
+            LEFT JOIN products p_cabinet ON r.cabinet_id > 0 AND r.cabinet_id = p_cabinet.id
             WHERE s.id = ?";
     
     // If admin, allow viewing all surveys. Otherwise, only user's own surveys
@@ -122,20 +130,24 @@ try {
             'panelPrice' => isset($survey['panel_price']) && $survey['panel_price'] !== null ? (int)$survey['panel_price'] : null,
             'panelsNeeded' => isset($survey['panels_needed']) && $survey['panels_needed'] !== null ? (int)$survey['panels_needed'] : null,
             'panelCost' => isset($survey['panel_cost']) && $survey['panel_cost'] !== null ? (int)$survey['panel_cost'] : null,
+            'panelImage' => $survey['panel_image_url'] ?? null,
             'energyPerPanelPerDay' => isset($survey['energy_per_panel_per_day']) && $survey['energy_per_panel_per_day'] !== null ? (float)$survey['energy_per_panel_per_day'] : null,
             'totalCapacity' => isset($survey['total_capacity']) && $survey['total_capacity'] !== null ? (float)$survey['total_capacity'] : null,
             'inverterId' => isset($survey['inverter_id']) && $survey['inverter_id'] !== null ? (int)$survey['inverter_id'] : null,
             'inverterName' => $survey['inverter_name'] ?? null,
             'inverterCapacity' => isset($survey['inverter_capacity']) && $survey['inverter_capacity'] !== null ? (float)$survey['inverter_capacity'] : null,
             'inverterPrice' => isset($survey['inverter_price']) && $survey['inverter_price'] !== null ? (int)$survey['inverter_price'] : null,
+            'inverterImage' => $survey['inverter_image_url'] ?? null,
             'cabinetId' => isset($survey['cabinet_id']) && $survey['cabinet_id'] !== null ? (int)$survey['cabinet_id'] : null,
             'cabinetName' => $survey['cabinet_name'] ?? null,
             'cabinetCapacity' => isset($survey['cabinet_capacity']) && $survey['cabinet_capacity'] !== null ? (float)$survey['cabinet_capacity'] : null,
             'cabinetPrice' => isset($survey['cabinet_price']) && $survey['cabinet_price'] !== null ? (int)$survey['cabinet_price'] : null,
+            'cabinetImage' => $survey['cabinet_image_url'] ?? null,
             'batteryNeeded' => isset($survey['battery_needed']) && $survey['battery_needed'] !== null ? (int)$survey['battery_needed'] : null,
             'batteryType' => $survey['battery_type'] ?? null,
             'batteryId' => isset($survey['battery_id']) && $survey['battery_id'] !== null ? (int)$survey['battery_id'] : null,
             'batteryName' => $survey['battery_name'] ?? null,
+            'batteryImage' => $survey['battery_image_url'] ?? null,
             'batteryCapacity' => isset($survey['battery_capacity']) && $survey['battery_capacity'] !== null ? (float)$survey['battery_capacity'] : null,
             'batteryQuantity' => isset($survey['battery_quantity']) && $survey['battery_quantity'] !== null ? (int)$survey['battery_quantity'] : null,
             'batteryUnitPrice' => isset($survey['battery_unit_price']) && $survey['battery_unit_price'] !== null ? (int)$survey['battery_unit_price'] : null,
