@@ -147,31 +147,40 @@ function renderOrderItems() {
         return;
     }
     
-    container.innerHTML = orderItems.map(item => `
-        <div class="flex gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-            <div class="w-16 h-16 flex-shrink-0">
-                <img 
-                    src="../${item.image_url}" 
-                    alt="${item.title}"
-                    class="w-full h-full object-cover rounded-lg"
-                    onerror="this.src='../assets/img/logo.jpg'"
-                >
-            </div>
-            <div class="flex-grow">
-                <h4 class="font-semibold text-gray-800 dark:text-white text-sm mb-1">
-                    ${item.title}
-                </h4>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600 dark:text-gray-400 text-sm">
-                        SL: ${item.quantity}
-                    </span>
-                    <span class="font-bold text-green-600">
-                        ${formatPrice(item.price * item.quantity)}
-                    </span>
+    container.innerHTML = orderItems.map(item => {
+        // Check if image_url is an emoji or a path
+        const isEmoji = item.image_url && item.image_url.length <= 3 && !item.image_url.includes('/');
+        
+        const imageHtml = isEmoji 
+            ? `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-3xl">${item.image_url}</div>`
+            : `<img 
+                src="../${item.image_url}" 
+                alt="${item.title}"
+                class="w-full h-full object-cover rounded-lg"
+                onerror="this.src='../assets/img/logo.jpg'"
+            >`;
+        
+        return `
+            <div class="flex gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="w-16 h-16 flex-shrink-0">
+                    ${imageHtml}
+                </div>
+                <div class="flex-grow">
+                    <h4 class="font-semibold text-gray-800 dark:text-white text-sm mb-1">
+                        ${item.title}
+                    </h4>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400 text-sm">
+                            SL: ${item.quantity}
+                        </span>
+                        <span class="font-bold text-green-600">
+                            ${formatPrice(item.price * item.quantity)}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
     
     updateOrderSummary();
 }
