@@ -113,46 +113,97 @@ try {
     // This handles cases where inverter/cabinet are virtual items without product_id
     
     // Helper function to find image by product name with multiple matching strategies
+    // This mirrors the logic in get_survey_products_public.php to ensure consistency
     $findImageByName = function($productName, $pdo, $category = null) use (&$survey) {
         if (empty($productName)) return null;
         
-        // Strategy 1: Exact match or contains
-        $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? AND is_active = 1 LIMIT 1");
+        // Strategy 1: Query through survey_product_configs (like get_survey_products_public.php)
+        // This ensures we only get products that are actually configured for surveys
+        if ($category) {
+            $stmt = $pdo->prepare("
+                SELECT p.image_url 
+                FROM products p
+                INNER JOIN survey_product_configs spc ON p.id = spc.product_id
+                WHERE p.is_active = 1 
+                  AND spc.is_active = 1
+                  AND spc.survey_category = ?
+                  AND p.title LIKE ?
+                LIMIT 1
+            ");
+            $searchTerm = '%' . $productName . '%';
+            $stmt->execute([$category, $searchTerm]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result && !empty($result['image_url'])) {
+                error_log("Found image via survey_category='{$category}': {$result['image_url']}");
+                return $result['image_url'];
+            }
+        }
+        
+        // Strategy 2: Query through survey_product_configs without category filter
+        $stmt = $pdo->prepare("
+            SELECT p.image_url 
+            FROM products p
+            INNER JOIN survey_product_configs spc ON p.id = spc.product_id
+            WHERE p.is_active = 1 
+              AND spc.is_active = 1
+              AND p.title LIKE ?
+            LIMIT 1
+        ");
         $searchTerm = '%' . $productName . '%';
         $stmt->execute([$searchTerm]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result && !empty($result['image_url'])) {
+            error_log("Found image via title match: {$result['image_url']}");
             return $result['image_url'];
         }
         
-        // Strategy 2: Extract key words (numbers, brand names) and search
+        // Strategy 3: Extract key words (numbers, brand names) and search via survey_product_configs
         // Extract numbers (e.g., "590W" -> "590", "5kW" -> "5")
-        if (preg_match_all('/(\d+)\s*(?:W|kW|kwh)/i', $productName, $matches)) {
+        if (preg_match_all('/(\d+)\s*(?:W|kW|kwh|K|Kwh)/i', $productName, $matches)) {
             foreach ($matches[1] as $number) {
-                $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? AND is_active = 1 LIMIT 1");
+                $stmt = $pdo->prepare("
+                    SELECT p.image_url 
+                    FROM products p
+                    INNER JOIN survey_product_configs spc ON p.id = spc.product_id
+                    WHERE p.is_active = 1 
+                      AND spc.is_active = 1
+                      AND p.title LIKE ?
+                    LIMIT 1
+                ");
                 $stmt->execute(["%{$number}%"]);
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 if ($result && !empty($result['image_url'])) {
+                    error_log("Found image via number '{$number}': {$result['image_url']}");
                     return $result['image_url'];
                 }
             }
         }
         
-        // Strategy 3: Extract brand/model names (Jinko, ECO Hybrid, BYD, etc.)
+        // Strategy 4: Extract brand/model names and search via survey_product_configs
         $keywords = [];
-        if (preg_match('/(Jinko|ECO Hybrid|BYD|Luxpower|Sungrow)/i', $productName, $brandMatch)) {
+        if (preg_match('/(Jinko|ECO Hybrid|ECO|BYD|Luxpower|Sungrow|A-Cornex)/i', $productName, $brandMatch)) {
             $keywords[] = $brandMatch[1];
         }
         
         foreach ($keywords as $keyword) {
-            $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? AND is_active = 1 LIMIT 1");
+            $stmt = $pdo->prepare("
+                SELECT p.image_url 
+                FROM products p
+                INNER JOIN survey_product_configs spc ON p.id = spc.product_id
+                WHERE p.is_active = 1 
+                  AND spc.is_active = 1
+                  AND p.title LIKE ?
+                LIMIT 1
+            ");
             $stmt->execute(["%{$keyword}%"]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result && !empty($result['image_url'])) {
+                error_log("Found image via brand '{$keyword}': {$result['image_url']}");
                 return $result['image_url'];
             }
         }
         
+        error_log("Could not find image for: '{$productName}' (category: '{$category}')");
         return null;
     };
     
