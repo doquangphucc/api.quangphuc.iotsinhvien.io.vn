@@ -109,6 +109,38 @@ try {
         exit;
     }
     
+    // If JOIN didn't find images (product_id = 0 or not exists), try to find by product name
+    // This handles cases where inverter/cabinet are virtual items without product_id
+    
+    // Helper function to find image by product name
+    $findImageByName = function($productName, $pdo) {
+        if (empty($productName)) return null;
+        
+        // Try to find product by matching title (case-insensitive, partial match)
+        $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? LIMIT 1");
+        $searchTerm = '%' . $productName . '%';
+        $stmt->execute([$searchTerm]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['image_url'] : null;
+    };
+    
+    // Try to find images by name if JOIN didn't find them
+    if (empty($survey['panel_image_url']) && !empty($survey['panel_name'])) {
+        $survey['panel_image_url'] = $findImageByName($survey['panel_name'], $pdo);
+    }
+    
+    if (empty($survey['inverter_image_url']) && !empty($survey['inverter_name'])) {
+        $survey['inverter_image_url'] = $findImageByName($survey['inverter_name'], $pdo);
+    }
+    
+    if (empty($survey['battery_image_url']) && !empty($survey['battery_name'])) {
+        $survey['battery_image_url'] = $findImageByName($survey['battery_name'], $pdo);
+    }
+    
+    if (empty($survey['cabinet_image_url']) && !empty($survey['cabinet_name'])) {
+        $survey['cabinet_image_url'] = $findImageByName($survey['cabinet_name'], $pdo);
+    }
+    
     // Format the response
     $formattedSurvey = [
         'id' => (int)$survey['id'],

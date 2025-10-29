@@ -2059,6 +2059,7 @@
                 panelTotalPrice,
                 roofArea,
                 selectedInverter,
+                selectedCabinet,
                 selectedBattery,
                 batteryProductId, // Product ID của pin lưu trữ
                 batteryCapacityNeeded,
@@ -2843,6 +2844,7 @@
                 
                 products.inverter['1_phase']?.forEach(inv => {
                     invertersByPhase['1'].push({
+                        id: inv.id,
                         name: inv.title,
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
@@ -2854,6 +2856,7 @@
                 
                 products.inverter['3_phase']?.forEach(inv => {
                     invertersByPhase['3'].push({
+                        id: inv.id,
                         name: inv.title,
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
@@ -2865,6 +2868,7 @@
                 
                 products.inverter['both']?.forEach(inv => {
                     invertersByPhase['both'].push({
+                        id: inv.id,
                         name: inv.title,
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
@@ -2906,6 +2910,7 @@
                 
                 products.electrical_cabinet['1_phase']?.forEach(cab => {
                     electricalCabinets['1'].push({
+                        id: cab.id,
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
@@ -2915,6 +2920,7 @@
                 
                 products.electrical_cabinet['3_phase']?.forEach(cab => {
                     electricalCabinets['3'].push({
+                        id: cab.id,
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
@@ -2924,6 +2930,7 @@
                 
                 products.electrical_cabinet['both']?.forEach(cab => {
                     electricalCabinets['both'].push({
+                        id: cab.id,
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
@@ -3195,13 +3202,13 @@
                     energyPerPanelPerDay: result.actualDailyKwh / result.panelCount,
                     totalCapacity: result.systemSizeWatt / 1000, // Convert to kW
                     inverter: {
-                        id: 0,
+                        id: result.selectedInverter?.id || 0,
                         name: result.selectedInverter.name,
                         capacity: result.selectedInverter.power / 1000,
                         price: result.selectedInverter.price
                     },
                     cabinet: {
-                        id: 0,
+                        id: result.selectedCabinet?.id || 0,
                         name: cabinetName,
                         capacity: result.systemSizeKw,
                         price: cabinetPrice
