@@ -294,6 +294,9 @@
                     <button onclick="window.print()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
                         📄 In báo giá
                     </button>
+                    <button onclick="buyPackageFromDetail()" id="buyPackageBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
+                        🛒 Mua gói này
+                    </button>
                     <a href="khao-sat-dien-mat-troi.html" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 text-center flex items-center justify-center">
                         ✨ Tạo khảo sát mới
                     </a>
@@ -611,6 +614,163 @@
             errorStateEl.classList.remove('hidden');
             
             document.getElementById('errorMessage').textContent = message;
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Function to prepare survey package from detail page and go to checkout
+        function buyPackageFromDetail() {
+            console.log('buyPackageFromDetail function called');
+            
+            if (!surveyData) {
+                showNotification('⚠️ Không tìm thấy dữ liệu khảo sát', 'error');
+                return;
+            }
+
+            const survey = surveyData;
+            const r = survey.results;
+            
+            try {
+                showNotification('⏳ Đang chuẩn bị gói khảo sát...', 'info');
+
+                // Calculate system size from panels
+                const systemSizeKw = r?.totalCapacity || 0;
+                const panelCount = r?.panelsNeeded || 0;
+
+                // Prepare survey package data with all items
+                const surveyPackage = {
+                    fromSurvey: true,
+                    items: [
+                        // Tấm pin
+                        {
+                            id: r?.panelId || null,
+                            title: r?.panelName || 'Tấm Pin',
+                            price: Number(r?.panelPrice || 0),
+                            quantity: panelCount,
+                            image_url: null // API doesn't return image
+                        },
+                        // Inverter
+                        {
+                            id: r?.inverterId || null,
+                            title: r?.inverterName || 'Inverter',
+                            price: Number(r?.inverterPrice || 0),
+                            quantity: 1,
+                            image_url: null,
+                            isVirtual: true
+                        },
+                        // Pin lưu trữ
+                        {
+                            id: r?.batteryId || null,
+                            title: r?.batteryName || 'Pin lưu trữ',
+                            price: Number(r?.batteryUnitPrice || 0),
+                            quantity: Number(r?.batteryQuantity || 1),
+                            image_url: null
+                        }
+                    ],
+                    // Add all accessories as separate items
+                    accessories: [
+                        // Tủ điện
+                        {
+                            id: r?.cabinetId || null,
+                            title: r?.cabinetName || 'Tủ điện',
+                            price: Number(r?.cabinetPrice || 0),
+                            quantity: 1,
+                            image_url: null,
+                            isVirtual: true
+                        },
+                        // Vật tư và phụ kiện đi kèm (tổng)
+                        {
+                            id: 'accessory_phukien',
+                            title: 'Vật tư và phụ kiện đi kèm',
+                            price: Number(r?.accessoriesCost || 0),
+                            quantity: 1,
+                            image_url: null,
+                            isVirtual: true
+                        },
+                        // Kẹp biên
+                        {
+                            id: 'accessory_clip',
+                            title: 'Kẹp biên, Kẹp giữa tấm PIN',
+                            price: Number(r?.clipPrice || 0),
+                            quantity: Number(r?.clipQty || 0),
+                            image_url: null,
+                            isVirtual: true
+                        },
+                        // Công thợ
+                        {
+                            id: 'accessory_labor',
+                            title: 'Chi phí công thợ lắp đặt trọn gói',
+                            price: Number(r?.laborCost || 0),
+                            quantity: 1,
+                            image_url: '🔧',
+                            isVirtual: true
+                        },
+                        // Vận chuyển
+                        {
+                            id: 'accessory_transport',
+                            title: 'Chi phí vận chuyển thiết bị',
+                            price: 0,
+                            quantity: 1,
+                            image_url: '🚛',
+                            isVirtual: true
+                        },
+                        // Dây DC
+                        {
+                            id: 'accessory_dc_cable',
+                            title: 'Dây DC chuyên dụng',
+                            price: Number(r?.dcCablePrice || 0),
+                            quantity: Number(r?.dcCableLength || 100),
+                            image_url: null,
+                            isVirtual: true
+                        }
+                    ],
+                    // Summary info
+                    summary: {
+                        inverter: r?.inverterName || 'Inverter',
+                        invertorPrice: Number(r?.inverterPrice || 0),
+                        cabinet: r?.cabinetName || 'Tủ điện',
+                        cabinetPrice: Number(r?.cabinetPrice || 0),
+                        totalEstimate: Number(r?.totalCost || 0),
+                        systemSizeKw: systemSizeKw,
+                        panelCount: panelCount,
+                        region: survey.region,
+                        phase: survey.phase
+                    },
+                    note: `Gói khảo sát điện mặt trời - ${systemSizeKw}kWp - ${panelCount} tấm pin - Inverter: ${r?.inverterName || 'N/A'} - Pin: ${r?.batteryName || 'N/A'}`
+                };
+
+                // Save to localStorage
+                localStorage.setItem('surveyPackage', JSON.stringify(surveyPackage));
+                console.log('Survey package saved to localStorage:', surveyPackage);
+
+                showNotification('✅ Đã chuẩn bị gói khảo sát!', 'success');
+                
+                // Redirect to checkout page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'dat-hang.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error preparing package:', error);
+                showNotification('❌ Lỗi khi chuẩn bị gói: ' + error.message, 'error');
+            }
         }
     </script>
     
