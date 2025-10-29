@@ -87,15 +87,15 @@ try {
     $orderId = $pdo->lastInsertId();
     
     // Add order items (including virtual items)
+    // Note: Explicitly specify columns to avoid order mismatch
     $stmt = $pdo->prepare("
         INSERT INTO order_items (
             order_id,
             product_id,
             product_name,
             quantity,
-            price,
-            image_url
-        ) VALUES (?, ?, ?, ?, ?, ?)
+            price
+        ) VALUES (?, ?, ?, ?, ?)
     ");
     
     foreach ($items as $item) {
@@ -105,13 +105,15 @@ try {
             $productId = intval($item['product_id']);
         }
         
+        // Debug logging
+        error_log("Inserting order item - Order ID: {$orderId}, Product ID: {$productId}, Name: " . ($item['title'] ?? 'Unknown'));
+        
         $stmt->execute([
             $orderId,
             $productId,
             $item['title'] ?? $item['name'] ?? 'Unknown',
             $item['quantity'] ?? 1,
-            $item['price'] ?? 0,
-            $item['image_url'] ?? null
+            $item['price'] ?? 0
         ]);
     }
     
