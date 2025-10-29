@@ -2628,6 +2628,26 @@
             }
         }
 
+        // Helper function to fix image URL path
+        function fixImageUrl(imageUrl) {
+            if (!imageUrl) return '';
+            
+            // Remove leading '../', '..//', './', etc.
+            imageUrl = imageUrl.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
+            
+            // If already starts with http or https, return as is
+            if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                return imageUrl;
+            }
+            
+            // Add leading slash if not present
+            if (!imageUrl.startsWith('/')) {
+                imageUrl = '/' + imageUrl;
+            }
+            
+            return imageUrl;
+        }
+        
         // Helper function to create display text from technical description
         function formatDisplayText(title, technicalDescription) {
             if (!technicalDescription) return title;
@@ -2687,12 +2707,7 @@
                     option.setAttribute('data-price', panel.price);
                     option.setAttribute('data-watt', watt);
                     option.setAttribute('data-title', panel.title); // Store original title
-                    // Fix image URL path
-                    let imageUrl = panel.image_url;
-                    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-                        imageUrl = '/' + imageUrl;
-                    }
-                    option.setAttribute('data-image', imageUrl);
+                    option.setAttribute('data-image', fixImageUrl(panel.image_url));
                     solarPanelSelect.appendChild(option);
                 });
                 console.log('✅ Đã load', products.solar_panel.length, 'loại tấm pin từ admin');
@@ -2714,12 +2729,7 @@
                     option.setAttribute('data-price', battery.price);
                     option.setAttribute('data-capacity', battery.title); // Store original title
                     option.setAttribute('data-title', battery.title); // Store original title
-                    // Fix image URL path
-                    let imageUrl = battery.image_url;
-                    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-                        imageUrl = '/' + imageUrl;
-                    }
-                    option.setAttribute('data-image', imageUrl);
+                    option.setAttribute('data-image', fixImageUrl(battery.image_url));
                     batterySelect.appendChild(option);
                 });
                 console.log('✅ Đã load', products.battery.length, 'loại pin lưu trữ từ admin');
@@ -2737,7 +2747,7 @@
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
                         warranty: "12 tháng",
-                        image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
+                        image: fixImageUrl(inv.image_url),
                         phase: "1"
                     });
                 });
@@ -2748,7 +2758,7 @@
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
                         warranty: "12 tháng",
-                        image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
+                        image: fixImageUrl(inv.image_url),
                         phase: "3"
                     });
                 });
@@ -2759,10 +2769,15 @@
                         power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
                         price: inv.price,
                         warranty: "12 tháng",
-                        image: inv.image_url.startsWith('http') ? inv.image_url : '/' + inv.image_url,
+                        image: fixImageUrl(inv.image_url),
                         phase: "both"
                     });
                 });
+                
+                const inverterCount = (products.inverter['1_phase']?.length || 0) + 
+                                     (products.inverter['3_phase']?.length || 0) + 
+                                     (products.inverter['both']?.length || 0);
+                console.log('✅ Đã load', inverterCount, 'loại biến tần từ admin');
             }
 
             // Update batteries with API data
@@ -2778,7 +2793,7 @@
                         capacity: capacity,
                         price: bat.price,
                         warranty: "10 năm",
-                        image: bat.image_url.startsWith('http') ? bat.image_url : '/' + bat.image_url
+                        image: fixImageUrl(bat.image_url)
                     });
                 });
             }
@@ -2794,7 +2809,7 @@
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
-                        image: cab.image_url.startsWith('http') ? cab.image_url : '/' + cab.image_url
+                        image: fixImageUrl(cab.image_url)
                     });
                 });
                 
@@ -2803,7 +2818,7 @@
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
-                        image: cab.image_url.startsWith('http') ? cab.image_url : '/' + cab.image_url
+                        image: fixImageUrl(cab.image_url)
                     });
                 });
                 
@@ -2812,9 +2827,14 @@
                         name: cab.title,
                         power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
                         price: cab.price,
-                        image: cab.image_url.startsWith('http') ? cab.image_url : '/' + cab.image_url
+                        image: fixImageUrl(cab.image_url)
                     });
                 });
+                
+                const cabinetCount = (products.electrical_cabinet['1_phase']?.length || 0) + 
+                                    (products.electrical_cabinet['3_phase']?.length || 0) + 
+                                    (products.electrical_cabinet['both']?.length || 0);
+                console.log('✅ Đã load', cabinetCount, 'loại tủ điện từ admin');
             }
         }
 
