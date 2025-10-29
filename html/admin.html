@@ -4880,10 +4880,17 @@
                     contactsData = data.channels; // Store globally
                     renderContactsTable(data.channels);
                 } else {
-                    showToast(data.message || 'Lỗi khi tải danh sách kênh liên hệ', 'error');
+                    // Only show error if it's not a permission issue (permission should be checked before loading)
+                    if (data.message && !data.message.includes('quyền') && !data.message.includes('Unauthorized')) {
+                        showToast(data.message || 'Lỗi khi tải danh sách kênh liên hệ', 'error');
+                    }
                 }
             } catch (error) {
-                showToast('Lỗi khi tải danh sách kênh liên hệ: ' + error.message, 'error');
+                console.error('Error loading contacts:', error);
+                // Only show error if it's not a permission issue
+                if (!error.message.includes('quyền') && !error.message.includes('Unauthorized')) {
+                    showToast('Lỗi khi tải danh sách kênh liên hệ: ' + error.message, 'error');
+                }
             }
         }
         

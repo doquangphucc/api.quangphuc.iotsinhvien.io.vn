@@ -9,12 +9,13 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Check authentication and permissions
-if (!isAdminLoggedIn()) {
+// Check authentication - user must be logged in
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
+// Check permission for contacts module
 $action = isset($_POST['id']) && $_POST['id'] ? 'edit' : 'create';
 if (!hasPermission($conn, 'contacts', $action)) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền ' . ($action === 'edit' ? 'sửa' : 'tạo') . ' kênh liên hệ']);

@@ -9,12 +9,13 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Check authentication and permissions
-if (!isAdminLoggedIn()) {
+// Check authentication - user must be logged in
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
+// Check permission for contacts module
 if (!hasPermission($conn, 'contacts', 'delete')) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa kênh liên hệ']);
     exit;
