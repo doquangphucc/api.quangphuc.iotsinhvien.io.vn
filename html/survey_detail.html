@@ -439,6 +439,10 @@
         }
         
         function populateSurveyData(survey) {
+            // Debug: Log full API response
+            console.log('populateSurveyData - Full survey object:', survey);
+            console.log('populateSurveyData - Results:', survey.results);
+            
             // Set quote date and number
             const createdAt = new Date(survey.createdAt);
             document.getElementById('quoteDate').textContent = createdAt.toLocaleDateString('vi-VN');
@@ -448,6 +452,44 @@
             document.getElementById('customerName').textContent = survey.fullName || '-';
             document.getElementById('customerPhone').textContent = survey.phone || '-';
             document.getElementById('customerAddress').textContent = `Khu vực: ${survey.regionName || '-'}`;
+            
+            const r = survey.results;
+            
+            // Debug: Log image URLs from API
+            console.log('populateSurveyData - panelImage:', r?.panelImage);
+            console.log('populateSurveyData - inverterImage:', r?.inverterImage);
+            console.log('populateSurveyData - batteryImage:', r?.batteryImage);
+            console.log('populateSurveyData - cabinetImage:', r?.cabinetImage);
+            
+            // Helper function to fix image URL path for survey_detail.html
+            function fixImageUrlForDetailPage(imageUrl) {
+                if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined' || imageUrl.trim() === '') {
+                    return null;
+                }
+                
+                // If already absolute URL, return as is
+                if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                    return imageUrl;
+                }
+                
+                // If starts with /assets, convert to relative path (from html/ directory)
+                if (imageUrl.startsWith('/assets/')) {
+                    return '..' + imageUrl;
+                }
+                
+                // If starts with assets/ (no leading slash), add ../
+                if (imageUrl.startsWith('assets/')) {
+                    return '../' + imageUrl;
+                }
+                
+                // If already relative path, return as is
+                if (imageUrl.startsWith('../')) {
+                    return imageUrl;
+                }
+                
+                // Otherwise, assume it's relative to assets
+                return '../assets/img/products/' + imageUrl;
+            }
             
             // Build products table
             const productsTableBody = document.getElementById('productsTableBody');
@@ -462,7 +504,7 @@
                     warranty: '12 năm',
                     unit: 'Tấm',
                     qty: Number(r?.panelsNeeded ?? 0),
-                    image: null,
+                    image: fixImageUrlForDetailPage(r?.panelImage),
                     unitPrice: Number(r?.panelPrice ?? 0),
                     totalPrice: Number(r?.panelCost ?? 0)
                 },
@@ -472,7 +514,7 @@
                     warranty: '5 năm',
                     unit: 'Bộ',
                     qty: 1,
-                    image: null,
+                    image: fixImageUrlForDetailPage(r?.inverterImage),
                     unitPrice: Number(r?.inverterPrice ?? 0),
                     totalPrice: Number(r?.inverterPrice ?? 0)
                 },
@@ -482,7 +524,7 @@
                     warranty: '10 năm',
                     unit: 'Bộ',
                     qty: Number(r?.batteryQuantity ?? 1),
-                    image: null,
+                    image: fixImageUrlForDetailPage(r?.batteryImage),
                     unitPrice: Number(r?.batteryUnitPrice ?? 0),
                     totalPrice: Number(r?.batteryCost ?? 0)
                 },
@@ -492,7 +534,7 @@
                     warranty: '3 năm',
                     unit: 'Tủ',
                     qty: 1,
-                    image: null,
+                    image: fixImageUrlForDetailPage(r?.cabinetImage),
                     unitPrice: Number(r?.cabinetPrice ?? 0),
                     totalPrice: Number(r?.cabinetPrice ?? 0)
                 },
@@ -562,9 +604,34 @@
             
             productsTableBody.innerHTML = products.map(item => {
                 totalAmount += item.totalPrice;
-                const imageHtml = item.image 
-                    ? `<img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-contain mx-auto">`
-                    : '<div class="w-10 h-10 mx-auto flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-[10px] text-gray-400">No Image</div>';
+                
+                // Check if image is emoji
+                const isEmoji = item.image && item.image.length <= 3 && !item.image.includes('/');
+                
+                let imageHtml;
+                if (isEmoji && item.image) {
+                    imageHtml = `<div class="w-10 h-10 mx-auto flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-2xl">${item.image}</div>`;
+                } else if (item.image) {
+                    // Handle different path formats
+                    let imgSrc;
+                    if (item.image.startsWith('http://') || item.image.startsWith('https://')) {
+                        imgSrc = item.image;
+                    } else if (item.image.startsWith('/')) {
+                        imgSrc = '..' + item.image;
+                    } else if (item.image.startsWith('../')) {
+                        imgSrc = item.image;
+                    } else {
+                        imgSrc = '../' + item.image;
+                    }
+                    imageHtml = `<img 
+                        src="${imgSrc}" 
+                        alt="${item.name}" 
+                        class="w-10 h-10 object-contain mx-auto rounded"
+                        onerror="this.src='../assets/img/logo.jpg'"
+                    >`;
+                } else {
+                    imageHtml = '<div class="w-10 h-10 mx-auto flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-[10px] text-gray-400">No Image</div>';
+                }
                 
                 return `
                     <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">
