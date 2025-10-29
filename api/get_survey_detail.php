@@ -1,5 +1,6 @@
 <?php
 require_once 'connect.php';
+require_once 'auth_helpers.php';
 
 requireAuth();
 
@@ -19,6 +20,9 @@ if (!is_numeric($surveyId)) {
 try {
     $db = Database::getInstance();
     $pdo = $db->getConnection();
+    
+    // Check if user is admin
+    $isAdmin = is_admin();
     
     // Get survey data
     $sql = "SELECT 
@@ -77,14 +81,23 @@ try {
                 r.total_cost
             FROM solar_surveys s
             LEFT JOIN survey_results r ON s.id = r.survey_id
-            WHERE s.id = ? AND s.user_id = ?";
+            WHERE s.id = ?";
     
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$surveyId, $userId]);
+    // If admin, allow viewing all surveys. Otherwise, only user's own surveys
+    if ($isAdmin) {
+        $sql .= "";  // Admin can view all
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$surveyId]);
+    } else {
+        $sql .= " AND s.user_id = ?";  // Normal user can only view their own
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$surveyId, $userId]);
+    }
+    
     $survey = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$survey) {
-        sendError('Không tìm thấy khảo sát');
+        sendError('Không tìm thấy khảo sát hoặc bạn không có quyền xem');
         exit;
     }
     
