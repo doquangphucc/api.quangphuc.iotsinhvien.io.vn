@@ -2025,6 +2025,13 @@
                 }
                 if (acc.name.includes("Công Thợ Lắp Đặt")) {
                     quantity = 1; // 1 gói lắp đặt
+                    // Tính giá nhân công: ≤16 tấm = 6 triệu, >16 tấm = 6 triệu + (số tấm - 16) × 300k
+                    let laborPrice = 6000000; // Giá cơ bản cho ≤16 tấm
+                    if (panelCount > 16) {
+                        laborPrice = 6000000 + (panelCount - 16) * 300000;
+                    }
+                    // Cập nhật giá cho item này
+                    acc.price = laborPrice;
                     displayName = acc.name;
                 }
                 if (acc.name.includes("Vận Chuyển")) {
