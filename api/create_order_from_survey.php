@@ -87,43 +87,35 @@ try {
     $orderId = $pdo->lastInsertId();
     
     // Add order items (including virtual items)
-    // First, let's check if image_url column exists by trying to query the table structure
-    try {
-        $checkStmt = $pdo->query("SHOW COLUMNS FROM order_items LIKE 'image_url'");
-        $hasImageUrl = $checkStmt->rowCount() > 0;
-        error_log("order_items table has image_url column: " . ($hasImageUrl ? 'YES' : 'NO'));
-    } catch (Exception $e) {
-        error_log("Error checking for image_url column: " . $e->getMessage());
-        $hasImageUrl = false;
-    }
-    
-    if ($hasImageUrl) {
-        $stmt = $pdo->prepare("
-            INSERT INTO order_items (
-                order_id,
-                product_id,
-                product_name,
-                quantity,
-                price,
-                image_url
-            ) VALUES (?, ?, ?, ?, ?, ?)
-        ");
+    // Try to insert with image_url, fallback to without if column doesn't exist
+    foreach ($items as $item) {
+        $productId = null;
+        if (!empty($item['product_id']) && is_numeric($item['product_id'])) {
+            $productId = intval($item['product_id']);
+        }
         
-        foreach ($items as $item) {
-            $productId = null;
-            if (!empty($item['product_id']) && is_numeric($item['product_id'])) {
-                $productId = intval($item['product_id']);
+        $imageUrl = $item['image_url'] ?? null;
+        if ($imageUrl && is_string($imageUrl)) {
+            // Clean image URL - convert absolute paths to relative
+            if ($imageUrl[0] === '/') {
+                $imageUrl = '..' . $imageUrl;
             }
-            
-            $imageUrl = $item['image_url'] ?? null;
-            if ($imageUrl && is_string($imageUrl)) {
-                // Clean image URL - convert absolute paths to relative
-                if ($imageUrl[0] === '/') {
-                    $imageUrl = '..' . $imageUrl;
-                }
-            }
-            
-            error_log("Inserting item: Order={$orderId}, Product={$productId}, Name=" . ($item['title'] ?? 'Unknown') . ", Image={$imageUrl}");
+        }
+        
+        error_log("Inserting item: Order={$orderId}, Product={$productId}, Name=" . ($item['title'] ?? 'Unknown') . ", Image={$imageUrl}");
+        
+        // Try to insert with image_url first
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO order_items (
+                    order_id,
+                    product_id,
+                    product_name,
+                    quantity,
+                    price,
+                    image_url
+                ) VALUES (?, ?, ?, ?, ?, ?)
+            ");
             
             $stmt->execute([
                 $orderId,
@@ -133,26 +125,21 @@ try {
                 $item['price'] ?? 0,
                 $imageUrl
             ]);
-        }
-    } else {
-        // Fallback: insert without image_url
-        $stmt = $pdo->prepare("
-            INSERT INTO order_items (
-                order_id,
-                product_id,
-                product_name,
-                quantity,
-                price
-            ) VALUES (?, ?, ?, ?, ?)
-        ");
-        
-        foreach ($items as $item) {
-            $productId = null;
-            if (!empty($item['product_id']) && is_numeric($item['product_id'])) {
-                $productId = intval($item['product_id']);
-            }
             
-            error_log("Inserting item (no image): Order={$orderId}, Product={$productId}, Name=" . ($item['title'] ?? 'Unknown'));
+            error_log("Successfully inserted with image_url");
+        } catch (Exception $e) {
+            // If image_url column doesn't exist, try without it
+            error_log("Failed to insert with image_url: " . $e->getMessage() . ". Trying without image_url...");
+            
+            $stmt = $pdo->prepare("
+                INSERT INTO order_items (
+                    order_id,
+                    product_id,
+                    product_name,
+                    quantity,
+                    price
+                ) VALUES (?, ?, ?, ?, ?)
+            ");
             
             $stmt->execute([
                 $orderId,
@@ -161,6 +148,8 @@ try {
                 $item['quantity'] ?? 1,
                 $item['price'] ?? 0
             ]);
+            
+            error_log("Successfully inserted without image_url");
         }
     }
     
