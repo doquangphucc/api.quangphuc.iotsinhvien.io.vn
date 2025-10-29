@@ -615,8 +615,14 @@
                         title: item.title,
                         quantity: item.quantity,
                         price: item.price,
+                        image_url: item.image_url || null,
                         isVirtual: item.isVirtual || false
                     }));
+                    
+                    // Debug: Log items
+                    console.log('Cart items:', cart);
+                    console.log('Mapped items:', items);
+                    console.log('First item structure:', items[0]);
                     
                     orderData = {
                         customer: customerData,
