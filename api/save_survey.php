@@ -111,6 +111,28 @@ try {
             );
         }
         
+        // Determine battery_type from selected battery
+        // Try to infer from name (8cell, 16cell) or capacity
+        $batteryType = 'unknown';
+        if (isset($selectedBattery['name'])) {
+            $name = strtolower($selectedBattery['name']);
+            if (strpos($name, '8') !== false || strpos($name, '8cell') !== false || (isset($selectedBattery['capacity']) && $selectedBattery['capacity'] <= 10)) {
+                $batteryType = '8cell';
+            } elseif (strpos($name, '16') !== false || strpos($name, '16cell') !== false || (isset($selectedBattery['capacity']) && $selectedBattery['capacity'] > 10)) {
+                $batteryType = '16cell';
+            }
+        }
+        
+        // If still unknown and there are multiple options, compare by cost (old logic)
+        if ($batteryType === 'unknown' && count($batteryOptions) >= 2) {
+            $batteryType = ($batteryOptions[0]['totalCost'] <= $batteryOptions[1]['totalCost']) ? '8cell' : '16cell';
+        }
+        
+        // Final fallback
+        if ($batteryType === 'unknown') {
+            $batteryType = '8cell';
+        }
+        
         // Region names
         $regionNames = [
             'mien-bac' => 'Miền Bắc',
