@@ -1275,7 +1275,12 @@
 
                         <div class="form-group">
                             <label>Số Điện Thoại *</label>
-                            <input type="tel" name="phone" required placeholder="0988919868" />
+                            <input type="tel" id="survey-phone" name="phone" required placeholder="0988919868" 
+                                   pattern="^0[0-9]{9}$" maxlength="10"
+                                   title="Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0" />
+                            <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+                                📱 Nhập đúng 10 số, bắt đầu bằng 0
+                            </small>
                         </div>
 
                         <div class="form-group">
@@ -2080,6 +2085,19 @@
                 return;
             }
             
+            // Validate phone number (10 digits, starts with 0)
+            const phoneRegex = /^0[0-9]{9}$/;
+            if (!phoneRegex.test(data.phone)) {
+                alert('Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0.');
+                // Scroll to phone input
+                const phoneInput = document.getElementById('survey-phone');
+                if (phoneInput) {
+                    phoneInput.focus();
+                    phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+            
             // Tính toán
             const result = calculateSolarSystem(data);
             
@@ -2583,6 +2601,26 @@
                 e.target.value = value;
             }
         });
+
+        // Phone number validation
+        const surveyPhoneInput = document.getElementById('survey-phone');
+        if (surveyPhoneInput) {
+            // Only allow numbers in phone input
+            surveyPhoneInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+            });
+
+            // Prevent paste of non-numeric characters
+            surveyPhoneInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const numbersOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+                this.value = numbersOnly;
+            });
+        }
 
         // Enhanced page animations and effects
         document.addEventListener('DOMContentLoaded', function() {
