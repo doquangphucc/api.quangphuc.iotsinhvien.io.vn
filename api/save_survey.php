@@ -66,12 +66,50 @@ try {
     if (isset($input['results'])) {
         $results = $input['results'];
         
-        // Determine battery type
-        $batteryType = isset($input['selectedBattery']) ? $input['selectedBattery'] : 
-                       ($results['batteryOptions'][0]['totalCost'] <= $results['batteryOptions'][1]['totalCost'] ? '8cell' : '16cell');
+        // Determine selected battery in a robust way
+        $selectedBattery = null;
+        $batteryOptions = isset($results['batteryOptions']) && is_array($results['batteryOptions']) ? $results['batteryOptions'] : [];
         
-        $batteryIndex = ($batteryType === '8cell') ? 0 : 1;
-        $selectedBattery = $results['batteryOptions'][$batteryIndex];
+        // If frontend provided explicit selected battery id or type
+        if (isset($input['selectedBattery'])) {
+            $sel = $input['selectedBattery'];
+            // Try find by id or name
+            foreach ($batteryOptions as $opt) {
+                if ((isset($opt['id']) && (string)$opt['id'] === (string)$sel) || (isset($opt['name']) && $opt['name'] === $sel)) {
+                    $selectedBattery = $opt;
+                    break;
+                }
+            }
+        }
+        
+        // Fallbacks: pick first available option
+        if ($selectedBattery === null && count($batteryOptions) > 0) {
+            $selectedBattery = $batteryOptions[0];
+        }
+        
+        // Final safety: ensure fields exist to avoid NULL constraint issues
+        if (!is_array($selectedBattery)) {
+            $selectedBattery = [
+                'id' => 0,
+                'name' => 'Pin lưu trữ',
+                'capacity' => 0,
+                'quantity' => 1,
+                'price' => 0,
+                'totalCost' => 0
+            ];
+        } else {
+            $selectedBattery = array_merge(
+                [
+                    'id' => 0,
+                    'name' => 'Pin lưu trữ',
+                    'capacity' => 0,
+                    'quantity' => 1,
+                    'price' => 0,
+                    'totalCost' => 0
+                ],
+                $selectedBattery
+            );
+        }
         
         // Region names
         $regionNames = [
