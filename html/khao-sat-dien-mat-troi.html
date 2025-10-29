@@ -2025,6 +2025,14 @@
                     displayName = acc.name;
                 }
                 
+                // Extract cabinet info robustly from accessories (case-insensitive)
+                const cabinetItem = Array.isArray(result.accessories)
+                    ? result.accessories.find(a => /tủ\s*điện/i.test(a.name || ''))
+                    : null;
+                const cabinetName = cabinetItem?.name || 'Tủ điện';
+                const cabinetPrice = (cabinetItem && (cabinetItem.totalPrice ?? cabinetItem.price)) ?
+                    Number(cabinetItem.totalPrice ?? cabinetItem.price) : 0;
+
                 return {
                     ...acc,
                     name: displayName,
@@ -3197,9 +3205,9 @@
                     },
                     cabinet: {
                         id: 0,
-                        name: result.accessories.find(a => a.name.includes('Tủ Điện'))?.name || 'Tủ điện',
+                        name: cabinetName,
                         capacity: result.systemSizeKw,
-                        price: result.accessories.find(a => a.name.includes('Tủ Điện'))?.totalPrice || 0
+                        price: cabinetPrice
                     },
                     batteryNeeded: result.batteryCapacityNeeded,
                     totalCost: result.totalPrice,
