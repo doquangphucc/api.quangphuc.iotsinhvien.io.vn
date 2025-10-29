@@ -1810,7 +1810,7 @@
             { name: "Jack Cắm MC4 1500VDC", unit: "bộ", price: 50000, quantity: 0, image: "../assets/img/products/jackcam.png" },
             { name: "Dây Điện (AC/DC)", unit: "mét", price: 30000, quantity: 0, image: "../assets/img/products/daydien.png" },
             { name: "Công Thợ Lắp Đặt Trọn Gói", unit: "dự án", price: 6000000, quantity: 1, image: "🔧" },
-            { name: "Vận Chuyển Đến Công Trình", unit: "chuyến", price: 1000000, quantity: 1, image: "🚛" }
+            { name: "Vận Chuyển Đến Công Trình", unit: "chuyến", price: 0, quantity: 1, image: "🚛", isTransport: true }
         ];
 
         // Hàm tính kWh từ số tiền điện và trả về chi tiết từng bậc
@@ -2092,6 +2092,9 @@
             let accessoriesHTML = '';
             result.accessories.forEach(acc => {
                 if (acc.quantity > 0) {
+                    // Special handling for transport (Vận chuyển)
+                    const isTransport = acc.isTransport || acc.name === 'Vận Chuyển Đến Công Trình';
+                    
                     accessoriesHTML += `
                         <tr>
                             <td class="center">${(acc.image && (acc.image.includes('../') || acc.image.startsWith('/') || acc.image.startsWith('http'))) ? 
@@ -2105,15 +2108,22 @@
                                         <small style="color: #4a5568; font-weight: 600;">📝 Mô tả:</small><br>
                                         <small style="color: #718096;">${getAccessoryDescription(acc.name)}</small>
                                     </div>
-                                    <div style="margin: 0.3rem 0; padding: 0.4rem; background: rgba(255,193,7,0.08); border-radius: 4px; border-left: 2px solid #ffc107;">
-                                        <small style="color: #4a5568; font-weight: 600;">🧮 Cách tính:</small><br>
-                                        <small style="color: #718096;">${getAccessoryCalculation(acc.name, acc.quantity, result.panelCount)}</small>
-                                    </div>
+                                    ${isTransport ? `
+                                        <div style="margin: 0.3rem 0; padding: 0.4rem; background: rgba(255,152,0,0.1); border-radius: 4px; border-left: 2px solid #ff9800;">
+                                            <small style="color: #e65100; font-weight: 600;">⚠️ Lưu ý:</small><br>
+                                            <small style="color: #f57c00;">Chi phí vận chuyển tùy thuộc vào khoảng cách từ kho đến công trình</small>
+                                        </div>
+                                    ` : `
+                                        <div style="margin: 0.3rem 0; padding: 0.4rem; background: rgba(255,193,7,0.08); border-radius: 4px; border-left: 2px solid #ffc107;">
+                                            <small style="color: #4a5568; font-weight: 600;">🧮 Cách tính:</small><br>
+                                            <small style="color: #718096;">${getAccessoryCalculation(acc.name, acc.quantity, result.panelCount)}</small>
+                                        </div>
+                                    `}
         </div>
                             </td>
                             <td class="center">${acc.quantity} ${acc.unit}</td>
-                            <td class="price-col">${acc.price.toLocaleString()}đ</td>
-                            <td class="price-col">${acc.totalPrice.toLocaleString()}đ</td>
+                            <td class="price-col">${isTransport ? '<span style="color: #ff9800; font-style: italic;">Tùy xa gần</span>' : acc.price.toLocaleString() + 'đ'}</td>
+                            <td class="price-col">${isTransport ? '<span style="color: #ff9800; font-style: italic;">Tùy xa gần</span>' : acc.totalPrice.toLocaleString() + 'đ'}</td>
                         </tr>
                     `;
                 }
@@ -2394,6 +2404,21 @@
                                 <tr style="background: linear-gradient(135deg, rgba(63,163,77,0.15) 0%, rgba(168,224,99,0.15) 100%); font-weight: 700; font-size: 1.1em;">
                                     <td class="label-col" style="color: #1E5631;">TỔNG CHI PHÍ ĐẦU TƯ</td>
                                     <td class="price-col" style="color: #1E5631; font-size: 1.2em;">${result.totalPrice.toLocaleString()}đ</td>
+                                </tr>
+                                <tr style="background: rgba(255,152,0,0.08);">
+                                    <td colspan="2" class="label-col" style="padding: 0.8rem 1rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="font-size: 1.2rem;">⚠️</span>
+                                            <span style="color: #e65100; font-weight: 600; font-size: 0.95rem;">
+                                                Lưu ý: Báo giá chưa bao gồm chi phí vận chuyển đến công trình
+                                            </span>
+                                        </div>
+                                        <div style="margin-top: 0.3rem; margin-left: 2rem;">
+                                            <small style="color: #f57c00;">
+                                                Chi phí vận chuyển sẽ được tính dựa trên khoảng cách từ kho đến công trình của bạn
+                                            </small>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
