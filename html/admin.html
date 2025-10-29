@@ -2452,7 +2452,11 @@
                 const data = await response.json();
                 
                 if (!data.success) {
-                    throw new Error(data.message || 'Không thể tải lịch sử khảo sát');
+                    // Only show error if it's not a permission issue (permission should be checked before loading)
+                    if (data.message && !data.message.includes('quyền')) {
+                        showToast(data.message, 'error');
+                    }
+                    return;
                 }
                 
                 const surveys = data.data.surveys;
@@ -2472,7 +2476,10 @@
                 
             } catch (error) {
                 console.error('Error loading survey history:', error);
-                alert('Lỗi khi tải lịch sử khảo sát: ' + error.message);
+                // Only show error if it's not a permission issue
+                if (!error.message.includes('quyền')) {
+                    showToast('Lỗi khi tải lịch sử khảo sát: ' + error.message, 'error');
+                }
             }
         }
         
@@ -2559,10 +2566,18 @@
                 
                 if (data.success) {
                     displaySurveyProducts(data.products);
+                } else {
+                    // Only show error if it's not a permission issue
+                    if (data.message && !data.message.includes('quyền')) {
+                        showToast(data.message, 'error');
+                    }
                 }
             } catch (error) {
                 console.error('Error loading survey products:', error);
-                showToast('Không thể tải danh sách sản phẩm', 'error');
+                // Only show error if it's not a permission issue
+                if (!error.message.includes('quyền')) {
+                    showToast('Không thể tải danh sách sản phẩm', 'error');
+                }
             }
         }
         
@@ -2785,11 +2800,17 @@
                 if (data.success) {
                     displaySurveyRegions(data.regions);
                 } else {
-                    showToast(data.message, 'error');
+                    // Only show error if it's not a permission issue (permission should be checked before loading)
+                    if (data.message && !data.message.includes('quyền')) {
+                        showToast(data.message, 'error');
+                    }
                 }
             } catch (error) {
                 console.error('Error loading survey regions:', error);
-                showToast('Có lỗi khi tải danh sách khu vực', 'error');
+                // Only show error if it's not a permission issue
+                if (!error.message.includes('quyền')) {
+                    showToast('Có lỗi khi tải danh sách khu vực', 'error');
+                }
             }
         }
         
@@ -2923,11 +2944,17 @@
                 if (data.success) {
                     displayElectricityPrices(data.prices);
                 } else {
-                    showToast(data.message, 'error');
+                    // Only show error if it's not a permission issue (permission should be checked before loading)
+                    if (data.message && !data.message.includes('quyền')) {
+                        showToast(data.message, 'error');
+                    }
                 }
             } catch (error) {
                 console.error('Error loading electricity prices:', error);
-                showToast('Có lỗi khi tải bảng giá điện', 'error');
+                // Only show error if it's not a permission issue
+                if (!error.message.includes('quyền')) {
+                    showToast('Có lỗi khi tải bảng giá điện', 'error');
+                }
             }
         }
         
