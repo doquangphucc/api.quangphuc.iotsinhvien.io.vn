@@ -4279,7 +4279,7 @@
             // Collect permissions
             const permissions = {};
             if (!isAdmin) {
-                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'rewards', 'intro-posts', 'projects', 'dich-vu'];
+                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home', 'contacts'];
                 modules.forEach(module => {
                     permissions[module] = {
                         can_view: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="view"]`)?.checked || false,
