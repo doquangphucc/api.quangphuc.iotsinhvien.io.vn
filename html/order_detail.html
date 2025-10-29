@@ -587,9 +587,17 @@
                 } else if (imageUrl) {
                     // Display image with proper path handling
                     let imgSrc;
-                    if (imageUrl.startsWith('http') || imageUrl.startsWith('/') || imageUrl.startsWith('../')) {
+                    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                        // Absolute URL
+                        imgSrc = imageUrl;
+                    } else if (imageUrl.startsWith('/')) {
+                        // Absolute path from domain root - convert to relative
+                        imgSrc = '..' + imageUrl;
+                    } else if (imageUrl.startsWith('../')) {
+                        // Already relative
                         imgSrc = imageUrl;
                     } else {
+                        // Relative path without ../
                         imgSrc = `../${imageUrl}`;
                     }
                     imageHtml = `<img src="${imgSrc}" 

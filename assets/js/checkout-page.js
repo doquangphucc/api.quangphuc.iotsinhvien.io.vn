@@ -151,14 +151,35 @@ function renderOrderItems() {
         // Check if image_url is an emoji or a path
         const isEmoji = item.image_url && item.image_url.length <= 3 && !item.image_url.includes('/');
         
-        const imageHtml = isEmoji 
-            ? `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-3xl">${item.image_url}</div>`
-            : `<img 
-                src="../${item.image_url}" 
+        let imageHtml;
+        if (isEmoji) {
+            imageHtml = `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg text-3xl">${item.image_url}</div>`;
+        } else if (item.image_url) {
+            // Handle different path formats
+            let imgSrc;
+            if (item.image_url.startsWith('http://') || item.image_url.startsWith('https://')) {
+                imgSrc = item.image_url;
+            } else if (item.image_url.startsWith('/')) {
+                // Absolute path from domain root - convert to relative
+                imgSrc = '..' + item.image_url;
+            } else if (item.image_url.startsWith('../')) {
+                imgSrc = item.image_url;
+            } else {
+                imgSrc = '../' + item.image_url;
+            }
+            imageHtml = `<img 
+                src="${imgSrc}" 
                 alt="${item.title}"
                 class="w-full h-full object-cover rounded-lg"
                 onerror="this.src='../assets/img/logo.jpg'"
             >`;
+        } else {
+            imageHtml = `<img 
+                src="../assets/img/logo.jpg" 
+                alt="${item.title}"
+                class="w-full h-full object-cover rounded-lg"
+            >`;
+        }
         
         // Check if this is a transport/shipping item (price = 0 and title contains vận chuyển)
         const isTransport = item.price === 0 && item.title.toLowerCase().includes('vận chuyển');
