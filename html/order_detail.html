@@ -584,13 +584,23 @@
                 if (isEmoji && imageUrl) {
                     // Display emoji directly
                     imageHtml = `<div class="text-3xl">${imageUrl}</div>`;
-                } else {
-                    // Display image with fallback to logo
-                    const imgSrc = imageUrl ? `../${imageUrl}` : '../assets/img/logo.jpg';
+                } else if (imageUrl) {
+                    // Display image with proper path handling
+                    let imgSrc;
+                    if (imageUrl.startsWith('http') || imageUrl.startsWith('/') || imageUrl.startsWith('../')) {
+                        imgSrc = imageUrl;
+                    } else {
+                        imgSrc = `../${imageUrl}`;
+                    }
                     imageHtml = `<img src="${imgSrc}" 
                                      alt="${item.product_name}" 
                                      class="w-12 h-12 object-cover rounded"
                                      onerror="this.src='../assets/img/logo.jpg'">`;
+                } else {
+                    // No image, use logo
+                    imageHtml = `<img src="../assets/img/logo.jpg" 
+                                     alt="${item.product_name}" 
+                                     class="w-12 h-12 object-cover rounded">`;
                 }
                 
                 return `
