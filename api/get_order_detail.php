@@ -27,13 +27,22 @@ if (!is_numeric($orderId)) {
 try {
     $db = Database::getInstance();
 
-    // Get order with items
-    $order = $db->select('orders', ['id' => $orderId, 'user_id' => $userId], '*');
+    // Check if user is admin
+    $isAdmin = is_admin();
+    
+    // If admin, allow viewing all orders. Otherwise, only user's own orders
+    if ($isAdmin) {
+        $order = $db->select('orders', ['id' => $orderId], '*');
+        error_log("Get Order Detail - Admin viewing order: {$orderId}");
+    } else {
+        $order = $db->select('orders', ['id' => $orderId, 'user_id' => $userId], '*');
+        error_log("Get Order Detail - User {$userId} viewing order: {$orderId}");
+    }
     
     error_log("Get Order Detail - Query result count: " . count($order));
 
     if (empty($order)) {
-        error_log("Get Order Detail - Order not found for order_id: {$orderId}, user_id: {$userId}");
+        error_log("Get Order Detail - Order not found for order_id: {$orderId}");
         sendError('Không tìm thấy đơn hàng hoặc đơn hàng không thuộc về bạn');
         exit;
     }
