@@ -209,6 +209,66 @@
 
         <!-- Survey Products Tab -->
         <div id="tab-survey" class="tab-content hidden">
+            <!-- Survey History Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">📊 Lịch Sử Khảo Sát</h2>
+                        <p class="text-sm text-gray-600 mt-1">Xem danh sách các khảo sát điện mặt trời từ khách hàng</p>
+                    </div>
+                    <button onclick="loadSurveyHistory()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        🔄 Tải lại
+                    </button>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg">
+                        <div class="text-sm opacity-90">Tổng khảo sát</div>
+                        <div id="total-surveys" class="text-3xl font-bold mt-1">0</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg">
+                        <div class="text-sm opacity-90">Có kết quả</div>
+                        <div id="surveys-with-results" class="text-3xl font-bold mt-1">0</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg">
+                        <div class="text-sm opacity-90">Hôm nay</div>
+                        <div id="surveys-today" class="text-3xl font-bold mt-1">0</div>
+                    </div>
+                </div>
+                
+                <!-- Surveys Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left border">ID</th>
+                                <th class="px-4 py-3 text-left border">Khách hàng</th>
+                                <th class="px-4 py-3 text-left border">Liên hệ</th>
+                                <th class="px-4 py-3 text-center border">Khu vực</th>
+                                <th class="px-4 py-3 text-center border">Pha</th>
+                                <th class="px-4 py-3 text-right border">Tiền điện/tháng</th>
+                                <th class="px-4 py-3 text-right border">Tổng chi phí</th>
+                                <th class="px-4 py-3 text-center border">Ngày khảo sát</th>
+                                <th class="px-4 py-3 text-center border">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="survey-history-tbody">
+                            <tr>
+                                <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-16 h-16 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <p>Đang tải dữ liệu...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Survey Regions Section -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <div class="flex justify-between items-center mb-6">
@@ -2034,11 +2094,12 @@
              switch(tabName) {
                  case 'categories': loadCategories(); break;
                  case 'products': loadProducts(); break;
-                 case 'survey': 
-                     loadSurveyRegions();
-                     loadElectricityPrices(); 
-                     loadSurveyProducts(); 
-                     break;
+                case 'survey': 
+                    loadSurveyHistory();
+                    loadSurveyRegions();
+                    loadElectricityPrices(); 
+                    loadSurveyProducts(); 
+                    break;
                  case 'packages': 
                      loadPackageCategories(); 
                      loadPackages(); 
@@ -2379,6 +2440,112 @@
                 // applyPermissions() already shows first available tab
             }
         });
+        // ============================================
+        // SURVEY HISTORY
+        // ============================================
+        
+        async function loadSurveyHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_survey_history.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Không thể tải lịch sử khảo sát');
+                }
+                
+                const surveys = data.data.surveys;
+                
+                // Update stats
+                document.getElementById('total-surveys').textContent = surveys.length;
+                
+                const surveysWithResults = surveys.filter(s => s.has_results).length;
+                document.getElementById('surveys-with-results').textContent = surveysWithResults;
+                
+                const today = new Date().toISOString().split('T')[0];
+                const surveysToday = surveys.filter(s => s.created_at.startsWith(today)).length;
+                document.getElementById('surveys-today').textContent = surveysToday;
+                
+                // Render table
+                renderSurveyHistory(surveys);
+                
+            } catch (error) {
+                console.error('Error loading survey history:', error);
+                showNotification('Lỗi khi tải lịch sử khảo sát: ' + error.message, 'error');
+            }
+        }
+        
+        function renderSurveyHistory(surveys) {
+            const tbody = document.getElementById('survey-history-tbody');
+            
+            if (surveys.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-16 h-16 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p>Chưa có khảo sát nào</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = surveys.map(survey => {
+                const createdDate = new Date(survey.created_at);
+                const formattedDate = createdDate.toLocaleDateString('vi-VN') + ' ' + 
+                                     createdDate.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
+                
+                const hasResults = survey.has_results;
+                const resultsBadge = hasResults 
+                    ? '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Có kết quả</span>'
+                    : '<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Chưa có</span>';
+                
+                const totalCostDisplay = hasResults && survey.total_cost
+                    ? Math.round(survey.total_cost).toLocaleString('vi-VN') + 'đ'
+                    : '-';
+                
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 border">#${survey.id}</td>
+                        <td class="px-4 py-3 border">
+                            <div class="font-semibold">${survey.full_name}</div>
+                            <div class="text-sm text-gray-500">@${survey.username || 'N/A'}</div>
+                        </td>
+                        <td class="px-4 py-3 border">
+                            <div class="text-sm">📞 ${survey.phone}</div>
+                            ${survey.email ? `<div class="text-sm text-gray-500">✉️ ${survey.email}</div>` : ''}
+                        </td>
+                        <td class="px-4 py-3 border text-center">${survey.region_name}</td>
+                        <td class="px-4 py-3 border text-center">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">${survey.phase} Pha</span>
+                        </td>
+                        <td class="px-4 py-3 border text-right font-semibold text-orange-600">
+                            ${Math.round(survey.monthly_bill).toLocaleString('vi-VN')}đ
+                        </td>
+                        <td class="px-4 py-3 border text-right">
+                            <div class="font-bold text-green-600">${totalCostDisplay}</div>
+                            ${hasResults ? `<div class="text-xs text-gray-500">${survey.panels_needed} tấm pin, ${survey.total_capacity}kW</div>` : ''}
+                        </td>
+                        <td class="px-4 py-3 border text-center text-sm">
+                            ${formattedDate}
+                        </td>
+                        <td class="px-4 py-3 border text-center">
+                            <a href="../html/survey_detail.html?id=${survey.id}" 
+                               target="_blank"
+                               class="inline-block bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">
+                                👁️ Xem chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
         // ============================================
         // SURVEY PRODUCTS MANAGEMENT
         // ============================================
