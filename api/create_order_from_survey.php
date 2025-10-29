@@ -117,16 +117,76 @@ try {
     
     // Handle vouchers if provided
     $voucherCodes = $data['voucher_codes'] ?? [];
-    if (!empty($voucherCodes)) {
-        $stmt = $pdo->prepare("
-            INSERT INTO order_vouchers (order_id, voucher_id, discount_amount)
-            SELECT ?, v.id, v.discount_amount
-            FROM vouchers v
-            WHERE v.code = ? AND v.is_active = 1
-        ");
+    $totalDiscount = 0;
+    
+    if (!empty($voucherCodes) && is_array($voucherCodes)) {
+        foreach ($voucherCodes as $voucherCode) {
+            if (empty($voucherCode)) continue;
+            
+            $voucherCode = trim($voucherCode);
+            $voucherData = null;
+            
+            // First try to find in lottery_rewards (reward-based vouchers)
+            $rewardSql = "SELECT * FROM lottery_rewards WHERE (voucher_code = ? OR id = ?) AND user_id = ? AND reward_type = 'voucher' AND status = 'pending' AND (expires_at IS NULL OR expires_at > NOW())";
+            $rewardStmt = $pdo->prepare($rewardSql);
+            $rewardStmt->execute([$voucherCode, intval($voucherCode), (int)$userId]);
+            $reward = $rewardStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($reward) {
+                $voucherData = [
+                    'source' => 'reward',
+                    'id' => (int)$reward['id'],
+                    'code' => $reward['voucher_code'] ?: $reward['id'],
+                    'discount' => (float)$reward['reward_value']
+                ];
+            } else {
+                // Fallback to vouchers table (legacy system)
+                $voucherSql = "SELECT * FROM vouchers WHERE code = ? AND is_used = 0 AND (expires_at IS NULL OR expires_at > NOW())";
+                $voucherStmt = $pdo->prepare($voucherSql);
+                $voucherStmt->execute([$voucherCode]);
+                $voucher = $voucherStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($voucher) {
+                    $voucherData = [
+                        'source' => 'voucher',
+                        'id' => (int)$voucher['id'],
+                        'code' => $voucher['code'],
+                        'discount' => (float)$voucher['discount_amount']
+                    ];
+                }
+            }
+            
+            if ($voucherData) {
+                // Insert into order_vouchers
+                $insertVoucherStmt = $pdo->prepare("INSERT INTO order_vouchers (order_id, voucher_id, voucher_code, discount_amount) VALUES (?, ?, ?, ?)");
+                $insertVoucherStmt->execute([
+                    $orderId,
+                    $voucherData['id'],
+                    $voucherData['code'],
+                    $voucherData['discount']
+                ]);
+                
+                // Mark voucher/reward as used
+                if ($voucherData['source'] === 'reward') {
+                    $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
+                    $updateRewardStmt = $pdo->prepare($updateRewardSql);
+                    $updateRewardStmt->execute([$voucherData['id']]);
+                } else {
+                    $updateVoucherSql = "UPDATE vouchers SET is_used = 1, used_by_user_id = ?, used_at = NOW() WHERE id = ?";
+                    $updateVoucherStmt = $pdo->prepare($updateVoucherSql);
+                    $updateVoucherStmt->execute([(int)$userId, $voucherData['id']]);
+                }
+                
+                $totalDiscount += $voucherData['discount'];
+            }
+        }
         
-        foreach ($voucherCodes as $code) {
-            $stmt->execute([$orderId, $code]);
+        // Update order with discount applied
+        if ($totalDiscount > 0) {
+            $finalTotal = max(0, $total - $totalDiscount);
+            $updateOrderSql = "UPDATE orders SET discount_amount = ?, total_amount = ? WHERE id = ?";
+            $updateOrderStmt = $pdo->prepare($updateOrderSql);
+            $updateOrderStmt->execute([$totalDiscount, $finalTotal, $orderId]);
         }
     }
     
