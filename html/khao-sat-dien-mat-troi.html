@@ -1934,13 +1934,22 @@
                 batteryCapacityNeeded = actualDailyKwh * batteryRatio;
             }
             
-            // Chọn pin lưu trữ phù hợp
-            const selectedBattery = batteries.find(bat => bat.capacity >= batteryCapacityNeeded) || batteries[0];
-            
-            // Lấy battery product_id từ select option
+            // Lấy thông tin pin từ dropdown option (người dùng chọn)
             const batterySelect = document.querySelector('select[name="batteryType"]');
             const selectedBatteryOption = batterySelect.options[batterySelect.selectedIndex];
             const batteryProductId = parseInt(selectedBatteryOption.getAttribute('data-product-id'));
+            const batteryPrice = parseFloat(selectedBatteryOption.getAttribute('data-price'));
+            const batteryImage = selectedBatteryOption.getAttribute('data-image');
+            const batteryTitle = selectedBatteryOption.getAttribute('data-title');
+            
+            // Tạo object selectedBattery từ dropdown
+            const selectedBattery = {
+                name: batteryTitle || 'Pin lưu trữ',
+                capacity: batteryCapacityNeeded, // Dùng dung lượng đã tính toán
+                price: batteryPrice,
+                warranty: "10 năm",
+                image: batteryImage
+            };
             
             // Chọn tủ điện phù hợp với biến tần
             // Logic tương tự inverter: nếu chọn 1 pha → lấy tủ 1 pha hoặc both, nếu chọn 3 pha → lấy tủ 3 pha hoặc both
