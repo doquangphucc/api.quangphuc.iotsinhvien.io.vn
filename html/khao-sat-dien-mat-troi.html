@@ -1867,7 +1867,10 @@
             const solarPanelWatt = parseInt(selectedOption.value);
             const solarPanelPrice = parseInt(selectedOption.getAttribute('data-price'));
             const solarPanelImage = selectedOption.getAttribute('data-image');
-            const solarPanelProductId = parseInt(selectedOption.getAttribute('data-product-id'));
+            const solarPanelProductId = parseInt(selectedOption.getAttribute('data-product-id')) || 0;
+            
+            // Debug: Log panel product ID
+            console.log('Panel Product ID from option:', solarPanelProductId, 'Attr:', selectedOption.getAttribute('data-product-id'));
             
             // Điều chỉnh giờ nắng theo khu vực
             let peakSunHours = 4.4; // Mặc định
@@ -1908,9 +1911,11 @@
             if (availableInverters.length > 0) {
                 // Tìm inverter có công suất phù hợp (lớn hơn hoặc bằng hệ thống)
                 selectedInverter = availableInverters.find(inv => inv.power >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
+                // Debug: Log inverter ID
+                console.log('Selected Inverter:', selectedInverter.name, 'ID:', selectedInverter.id);
             } else {
                 // Fallback nếu không có inverter phù hợp
-                selectedInverter = { name: "Không có biến tần phù hợp", power: 0, price: 0, warranty: "N/A", image: "", phase: formData.phase };
+                selectedInverter = { id: 0, name: "Không có biến tần phù hợp", power: 0, price: 0, warranty: "N/A", image: "", phase: formData.phase };
             }
             
             // Tính sản lượng điện thực tế
@@ -1973,9 +1978,11 @@
             if (availableCabinets.length > 0) {
                 // Tìm tủ điện có công suất phù hợp với biến tần
                 selectedCabinet = availableCabinets.find(cab => cab.power >= selectedInverter.power) || availableCabinets[availableCabinets.length - 1];
+                // Debug: Log cabinet ID
+                console.log('Selected Cabinet:', selectedCabinet.name, 'ID:', selectedCabinet.id);
             } else {
                 // Fallback nếu không có tủ điện phù hợp
-                selectedCabinet = { name: "Không có tủ điện phù hợp", power: 0, price: 0, image: "../assets/img/products/electrical-cabinet.jpg" };
+                selectedCabinet = { id: 0, name: "Không có tủ điện phù hợp", power: 0, price: 0, image: "../assets/img/products/electrical-cabinet.jpg" };
             }
             
             // Thêm tủ điện đã chọn vào đầu danh sách phụ kiện
@@ -3181,6 +3188,12 @@
             if (window.currentSurveyResult) {
                 console.log('Using currentSurveyResult:', window.currentSurveyResult);
                 const result = window.currentSurveyResult;
+                
+                // Debug: Log all product IDs before sending to API
+                console.log('collectCalculationResults - Panel ID:', result.solarPanelProductId);
+                console.log('collectCalculationResults - Inverter ID:', result.selectedInverter?.id);
+                console.log('collectCalculationResults - Cabinet ID:', result.selectedCabinet?.id);
+                console.log('collectCalculationResults - Battery ID:', result.batteryProductId);
                 // Resolve cabinet info from accessories list
                 const cabItem = Array.isArray(result.accessories)
                     ? result.accessories.find(a => /tủ\s*điện/i.test((a.name || ''))) : null;
@@ -3194,7 +3207,7 @@
                     panelsNeeded: result.panelCount,
                     panelCost: result.panelTotalPrice,
                     panelInfo: {
-                        id: result.solarPanelProductId,
+                        id: result.solarPanelProductId || 0,
                         name: result.solarPanelName,
                         power: result.solarPanelWatt / 1000, // Convert to kW
                         price: result.solarPanelPrice
@@ -3202,13 +3215,13 @@
                     energyPerPanelPerDay: result.actualDailyKwh / result.panelCount,
                     totalCapacity: result.systemSizeWatt / 1000, // Convert to kW
                     inverter: {
-                        id: result.selectedInverter?.id || 0,
+                        id: (result.selectedInverter && result.selectedInverter.id) ? result.selectedInverter.id : 0,
                         name: result.selectedInverter.name,
                         capacity: result.selectedInverter.power / 1000,
                         price: result.selectedInverter.price
                     },
                     cabinet: {
-                        id: result.selectedCabinet?.id || 0,
+                        id: (result.selectedCabinet && result.selectedCabinet.id) ? result.selectedCabinet.id : 0,
                         name: cabinetName,
                         capacity: result.systemSizeKw,
                         price: cabinetPrice

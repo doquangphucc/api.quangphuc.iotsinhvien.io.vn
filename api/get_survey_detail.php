@@ -112,33 +112,69 @@ try {
     // If JOIN didn't find images (product_id = 0 or not exists), try to find by product name
     // This handles cases where inverter/cabinet are virtual items without product_id
     
-    // Helper function to find image by product name
-    $findImageByName = function($productName, $pdo) {
+    // Helper function to find image by product name with multiple matching strategies
+    $findImageByName = function($productName, $pdo, $category = null) use (&$survey) {
         if (empty($productName)) return null;
         
-        // Try to find product by matching title (case-insensitive, partial match)
-        $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? LIMIT 1");
+        // Strategy 1: Exact match or contains
+        $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? AND is_active = 1 LIMIT 1");
         $searchTerm = '%' . $productName . '%';
         $stmt->execute([$searchTerm]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['image_url'] : null;
+        if ($result && !empty($result['image_url'])) {
+            return $result['image_url'];
+        }
+        
+        // Strategy 2: Extract key words (numbers, brand names) and search
+        // Extract numbers (e.g., "590W" -> "590", "5kW" -> "5")
+        if (preg_match_all('/(\d+)\s*(?:W|kW|kwh)/i', $productName, $matches)) {
+            foreach ($matches[1] as $number) {
+                $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? AND is_active = 1 LIMIT 1");
+                $stmt->execute(["%{$number}%"]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($result && !empty($result['image_url'])) {
+                    return $result['image_url'];
+                }
+            }
+        }
+        
+        // Strategy 3: Extract brand/model names (Jinko, ECO Hybrid, BYD, etc.)
+        $keywords = [];
+        if (preg_match('/(Jinko|ECO Hybrid|BYD|Luxpower|Sungrow)/i', $productName, $brandMatch)) {
+            $keywords[] = $brandMatch[1];
+        }
+        
+        foreach ($keywords as $keyword) {
+            $stmt = $pdo->prepare("SELECT image_url FROM products WHERE title LIKE ? AND is_active = 1 LIMIT 1");
+            $stmt->execute(["%{$keyword}%"]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result && !empty($result['image_url'])) {
+                return $result['image_url'];
+            }
+        }
+        
+        return null;
     };
     
     // Try to find images by name if JOIN didn't find them
     if (empty($survey['panel_image_url']) && !empty($survey['panel_name'])) {
-        $survey['panel_image_url'] = $findImageByName($survey['panel_name'], $pdo);
+        $survey['panel_image_url'] = $findImageByName($survey['panel_name'], $pdo, 'solar_panel');
+        error_log("Fallback search for panel: '{$survey['panel_name']}' -> " . ($survey['panel_image_url'] ?: 'NOT FOUND'));
     }
     
     if (empty($survey['inverter_image_url']) && !empty($survey['inverter_name'])) {
-        $survey['inverter_image_url'] = $findImageByName($survey['inverter_name'], $pdo);
+        $survey['inverter_image_url'] = $findImageByName($survey['inverter_name'], $pdo, 'inverter');
+        error_log("Fallback search for inverter: '{$survey['inverter_name']}' -> " . ($survey['inverter_image_url'] ?: 'NOT FOUND'));
     }
     
     if (empty($survey['battery_image_url']) && !empty($survey['battery_name'])) {
-        $survey['battery_image_url'] = $findImageByName($survey['battery_name'], $pdo);
+        $survey['battery_image_url'] = $findImageByName($survey['battery_name'], $pdo, 'battery');
+        error_log("Fallback search for battery: '{$survey['battery_name']}' -> " . ($survey['battery_image_url'] ?: 'NOT FOUND'));
     }
     
     if (empty($survey['cabinet_image_url']) && !empty($survey['cabinet_name'])) {
-        $survey['cabinet_image_url'] = $findImageByName($survey['cabinet_name'], $pdo);
+        $survey['cabinet_image_url'] = $findImageByName($survey['cabinet_name'], $pdo, 'electrical_cabinet');
+        error_log("Fallback search for cabinet: '{$survey['cabinet_name']}' -> " . ($survey['cabinet_image_url'] ?: 'NOT FOUND'));
     }
     
     // Format the response

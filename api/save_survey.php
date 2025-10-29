@@ -145,12 +145,18 @@ try {
         $totalCostWithoutBattery = $results['totalCost'] - $selectedBattery['totalCost'];
         $billBreakdownJson = json_encode($results['billBreakdown']);
         
+        // Debug: Log product IDs before saving
+        error_log("Save Survey - panelInfo: " . json_encode($panelInfo));
+        error_log("Save Survey - inverter: " . json_encode($results['inverter']));
+        error_log("Save Survey - cabinet: " . json_encode($results['cabinet']));
+        error_log("Save Survey - selectedBattery: " . json_encode($selectedBattery));
+        
         $resultData = [
             'survey_id' => $surveyId,
             'monthly_kwh' => (float)$results['monthlyKWh'],
             'sun_hours' => (float)$results['sunHours'],
             'region_name' => $regionName,
-            'panel_id' => (int)$panelInfo['id'],
+            'panel_id' => (int)($panelInfo['id'] ?? 0),
             'panel_name' => $panelInfo['name'],
             'panel_power' => (float)$panelInfo['power'],
             'panel_price' => (float)$panelInfo['price'],
@@ -158,11 +164,11 @@ try {
             'panel_cost' => (float)$results['panelCost'],
             'energy_per_panel_per_day' => (float)$results['energyPerPanelPerDay'],
             'total_capacity' => (float)$results['totalCapacity'],
-            'inverter_id' => (int)$results['inverter']['id'],
+            'inverter_id' => (int)($results['inverter']['id'] ?? 0),
             'inverter_name' => $results['inverter']['name'],
             'inverter_capacity' => (float)$results['inverter']['capacity'],
             'inverter_price' => (float)$results['inverter']['price'],
-            'cabinet_id' => (int)$results['cabinet']['id'],
+            'cabinet_id' => (int)($results['cabinet']['id'] ?? 0),
             'cabinet_name' => $results['cabinet']['name'],
             'cabinet_capacity' => (float)$results['cabinet']['capacity'],
             'cabinet_price' => (float)$results['cabinet']['price'],
