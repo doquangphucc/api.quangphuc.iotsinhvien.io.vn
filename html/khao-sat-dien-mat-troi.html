@@ -3174,6 +3174,11 @@
             if (window.currentSurveyResult) {
                 console.log('Using currentSurveyResult:', window.currentSurveyResult);
                 const result = window.currentSurveyResult;
+                // Resolve cabinet info from accessories list
+                const cabItem = Array.isArray(result.accessories)
+                    ? result.accessories.find(a => /tủ\s*điện/i.test((a.name || ''))) : null;
+                const cabinetName = cabItem?.name || 'Tủ điện';
+                const cabinetPrice = cabItem ? Number((cabItem.totalPrice ?? cabItem.price) || 0) : 0;
                 
                 // Transform to old format for API
                 return {
