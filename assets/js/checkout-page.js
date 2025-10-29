@@ -160,6 +160,13 @@ function renderOrderItems() {
                 onerror="this.src='../assets/img/logo.jpg'"
             >`;
         
+        // Check if this is a transport/shipping item (price = 0 and title contains vận chuyển)
+        const isTransport = item.price === 0 && item.title.toLowerCase().includes('vận chuyển');
+        
+        const priceHtml = isTransport 
+            ? `<span class="text-orange-600 dark:text-orange-400 text-xs italic">Tính theo khoảng cách</span>`
+            : `<span class="font-bold text-green-600">${formatPrice(item.price * item.quantity)}</span>`;
+        
         return `
             <div class="flex gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                 <div class="w-16 h-16 flex-shrink-0">
@@ -173,9 +180,7 @@ function renderOrderItems() {
                         <span class="text-gray-600 dark:text-gray-400 text-sm">
                             SL: ${item.quantity}
                         </span>
-                        <span class="font-bold text-green-600">
-                            ${formatPrice(item.price * item.quantity)}
-                        </span>
+                        ${priceHtml}
                     </div>
                 </div>
             </div>
