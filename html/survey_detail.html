@@ -662,49 +662,7 @@
                     image: a.image,
                     unitPrice: a.price,
                     totalPrice: a.totalPrice
-                })),
-                {
-                    name: 'Chi phí công thợ lắp đặt trọn gói',
-                    brand: '-',
-                    warranty: '-',
-                    unit: 'Đội',
-                    qty: 1,
-                    image: null,
-                    unitPrice: Number(r?.laborCost ?? 0),
-                    totalPrice: Number(r?.laborCost ?? 0)
-                },
-                {
-                    name: 'Chi phí vận chuyển thiết bị',
-                    brand: '-',
-                    warranty: '-',
-                    unit: 'Chuyến',
-                    qty: 1,
-                    image: null,
-                    unitPrice: 0,
-                    totalPrice: 0,
-                    note: 'Tùy điều kiện'
-                },
-                {
-                    name: 'Chi phí Gia công khung sườn giá đỡ tấm pin',
-                    brand: '-',
-                    warranty: '-',
-                    unit: 'Bộ',
-                    qty: 1,
-                    image: null,
-                    unitPrice: 0,
-                    totalPrice: 0,
-                    note: 'Tùy công trình'
-                },
-                {
-                    name: 'Dây DC chuyên dụng',
-                    brand: '-',
-                    warranty: '-',
-                    unit: 'Mét',
-                    qty: Number(r?.dcCableLength ?? 100),
-                    image: null,
-                    unitPrice: Number(r?.dcCablePrice ?? 0),
-                    totalPrice: Number(r?.dcCableCost ?? 0)
-                }
+                }))
             ];
             
             productsTableBody.innerHTML = products.map(item => {
