@@ -253,7 +253,19 @@
             </div>
 
             <!-- Packages Container - Loaded from database -->
-            <div id="packages-container" class=""></div>
+            <div class="relative">
+                <button id="packages-scroll-left" type="button"
+                    class="hidden md:flex absolute left-0 top-1/2 z-30 -translate-y-1/2 rounded-full bg-white/80 shadow-lg p-3 hover:bg-green-100 transition-all duration-300 border border-green-100"
+                    aria-label="Xem sang trái">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div id="packages-container" class="flex flex-nowrap gap-6 overflow-x-auto snap-x scroll-smooth scrollbar-hide relative z-10"></div>
+                <button id="packages-scroll-right" type="button"
+                    class="hidden md:flex absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-full bg-white/80 shadow-lg p-3 hover:bg-green-100 transition-all duration-300 border border-green-100"
+                    aria-label="Xem sang phải">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
                     </div>
     </section>
 
@@ -456,5 +468,34 @@
             setInterval(slideNext, 2000);
         })();
     </script>
+<script>
+(function(){
+    const container = document.getElementById('packages-container');
+    const btnLeft = document.getElementById('packages-scroll-left');
+    const btnRight = document.getElementById('packages-scroll-right');
+    function updateButtonVisibility() {
+        if (!container) return;
+        if (container.scrollWidth > container.clientWidth) {
+            btnLeft.classList.remove('hidden');
+            btnRight.classList.remove('hidden');
+        } else {
+            btnLeft.classList.add('hidden');
+            btnRight.classList.add('hidden');
+        }
+    }
+    btnLeft && btnLeft.addEventListener('click',()=>{
+        const firstChild = container.querySelector(':scope > *');
+        let scrollAmount = firstChild ? (firstChild.clientWidth+24||300) : 300;
+        container.scrollBy({left:-scrollAmount,behavior:'smooth'});
+    });
+    btnRight && btnRight.addEventListener('click',()=>{
+        const firstChild = container.querySelector(':scope > *');
+        let scrollAmount = firstChild ? (firstChild.clientWidth+24||300) : 300;
+        container.scrollBy({left:scrollAmount,behavior:'smooth'});
+    });
+    window.addEventListener('resize',updateButtonVisibility);
+    setTimeout(updateButtonVisibility, 1200); // Delay for data loaded
+})();
+</script>
 </body>
 </html>
