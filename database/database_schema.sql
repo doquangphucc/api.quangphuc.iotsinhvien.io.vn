@@ -64,6 +64,11 @@ CREATE TABLE IF NOT EXISTS survey_product_configs (
     survey_category ENUM('solar_panel', 'inverter', 'battery', 'electrical_cabinet', 'accessory') NOT NULL COMMENT 'Loại sản phẩm trong khảo sát',
     phase_type ENUM('1_phase', '3_phase', 'both', 'none') DEFAULT 'none' COMMENT 'Loại pha (chỉ dùng cho inverter)',
     price_type ENUM('market_price', 'category_price') DEFAULT 'market_price' COMMENT 'Loại giá sử dụng',
+    -- Thông số chuẩn hóa theo cấu hình khảo sát (ưu tiên so với products.* nếu có)
+    panel_power_watt INT DEFAULT NULL COMMENT 'Công suất tấm pin (W/tấm) - dùng cho khảo sát',
+    inverter_power_watt INT DEFAULT NULL COMMENT 'Công suất inverter (W) - dùng cho khảo sát',
+    battery_capacity_kwh DECIMAL(10,2) DEFAULT NULL COMMENT 'Dung lượng 1 bộ pin (kWh) - dùng cho khảo sát',
+    cabinet_power_kw DECIMAL(10,2) DEFAULT NULL COMMENT 'Công suất tủ điện (kW) - dùng cho khảo sát',
     is_active BOOLEAN DEFAULT TRUE COMMENT 'Có hiển thị trong khảo sát',
     display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
     notes TEXT COMMENT 'Ghi chú',

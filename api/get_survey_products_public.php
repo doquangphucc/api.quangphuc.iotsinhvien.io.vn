@@ -27,6 +27,10 @@ try {
                 spc.survey_category,
                 spc.phase_type,
                 spc.price_type,
+                spc.panel_power_watt AS spc_panel_power_watt,
+                spc.inverter_power_watt AS spc_inverter_power_watt,
+                spc.battery_capacity_kwh AS spc_battery_capacity_kwh,
+                spc.cabinet_power_kw AS spc_cabinet_power_kw,
                 spc.is_active,
                 spc.display_order
             FROM products p
@@ -46,6 +50,12 @@ try {
         // Paths are like "assets/img/products/xxx.png" which work from document root
         $imageUrl = $row['image_url'];
         
+        // Prefer survey-specific numeric specs if present
+        $panelWatt = isset($row['spc_panel_power_watt']) && $row['spc_panel_power_watt'] !== null ? (int)$row['spc_panel_power_watt'] : (isset($row['panel_power_watt']) ? (int)$row['panel_power_watt'] : null);
+        $inverterWatt = isset($row['spc_inverter_power_watt']) && $row['spc_inverter_power_watt'] !== null ? (int)$row['spc_inverter_power_watt'] : (isset($row['inverter_power_watt']) ? (int)$row['inverter_power_watt'] : null);
+        $batteryKwh = isset($row['spc_battery_capacity_kwh']) && $row['spc_battery_capacity_kwh'] !== null ? floatval($row['spc_battery_capacity_kwh']) : (isset($row['battery_capacity_kwh']) ? floatval($row['battery_capacity_kwh']) : null);
+        $cabinetKw = isset($row['spc_cabinet_power_kw']) && $row['spc_cabinet_power_kw'] !== null ? floatval($row['spc_cabinet_power_kw']) : (isset($row['cabinet_power_kw']) ? floatval($row['cabinet_power_kw']) : null);
+
         $products[] = [
             'id' => (int)$row['id'],
             'title' => $row['title'],
@@ -54,10 +64,10 @@ try {
             'category_price' => floatval($row['category_price']),
             'technical_description' => $row['technical_description'],
             'image_url' => $imageUrl,
-            'panel_power_watt' => isset($row['panel_power_watt']) ? (int)$row['panel_power_watt'] : null,
-            'inverter_power_watt' => isset($row['inverter_power_watt']) ? (int)$row['inverter_power_watt'] : null,
-            'battery_capacity_kwh' => isset($row['battery_capacity_kwh']) ? floatval($row['battery_capacity_kwh']) : null,
-            'cabinet_power_kw' => isset($row['cabinet_power_kw']) ? floatval($row['cabinet_power_kw']) : null,
+            'panel_power_watt' => $panelWatt,
+            'inverter_power_watt' => $inverterWatt,
+            'battery_capacity_kwh' => $batteryKwh,
+            'cabinet_power_kw' => $cabinetKw,
             'survey_category' => $row['survey_category'],
             'phase_type' => $row['phase_type'],
             'display_order' => (int)$row['display_order']
