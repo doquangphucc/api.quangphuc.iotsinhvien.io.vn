@@ -1867,6 +1867,7 @@
             const solarPanelWatt = parseInt(selectedOption.value);
             const solarPanelPrice = parseInt(selectedOption.getAttribute('data-price'));
             const solarPanelImage = selectedOption.getAttribute('data-image');
+            const solarPanelNote = selectedOption.getAttribute('data-note') || null;
             const solarPanelProductId = parseInt(selectedOption.getAttribute('data-product-id')) || 0;
             
             // Debug: Log panel product ID
@@ -1975,7 +1976,8 @@
                 price: batteryPrice,
                 totalPrice: selectedBatteryUnits * batteryPrice,
                 warranty: "10 năm",
-                image: batteryImage
+                image: batteryImage,
+                notes: selectedBatteryOption.getAttribute('data-note') || null
             };
             
             // Chọn tủ điện phù hợp với biến tần
@@ -2091,6 +2093,7 @@
                 solarPanelWatt,
                 solarPanelPrice,
                 solarPanelImage,
+                solarPanelNote,
                 solarPanelProductId, // Product ID của tấm pin
                 panelTotalPrice,
                 roofArea,
@@ -2384,6 +2387,7 @@
                                                 <small style="color: #718096;">• Công suất cần: ${result.dailyKwh.toFixed(1)} ÷ ${result.peakSunHours} = ${result.systemSizeKw}kWp</small><br>
                                                 <small style="color: #718096;">• Số tấm: ${result.systemSizeKw}kW ÷ ${(result.solarPanelWatt/1000).toFixed(2)}kW = ${result.panelCount} tấm</small>
                                             </div>
+                                            ${result.solarPanelNote ? `<div style=\"margin: 0.4rem 0; padding: 0.5rem; background: rgba(255,235,59,0.15); border-radius: 6px; border-left: 3px solid #FFEB3B;\"><small style=\"color:#6b7280; font-weight:600;\">📝 Ghi chú:</small><br><small style=\"color:#6b7280;\">${result.solarPanelNote}</small></div>` : ''}
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
                                         </div>
                                     </td>
@@ -2414,6 +2418,7 @@
                                                 <small style="color: #718096;">• Loại điện: ${result.selectedInverter.phase === '1' ? '1 Pha' : result.selectedInverter.phase === '3' ? '3 Pha' : 'Cả 2 Pha'}</small><br>
                                                 <small style="color: #718096;">• Bảo hành: ${result.selectedInverter.warranty}</small>
                                             </div>
+                                            ${result.selectedInverter.notes ? `<div style="margin: 0.4rem 0; padding: 0.5rem; background: rgba(255,235,59,0.15); border-radius: 6px; border-left: 3px solid #FFEB3B;"><small style="color:#6b7280; font-weight:600;">📝 Ghi chú:</small><br><small style="color:#6b7280;">${result.selectedInverter.notes}</small></div>` : ''}
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(33,150,243,0.1); border-radius: 6px; border-left: 3px solid #2196f3;">
                                                 <small style="color: #4a5568; font-weight: 600;">🎯 Tại sao chọn biến tần này:</small><br>
                                                 <small style="color: #718096;">• Hệ thống cần: ${result.systemSizeKw}kWp</small><br>
@@ -2430,7 +2435,37 @@
                             </tbody>
                         </table>
 
-                        <!-- 3. Pin lưu trữ -->
+                        <!-- 3. Tủ điện -->
+                        <table class="excel-table" style="margin-top: 1rem;">
+                            <tbody>
+                                <tr style="background: linear-gradient(135deg, rgba(0,200,81,0.1) 0%, rgba(105,240,174,0.1) 100%); border: 2px solid rgba(0,200,81,0.3);">
+                                    <td colspan="5" class="label-col" style="font-weight: 800; color: var(--color-primary); font-size: 1.1rem; padding: 1rem;">
+                                        <span style="font-size: 1.3em; margin-right: 0.5rem;">🧰</span> Tủ Điện Hybrid
+                                        <div style="font-size: 0.8rem; color: #4a5568; margin-top: 0.3rem; font-weight: 500;">Tủ phân phối và bảo vệ, phù hợp với công suất biến tần</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="center" style="width: 80px"><img src="${result.selectedCabinet.image}" alt="${result.selectedCabinet.name}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px; padding: 4px; background: #f7fafc;"></td>
+                                    <td class="label-col" style="width: 40%">
+                                        <div style="line-height: 1.4;">
+                                            <strong style="color: #2d3748; font-size: 1.05rem;">${result.selectedCabinet.name}</strong><br>
+                                            <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(63,163,77,0.1); border-radius: 6px; border-left: 3px solid #3FA34D;">
+                                                <small style="color: #4a5568; font-weight: 600;">📊 Thông số:</small><br>
+                                                <small style="color: #718096;">• Công suất hỗ trợ: ${result.selectedCabinet.power}W</small><br>
+                                                <small style="color: #718096;">• Khuyến nghị cho inverter: ≥ ${result.selectedInverter.power}W</small>
+                                            </div>
+                                            ${result.selectedCabinet.notes ? `<div style=\"margin: 0.4rem 0; padding: 0.5rem; background: rgba(255,235,59,0.15); border-radius: 6px; border-left: 3px solid #FFEB3B;\"><small style=\"color:#6b7280; font-weight:600;\">📝 Ghi chú:</small><br><small style=\"color:#6b7280;\">${result.selectedCabinet.notes}</small></div>` : ''}
+                                            <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
+                                        </div>
+                                    </td>
+                                    <td class="center" style="width: 12%">1 cái</td>
+                                    <td class="price-col" style="width: 17%">${result.selectedCabinet.price.toLocaleString()}đ</td>
+                                    <td class="price-col" style="width: 17%"><strong>${result.selectedCabinet.price.toLocaleString()}đ</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 4. Pin lưu trữ -->
                         <table class="excel-table" style="margin-top: 1rem;">
                             <tbody>
                                 <tr style="background: linear-gradient(135deg, rgba(0,200,81,0.1) 0%, rgba(105,240,174,0.1) 100%); border: 2px solid rgba(0,200,81,0.3);">
@@ -2457,6 +2492,7 @@
                                                 <small style="color: #718096;">• Pin cần: ${result.actualDailyKwh.toFixed(1)} × ${result.batteryRatio} = ${result.batteryCapacityNeeded.toFixed(2)}kWh</small><br>
                                                 <small style="color: #718096;">• Chọn pin: ${result.selectedBattery.units} bộ × ${result.selectedBattery.capacity}kWh = ${(result.selectedBattery.units * result.selectedBattery.capacity).toFixed(2)}kWh ${ (result.selectedBattery.units * result.selectedBattery.capacity) + 1e-6 >= result.batteryCapacityNeeded ? '(≥' : '(<'} ${result.batteryCapacityNeeded.toFixed(2)}kWh${ (result.selectedBattery.units * result.selectedBattery.capacity) + 1e-6 >= result.batteryCapacityNeeded ? ')' : ')'} </small>
                                             </div>
+                                            ${result.selectedBattery.notes ? `<div style=\"margin: 0.4rem 0; padding: 0.5rem; background: rgba(255,235,59,0.15); border-radius: 6px; border-left: 3px solid #FFEB3B;\"><small style=\"color:#6b7280; font-weight:600;\">📝 Ghi chú:</small><br><small style=\"color:#6b7280;\">${result.selectedBattery.notes}</small></div>` : ''}
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
                                         </div>
                                     </td>
@@ -2467,7 +2503,7 @@
                             </tbody>
                         </table>
 
-                        <!-- 4. Phụ kiện & Vật tư lắp đặt -->
+                        <!-- 5. Phụ kiện & Vật Tư Lắp Đặt -->
                         <table class="excel-table" style="margin-top: 1rem;">
                             <tbody>
                                 <tr style="background: linear-gradient(135deg, rgba(0,200,81,0.1) 0%, rgba(105,240,174,0.1) 100%); border: 2px solid rgba(0,200,81,0.3);">
@@ -2845,6 +2881,7 @@
                     option.setAttribute('data-watt', watt);
                     option.setAttribute('data-title', panel.title); // Store original title
                     option.setAttribute('data-image', fixImageUrl(panel.image_url));
+                    if (panel.notes) option.setAttribute('data-note', panel.notes);
                     solarPanelSelect.appendChild(option);
                 });
                 console.log('✅ Đã load', products.solar_panel.length, 'loại tấm pin từ admin');
@@ -2870,6 +2907,7 @@
                     option.setAttribute('data-product-id', battery.id);
                     option.setAttribute('data-price', battery.price);
                     option.setAttribute('data-capacity-kwh', unitCap);
+                    if (battery.notes) option.setAttribute('data-note', battery.notes);
                     option.setAttribute('data-title', battery.title); // Store original title
                     option.setAttribute('data-image', fixImageUrl(battery.image_url));
                     batterySelect.appendChild(option);
@@ -2891,6 +2929,7 @@
                         price: inv.price,
                         warranty: "12 tháng",
                         image: fixImageUrl(inv.image_url),
+                        notes: inv.notes || null,
                         phase: "1"
                     });
                 });
@@ -2903,6 +2942,7 @@
                         price: inv.price,
                         warranty: "12 tháng",
                         image: fixImageUrl(inv.image_url),
+                        notes: inv.notes || null,
                         phase: "3"
                     });
                 });
@@ -2915,6 +2955,7 @@
                         price: inv.price,
                         warranty: "12 tháng",
                         image: fixImageUrl(inv.image_url),
+                        notes: inv.notes || null,
                         phase: "both"
                     });
                 });
@@ -2960,7 +3001,8 @@
                         name: cab.title,
                         power: (cab.cabinet_power_kw && cab.cabinet_power_kw > 0) ? (cab.cabinet_power_kw * 1000) : (parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000),
                         price: cab.price,
-                        image: fixImageUrl(cab.image_url)
+                        image: fixImageUrl(cab.image_url),
+                        notes: cab.notes || null
                     });
                 });
                 
@@ -2970,7 +3012,8 @@
                         name: cab.title,
                         power: (cab.cabinet_power_kw && cab.cabinet_power_kw > 0) ? (cab.cabinet_power_kw * 1000) : (parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000),
                         price: cab.price,
-                        image: fixImageUrl(cab.image_url)
+                        image: fixImageUrl(cab.image_url),
+                        notes: cab.notes || null
                     });
                 });
                 
@@ -2980,7 +3023,8 @@
                         name: cab.title,
                         power: (cab.cabinet_power_kw && cab.cabinet_power_kw > 0) ? (cab.cabinet_power_kw * 1000) : (parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000),
                         price: cab.price,
-                        image: fixImageUrl(cab.image_url)
+                        image: fixImageUrl(cab.image_url),
+                        notes: cab.notes || null
                     });
                 });
                 

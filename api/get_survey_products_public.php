@@ -31,6 +31,7 @@ try {
                 spc.inverter_power_watt AS spc_inverter_power_watt,
                 spc.battery_capacity_kwh AS spc_battery_capacity_kwh,
                 spc.cabinet_power_kw AS spc_cabinet_power_kw,
+                spc.notes AS spc_notes,
                 spc.is_active,
                 spc.display_order
             FROM products p
@@ -68,6 +69,7 @@ try {
             'inverter_power_watt' => $inverterWatt,
             'battery_capacity_kwh' => $batteryKwh,
             'cabinet_power_kw' => $cabinetKw,
+            'notes' => $row['spc_notes'] ?? null,
             'survey_category' => $row['survey_category'],
             'phase_type' => $row['phase_type'],
             'display_order' => (int)$row['display_order']
