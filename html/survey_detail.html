@@ -1211,13 +1211,13 @@
                 // Hiển thị loading
                 showNotification('🔄 Đang tạo PDF...', 'info');
 
-                // Cấu hình html2pdf - zoom out để fit gọn trong 1 trang
+                // Cấu hình html2pdf - không lề để tận dụng tối đa không gian
                 const opt = {
-                    margin: [0.6, 0.6, 0.6, 0.6], // Margin hợp lý
+                    margin: [0, 0, 0, 0], // Không lề - in không lề
                     filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
                     image: { type: 'jpeg', quality: 0.95 },
                     html2canvas: { 
-                        scale: 0.55, // Giảm scale xuống 0.55 để zoom out và fit gọn trong 1 trang
+                        scale: 0.58, // Scale phù hợp để fit gọn trong 1 trang không lề
                         useCORS: true,
                         logging: false,
                         letterRendering: true
