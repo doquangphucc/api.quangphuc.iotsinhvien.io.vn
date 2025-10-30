@@ -37,9 +37,8 @@ try {
     $survey_category = isset($data['survey_category']) ? $data['survey_category'] : '';
     $phase_type = isset($data['phase_type']) ? $data['phase_type'] : 'none';
     $price_type = isset($data['price_type']) ? $data['price_type'] : 'market_price';
-    $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
-    $display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
-    $notes = isset($data['notes']) ? $data['notes'] : '';
+    $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 0; // default OFF
+    $display_order = isset($data['display_order']) && $data['display_order'] !== '' ? intval($data['display_order']) : 0;
 
     // Numeric specs (optional)
     $panel_power_watt = isset($data['panel_power_watt']) && $data['panel_power_watt'] !== '' ? intval($data['panel_power_watt']) : null;
@@ -76,7 +75,6 @@ try {
                     price_type = ?, 
                     is_active = ?, 
                     display_order = ?, 
-                    notes = ?,
                     panel_power_watt = ?,
                     inverter_power_watt = ?,
                     battery_capacity_kwh = ?,
@@ -85,13 +83,12 @@ try {
                 WHERE product_id = ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssiisdiddi",
+        $stmt->bind_param("sssiiiiddi",
             $survey_category, 
             $phase_type, 
             $price_type, 
             $is_active, 
             $display_order, 
-            $notes,
             $panel_power_watt,
             $inverter_power_watt,
             $battery_capacity_kwh,
@@ -101,18 +98,17 @@ try {
     } else {
         // Insert new config
         $sql = "INSERT INTO survey_product_configs 
-                (product_id, survey_category, phase_type, price_type, is_active, display_order, notes, panel_power_watt, inverter_power_watt, battery_capacity_kwh, cabinet_power_kw) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (product_id, survey_category, phase_type, price_type, is_active, display_order, panel_power_watt, inverter_power_watt, battery_capacity_kwh, cabinet_power_kw) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssiisiddi", 
+        $stmt->bind_param("isssiiiidd", 
             $product_id, 
             $survey_category, 
             $phase_type, 
             $price_type, 
             $is_active, 
             $display_order, 
-            $notes,
             $panel_power_watt,
             $inverter_power_watt,
             $battery_capacity_kwh,
