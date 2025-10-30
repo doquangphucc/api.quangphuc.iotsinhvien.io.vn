@@ -1211,18 +1211,20 @@
                 // Hiển thị loading
                 showNotification('🔄 Đang tạo PDF...', 'info');
 
-                // Cấu hình html2pdf
+                // Cấu hình html2pdf - tối ưu cho 1 trang A4
                 const opt = {
-                    margin: [1, 1, 1, 1], // Top, Right, Bottom, Left (cm)
+                    margin: [0.5, 0.5, 0.5, 0.5], // Margin tối thiểu (cm)
                     filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.95 },
+                    image: { type: 'jpeg', quality: 0.9 },
                     html2canvas: { 
-                        scale: 1.5, // Giảm scale để tránh nội dung vượt quá trang
+                        scale: 0.75, // Scale nhỏ để fit vào 1 trang
                         useCORS: true,
                         logging: false,
                         letterRendering: true,
                         allowTaint: false,
-                        backgroundColor: '#ffffff'
+                        backgroundColor: '#ffffff',
+                        windowWidth: 794, // A4 width in pixels at 96dpi
+                        windowHeight: 1123 // A4 height in pixels at 96dpi
                     },
                     jsPDF: { 
                         unit: 'cm', 
@@ -1231,10 +1233,7 @@
                         compress: true
                     },
                     pagebreak: {
-                        mode: ['avoid-all', 'css', 'legacy'], // Tránh ngắt trang giữa các phần tử
-                        before: '.bg-white.rounded-2xl', // Ngắt trang trước mỗi section
-                        after: ['table', '.bg-gradient-to-r'], // Ngắt trang sau bảng hoặc summary
-                        avoid: ['tr', 'td', 'thead', 'tfoot'] // Tránh ngắt trang trong bảng
+                        mode: 'avoid-all' // Cố gắng giữ tất cả trong 1 trang
                     }
                 };
 
@@ -1247,42 +1246,99 @@
                 if (actionButtons) actionButtons.remove();
                 if (backButton) backButton.remove();
 
-                // Áp dụng CSS tối ưu cho PDF
-                clone.style.width = '21cm'; // A4 width
-                clone.style.maxWidth = '21cm';
-                clone.style.margin = '0 auto';
-                clone.style.padding = '0';
+                // Áp dụng CSS tối ưu cho PDF - thu gọn để fit 1 trang
+                clone.style.width = '19cm'; // A4 width - margin
+                clone.style.maxWidth = '19cm';
+                clone.style.margin = '0';
+                clone.style.padding = '0.3cm';
                 clone.style.backgroundColor = '#ffffff';
                 clone.style.color = '#000000';
+                clone.style.fontSize = '9px'; // Giảm font-size tổng thể
+                
+                // Giảm padding/margin cho tất cả các section
+                const sections = clone.querySelectorAll('.rounded-2xl, .p-4, .mb-4, .p-2');
+                sections.forEach(section => {
+                    section.style.padding = '0.3cm';
+                    section.style.marginBottom = '0.3cm';
+                    section.style.marginTop = '0.2cm';
+                });
+                
+                // Thu nhỏ tiêu đề
+                const titles = clone.querySelectorAll('h1, h2, h3');
+                titles.forEach(title => {
+                    title.style.fontSize = '11px';
+                    title.style.marginBottom = '0.2cm';
+                    title.style.marginTop = '0.2cm';
+                });
                 
                 // Đảm bảo các container con cũng có kích thước phù hợp
                 const containers = clone.querySelectorAll('.container, .max-w-5xl');
                 containers.forEach(container => {
                     container.style.maxWidth = '100%';
                     container.style.width = '100%';
+                    container.style.padding = '0';
+                    container.style.margin = '0';
                 });
                 
-                // Tối ưu bảng cho PDF
+                // Tối ưu bảng cho PDF - thu nhỏ font và cell padding
                 const tables = clone.querySelectorAll('table');
                 tables.forEach(table => {
                     table.style.width = '100%';
-                    table.style.fontSize = '12px';
+                    table.style.fontSize = '8px'; // Font nhỏ hơn
                     table.style.borderCollapse = 'collapse';
+                    table.style.marginBottom = '0.3cm';
                 });
                 
-                // Tối ưu ảnh trong bảng
+                // Giảm padding cho cells trong bảng
+                const cells = clone.querySelectorAll('table th, table td');
+                cells.forEach(cell => {
+                    cell.style.padding = '0.15cm';
+                    cell.style.fontSize = '8px';
+                });
+                
+                // Thu nhỏ ảnh trong bảng
                 const tableImages = clone.querySelectorAll('table img');
                 tableImages.forEach(img => {
-                    img.style.maxWidth = '50px';
-                    img.style.maxHeight = '50px';
+                    img.style.maxWidth = '35px';
+                    img.style.maxHeight = '35px';
                     img.style.objectFit = 'cover';
                 });
+                
+                // Thu nhỏ logo công ty
+                const logos = clone.querySelectorAll('img[alt*="SOLAR"], img[alt*="logo"]');
+                logos.forEach(logo => {
+                    logo.style.maxWidth = '50px';
+                    logo.style.maxHeight = '50px';
+                });
+                
+                // Thu nhỏ text trong summary boxes
+                const summaryBoxes = clone.querySelectorAll('.bg-white.dark\\:bg-gray-700, .bg-gradient-to-br');
+                summaryBoxes.forEach(box => {
+                    box.style.padding = '0.2cm';
+                    box.style.margin = '0.15cm';
+                    const text = box.querySelectorAll('p');
+                    text.forEach(p => {
+                        p.style.fontSize = '8px';
+                        p.style.margin = '0.1cm';
+                    });
+                });
+                
+                // Giảm khoảng cách giữa các phần tử
+                clone.querySelectorAll('div').forEach(div => {
+                    const mb = window.getComputedStyle(div).marginBottom;
+                    if (mb && parseFloat(mb) > 10) {
+                        div.style.marginBottom = '0.3cm';
+                    }
+                });
 
-                // Tạo một container tạm để render
+                // Tạo một container tạm để render - vừa với A4
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'absolute';
                 tempContainer.style.left = '-9999px';
                 tempContainer.style.width = '21cm';
+                tempContainer.style.height = '29.7cm'; // A4 height
+                tempContainer.style.maxHeight = '29.7cm';
+                tempContainer.style.overflow = 'hidden';
                 tempContainer.style.backgroundColor = '#ffffff';
                 tempContainer.appendChild(clone);
                 document.body.appendChild(tempContainer);
