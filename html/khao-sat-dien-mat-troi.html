@@ -2033,7 +2033,9 @@
                 
                 // Tính toán số lượng theo từng loại phụ kiện
                 if (isDynamic) {
-                    // Dynamic rule: quantity = baseQty + depQty * count(depTarget)
+                    // Quy tắc mới:
+                    // - Nếu phụ thuộc 'project' (cả công trình): số lượng = baseQty
+                    // - Ngược lại: số lượng = baseQty × targetCount × (depQty || 1)
                     const depTarget = (acc.depTarget || 'project');
                     let targetCount = 1;
                     if (depTarget === 'panel') targetCount = panelCount;
@@ -2042,8 +2044,8 @@
                     else if (depTarget === 'cabinet') targetCount = 1;
                     else targetCount = 1; // project
                     const baseQty = Number(acc.baseQty || 0);
-                    const depQty = Number(acc.depQty || 0);
-                    quantity = baseQty + depQty * targetCount;
+                    const depQty = Number(acc.depQty || 1);
+                    quantity = (depTarget === 'project') ? baseQty : baseQty * targetCount * depQty;
                     displayName = acc.name;
                 } else {
                     if (acc.name.includes("Bách Z")) {

@@ -2823,7 +2823,8 @@
                 const accBase = parseFloat(document.getElementById('survey_accessory_base_qty')?.value || '');
                 const accDep = parseFloat(document.getElementById('survey_accessory_dependent_qty')?.value || '');
                 const accTarget = document.getElementById('survey_accessory_dependent_target')?.value || '';
-                ready = !!accUnit && !isNaN(accBase) && !isNaN(accDep) && !!accTarget;
+                // depQty có thể bỏ trống (mặc định 1)
+                ready = !!accUnit && !isNaN(accBase) && !!accTarget;
             } else ready = true;
 
             isActiveEl.disabled = !ready;
@@ -2874,7 +2875,7 @@
             else if (surveyCategory === 'inverter') ready = phaseType !== 'none' && !!invKW && invKW > 0;
             else if (surveyCategory === 'battery') ready = !!battKwh && battKwh > 0;
             else if (surveyCategory === 'electrical_cabinet') ready = phaseType !== 'none' && !!cabKW && cabKW > 0;
-            else if (surveyCategory === 'accessory') ready = !!accUnit && (!isNaN(accBase)) && (!isNaN(accDep)) && !!accTarget;
+            else if (surveyCategory === 'accessory') ready = !!accUnit && (!isNaN(accBase)) && !!accTarget;
             else ready = true;
             if (isActive && !ready) {
                 showToast('Vui lòng nhập đầy đủ thông số bắt buộc trước khi kích hoạt.', 'warning');
