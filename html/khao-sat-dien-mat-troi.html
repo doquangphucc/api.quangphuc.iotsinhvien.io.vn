@@ -3311,11 +3311,9 @@
                 console.log('collectCalculationResults - Inverter ID:', result.selectedInverter?.id);
                 console.log('collectCalculationResults - Cabinet ID:', result.selectedCabinet?.id);
                 console.log('collectCalculationResults - Battery ID:', result.batteryProductId);
-                // Resolve cabinet info from accessories list
-                const cabItem = Array.isArray(result.accessories)
-                    ? result.accessories.find(a => /tủ\s*điện/i.test((a.name || ''))) : null;
-                const cabinetName = cabItem?.name || 'Tủ điện';
-                const cabinetPrice = cabItem ? Number((cabItem.totalPrice ?? cabItem.price) || 0) : 0;
+                // Resolve cabinet from selectedCabinet (no longer inside accessories list)
+                const cabinetName = result.selectedCabinet?.name || 'Tủ điện';
+                const cabinetPrice = Number(result.selectedCabinet?.price || 0);
                 
                 // Transform to old format for API
                 return {
@@ -3340,7 +3338,7 @@
                     cabinet: {
                         id: (result.selectedCabinet && result.selectedCabinet.id) ? result.selectedCabinet.id : 0,
                         name: cabinetName,
-                        capacity: result.systemSizeKw,
+                        capacity: result.selectedCabinet?.power ? (result.selectedCabinet.power/1000) : result.systemSizeKw,
                         price: cabinetPrice
                     },
                     batteryNeeded: result.batteryCapacityNeeded,
@@ -3479,6 +3477,15 @@
                             image_url: result.selectedInverter.image,
                             isVirtual: true
                         },
+                        // Tủ điện
+                        {
+                            id: result.selectedCabinet?.id || ('cabinet_' + Date.now()),
+                            title: result.selectedCabinet?.name || 'Tủ điện',
+                            price: result.selectedCabinet?.price || 0,
+                            quantity: 1,
+                            image_url: result.selectedCabinet?.image || '',
+                            isVirtual: true
+                        },
                         // Pin lưu trữ
                         {
                             id: result.batteryProductId,
@@ -3501,8 +3508,8 @@
                     summary: {
                         inverter: result.selectedInverter.name,
                         invertorPrice: result.selectedInverter.price,
-                        cabinet: result.accessories.find(a => a.name.includes('Tủ Điện'))?.name || 'Tủ điện',
-                        cabinetPrice: result.accessories.find(a => a.name.includes('Tủ Điện'))?.totalPrice || 0,
+                        cabinet: result.selectedCabinet?.name || 'Tủ điện',
+                        cabinetPrice: result.selectedCabinet?.price || 0,
                         totalEstimate: result.totalPrice,
                         systemSizeKw: result.systemSizeKw,
                         panelCount: result.panelCount,
