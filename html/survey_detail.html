@@ -521,6 +521,9 @@
     
     <!-- html2pdf.js for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2canvas and jsPDF for direct PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
@@ -546,16 +549,28 @@
             el.style.height = '';
 
             const r = el.getBoundingClientRect();
-            const scale = Math.min(availW / r.width, availH / r.height, 1);
-
-            // Đảm bảo sau scale không vượt quá A4 - tính lại scale nếu cần
-            let finalScale = scale;
-            const scaledHeight = r.height * scale;
-            const scaledWidth = r.width * scale;
             
-            if (scaledHeight > availH || scaledWidth > availW) {
-                finalScale = Math.min(availW / r.width, availH / r.height, 1);
+            // Tính scale dựa trên width và height, ưu tiên fit height trước
+            const scaleW = availW / r.width;
+            const scaleH = availH / r.height;
+            let finalScale = Math.min(scaleW, scaleH, 1);
+            
+            // Đảm bảo sau scale không vượt quá A4 - thêm buffer nhỏ
+            const buffer = 2; // 2px buffer
+            const scaledHeight = r.height * finalScale;
+            const scaledWidth = r.width * finalScale;
+            
+            // Nếu vượt quá, tính lại scale chính xác hơn
+            if (scaledHeight > (availH - buffer) || scaledWidth > (availW - buffer)) {
+                finalScale = Math.min(
+                    (availW - buffer) / r.width, 
+                    (availH - buffer) / r.height, 
+                    1
+                );
             }
+            
+            // Đảm bảo finalScale không quá nhỏ (tối thiểu 0.3)
+            finalScale = Math.max(finalScale, 0.3);
 
             // Cố định kích thước gốc để khi scale không bị cắt
             el.style.width  = r.width  + 'px';
@@ -1312,7 +1327,7 @@
             }
         }
 
-        // Export to PDF function - dùng fitElementToA4
+        // Export to PDF function - Cách 2: html2canvas + jsPDF trực tiếp (luôn chỉ 1 trang)
         async function exportToPDF() {
             try {
                 const src = document.getElementById('surveyDetail');
@@ -1324,40 +1339,32 @@
                 // Hiển thị loading
                 showNotification('🔄 Đang tạo PDF...', 'info');
 
-                // Clone để không đụng trang thật
+                // Clone & bọc A4
                 const clone = src.cloneNode(true);
-
-                // Ẩn nút, back…
                 const rm = clone.querySelector('#actionButtons');
                 if (rm) rm.remove();
                 const bk = clone.querySelector('.back-button');
                 if (bk) bk.remove();
 
-                // Tạo wrapper A4 - giới hạn chính xác 1 trang
                 const wrapper = document.createElement('div');
                 wrapper.style.width = '210mm';
                 wrapper.style.height = '297mm';
-                wrapper.style.maxHeight = '297mm'; // Giới hạn không vượt quá A4
-                wrapper.style.minHeight = '297mm'; // Cố định height
                 wrapper.style.padding = '5mm';
                 wrapper.style.boxSizing = 'border-box';
                 wrapper.style.background = 'white';
-                wrapper.style.overflow = 'hidden'; // Ẩn phần vượt quá
-                wrapper.style.position = 'relative';
+                wrapper.style.overflow = 'hidden';
                 wrapper.appendChild(clone);
 
-                // Đưa ra ngoài màn hình để đo & render
                 const temp = document.createElement('div');
                 temp.style.position = 'fixed';
                 temp.style.left = '-10000px';
-                temp.style.top = '0';
                 temp.appendChild(wrapper);
                 document.body.appendChild(temp);
 
-                // Fit clone vào A4
-                fitElementToA4(clone, {marginMm: 5});
+                // Fit clone vào A4 (đã có hàm của bạn)
+                fitElementToA4(clone, { marginMm: 5 });
 
-                // Đợi ảnh (tối đa 2s/ảnh)
+                // Đợi ảnh
                 const imgs = wrapper.querySelectorAll('img');
                 await Promise.all([...imgs].map(img => img.complete ? Promise.resolve() : new Promise(r => {
                     img.onload = r;
@@ -1368,17 +1375,42 @@
                 // Đợi DOM cập nhật
                 await new Promise(resolve => setTimeout(resolve, 300));
 
-                // Xuất PDF
-                const opt = {
-                    margin: 0,                    // đã có padding 5mm trong wrapper
-                    filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.95 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false }, // nét
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all'] }   // phòng ngừa ngắt trang
-                };
+                // Render thành canvas 1 trang
+                const canvas = await html2canvas(wrapper, { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                // Thêm vào PDF 1 trang duy nhất (không cho phép chia trang)
+                // jsPDF từ CDN - UMD version expose qua window.jspdf
+                let jsPDFLib;
+                if (window.jspdf && window.jspdf.jsPDF) {
+                    jsPDFLib = window.jspdf.jsPDF;
+                } else if (window.jsPDF) {
+                    jsPDFLib = window.jsPDF;
+                } else {
+                    throw new Error('jsPDF không tìm thấy. Vui lòng kiểm tra CDN.');
+                }
+                const pdf = new jsPDFLib({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+                const pageW = 210;
+                const pageH = 297;
                 
-                await html2pdf().set(opt).from(wrapper).save();
+                // Giữ tỉ lệ ảnh: fit theo chiều nào chạm biên trước
+                const imgRatio = canvas.width / canvas.height;
+                let w = pageW;
+                let h = w / imgRatio;
+                if (h > pageH) {
+                    h = pageH;
+                    w = h * imgRatio;
+                }
+                const x = (pageW - w) / 2;
+                const y = (pageH - h) / 2;
+                pdf.addImage(imgData, 'JPEG', x, y, w, h, undefined, 'FAST');
+
+                pdf.save(`BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`);
 
                 // Dọn
                 document.body.removeChild(temp);
