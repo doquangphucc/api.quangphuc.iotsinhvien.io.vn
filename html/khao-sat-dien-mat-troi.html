@@ -1996,6 +1996,7 @@
             // Chọn tủ điện phù hợp với biến tần
             // Logic tương tự inverter: nếu chọn 1 pha → lấy tủ 1 pha hoặc both, nếu chọn 3 pha → lấy tủ 3 pha hoặc both
             let selectedCabinet;
+            let cabinetAlternatives = [];
             let availableCabinets = [];
             
             if (formData.phase === '1') {
@@ -2013,10 +2014,14 @@
             }
             
             if (availableCabinets.length > 0) {
-                // Tìm tủ điện có công suất phù hợp với biến tần
-                selectedCabinet = availableCabinets.find(cab => cab.power >= selectedInverter.power) || availableCabinets[availableCabinets.length - 1];
-                // Debug: Log cabinet ID
-                console.log('Selected Cabinet:', selectedCabinet.name, 'ID:', selectedCabinet.id);
+                // Chuẩn hóa và sắp xếp tăng dần theo công suất để chọn NHỎ NHẤT thỏa điều kiện
+                availableCabinets = availableCabinets.map(c => ({...c, power: Number(c.power || 0)}))
+                    .sort((a,b)=>a.power-b.power);
+                const minPower = availableCabinets.filter(c => c.power >= selectedInverter.power)
+                    .reduce((min, c) => Math.min(min, c.power), Infinity);
+                cabinetAlternatives = availableCabinets.filter(c => c.power >= selectedInverter.power && c.power === minPower);
+                selectedCabinet = cabinetAlternatives[0] || availableCabinets[availableCabinets.length-1];
+                console.log('Selected Cabinet:', selectedCabinet.name, 'ID:', selectedCabinet.id, 'alts:', cabinetAlternatives.map(c=>c.name));
             } else {
                 // Fallback nếu không có tủ điện phù hợp
                 selectedCabinet = { id: 0, name: "Không có tủ điện phù hợp", power: 0, price: 0, image: "../assets/img/products/electrical-cabinet.jpg" };
@@ -2135,6 +2140,7 @@
                 roofArea,
                 selectedInverter,
                 selectedCabinet,
+                cabinetAlternatives,
                 selectedBattery,
                 batteryProductId, // Product ID của pin lưu trữ
                 batteryCapacityNeeded,
@@ -2683,6 +2689,22 @@
             // Store result for later use
             window.currentSurveyResult = result;
             window.currentFormData = formData;
+            // Cho phép chọn giữa các tủ điện cùng mức công suất (nếu có)
+            const cabinetRadios = document.querySelectorAll('input[name="cabinetChoice"]');
+            if (cabinetRadios && cabinetRadios.length > 1) {
+                cabinetRadios.forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        const idx = parseInt(e.target.value, 10) || 0;
+                        const oldPrice = result.selectedCabinet.price || 0;
+                        result.selectedCabinet = result.cabinetAlternatives[idx];
+                        const newPrice = result.selectedCabinet.price || 0;
+                        // Cập nhật tổng nhanh mà không cần tính lại tất cả
+                        result.totalPrice = result.totalPrice - oldPrice + newPrice;
+                        // Re-render kết quả
+                        displayResults(result, formData);
+                    });
+                });
+            }
             
             // Add event listener to save button (after it's created)
             const saveSurveyBtn = document.getElementById('saveSurveyBtn');
