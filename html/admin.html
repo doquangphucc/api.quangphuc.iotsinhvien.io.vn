@@ -2738,10 +2738,23 @@
                 fill('survey_cabinet_power_kw', config.cabinet_power_kw);
                 // accessory fields
                 const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val ?? ''); };
+                console.debug('Accessory config for product', productId, {
+                    unit: config.accessory_unit,
+                    base: config.accessory_base_qty,
+                    dep: config.accessory_dependent_qty,
+                    target: config.accessory_dependent_target
+                });
                 setVal('survey_accessory_unit', config.accessory_unit || '');
                 setVal('survey_accessory_base_qty', (config.accessory_base_qty ?? ''));
                 setVal('survey_accessory_dependent_qty', (config.accessory_dependent_qty ?? ''));
                 setVal('survey_accessory_dependent_target', config.accessory_dependent_target || '');
+                // Re-log applied values
+                console.debug('Accessory form values applied', {
+                    unit: document.getElementById('survey_accessory_unit')?.value,
+                    base: document.getElementById('survey_accessory_base_qty')?.value,
+                    dep: document.getElementById('survey_accessory_dependent_qty')?.value,
+                    target: document.getElementById('survey_accessory_dependent_target')?.value
+                });
             }
             // Update activation UI state initially
             updateSurveyActivationState();
