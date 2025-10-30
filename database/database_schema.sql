@@ -44,6 +44,11 @@ CREATE TABLE IF NOT EXISTS products (
     category_price DECIMAL(15, 2) DEFAULT NULL COMMENT 'Giá theo danh mục',
     technical_description TEXT COMMENT 'Mô tả kỹ thuật (gộp mô tả ngắn và thông số kỹ thuật)',
     image_url VARCHAR(500) COMMENT 'Đường dẫn ảnh sản phẩm',
+    -- Thông số chuẩn hóa phục vụ tính toán khảo sát (nullable)
+    panel_power_watt INT DEFAULT NULL COMMENT 'Công suất tấm pin (W/tấm)',
+    inverter_power_watt INT DEFAULT NULL COMMENT 'Công suất inverter (W)',
+    battery_capacity_kwh DECIMAL(10,2) DEFAULT NULL COMMENT 'Dung lượng 1 bộ pin lưu trữ (kWh)',
+    cabinet_power_kw DECIMAL(10,2) DEFAULT NULL COMMENT 'Công suất tủ điện (kW)',
     is_active BOOLEAN DEFAULT TRUE COMMENT 'Trạng thái hiển thị',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

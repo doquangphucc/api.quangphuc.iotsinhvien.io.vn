@@ -2857,8 +2857,11 @@
                 products.battery.forEach(battery => {
                     // Create formatted display text with tech specs
                     const displayText = formatDisplayText(battery.title, battery.technical_description);
-                    const capMatch = (battery.title || battery.technical_description || '').match(/(\d+\.?\d*)\s*kWh/i);
-                    const unitCap = capMatch ? parseFloat(capMatch[1]) : 0;
+                    const unitCap = (typeof battery.battery_capacity_kwh === 'number' && battery.battery_capacity_kwh > 0)
+                        ? battery.battery_capacity_kwh
+                        : ((battery.title || battery.technical_description || '').match(/(\d+\.?\d*)\s*kW(h)?/i)?.[1]
+                            ? parseFloat((battery.title || battery.technical_description || '').match(/(\d+\.?\d*)\s*kW(h)?/i)[1])
+                            : 0);
                     
                     // Use product_id as value for better tracking
                     const option = document.createElement('option');
@@ -2884,7 +2887,7 @@
                     invertersByPhase['1'].push({
                         id: inv.id,
                         name: inv.title,
-                        power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
+                        power: (inv.inverter_power_watt && inv.inverter_power_watt > 0) ? inv.inverter_power_watt : (parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000),
                         price: inv.price,
                         warranty: "12 tháng",
                         image: fixImageUrl(inv.image_url),
@@ -2896,7 +2899,7 @@
                     invertersByPhase['3'].push({
                         id: inv.id,
                         name: inv.title,
-                        power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
+                        power: (inv.inverter_power_watt && inv.inverter_power_watt > 0) ? inv.inverter_power_watt : (parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000),
                         price: inv.price,
                         warranty: "12 tháng",
                         image: fixImageUrl(inv.image_url),
@@ -2908,7 +2911,7 @@
                     invertersByPhase['both'].push({
                         id: inv.id,
                         name: inv.title,
-                        power: parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000,
+                        power: (inv.inverter_power_watt && inv.inverter_power_watt > 0) ? inv.inverter_power_watt : (parseInt(inv.title.match(/(\d+)K/i)?.[1] || '0') * 1000),
                         price: inv.price,
                         warranty: "12 tháng",
                         image: fixImageUrl(inv.image_url),
@@ -2955,7 +2958,7 @@
                     electricalCabinets['1'].push({
                         id: cab.id,
                         name: cab.title,
-                        power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
+                        power: (cab.cabinet_power_kw && cab.cabinet_power_kw > 0) ? (cab.cabinet_power_kw * 1000) : (parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000),
                         price: cab.price,
                         image: fixImageUrl(cab.image_url)
                     });
@@ -2965,7 +2968,7 @@
                     electricalCabinets['3'].push({
                         id: cab.id,
                         name: cab.title,
-                        power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
+                        power: (cab.cabinet_power_kw && cab.cabinet_power_kw > 0) ? (cab.cabinet_power_kw * 1000) : (parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000),
                         price: cab.price,
                         image: fixImageUrl(cab.image_url)
                     });
@@ -2975,7 +2978,7 @@
                     electricalCabinets['both'].push({
                         id: cab.id,
                         name: cab.title,
-                        power: parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000,
+                        power: (cab.cabinet_power_kw && cab.cabinet_power_kw > 0) ? (cab.cabinet_power_kw * 1000) : (parseInt(cab.title.match(/(\d+)kW/i)?.[1] || '0') * 1000),
                         price: cab.price,
                         image: fixImageUrl(cab.image_url)
                     });
