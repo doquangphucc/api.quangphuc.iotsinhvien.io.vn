@@ -1694,6 +1694,8 @@
     <script>
         // API Base URL
         const API_BASE = '../api';
+        // Bản đồ giờ nắng theo khu vực (mặc định)
+        let regionSunHours = { 'mien-bac': 4.4, 'mien-trung': 4.7, 'mien-nam': 6.3 };
         
         // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -1875,11 +1877,8 @@
             // Debug: Log panel product ID
             console.log('Panel Product ID from option:', solarPanelProductId, 'Attr:', selectedOption.getAttribute('data-product-id'));
             
-            // Điều chỉnh giờ nắng theo khu vực
-            let peakSunHours = 4.4; // Mặc định
-            if (formData.region === 'mien-bac') peakSunHours = 4.4;
-            else if (formData.region === 'mien-trung') peakSunHours = 6.3;
-            else if (formData.region === 'mien-nam') peakSunHours = 6.3;
+            // Điều chỉnh giờ nắng theo khu vực (ưu tiên dữ liệu từ Admin)
+            let peakSunHours = regionSunHours[formData.region] || 4.4;
             
             // Tính toán hệ thống
             const dailyKwh = monthlyKwh / 30;
@@ -2735,6 +2734,8 @@
             
             // Load survey products from API
             loadSurveyProducts();
+            // Load sun hours from Admin
+            loadSurveyRegionsPublic();
             
             // Add floating elements
             createFloatingElements();
@@ -2779,6 +2780,32 @@
             } catch (error) {
                 console.error('Error loading electricity prices:', error);
                 console.log('Using default electricity prices');
+            }
+        }
+
+        // Load survey regions (sun hours) from Admin and update option labels
+        async function loadSurveyRegionsPublic() {
+            try {
+                const res = await fetch(`${API_BASE}/get_survey_regions_public.php`);
+                const data = await res.json();
+                if (data.success && Array.isArray(data.regions)) {
+                    data.regions.filter(r => r.is_active).forEach(r => {
+                        regionSunHours[r.region_code] = Number(r.sun_hours || 0) || regionSunHours[r.region_code] || 0;
+                    });
+                    const regionSelect = document.querySelector('select[name="region"]');
+                    if (regionSelect) {
+                        Array.from(regionSelect.options).forEach(opt => {
+                            const code = opt.value;
+                            const match = data.regions.find(r => r.region_code === code);
+                            if (match) {
+                                const display = match.display_content || `${match.region_name} (${match.sun_hours} giờ nắng/ngày)`;
+                                opt.textContent = display;
+                            }
+                        });
+                    }
+                }
+            } catch (err) {
+                console.warn('Load survey regions failed, use defaults', err);
             }
         }
         
