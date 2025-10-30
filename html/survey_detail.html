@@ -286,6 +286,14 @@
                             <p class="text-sm text-gray-600 dark:text-gray-400">Tiết kiệm mùa hè/tháng:</p>
                             <p class="text-xl font-bold text-emerald-600" id="summerSavings">-</p>
                         </div>
+                        <div class="bg-white dark:bg-gray-700 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Hoàn vốn dự kiến:</p>
+                            <p class="text-xl font-bold text-emerald-600" id="paybackSimple">-</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Hoàn vốn khi vay 10%/năm:</p>
+                            <p class="text-xl font-bold text-blue-600" id="paybackLoan">-</p>
+                        </div>
                     </div>
                 </div>
 
@@ -754,11 +762,30 @@
             const monthlyKWh = dailyKWh * 30;
             const monthlySavings = survey.monthlyBill * 0.8;
             const summerSavings = monthlySavings * 1.25;
+            // Payback (simple) and discounted at 10%
+            const totalCost = Number(r?.totalCost || 0);
+            const annualSavings = monthlySavings * 12;
+            const paybackYears = annualSavings > 0 ? Math.ceil(totalCost / annualSavings) : '-';
+            function calcDiscountedPayback(cost, savingsPerYear, rate) {
+                if (savingsPerYear <= 0) return '-';
+                let cumNPV = 0;
+                let year = 0;
+                while (year < 30 && cumNPV < cost) {
+                    year += 1;
+                    cumNPV += savingsPerYear / Math.pow(1 + rate, year);
+                }
+                return year >= 30 ? '>30' : year;
+            }
+            const discountedPaybackYears = calcDiscountedPayback(totalCost, annualSavings, 0.10);
             
             document.getElementById('dailyKWh').textContent = `${dailyKWh.toFixed(1)} KW`;
             document.getElementById('monthlyKWhGen').textContent = `${monthlyKWh.toFixed(0)} KW`;
             document.getElementById('monthlySavings').textContent = `${Math.round(monthlySavings).toLocaleString('vi-VN')}đ`;
             document.getElementById('summerSavings').textContent = `${Math.round(summerSavings).toLocaleString('vi-VN')}đ`;
+            const paybackSimpleEl = document.getElementById('paybackSimple');
+            if (paybackSimpleEl) paybackSimpleEl.textContent = `${paybackYears} năm`;
+            const paybackLoanEl = document.getElementById('paybackLoan');
+            if (paybackLoanEl) paybackLoanEl.textContent = `${discountedPaybackYears} năm`;
         }
         
         function getUsageTimeText(usageTime) {
