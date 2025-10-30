@@ -109,6 +109,131 @@
         body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
              background-color: #7f1d1d;
         }
+        
+        /* Print Styles - Chỉ hiển thị nội dung báo giá */
+        @media print {
+            @page {
+                margin: 0.5cm;
+                size: A4;
+            }
+            
+            /* Ẩn tất cả navigation, header, footer, buttons */
+            header,
+            #cart-fab,
+            .theme-toggle,
+            .auth-btn,
+            #mobile-menu-button,
+            #mobile-menu,
+            nav,
+            .cta,
+            #auth-buttons,
+            #mobile-auth-buttons,
+            .back-button,
+            button,
+            a[href*="survey_history"],
+            a[href*="khao-sat-dien-mat-troi"] {
+                display: none !important;
+            }
+            
+            /* Ẩn nút Actions */
+            #actionButtons,
+            .flex.gap-4.mb-6:has(button) {
+                display: none !important;
+            }
+            
+            /* Đảm bảo body không có background khi in */
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            /* Đảm bảo các container không có shadow khi in */
+            .bg-white,
+            .bg-gray-50,
+            .bg-gradient-to-br,
+            .rounded-2xl,
+            .shadow-lg,
+            .shadow-xl {
+                background: white !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            
+            /* Đảm bảo ảnh hiển thị khi in */
+            img {
+                max-width: 100% !important;
+                height: auto !important;
+                page-break-inside: avoid;
+            }
+            
+            /* Ảnh sản phẩm trong bảng */
+            table img {
+                display: block !important;
+                max-width: 60px !important;
+                max-height: 60px !important;
+                object-fit: cover !important;
+            }
+            
+            /* Đảm bảo bảng không bị cắt */
+            table {
+                page-break-inside: avoid;
+            }
+            
+            /* Ẩn loading state */
+            #loading {
+                display: none !important;
+            }
+            
+            /* Hiển thị survey detail */
+            #surveyDetail {
+                display: block !important;
+            }
+            
+            /* Đảm bảo text màu đen khi in */
+            .text-gray-800,
+            .text-gray-700,
+            .text-gray-600,
+            .text-emerald-600,
+            .text-blue-600,
+            .dark\:text-white,
+            .dark\:text-gray-300 {
+                color: black !important;
+            }
+            
+            /* Header công ty nổi bật khi in */
+            .bg-white.rounded-2xl.p-4.mb-4.shadow-lg:first-of-type {
+                border: 2px solid #16a34a !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            /* Đảm bảo logo hiển thị khi in */
+            .bg-white.rounded-2xl.p-4.mb-4.shadow-lg:first-of-type img {
+                display: block !important;
+                max-width: 80px !important;
+                height: auto !important;
+            }
+            
+            /* Bảng sản phẩm */
+            table {
+                border-collapse: collapse !important;
+                width: 100% !important;
+            }
+            
+            th, td {
+                border: 1px solid #d1d5db !important;
+                padding: 0.5rem !important;
+            }
+            
+            thead tr {
+                background: #16a34a !important;
+                color: white !important;
+            }
+            
+            /* Tổng cộng */
+            tfoot tr {
+                background: #d1fae5 !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
@@ -178,7 +303,7 @@
     <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-3">
         <div class="container mx-auto max-w-5xl">
             <!-- Back Button -->
-            <div class="mb-6">
+            <div class="mb-6 back-button">
                 <a href="survey_history.html" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -300,7 +425,10 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex gap-4 mb-6">
+                <div class="flex gap-4 mb-6" id="actionButtons">
+                    <button onclick="exportToPDF()" class="flex-1 bg-gradient-to-r from-red-600 to-pink-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
+                        📥 Xuất PDF
+                    </button>
                     <button onclick="window.print()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
                         📄 In báo giá
                     </button>
@@ -376,6 +504,9 @@
             </div>
         </div>
     </footer>
+    
+    <!-- html2pdf.js for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
@@ -1065,6 +1196,78 @@
             } catch (error) {
                 console.error('Error preparing package:', error);
                 showNotification('❌ Lỗi khi chuẩn bị gói: ' + error.message, 'error');
+            }
+        }
+
+        // Export to PDF function
+        async function exportToPDF() {
+            try {
+                const surveyDetailEl = document.getElementById('surveyDetail');
+                if (!surveyDetailEl) {
+                    alert('Không tìm thấy nội dung báo giá!');
+                    return;
+                }
+
+                // Hiển thị loading
+                showNotification('🔄 Đang tạo PDF...', 'info');
+
+                // Cấu hình html2pdf
+                const opt = {
+                    margin: [0.5, 0.5, 0.5, 0.5],
+                    filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        letterRendering: true
+                    },
+                    jsPDF: { 
+                        unit: 'cm', 
+                        format: 'a4', 
+                        orientation: 'portrait' 
+                    }
+                };
+
+                // Clone element để không ảnh hưởng đến trang chính
+                const clone = surveyDetailEl.cloneNode(true);
+                
+                // Ẩn các phần không cần thiết trong clone
+                const actionButtons = clone.querySelector('#actionButtons');
+                const backButton = clone.querySelector('.back-button');
+                if (actionButtons) actionButtons.remove();
+                if (backButton) backButton.remove();
+
+                // Tạo một container tạm để render
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.appendChild(clone);
+                document.body.appendChild(tempContainer);
+
+                // Đảm bảo tất cả ảnh đã load
+                const images = clone.querySelectorAll('img');
+                const imagePromises = Array.from(images).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve; // Tiếp tục ngay cả khi ảnh lỗi
+                        setTimeout(resolve, 2000); // Timeout sau 2s
+                    });
+                });
+
+                await Promise.all(imagePromises);
+
+                // Export PDF
+                await html2pdf().set(opt).from(clone).save();
+
+                // Dọn dẹp
+                document.body.removeChild(tempContainer);
+
+                showNotification('✅ Đã xuất PDF thành công!', 'success');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showNotification('❌ Lỗi khi xuất PDF: ' + error.message, 'error');
             }
         }
     </script>
