@@ -931,7 +931,7 @@
                     return null;
                 }
 
-                // Prepare survey package data with all items (dùng dữ liệu đã lưu)
+                // Prepare survey package data với cấu trúc thống nhất (items: panel, inverter, cabinet, battery; accessories: tất cả phụ kiện)
                 const surveyPackage = {
                     fromSurvey: true,
                     items: [
@@ -952,6 +952,15 @@
                             image_url: getImageUrl(r?.inverterImage, r?.inverterName, 'inverter', survey.phase),
                             isVirtual: true
                         },
+                        // Tủ điện
+                        {
+                            id: r?.cabinetId || null,
+                            title: r?.cabinetName || 'Tủ điện',
+                            price: Number(r?.cabinetPrice || 0),
+                            quantity: 1,
+                            image_url: getImageUrl(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
+                            isVirtual: true
+                        },
                         // Pin lưu trữ
                         {
                             id: r?.batteryId || null,
@@ -961,72 +970,15 @@
                             image_url: getImageUrl(r?.batteryImage, r?.batteryName, 'battery')
                         }
                     ],
-                    // Add all accessories as separate items (recomputed to match survey page)
-                    accessories: [
-                        // Tủ điện (dùng dữ liệu đã lưu)
-                        {
-                            id: r?.cabinetId || null,
-                            title: r?.cabinetName || 'Tủ điện',
-                            price: Number(r?.cabinetPrice || 0),
-                            quantity: 1,
-                            image_url: getImageUrl(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
-                            isVirtual: true
-                        },
-                        // Các phụ kiện cấu hình từ Admin (computedAccessories)
-                        ...computedAccessories.map(a => ({
-                            id: 'accessory_' + a.name.replace(/\s+/g, '_'),
-                            title: a.name,
-                            price: a.price,
-                            quantity: a.quantity,
-                            image_url: a.image,
-                            isVirtual: true
-                        })),
-                        // Vật tư và phụ kiện đi kèm (tổng)
-                        {
-                            id: 'accessory_phukien',
-                            title: 'Vật tư và phụ kiện đi kèm',
-                            price: Number(r?.accessoriesCost || 0),
-                            quantity: 1,
-                            image_url: null,
-                            isVirtual: true
-                        },
-                        // Kẹp biên
-                        {
-                            id: 'accessory_clip',
-                            title: 'Kẹp biên, Kẹp giữa tấm PIN',
-                            price: Number(r?.clipPrice || 0),
-                            quantity: Number(r?.clipQty || 0),
-                            image_url: null,
-                            isVirtual: true
-                        },
-                        // Công thợ
-                        {
-                            id: 'accessory_labor',
-                            title: 'Chi phí công thợ lắp đặt trọn gói',
-                            price: Number(r?.laborCost || 0),
-                            quantity: 1,
-                            image_url: '🔧',
-                            isVirtual: true
-                        },
-                        // Vận chuyển
-                        {
-                            id: 'accessory_transport',
-                            title: 'Chi phí vận chuyển thiết bị',
-                            price: 0,
-                            quantity: 1,
-                            image_url: '🚛',
-                            isVirtual: true
-                        },
-                        // Dây DC
-                        {
-                            id: 'accessory_dc_cable',
-                            title: 'Dây DC chuyên dụng',
-                            price: Number(r?.dcCablePrice || 0),
-                            quantity: Number(r?.dcCableLength || 100),
-                            image_url: null,
-                            isVirtual: true
-                        }
-                    ],
+                    // Accessories: chỉ các phụ kiện đã lưu/tính (không thêm các dòng tổng hợp)
+                    accessories: computedAccessories.map(a => ({
+                        id: 'accessory_' + a.name.replace(/\s+/g, '_'),
+                        title: a.name,
+                        price: a.price,
+                        quantity: a.quantity,
+                        image_url: a.image,
+                        isVirtual: true
+                    })),
                     // Summary info
                     summary: {
                         inverter: r?.inverterName || 'Inverter',
