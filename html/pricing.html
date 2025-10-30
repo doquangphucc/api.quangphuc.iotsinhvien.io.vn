@@ -473,6 +473,14 @@
     const container = document.getElementById('packages-container');
     const btnLeft = document.getElementById('packages-scroll-left');
     const btnRight = document.getElementById('packages-scroll-right');
+    function getCardScrollAmount(){
+        if (!container) return 300;
+        const track = container.querySelector(':scope > div');
+        const firstCard = track ? track.querySelector(':scope > *') : null;
+        const cardWidth = firstCard ? firstCard.clientWidth : 0;
+        const GAP = 24; // match gap-6
+        return cardWidth ? (cardWidth + GAP) : 300;
+    }
     function updateButtonVisibility() {
         if (!container) return;
         if (container.scrollWidth > container.clientWidth) {
@@ -484,13 +492,11 @@
         }
     }
     btnLeft && btnLeft.addEventListener('click',()=>{
-        const firstChild = container.querySelector(':scope > *');
-        let scrollAmount = firstChild ? (firstChild.clientWidth+24||300) : 300;
+        const scrollAmount = getCardScrollAmount();
         container.scrollBy({left:-scrollAmount,behavior:'smooth'});
     });
     btnRight && btnRight.addEventListener('click',()=>{
-        const firstChild = container.querySelector(':scope > *');
-        let scrollAmount = firstChild ? (firstChild.clientWidth+24||300) : 300;
+        const scrollAmount = getCardScrollAmount();
         container.scrollBy({left:scrollAmount,behavior:'smooth'});
     });
     window.addEventListener('resize',updateButtonVisibility);
