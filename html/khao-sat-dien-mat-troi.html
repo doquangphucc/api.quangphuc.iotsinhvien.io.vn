@@ -2216,7 +2216,6 @@
             // Tạo HTML cho bảng phụ kiện chi tiết
             let accessoriesHTML = '';
             result.accessories.forEach(acc => {
-                if (acc.quantity > 0) {
                     // Special handling for transport (Vận chuyển)
                     const isTransport = acc.isTransport || acc.name === 'Vận Chuyển Đến Công Trình';
                     
@@ -2251,7 +2250,6 @@
                             <td class="price-col">${isTransport ? '<span style="color: #ff9800; font-style: italic;">Tùy xa gần</span>' : acc.totalPrice.toLocaleString() + 'đ'}</td>
                         </tr>
                     `;
-                }
             });
             
             // Tên khu vực
