@@ -1213,19 +1213,28 @@
 
                 // Cấu hình html2pdf
                 const opt = {
-                    margin: [0.5, 0.5, 0.5, 0.5],
+                    margin: [1, 1, 1, 1], // Top, Right, Bottom, Left (cm)
                     filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
+                    image: { type: 'jpeg', quality: 0.95 },
                     html2canvas: { 
-                        scale: 2,
+                        scale: 1.5, // Giảm scale để tránh nội dung vượt quá trang
                         useCORS: true,
                         logging: false,
-                        letterRendering: true
+                        letterRendering: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff'
                     },
                     jsPDF: { 
                         unit: 'cm', 
                         format: 'a4', 
-                        orientation: 'portrait' 
+                        orientation: 'portrait',
+                        compress: true
+                    },
+                    pagebreak: {
+                        mode: ['avoid-all', 'css', 'legacy'], // Tránh ngắt trang giữa các phần tử
+                        before: '.bg-white.rounded-2xl', // Ngắt trang trước mỗi section
+                        after: ['table', '.bg-gradient-to-r'], // Ngắt trang sau bảng hoặc summary
+                        avoid: ['tr', 'td', 'thead', 'tfoot'] // Tránh ngắt trang trong bảng
                     }
                 };
 
@@ -1238,10 +1247,43 @@
                 if (actionButtons) actionButtons.remove();
                 if (backButton) backButton.remove();
 
+                // Áp dụng CSS tối ưu cho PDF
+                clone.style.width = '21cm'; // A4 width
+                clone.style.maxWidth = '21cm';
+                clone.style.margin = '0 auto';
+                clone.style.padding = '0';
+                clone.style.backgroundColor = '#ffffff';
+                clone.style.color = '#000000';
+                
+                // Đảm bảo các container con cũng có kích thước phù hợp
+                const containers = clone.querySelectorAll('.container, .max-w-5xl');
+                containers.forEach(container => {
+                    container.style.maxWidth = '100%';
+                    container.style.width = '100%';
+                });
+                
+                // Tối ưu bảng cho PDF
+                const tables = clone.querySelectorAll('table');
+                tables.forEach(table => {
+                    table.style.width = '100%';
+                    table.style.fontSize = '12px';
+                    table.style.borderCollapse = 'collapse';
+                });
+                
+                // Tối ưu ảnh trong bảng
+                const tableImages = clone.querySelectorAll('table img');
+                tableImages.forEach(img => {
+                    img.style.maxWidth = '50px';
+                    img.style.maxHeight = '50px';
+                    img.style.objectFit = 'cover';
+                });
+
                 // Tạo một container tạm để render
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'absolute';
                 tempContainer.style.left = '-9999px';
+                tempContainer.style.width = '21cm';
+                tempContainer.style.backgroundColor = '#ffffff';
                 tempContainer.appendChild(clone);
                 document.body.appendChild(tempContainer);
 
@@ -1257,9 +1299,15 @@
                 });
 
                 await Promise.all(imagePromises);
+                
+                // Đợi một chút để DOM cập nhật và styles được áp dụng
+                await new Promise(resolve => setTimeout(resolve, 300));
 
-                // Export PDF
-                await html2pdf().set(opt).from(clone).save();
+                // Export PDF - render từ clone element
+                await html2pdf()
+                    .set(opt)
+                    .from(clone)
+                    .save();
 
                 // Dọn dẹp
                 document.body.removeChild(tempContainer);
