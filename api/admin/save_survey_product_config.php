@@ -50,6 +50,18 @@ try {
     $accessory_base_qty = isset($data['accessory_base_qty']) && $data['accessory_base_qty'] !== '' ? floatval($data['accessory_base_qty']) : null;
     $accessory_dependent_qty = isset($data['accessory_dependent_qty']) && $data['accessory_dependent_qty'] !== '' ? floatval($data['accessory_dependent_qty']) : null;
     $accessory_dependent_target = isset($data['accessory_dependent_target']) ? $data['accessory_dependent_target'] : null;
+    // Normalize dependent_target to match ENUM('panel','inverter','battery','cabinet','project')
+    if ($accessory_dependent_target) {
+        $map = [
+            'panel' => 'panel', 'tấm pin' => 'panel', 'tam pin' => 'panel', 'tam_pin' => 'panel',
+            'inverter' => 'inverter',
+            'battery' => 'battery', 'pin' => 'battery', 'pin lưu trữ' => 'battery',
+            'cabinet' => 'cabinet', 'tủ điện' => 'cabinet', 'tu dien' => 'cabinet',
+            'project' => 'project', 'cả công trình' => 'project', 'ca cong trinh' => 'project'
+        ];
+        $key = mb_strtolower(trim($accessory_dependent_target), 'UTF-8');
+        $accessory_dependent_target = isset($map[$key]) ? $map[$key] : null;
+    }
 
     if (!$product_id || !$survey_category) {
         echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc'], JSON_UNESCAPED_UNICODE);
