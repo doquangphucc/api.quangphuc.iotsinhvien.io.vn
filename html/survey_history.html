@@ -338,22 +338,35 @@
             // Payback calculations
             const rawTotalCost = Number(survey.results?.totalCost || 0);
             const monthlyBill = Number(survey.monthlyBill || 0);
-            const annualSavings = monthlyBill * 12 * 0.8; // ước tính tiết kiệm 80% tiền điện
-            const paybackYears = annualSavings > 0 ? Math.ceil(rawTotalCost / annualSavings) : '-';
-
-            // Discounted payback at 10% (approx: khi NPV tiết kiệm chiết khấu >= chi phí đầu tư)
-            function calcDiscountedPayback(cost, savingsPerYear, rate) {
-                if (savingsPerYear <= 0) return '-';
-                let cumNPV = 0;
-                let year = 0;
-                // giới hạn 30 năm để tránh vòng lặp vô hạn
-                while (year < 30 && cumNPV < cost) {
-                    year += 1;
-                    cumNPV += savingsPerYear / Math.pow(1 + rate, year);
-                }
-                return year >= 30 ? '>30' : year;
+            // Payback 1: Dùng tiền điện ban đầu (trước khi lắp) để hoàn vốn
+            let paybackSimpleText = '-';
+            if (monthlyBill > 0) {
+                const monthsPayback = rawTotalCost / monthlyBill;
+                const yearsPayback = Math.floor(monthsPayback / 12);
+                const remainingMonths = Math.ceil(monthsPayback % 12);
+                paybackSimpleText = yearsPayback > 0 
+                    ? `${yearsPayback} năm ${remainingMonths} tháng`
+                    : `${remainingMonths} tháng`;
             }
-            const discountedPaybackYears = calcDiscountedPayback(rawTotalCost, annualSavings, 0.10);
+            // Payback 2: Khi vay ngân hàng 10%/năm, tính thời gian hoàn vốn (bao gồm trả lãi)
+            function calcLoanPayback(principal, monthlyPayment, annualRate) {
+                if (monthlyPayment <= 0 || principal <= 0) return '-';
+                let remainingPrincipal = principal;
+                let months = 0;
+                const monthlyRate = annualRate / 12;
+                while (remainingPrincipal > 0.01 && months < 600) {
+                    months += 1;
+                    const interestThisMonth = remainingPrincipal * monthlyRate;
+                    const principalPayment = monthlyPayment - interestThisMonth;
+                    remainingPrincipal -= principalPayment;
+                    if (remainingPrincipal < 0) remainingPrincipal = 0;
+                }
+                if (months >= 600) return '>50 năm';
+                const years = Math.floor(months / 12);
+                const remMonths = Math.ceil(months % 12);
+                return years > 0 ? `${years} năm ${remMonths} tháng` : `${remMonths} tháng`;
+            }
+            const paybackLoanText = calcLoanPayback(rawTotalCost, monthlyBill, 0.10);
             
             return `
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -391,7 +404,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Hoàn vốn dự kiến:</span>
-                                <span class="font-semibold text-emerald-600">${paybackYears} năm</span>
+                                <span class="font-semibold text-emerald-600">${paybackSimpleText}</span>
                             </div>
         </div>
                         <div class="space-y-2">
@@ -409,7 +422,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Hoàn vốn khi vay 10%:</span>
-                                <span class="font-semibold text-blue-600">${discountedPaybackYears} năm</span>
+                                <span class="font-semibold text-blue-600">${paybackLoanText || '-'}</span>
                             </div>
         </div>
                     </div>
