@@ -1978,9 +1978,9 @@
                         <p class="text-xs text-gray-500 mt-1">Thông số này chỉ dùng để tính toán trong trang Khảo sát, không hiển thị ở trang sản phẩm.</p>
                     </div>
                     <div id="survey_spec_inverter" class="hidden">
-                        <label class="block text-sm font-semibold mb-1">Công suất inverter (W)</label>
-                        <input type="number" id="survey_inverter_power_watt" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 10000">
-                        <p class="text-xs text-gray-500 mt-1">Thông số này chỉ dùng để tính toán trong trang Khảo sát, không hiển thị ở trang sản phẩm.</p>
+                        <label class="block text-sm font-semibold mb-1">Công suất inverter (kW)</label>
+                        <input type="number" step="0.01" id="survey_inverter_power_watt" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 10 (tương đương 10kW)">
+                        <p class="text-xs text-gray-500 mt-1">Nhập đơn vị kW (ví dụ 10). Hệ thống sẽ tự quy đổi sang W để tính toán. Thông số này chỉ dùng cho trang Khảo sát.</p>
                     </div>
                     <div id="survey_spec_battery" class="hidden">
                         <label class="block text-sm font-semibold mb-1">Dung lượng 1 bộ pin (kWh)</label>
@@ -2699,10 +2699,10 @@
                  document.getElementById('survey_notes').value = config.notes || '';
                  
                  updateSurveyPhaseField();
-                // fill numeric specs
+                // fill numeric specs (inverter stored as W -> display as kW)
                 const fill = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val ?? ''); };
                 fill('survey_panel_power_watt', config.panel_power_watt);
-                fill('survey_inverter_power_watt', config.inverter_power_watt);
+                fill('survey_inverter_power_watt', config.inverter_power_watt ? (config.inverter_power_watt/1000) : '');
                 fill('survey_battery_capacity_kwh', config.battery_capacity_kwh);
                 fill('survey_cabinet_power_kw', config.cabinet_power_kw);
              }
@@ -2758,6 +2758,13 @@
              const notes = document.getElementById('survey_notes').value;
              
             try {
+                // Convert inverter kW -> W if provided
+                let inverterKW = document.getElementById('survey_inverter_power_watt')?.value;
+                let inverterWattPayload = '';
+                if (inverterKW !== undefined && inverterKW !== null && `${inverterKW}`.trim() !== '') {
+                    const kwNum = parseFloat(inverterKW);
+                    if (!isNaN(kwNum)) inverterWattPayload = Math.round(kwNum * 1000);
+                }
                  const response = await fetch(`${API_BASE}/admin/save_survey_product_config.php`, {
                      method: 'POST',
                      credentials: 'include',
@@ -2771,7 +2778,7 @@
                          is_active: isActive,
                         notes: notes,
                         panel_power_watt: document.getElementById('survey_panel_power_watt')?.value || '',
-                        inverter_power_watt: document.getElementById('survey_inverter_power_watt')?.value || '',
+                        inverter_power_watt: inverterWattPayload,
                         battery_capacity_kwh: document.getElementById('survey_battery_capacity_kwh')?.value || '',
                         cabinet_power_kw: document.getElementById('survey_cabinet_power_kw')?.value || ''
                      })
