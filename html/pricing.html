@@ -159,7 +159,8 @@
         }
 
         /* Avoid accidental vertical scrollbar in packages scroller */
-        #packages-container{ overflow-y: hidden; }
+        #packages-container{ overflow-y: hidden; scrollbar-width: none; }
+        #packages-container::-webkit-scrollbar{ display:none; }
     </style>
 </head>
 <body data-page="pricing">
