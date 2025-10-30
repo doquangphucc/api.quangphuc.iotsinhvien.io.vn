@@ -716,31 +716,9 @@ INSERT INTO survey_results (id, survey_id, monthly_kwh, sun_hours, region_name, 
 (1, 1, 1000.00, 4.5, 'Miền Bắc', 2, 'Pin mặt trời 630W', 0.630, 2800000.00, 12, 33600000.00, 2.835, 7.56, 1, 'Inverter Luxpower', 6.00, 15000000.00, 1, 'Tủ điện', 6.00, 2000000.00, 0.00, '8cell', 1, 'Pin lưu trữ 8 cell', 8.30, 0, 15000000.00, 0.00, 12, 50000.00, 600000.00, 48, 10000.00, 480000.00, 24, 15000.00, 360000.00, 120, 20000.00, 2400000.00, 6000000.00, 3600000.00, 60200000.00, 60200000.00, '[]', '2025-10-28 00:04:38');
 
 -- =====================================================
--- DỮ LIỆU MẪU - SURVEY_PRODUCT_CONFIGS (Cấu hình sản phẩm cho khảo sát)
+-- SURVEY_PRODUCT_CONFIGS: Khởi tạo trống (admin sẽ cấu hình lại)
 -- =====================================================
-INSERT INTO survey_product_configs (id, product_id, survey_category, phase_type, price_type, is_active, display_order, notes, created_at, updated_at) VALUES
-(1, 1, 'solar_panel', 'none', 'market_price', 1, 1, 'Jinko 590W', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(2, 2, 'solar_panel', 'none', 'market_price', 1, 2, 'Jinko 630W', '2025-10-27 11:31:10', '2025-10-28 00:20:56'),
-(3, 5, 'inverter', '1_phase', 'market_price', 1, 1, 'ECO Hybrid 5kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(4, 6, 'inverter', '1_phase', 'market_price', 1, 2, 'ECO Hybrid 6kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(5, 7, 'inverter', '1_phase', 'market_price', 1, 3, 'ECO Hybrid 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(6, 8, 'inverter', '1_phase', 'market_price', 1, 4, 'Hybrid GEN-LB-EU 6K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(7, 9, 'inverter', '1_phase', 'market_price', 1, 5, 'Hybrid GEN-LB-EU 8K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(8, 10, 'inverter', '1_phase', 'market_price', 1, 6, 'Hybrid GEN-LB-EU 10K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(9, 11, 'inverter', '1_phase', 'market_price', 1, 7, 'Hybrid LXP-12K', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(10, 12, 'battery', 'none', 'market_price', 1, 1, 'Cell BYD 173ah', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(11, 13, 'battery', 'none', 'market_price', 1, 2, 'Cell A-Cornex 16 Cell', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(12, 14, 'electrical_cabinet', '1_phase', 'market_price', 1, 1, '1 pha 6kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(13, 15, 'electrical_cabinet', '1_phase', 'market_price', 1, 2, '1 pha 8kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(14, 16, 'electrical_cabinet', '1_phase', 'market_price', 1, 3, '1 pha 10kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(15, 17, 'electrical_cabinet', '1_phase', 'market_price', 1, 4, '1 pha 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(16, 18, 'electrical_cabinet', '3_phase', 'market_price', 1, 1, '3 pha 12kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(17, 19, 'electrical_cabinet', '3_phase', 'market_price', 1, 2, '3 pha 15kW', '2025-10-27 11:31:10', '2025-10-27 11:31:10'),
-(18, 3, 'inverter', '1_phase', 'category_price', 1, 1, '', '2025-10-27 11:52:42', '2025-10-27 11:52:42'),
-(19, 4, 'inverter', '1_phase', 'category_price', 1, 1, '', '2025-10-27 12:10:31', '2025-10-27 12:10:31'),
-(20, 20, 'accessory', 'none', 'market_price', 1, 0, '', '2025-10-27 12:10:46', '2025-10-27 12:10:46'),
-(21, 21, 'accessory', 'none', 'category_price', 1, 0, '', '2025-10-27 12:10:54', '2025-10-27 12:10:54'),
-(22, 22, 'accessory', 'none', 'category_price', 1, 0, '', '2025-10-27 12:11:01', '2025-10-27 12:11:01');
+-- Không chèn dữ liệu mặc định cho survey_product_configs
 
 -- =====================================================
 -- DỮ LIỆU MẪU - INTRO_POSTS (Bài viết trang giới thiệu)
