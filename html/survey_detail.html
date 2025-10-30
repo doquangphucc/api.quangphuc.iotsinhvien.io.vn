@@ -113,8 +113,22 @@
         /* Print Styles - Chỉ hiển thị nội dung báo giá */
         @media print {
             @page {
-                margin: 0.5cm;
+                margin: 0;
                 size: A4;
+            }
+            
+            /* CSS cho wrapper A4 khi in */
+            #printA4Wrapper { 
+                width: 210mm !important; 
+                height: 297mm !important; 
+                padding: 5mm !important; 
+                box-sizing: border-box !important; 
+                margin: 0 auto !important;
+            }
+            
+            html, body { 
+                margin: 0 !important; 
+                padding: 0 !important;
             }
             
             /* Ẩn tất cả navigation, header, footer, buttons */
@@ -512,6 +526,90 @@
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/cache-buster.js"></script>
+    
+    <!-- Fit to A4 utility -->
+    <script>
+        // Thu nhỏ 1 element để vừa A4 (mm). Dùng được cho in & html2pdf.
+        function fitElementToA4(el, {marginMm = 5} = {}) {
+            const DPI = 96;                           // ~dpi trình duyệt
+            const mm2px = mm => (mm/25.4)*DPI;
+
+            const A4W = mm2px(210);
+            const A4H = mm2px(297);
+            const M   = mm2px(marginMm);
+            const availW = A4W - 2*M;
+            const availH = A4H - 2*M;
+
+            // Bỏ mọi scale cũ để đo đúng
+            el.style.transform = 'none';
+            el.style.width = '';
+            el.style.height = '';
+
+            const r = el.getBoundingClientRect();
+            const scale = Math.min(availW / r.width, availH / r.height, 1);
+
+            // Cố định kích thước gốc để khi scale không bị cắt
+            el.style.width  = r.width  + 'px';
+            el.style.height = r.height + 'px';
+
+            el.style.transformOrigin = 'top left';
+            el.style.transform = `scale(${scale})`;
+
+            // Tạo khung A4 để html2pdf cắt đúng trang
+            const wrapper = el.parentElement;
+            wrapper.style.width  = '210mm';
+            wrapper.style.height = '297mm';
+            wrapper.style.padding = `${marginMm}mm`;
+            wrapper.style.boxSizing = 'border-box';
+            wrapper.style.background = 'white';
+            return scale;
+        }
+    </script>
+
+    <!-- Print fit logic -->
+    <script>
+        let _printWrapper = null, _origParent = null, _origNext = null;
+
+        function preparePrintFit() {
+            const el = document.getElementById('surveyDetail');
+            if (!el) return;
+
+            // Tạo wrapper A4 tạm
+            _printWrapper = document.createElement('div');
+            _printWrapper.id = 'printA4Wrapper';
+            _printWrapper.style.margin = '0 auto';
+            _printWrapper.style.pageBreakInside = 'avoid';
+
+            _origParent = el.parentNode;
+            _origNext = el.nextSibling;
+            _printWrapper.appendChild(el);
+            document.body.appendChild(_printWrapper);
+
+            fitElementToA4(el, {marginMm: 5});
+        }
+
+        function cleanupPrintFit() {
+            if (_printWrapper && _origParent) {
+                const el = document.getElementById('surveyDetail');
+                // reset style
+                el.style.transform = '';
+                el.style.width = '';
+                el.style.height = '';
+                _printWrapper.style.width = '';
+                _printWrapper.style.height = '';
+                _printWrapper.style.padding = '';
+                // đưa về chỗ cũ
+                if (_origNext) _origParent.insertBefore(el, _origNext);
+                else _origParent.appendChild(el);
+                _printWrapper.remove();
+            }
+            _printWrapper = _origParent = _origNext = null;
+        }
+
+        // Tự động fit trước/ sau in
+        window.addEventListener('beforeprint', preparePrintFit);
+        window.addEventListener('afterprint', cleanupPrintFit);
+    </script>
     
     <!-- Survey Detail Logic -->
     <script>
@@ -1199,11 +1297,11 @@
             }
         }
 
-        // Export to PDF function
+        // Export to PDF function - dùng fitElementToA4
         async function exportToPDF() {
             try {
-                const surveyDetailEl = document.getElementById('surveyDetail');
-                if (!surveyDetailEl) {
+                const src = document.getElementById('surveyDetail');
+                if (!src) {
                     alert('Không tìm thấy nội dung báo giá!');
                     return;
                 }
@@ -1211,83 +1309,60 @@
                 // Hiển thị loading
                 showNotification('🔄 Đang tạo PDF...', 'info');
 
-                // Cấu hình html2pdf - không lề để tận dụng tối đa không gian
+                // Clone để không đụng trang thật
+                const clone = src.cloneNode(true);
+
+                // Ẩn nút, back…
+                const rm = clone.querySelector('#actionButtons');
+                if (rm) rm.remove();
+                const bk = clone.querySelector('.back-button');
+                if (bk) bk.remove();
+
+                // Tạo wrapper A4
+                const wrapper = document.createElement('div');
+                wrapper.style.width = '210mm';
+                wrapper.style.height = '297mm';
+                wrapper.style.padding = '5mm';
+                wrapper.style.boxSizing = 'border-box';
+                wrapper.style.background = 'white';
+                wrapper.appendChild(clone);
+
+                // Đưa ra ngoài màn hình để đo & render
+                const temp = document.createElement('div');
+                temp.style.position = 'fixed';
+                temp.style.left = '-10000px';
+                temp.style.top = '0';
+                temp.appendChild(wrapper);
+                document.body.appendChild(temp);
+
+                // Fit clone vào A4
+                fitElementToA4(clone, {marginMm: 5});
+
+                // Đợi ảnh (tối đa 2s/ảnh)
+                const imgs = wrapper.querySelectorAll('img');
+                await Promise.all([...imgs].map(img => img.complete ? Promise.resolve() : new Promise(r => {
+                    img.onload = r;
+                    img.onerror = r;
+                    setTimeout(r, 2000);
+                })));
+
+                // Đợi DOM cập nhật
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // Xuất PDF
                 const opt = {
-                    margin: [0, 0, 0, 0], // Không lề - in không lề
+                    margin: 0,                    // đã có padding 5mm trong wrapper
                     filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
                     image: { type: 'jpeg', quality: 0.95 },
-                    html2canvas: { 
-                        scale: 0.58, // Scale phù hợp để fit gọn trong 1 trang không lề
-                        useCORS: true,
-                        logging: false,
-                        letterRendering: true
-                    },
-                    jsPDF: { 
-                        unit: 'cm', 
-                        format: 'a4', 
-                        orientation: 'portrait'
-                    }
+                    html2canvas: { scale: 2, useCORS: true, logging: false }, // nét
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all'] }   // phòng ngừa ngắt trang
                 };
-
-                // Clone element để không ảnh hưởng đến trang chính
-                const clone = surveyDetailEl.cloneNode(true);
                 
-                // Ẩn các phần không cần thiết trong clone
-                const actionButtons = clone.querySelector('#actionButtons');
-                const backButton = clone.querySelector('.back-button');
-                if (actionButtons) actionButtons.remove();
-                if (backButton) backButton.remove();
+                await html2pdf().set(opt).from(wrapper).save();
 
-                // Đảm bảo clone fit chính xác A4 width (21cm) và không có lề
-                clone.style.width = '21cm'; // Chính xác A4 width
-                clone.style.maxWidth = '21cm';
-                clone.style.margin = '0';
-                clone.style.padding = '0';
-                clone.style.boxSizing = 'border-box';
-                
-                // Loại bỏ padding/margin của các container con
-                const containers = clone.querySelectorAll('.container, .max-w-5xl, .mx-auto');
-                containers.forEach(container => {
-                    container.style.margin = '0';
-                    container.style.padding = '0';
-                    container.style.width = '100%';
-                    container.style.maxWidth = '100%';
-                });
-                
-                // Loại bỏ padding của các section
-                const sections = clone.querySelectorAll('.p-4, .px-3, .py-8');
-                sections.forEach(section => {
-                    section.style.padding = '0.3cm';
-                });
-
-                // Tạo một container tạm để render - fit chính xác A4
-                const tempContainer = document.createElement('div');
-                tempContainer.style.position = 'absolute';
-                tempContainer.style.left = '-9999px';
-                tempContainer.style.width = '21cm'; // Chính xác A4 width
-                tempContainer.style.margin = '0';
-                tempContainer.style.padding = '0';
-                tempContainer.appendChild(clone);
-                document.body.appendChild(tempContainer);
-
-                // Đảm bảo tất cả ảnh đã load
-                const images = clone.querySelectorAll('img');
-                const imagePromises = Array.from(images).map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise((resolve) => {
-                        img.onload = resolve;
-                        img.onerror = resolve; // Tiếp tục ngay cả khi ảnh lỗi
-                        setTimeout(resolve, 2000); // Timeout sau 2s
-                    });
-                });
-
-                await Promise.all(imagePromises);
-
-                // Export PDF - render từ clone như ban đầu
-                await html2pdf().set(opt).from(clone).save();
-
-                // Dọn dẹp
-                document.body.removeChild(tempContainer);
+                // Dọn
+                document.body.removeChild(temp);
 
                 showNotification('✅ Đã xuất PDF thành công!', 'success');
             } catch (error) {
