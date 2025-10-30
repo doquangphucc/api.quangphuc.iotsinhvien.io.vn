@@ -45,6 +45,11 @@ try {
     $inverter_power_watt = isset($data['inverter_power_watt']) && $data['inverter_power_watt'] !== '' ? intval($data['inverter_power_watt']) : null;
     $battery_capacity_kwh = isset($data['battery_capacity_kwh']) && $data['battery_capacity_kwh'] !== '' ? floatval($data['battery_capacity_kwh']) : null;
     $cabinet_power_kw = isset($data['cabinet_power_kw']) && $data['cabinet_power_kw'] !== '' ? floatval($data['cabinet_power_kw']) : null;
+    // Accessory fields (optional)
+    $accessory_unit = isset($data['accessory_unit']) ? $data['accessory_unit'] : null;
+    $accessory_base_qty = isset($data['accessory_base_qty']) && $data['accessory_base_qty'] !== '' ? floatval($data['accessory_base_qty']) : null;
+    $accessory_dependent_qty = isset($data['accessory_dependent_qty']) && $data['accessory_dependent_qty'] !== '' ? floatval($data['accessory_dependent_qty']) : null;
+    $accessory_dependent_target = isset($data['accessory_dependent_target']) ? $data['accessory_dependent_target'] : null;
 
     if (!$product_id || !$survey_category) {
         echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc'], JSON_UNESCAPED_UNICODE);
@@ -79,11 +84,15 @@ try {
                     inverter_power_watt = ?,
                     battery_capacity_kwh = ?,
                     cabinet_power_kw = ?,
+                    accessory_unit = ?,
+                    accessory_base_qty = ?,
+                    accessory_dependent_qty = ?,
+                    accessory_dependent_target = ?,
                     updated_at = NOW()
                 WHERE product_id = ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssiiiiddi",
+        $stmt->bind_param("sssiiiiddsddsi",
             $survey_category, 
             $phase_type, 
             $price_type, 
@@ -93,16 +102,20 @@ try {
             $inverter_power_watt,
             $battery_capacity_kwh,
             $cabinet_power_kw,
+            $accessory_unit,
+            $accessory_base_qty,
+            $accessory_dependent_qty,
+            $accessory_dependent_target,
             $product_id
         );
     } else {
         // Insert new config
         $sql = "INSERT INTO survey_product_configs 
-                (product_id, survey_category, phase_type, price_type, is_active, display_order, panel_power_watt, inverter_power_watt, battery_capacity_kwh, cabinet_power_kw) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (product_id, survey_category, phase_type, price_type, is_active, display_order, panel_power_watt, inverter_power_watt, battery_capacity_kwh, cabinet_power_kw, accessory_unit, accessory_base_qty, accessory_dependent_qty, accessory_dependent_target) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssiiiidd", 
+        $stmt->bind_param("isssiiiiddsdds", 
             $product_id, 
             $survey_category, 
             $phase_type, 
@@ -112,7 +125,11 @@ try {
             $panel_power_watt,
             $inverter_power_watt,
             $battery_capacity_kwh,
-            $cabinet_power_kw
+            $cabinet_power_kw,
+            $accessory_unit,
+            $accessory_base_qty,
+            $accessory_dependent_qty,
+            $accessory_dependent_target
         );
     }
 

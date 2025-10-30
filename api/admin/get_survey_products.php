@@ -38,6 +38,10 @@ $sql = "SELECT
             spc.inverter_power_watt as spc_inverter_power_watt,
             spc.battery_capacity_kwh as spc_battery_capacity_kwh,
             spc.cabinet_power_kw as spc_cabinet_power_kw,
+            spc.accessory_unit,
+            spc.accessory_base_qty,
+            spc.accessory_dependent_qty,
+            spc.accessory_dependent_target,
             p.panel_power_watt as product_panel_power_watt,
             p.inverter_power_watt as product_inverter_power_watt,
             p.battery_capacity_kwh as product_battery_capacity_kwh,
@@ -79,7 +83,11 @@ while ($row = $result->fetch_assoc()) {
             'panel_power_watt' => isset($row['spc_panel_power_watt']) ? (int)$row['spc_panel_power_watt'] : null,
             'inverter_power_watt' => isset($row['spc_inverter_power_watt']) ? (int)$row['spc_inverter_power_watt'] : null,
             'battery_capacity_kwh' => isset($row['spc_battery_capacity_kwh']) ? floatval($row['spc_battery_capacity_kwh']) : null,
-            'cabinet_power_kw' => isset($row['spc_cabinet_power_kw']) ? floatval($row['spc_cabinet_power_kw']) : null
+            'cabinet_power_kw' => isset($row['spc_cabinet_power_kw']) ? floatval($row['spc_cabinet_power_kw']) : null,
+            'accessory_unit' => $row['accessory_unit'] ?? null,
+            'accessory_base_qty' => isset($row['accessory_base_qty']) ? floatval($row['accessory_base_qty']) : null,
+            'accessory_dependent_qty' => isset($row['accessory_dependent_qty']) ? floatval($row['accessory_dependent_qty']) : null,
+            'accessory_dependent_target' => $row['accessory_dependent_target'] ?? null
         ] : null
     ];
 }

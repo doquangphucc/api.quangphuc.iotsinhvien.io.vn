@@ -1990,6 +1990,40 @@
                         <input type="number" step="0.01" id="survey_cabinet_power_kw" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 12">
                         <p class="text-xs text-gray-500 mt-1">Thông số này chỉ dùng để tính toán trong trang Khảo sát, không hiển thị ở trang sản phẩm.</p>
                     </div>
+                    <div id="survey_spec_accessory" class="hidden">
+                        <label class="block text-sm font-semibold mb-2">Cấu hình phụ kiện</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Đơn vị tính</label>
+                                <select id="survey_accessory_unit" class="w-full px-4 py-2 border rounded-lg">
+                                    <option value="">-- Chọn đơn vị --</option>
+                                    <option value="bo">Bộ</option>
+                                    <option value="cai">Cái</option>
+                                    <option value="met">Mét</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Số lượng bản thân</label>
+                                <input type="number" step="0.01" id="survey_accessory_base_qty" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 100 (m), 6 (cái)">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Hệ số theo phụ thuộc</label>
+                                <input type="number" step="0.01" id="survey_accessory_dependent_qty" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 6 (cái/tấm)">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Đối tượng phụ thuộc</label>
+                                <select id="survey_accessory_dependent_target" class="w-full px-4 py-2 border rounded-lg">
+                                    <option value="">-- Chọn phụ thuộc --</option>
+                                    <option value="panel">Tấm pin</option>
+                                    <option value="inverter">Inverter</option>
+                                    <option value="battery">Pin lưu trữ</option>
+                                    <option value="cabinet">Tủ điện</option>
+                                    <option value="project">Cả công trình</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Công thức: số lượng = Số lượng bản thân + (Hệ số × số lượng đối tượng phụ thuộc)</p>
+                    </div>
                 </div>
 
                 <div class="flex gap-4 mt-6">
@@ -2731,15 +2765,18 @@
             const specInverter = document.getElementById('survey_spec_inverter');
             const specBattery = document.getElementById('survey_battery_capacity_kwh')?.closest('div');
             const specCabinet = document.getElementById('survey_cabinet_power_kw')?.closest('div');
+            const specAccessory = document.getElementById('survey_spec_accessory');
             if (specPanel && specInverter && specBattery && specCabinet) {
                 specPanel.classList.add('hidden');
                 specInverter.classList.add('hidden');
                 specBattery.classList.add('hidden');
                 specCabinet.classList.add('hidden');
+                if (specAccessory) specAccessory.classList.add('hidden');
                 if (category === 'solar_panel') specPanel.classList.remove('hidden');
                 if (category === 'inverter') specInverter.classList.remove('hidden');
                 if (category === 'battery') specBattery.classList.remove('hidden');
                 if (category === 'electrical_cabinet') specCabinet.classList.remove('hidden');
+                if (category === 'accessory' && specAccessory) specAccessory.classList.remove('hidden');
             }
             // Re-evaluate activation state when category/phase changes
             updateSurveyActivationState();
@@ -2802,11 +2839,17 @@
             const invKW = parseFloat(document.getElementById('survey_inverter_power_watt')?.value || '');
             const battKwh = parseFloat(document.getElementById('survey_battery_capacity_kwh')?.value || '');
             const cabKW = parseFloat(document.getElementById('survey_cabinet_power_kw')?.value || '');
+            // Accessory fields
+            const accUnit = document.getElementById('survey_accessory_unit')?.value || '';
+            const accBase = parseFloat(document.getElementById('survey_accessory_base_qty')?.value || '');
+            const accDep = parseFloat(document.getElementById('survey_accessory_dependent_qty')?.value || '');
+            const accTarget = document.getElementById('survey_accessory_dependent_target')?.value || '';
             let ready = false;
             if (surveyCategory === 'solar_panel') ready = !!panelW && panelW > 0;
             else if (surveyCategory === 'inverter') ready = phaseType !== 'none' && !!invKW && invKW > 0;
             else if (surveyCategory === 'battery') ready = !!battKwh && battKwh > 0;
             else if (surveyCategory === 'electrical_cabinet') ready = phaseType !== 'none' && !!cabKW && cabKW > 0;
+            else if (surveyCategory === 'accessory') ready = !!accUnit && (!isNaN(accBase) || !isNaN(accDep)) && !!accTarget;
             else ready = true;
             if (isActive && !ready) {
                 showToast('Vui lòng nhập đầy đủ thông số bắt buộc trước khi kích hoạt.', 'warning');
@@ -2843,7 +2886,11 @@
                         panel_power_watt: document.getElementById('survey_panel_power_watt')?.value || '',
                         inverter_power_watt: inverterWattPayload,
                         battery_capacity_kwh: document.getElementById('survey_battery_capacity_kwh')?.value || '',
-                        cabinet_power_kw: document.getElementById('survey_cabinet_power_kw')?.value || ''
+                         cabinet_power_kw: document.getElementById('survey_cabinet_power_kw')?.value || '',
+                         accessory_unit: accUnit,
+                         accessory_base_qty: isNaN(accBase) ? '' : accBase,
+                         accessory_dependent_qty: isNaN(accDep) ? '' : accDep,
+                         accessory_dependent_target: accTarget
                      })
                  });
                  
