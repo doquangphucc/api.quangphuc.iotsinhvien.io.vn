@@ -559,40 +559,10 @@
                 return null;
             }
             
-            // Tính danh sách tủ điện phù hợp và phương án thay thế (nếu có)
+            // Trang chi tiết: hiển thị đúng dữ liệu đã lưu trong DB (không tính lại tủ điện)
             let cabinetAlternatives = [];
             let selectedCabinetIdx = 0;
-            (function buildCabinetAlternatives(){
-                if (!surveyProducts || !surveyProducts.electrical_cabinet) return;
-                // Ưu tiên đúng pha + cả hai pha
-                const phaseKey = survey.phase === 1 ? '1_phase' : survey.phase === 3 ? '3_phase' : 'both';
-                let available = [
-                    ...((surveyProducts.electrical_cabinet[phaseKey] || [])),
-                    ...((surveyProducts.electrical_cabinet['both'] || []))
-                ].map(c => ({
-                    id: c.id,
-                    name: c.title,
-                    power: (c.cabinet_power_kw && c.cabinet_power_kw > 0) ? c.cabinet_power_kw*1000 : (parseInt((c.title||'').match(/(\d+)kW/i)?.[1]||'0')*1000),
-                    price: Number(c.price||0),
-                    image: c.image_url ? (c.image_url.startsWith('/') ? '..'+c.image_url : (c.image_url.startsWith('..')? c.image_url : ('../'+c.image_url))) : null
-                })).filter(c=>c.power>0).sort((a,b)=>a.power-b.power);
-
-                // Suy ra công suất inverter (W)
-                let inverterPowerW = 0;
-                if (typeof r?.inverterCapacity === 'number' && r.inverterCapacity > 0) {
-                    inverterPowerW = r.inverterCapacity * 1000;
-                } else if (r?.inverterName) {
-                    const m = r.inverterName.match(/(\d+)\s*K/i);
-                    if (m) inverterPowerW = parseInt(m[1],10)*1000;
-                }
-                if (!inverterPowerW) return;
-
-                const minPower = available.filter(c=>c.power>=inverterPowerW).reduce((min,c)=>Math.min(min,c.power), Infinity);
-                cabinetAlternatives = available.filter(c=>c.power>=inverterPowerW && c.power===minPower);
-                if (cabinetAlternatives.length===0 && available.length>0) {
-                    cabinetAlternatives = [available[available.length-1]];
-                }
-            })();
+            // Không dựng danh sách lựa chọn; giữ trống để không hiển thị radio
 
             // Lưu vào window để dùng cho mua gói
             window.currentCabinetAlternatives = cabinetAlternatives;
@@ -607,7 +577,16 @@
             const panelCount = Number(r?.panelsNeeded ?? 0);
             const selectedBatteryUnits = Number(r?.batteryQuantity ?? 1);
             let computedAccessories = [];
-            if (surveyProducts && surveyProducts.accessory && Array.isArray(surveyProducts.accessory)) {
+            if (Array.isArray(r?.accessories) && r.accessories.length > 0) {
+                computedAccessories = r.accessories.map(a => ({
+                    name: a.name,
+                    unit: a.unit || '',
+                    quantity: Number(a.quantity || 0),
+                    price: Number(a.price || 0),
+                    totalPrice: Number(a.totalPrice || (Number(a.quantity||0)*Number(a.price||0))),
+                    image: a.image || null
+                }));
+            } else if (surveyProducts && surveyProducts.accessory && Array.isArray(surveyProducts.accessory)) {
                 computedAccessories = surveyProducts.accessory.map(acc => {
                     const depTarget = acc.accessory_dependent_target || 'project';
                     const baseQty = typeof acc.accessory_base_qty === 'number' ? acc.accessory_base_qty : 0;
@@ -664,15 +643,14 @@
                     totalPrice: Number(r?.batteryCost ?? 0)
                 },
                 {
-                    name: (chosenCabinet?.name) || r?.cabinetName || 'Tủ điện',
+                    name: r?.cabinetName || 'Tủ điện',
                     brand: '-',
                     warranty: '3 năm',
                     unit: 'Tủ',
                     qty: 1,
-                    image: getImageUrlForDisplay((chosenCabinet?.image)||r?.cabinetImage, (chosenCabinet?.name)||r?.cabinetName, 'electrical_cabinet', survey.phase),
-                    unitPrice: Number((chosenCabinet?.price) ?? (r?.cabinetPrice ?? 0)),
-                    totalPrice: Number((chosenCabinet?.price) ?? (r?.cabinetPrice ?? 0)),
-                    __isCabinet: true
+                    image: getImageUrlForDisplay(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
+                    unitPrice: Number(r?.cabinetPrice ?? 0),
+                    totalPrice: Number(r?.cabinetPrice ?? 0)
                 },
                 // Push computed accessories as individual rows (always show all configured)
                 ...computedAccessories.map(a => ({
@@ -760,21 +738,9 @@
                     imageHtml = '<div class="w-10 h-10 mx-auto flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-[10px] text-gray-400">No Image</div>';
                 }
                 
-                const cabinetChoiceHtml = (item.__isCabinet && cabinetAlternatives && cabinetAlternatives.length>1) ? `
-                    <div style="margin:6px 0; padding:6px; background:#f7fafc; border:1px dashed #cbd5e0; border-radius:6px;">
-                        <small style="color:#4a5568; font-weight:600;">Chọn tủ điện (cùng mức công suất):</small><br>
-                        ${cabinetAlternatives.map((cab, idx)=>`
-                            <label style='margin-right:10px; display:inline-flex; align-items:center; gap:6px;'>
-                                <input type="radio" name="cabinetChoice" value="${idx}" ${idx===selectedCabinetIdx?'checked':''}>
-                                <span>${cab.name}</span>
-                            </label>
-                        `).join('')}
-                    </div>
-                ` : '';
-
                 return `
                     <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">
-                        <td class="p-2 border-r border-gray-200 dark:border-gray-700">${item.name}${cabinetChoiceHtml}</td>
+                        <td class="p-2 border-r border-gray-200 dark:border-gray-700">${item.name}</td>
                         <td class="p-2 border-r border-gray-200 dark:border-gray-700">${item.brand}</td>
                         <td class="p-2 border-r border-gray-200 dark:border-gray-700 text-center">${item.warranty}</td>
                         <td class="p-2 border-r border-gray-200 dark:border-gray-700 text-center">${item.unit}</td>
@@ -789,17 +755,7 @@
             // Update totals
             document.getElementById('totalAmount').textContent = totalAmount.toLocaleString('vi-VN');
 
-            // Lắng nghe chọn tủ điện nếu có nhiều phương án
-            const cabRadios = document.querySelectorAll('input[name="cabinetChoice"]');
-            if (cabRadios && cabRadios.length>1) {
-                cabRadios.forEach(radio => {
-                    radio.addEventListener('change', (e) => {
-                        window.selectedCabinetIdxFromDetail = parseInt(e.target.value,10)||0;
-                        // Re-render để cập nhật tên/giá/tổng
-                        populateSurveyData(survey);
-                    });
-                });
-            }
+            // Không cho chọn tủ ở trang chi tiết
             
             // Summary calculations
             const dailyKWh = (r?.totalCapacity || 0) * (r?.sunHours || 4.4);
@@ -975,10 +931,7 @@
                     return null;
                 }
 
-                // Prepare survey package data with all items
-                const chosenIdx = window.selectedCabinetIdxFromDetail || 0;
-                const chosenCabinet = (window.currentCabinetAlternatives && window.currentCabinetAlternatives.length>0) ? window.currentCabinetAlternatives[chosenIdx] : null;
-
+                // Prepare survey package data with all items (dùng dữ liệu đã lưu)
                 const surveyPackage = {
                     fromSurvey: true,
                     items: [
@@ -1010,13 +963,13 @@
                     ],
                     // Add all accessories as separate items (recomputed to match survey page)
                     accessories: [
-                        // Tủ điện
+                        // Tủ điện (dùng dữ liệu đã lưu)
                         {
-                            id: (chosenCabinet?.id) || (r?.cabinetId || null),
-                            title: (chosenCabinet?.name) || (r?.cabinetName || 'Tủ điện'),
-                            price: Number((chosenCabinet?.price) || (r?.cabinetPrice || 0)),
+                            id: r?.cabinetId || null,
+                            title: r?.cabinetName || 'Tủ điện',
+                            price: Number(r?.cabinetPrice || 0),
                             quantity: 1,
-                            image_url: getImageUrl((chosenCabinet?.image)||r?.cabinetImage, (chosenCabinet?.name)||r?.cabinetName, 'electrical_cabinet', survey.phase),
+                            image_url: getImageUrl(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
                             isVirtual: true
                         },
                         // Các phụ kiện cấu hình từ Admin (computedAccessories)
