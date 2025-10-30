@@ -35,7 +35,6 @@ try {
                 spc.accessory_base_qty AS spc_accessory_base_qty,
                 spc.accessory_dependent_qty AS spc_accessory_dependent_qty,
                 spc.accessory_dependent_target AS spc_accessory_dependent_target,
-                spc.notes AS spc_notes,
                 spc.is_active,
                 spc.display_order
             FROM products p
@@ -77,7 +76,6 @@ try {
             'accessory_base_qty' => isset($row['spc_accessory_base_qty']) ? floatval($row['spc_accessory_base_qty']) : null,
             'accessory_dependent_qty' => isset($row['spc_accessory_dependent_qty']) ? floatval($row['spc_accessory_dependent_qty']) : null,
             'accessory_dependent_target' => $row['spc_accessory_dependent_target'] ?? null,
-            'notes' => $row['spc_notes'] ?? null,
             'survey_category' => $row['survey_category'],
             'phase_type' => $row['phase_type'],
             'display_order' => (int)$row['display_order']

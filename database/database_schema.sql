@@ -76,7 +76,6 @@ CREATE TABLE IF NOT EXISTS survey_product_configs (
     accessory_dependent_target ENUM('panel','inverter','battery','cabinet','project') DEFAULT NULL COMMENT 'Đối tượng phụ thuộc',
     is_active BOOLEAN DEFAULT TRUE COMMENT 'Có hiển thị trong khảo sát',
     display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
-    notes TEXT COMMENT 'Ghi chú',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
