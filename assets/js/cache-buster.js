@@ -165,7 +165,7 @@ async function injectContactFABs() {
     const container = document.createElement('div');
     container.id = 'contact-fabs';
     container.style.cssText = [
-        'position:fixed','left:20px','bottom:150px','z-index:1000',
+        'position:fixed','left:20px','bottom:80px','z-index:1000',
         'display:flex','flex-direction:column','gap:10px'
     ].join(';');
 
