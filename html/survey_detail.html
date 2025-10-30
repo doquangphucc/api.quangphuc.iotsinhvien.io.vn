@@ -1238,10 +1238,35 @@
                 if (actionButtons) actionButtons.remove();
                 if (backButton) backButton.remove();
 
-                // Tạo một container tạm để render - giữ đơn giản như ban đầu
+                // Đảm bảo clone fit chính xác A4 width (21cm) và không có lề
+                clone.style.width = '21cm'; // Chính xác A4 width
+                clone.style.maxWidth = '21cm';
+                clone.style.margin = '0';
+                clone.style.padding = '0';
+                clone.style.boxSizing = 'border-box';
+                
+                // Loại bỏ padding/margin của các container con
+                const containers = clone.querySelectorAll('.container, .max-w-5xl, .mx-auto');
+                containers.forEach(container => {
+                    container.style.margin = '0';
+                    container.style.padding = '0';
+                    container.style.width = '100%';
+                    container.style.maxWidth = '100%';
+                });
+                
+                // Loại bỏ padding của các section
+                const sections = clone.querySelectorAll('.p-4, .px-3, .py-8');
+                sections.forEach(section => {
+                    section.style.padding = '0.3cm';
+                });
+
+                // Tạo một container tạm để render - fit chính xác A4
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'absolute';
                 tempContainer.style.left = '-9999px';
+                tempContainer.style.width = '21cm'; // Chính xác A4 width
+                tempContainer.style.margin = '0';
+                tempContainer.style.padding = '0';
                 tempContainer.appendChild(clone);
                 document.body.appendChild(tempContainer);
 
