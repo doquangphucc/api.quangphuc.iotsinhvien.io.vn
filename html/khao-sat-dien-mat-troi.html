@@ -1883,7 +1883,8 @@
             
             // Tính toán hệ thống
             const dailyKwh = monthlyKwh / 30;
-            const systemSizeKw = Math.ceil(dailyKwh / peakSunHours);
+            // Không làm tròn kWp; chỉ làm tròn khi quy đổi ra số tấm
+            const systemSizeKw = (dailyKwh / peakSunHours);
             const systemSizeWatt = systemSizeKw * 1000;
             
             // Số lượng tấm pin cần thiết
