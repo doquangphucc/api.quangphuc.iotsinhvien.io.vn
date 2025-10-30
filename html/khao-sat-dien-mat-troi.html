@@ -2116,7 +2116,9 @@
             const accessoriesTotal = calculatedAccessories.reduce((sum, acc) => sum + acc.totalPrice, 0);
             
             // Tổng cộng (đã bao gồm tất cả 12 thành phần)
-            const totalPrice = panelTotalPrice + selectedInverter.price + selectedBattery.totalPrice + accessoriesTotal;
+            // Tổng giá = Thiết bị (tấm pin + inverter + tủ điện + pin lưu trữ) + Phụ kiện
+            const deviceTotal = panelTotalPrice + selectedInverter.price + (selectedCabinet?.price || 0) + selectedBattery.totalPrice;
+            const totalPrice = deviceTotal + accessoriesTotal;
             
             // Tính tiết kiệm hàng năm (tiết kiệm 80% tiền điện)
             const annualSavings = monthlyBill * 12 * 0.8;
