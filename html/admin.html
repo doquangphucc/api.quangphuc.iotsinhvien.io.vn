@@ -2729,8 +2729,8 @@
                 document.getElementById('survey_display_order').value = (config.display_order && config.display_order !== 0) ? config.display_order : '';
                 document.getElementById('survey_is_active').checked = !!config.is_active;
                  
-                 updateSurveyPhaseField();
-                // fill numeric specs (inverter stored as W -> display as kW)
+                updateSurveyPhaseField();
+               // fill numeric specs (inverter stored as W -> display as kW)
                 const fill = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val ?? ''); };
                 fill('survey_panel_power_watt', config.panel_power_watt);
                 fill('survey_inverter_power_watt', config.inverter_power_watt ? (config.inverter_power_watt/1000) : '');
@@ -2755,6 +2755,9 @@
                     dep: document.getElementById('survey_accessory_dependent_qty')?.value,
                     target: document.getElementById('survey_accessory_dependent_target')?.value
                 });
+                // IMPORTANT: re-apply is_active after fields are populated because
+                // earlier validation may temporarily uncheck it
+                document.getElementById('survey_is_active').checked = !!config.is_active;
             }
             // Update activation UI state initially
             updateSurveyActivationState();
