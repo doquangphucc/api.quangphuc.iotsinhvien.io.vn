@@ -1885,6 +1885,8 @@
             // Không làm tròn kWp; chỉ làm tròn khi quy đổi ra số tấm
             const systemSizeKw = (dailyKwh / peakSunHours);
             const systemSizeWatt = systemSizeKw * 1000;
+            // Giá trị hiển thị (làm tròn 2 chữ số): VD 3.8560 -> 3.86 kWp
+            const systemSizeKwDisplay = Number(systemSizeKw.toFixed(2));
             
             // Số lượng tấm pin cần thiết
             const panelCount = Math.ceil(systemSizeWatt / solarPanelWatt);
@@ -2113,7 +2115,7 @@
                 monthlyKwh,
                 monthlyBill,
                 kwhBreakdown: kwhCalculation.breakdown, // Chi tiết phân bổ từng bậc
-                systemSizeKw,
+                systemSizeKw: systemSizeKwDisplay,
                 systemSizeWatt,
                 panelCount,
                 solarPanelWatt,
