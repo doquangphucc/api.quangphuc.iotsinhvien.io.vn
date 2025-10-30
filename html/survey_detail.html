@@ -586,6 +586,7 @@
             el.style.overflow = 'hidden'; // Ẩn phần vượt quá
 
             // Tạo khung A4 để html2pdf cắt đúng trang
+            const wrapper = el.parentElement; // Lấy wrapper từ parent element
             wrapper.style.width  = '210mm';
             wrapper.style.height = '297mm';
             wrapper.style.maxHeight = '297mm'; // Giới hạn không vượt quá A4
