@@ -41,6 +41,12 @@ try {
     $display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
     $notes = isset($data['notes']) ? $data['notes'] : '';
 
+    // Numeric specs (optional)
+    $panel_power_watt = isset($data['panel_power_watt']) && $data['panel_power_watt'] !== '' ? intval($data['panel_power_watt']) : null;
+    $inverter_power_watt = isset($data['inverter_power_watt']) && $data['inverter_power_watt'] !== '' ? intval($data['inverter_power_watt']) : null;
+    $battery_capacity_kwh = isset($data['battery_capacity_kwh']) && $data['battery_capacity_kwh'] !== '' ? floatval($data['battery_capacity_kwh']) : null;
+    $cabinet_power_kw = isset($data['cabinet_power_kw']) && $data['cabinet_power_kw'] !== '' ? floatval($data['cabinet_power_kw']) : null;
+
     if (!$product_id || !$survey_category) {
         echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc'], JSON_UNESCAPED_UNICODE);
         exit;
@@ -71,34 +77,46 @@ try {
                     is_active = ?, 
                     display_order = ?, 
                     notes = ?,
+                    panel_power_watt = ?,
+                    inverter_power_watt = ?,
+                    battery_capacity_kwh = ?,
+                    cabinet_power_kw = ?,
                     updated_at = NOW()
                 WHERE product_id = ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssiisi",
+        $stmt->bind_param("sssiisdiddi",
             $survey_category, 
             $phase_type, 
             $price_type, 
             $is_active, 
             $display_order, 
             $notes,
+            $panel_power_watt,
+            $inverter_power_watt,
+            $battery_capacity_kwh,
+            $cabinet_power_kw,
             $product_id
         );
     } else {
         // Insert new config
         $sql = "INSERT INTO survey_product_configs 
-                (product_id, survey_category, phase_type, price_type, is_active, display_order, notes) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+                (product_id, survey_category, phase_type, price_type, is_active, display_order, notes, panel_power_watt, inverter_power_watt, battery_capacity_kwh, cabinet_power_kw) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssiis", 
+        $stmt->bind_param("isssiisiddi", 
             $product_id, 
             $survey_category, 
             $phase_type, 
             $price_type, 
             $is_active, 
             $display_order, 
-            $notes
+            $notes,
+            $panel_power_watt,
+            $inverter_power_watt,
+            $battery_capacity_kwh,
+            $cabinet_power_kw
         );
     }
 

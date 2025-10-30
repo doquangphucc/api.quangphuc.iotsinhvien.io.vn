@@ -34,7 +34,15 @@ $sql = "SELECT
             spc.price_type,
             spc.is_active as survey_is_active,
             spc.display_order,
-            spc.notes
+            spc.notes,
+            spc.panel_power_watt as spc_panel_power_watt,
+            spc.inverter_power_watt as spc_inverter_power_watt,
+            spc.battery_capacity_kwh as spc_battery_capacity_kwh,
+            spc.cabinet_power_kw as spc_cabinet_power_kw,
+            p.panel_power_watt as product_panel_power_watt,
+            p.inverter_power_watt as product_inverter_power_watt,
+            p.battery_capacity_kwh as product_battery_capacity_kwh,
+            p.cabinet_power_kw as product_cabinet_power_kw
         FROM products p
         LEFT JOIN product_categories pc ON p.category_id = pc.id
         LEFT JOIN survey_product_configs spc ON p.id = spc.product_id";
@@ -69,7 +77,11 @@ while ($row = $result->fetch_assoc()) {
             'price_type' => $row['price_type'],
             'is_active' => (bool)$row['survey_is_active'],
             'display_order' => (int)$row['display_order'],
-            'notes' => $row['notes']
+            'notes' => $row['notes'],
+            'panel_power_watt' => isset($row['spc_panel_power_watt']) ? (int)$row['spc_panel_power_watt'] : null,
+            'inverter_power_watt' => isset($row['spc_inverter_power_watt']) ? (int)$row['spc_inverter_power_watt'] : null,
+            'battery_capacity_kwh' => isset($row['spc_battery_capacity_kwh']) ? floatval($row['spc_battery_capacity_kwh']) : null,
+            'cabinet_power_kw' => isset($row['spc_cabinet_power_kw']) ? floatval($row['spc_cabinet_power_kw']) : null
         ] : null
     ];
 }
