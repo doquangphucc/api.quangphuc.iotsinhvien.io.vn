@@ -50,6 +50,7 @@ try {
     $accessory_base_qty = isset($data['accessory_base_qty']) && $data['accessory_base_qty'] !== '' ? floatval($data['accessory_base_qty']) : null;
     $accessory_dependent_qty = isset($data['accessory_dependent_qty']) && $data['accessory_dependent_qty'] !== '' ? floatval($data['accessory_dependent_qty']) : null;
     $accessory_dependent_target = isset($data['accessory_dependent_target']) ? $data['accessory_dependent_target'] : null;
+    if ($accessory_dependent_target === '') { $accessory_dependent_target = null; }
     // Normalize dependent_target to match ENUM('panel','inverter','battery','cabinet','project')
     if ($accessory_dependent_target) {
         $map = [
