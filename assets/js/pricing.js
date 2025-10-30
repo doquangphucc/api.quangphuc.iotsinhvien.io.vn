@@ -284,13 +284,13 @@ function renderPackages() {
         return;
     }
     
-    let html = '<div class="grid md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">';
+    let html = '<div class="flex flex-nowrap gap-6">';
     
     filteredPackages.forEach(pkg => {
         const badgeColor = pkg.badge_color || 'blue';
         
         html += `
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[320px] flex-shrink-0">
                 ${pkg.badge_text ? `
                     <div class="bg-gradient-to-r from-${badgeColor}-600 to-${badgeColor}-700 text-white text-center py-1 font-bold text-[10px] uppercase tracking-wider">
                         ${pkg.badge_text}
