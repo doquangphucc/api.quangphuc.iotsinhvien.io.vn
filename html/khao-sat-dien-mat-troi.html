@@ -1912,8 +1912,9 @@
             }
             
             if (availableInverters.length > 0) {
-                // Tìm inverter có công suất phù hợp (lớn hơn hoặc bằng hệ thống)
-                selectedInverter = availableInverters.find(inv => inv.power >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
+                // Tìm inverter phù hợp theo quy tắc 1.5x: inverter có thể kéo tối đa ~1.5 × công suất DC
+                // Điều kiện chọn: inv.power * 1.5 >= systemSizeWatt
+                selectedInverter = availableInverters.find(inv => (inv.power * 1.5) >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
                 // Nếu không parse được công suất (0W), cố gắng suy ra từ tên; nếu vẫn 0 thì gán = systemSizeWatt
                 if (!selectedInverter.power || selectedInverter.power === 0) {
                     const pMatch = (selectedInverter.name || '').match(/(\d+)\s*K/i);
@@ -2444,7 +2445,7 @@
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(33,150,243,0.1); border-radius: 6px; border-left: 3px solid #2196f3;">
                                                 <small style="color: #4a5568; font-weight: 600;">🎯 Tại sao chọn biến tần này:</small><br>
                                                 <small style="color: #718096;">• Hệ thống cần: ${result.systemSizeKw}kWp</small><br>
-                                                <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (≥ ${result.systemSizeKw}kWp)</small><br>
+                                                <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (kéo tối đa ≈ ${(result.selectedInverter.power*1.5/1000).toFixed(1)}kWp ≥ ${result.systemSizeKw}kWp)</small><br>
                                                 <small style="color: #718096;">• Phù hợp với loại điện ${result.selectedInverter.phase === '1' ? '1 pha' : result.selectedInverter.phase === '3' ? '3 pha' : 'cả 2 pha'} đã chọn</small>
                                             </div>
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
