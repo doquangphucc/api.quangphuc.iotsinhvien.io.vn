@@ -548,21 +548,36 @@
             const r = el.getBoundingClientRect();
             const scale = Math.min(availW / r.width, availH / r.height, 1);
 
+            // Đảm bảo sau scale không vượt quá A4 - tính lại scale nếu cần
+            let finalScale = scale;
+            const scaledHeight = r.height * scale;
+            const scaledWidth = r.width * scale;
+            
+            if (scaledHeight > availH || scaledWidth > availW) {
+                finalScale = Math.min(availW / r.width, availH / r.height, 1);
+            }
+
             // Cố định kích thước gốc để khi scale không bị cắt
             el.style.width  = r.width  + 'px';
             el.style.height = r.height + 'px';
 
             el.style.transformOrigin = 'top left';
-            el.style.transform = `scale(${scale})`;
+            el.style.transform = `scale(${finalScale})`;
+            el.style.overflow = 'hidden'; // Ẩn phần vượt quá
 
             // Tạo khung A4 để html2pdf cắt đúng trang
             const wrapper = el.parentElement;
             wrapper.style.width  = '210mm';
             wrapper.style.height = '297mm';
+            wrapper.style.maxHeight = '297mm'; // Giới hạn không vượt quá A4
+            wrapper.style.minHeight = '297mm'; // Cố định height
             wrapper.style.padding = `${marginMm}mm`;
             wrapper.style.boxSizing = 'border-box';
             wrapper.style.background = 'white';
-            return scale;
+            wrapper.style.overflow = 'hidden'; // Ẩn phần vượt quá
+            wrapper.style.position = 'relative';
+            
+            return finalScale;
         }
     </script>
 
@@ -1318,13 +1333,17 @@
                 const bk = clone.querySelector('.back-button');
                 if (bk) bk.remove();
 
-                // Tạo wrapper A4
+                // Tạo wrapper A4 - giới hạn chính xác 1 trang
                 const wrapper = document.createElement('div');
                 wrapper.style.width = '210mm';
                 wrapper.style.height = '297mm';
+                wrapper.style.maxHeight = '297mm'; // Giới hạn không vượt quá A4
+                wrapper.style.minHeight = '297mm'; // Cố định height
                 wrapper.style.padding = '5mm';
                 wrapper.style.boxSizing = 'border-box';
                 wrapper.style.background = 'white';
+                wrapper.style.overflow = 'hidden'; // Ẩn phần vượt quá
+                wrapper.style.position = 'relative';
                 wrapper.appendChild(clone);
 
                 // Đưa ra ngoài màn hình để đo & render
