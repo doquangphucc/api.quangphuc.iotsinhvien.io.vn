@@ -443,8 +443,8 @@
                     <button onclick="exportToPDF()" class="flex-1 bg-gradient-to-r from-red-600 to-pink-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
                         📥 Xuất PDF
                     </button>
-                    <button onclick="window.print()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
-                        📄 In báo giá
+                    <button onclick="exportToImage()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
+                        🖼️ Xuất ảnh
                     </button>
                     <button onclick="buyPackageFromDetail()" id="buyPackageBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200">
                         🛒 Mua gói này
@@ -1424,6 +1424,82 @@
             } catch (error) {
                 console.error('Error exporting PDF:', error);
                 showNotification('❌ Lỗi khi xuất PDF: ' + error.message, 'error');
+            }
+        }
+
+        // Export to Image function - xuất ảnh PNG/JPG
+        async function exportToImage() {
+            try {
+                const src = document.getElementById('surveyDetail');
+                if (!src) {
+                    alert('Không tìm thấy nội dung báo giá!');
+                    return;
+                }
+
+                // Hiển thị loading
+                showNotification('🔄 Đang tạo ảnh...', 'info');
+
+                // Clone & bọc A4
+                const clone = src.cloneNode(true);
+                const rm = clone.querySelector('#actionButtons');
+                if (rm) rm.remove();
+                const bk = clone.querySelector('.back-button');
+                if (bk) bk.remove();
+
+                const wrapper = document.createElement('div');
+                wrapper.style.width = '210mm';
+                wrapper.style.height = '297mm';
+                wrapper.style.padding = '5mm';
+                wrapper.style.boxSizing = 'border-box';
+                wrapper.style.background = 'white';
+                wrapper.style.overflow = 'hidden';
+                wrapper.appendChild(clone);
+
+                const temp = document.createElement('div');
+                temp.style.position = 'fixed';
+                temp.style.left = '-10000px';
+                temp.appendChild(wrapper);
+                document.body.appendChild(temp);
+
+                // Fit clone vào A4
+                fitElementToA4(clone, { marginMm: 5 });
+
+                // Đợi ảnh
+                const imgs = wrapper.querySelectorAll('img');
+                await Promise.all([...imgs].map(img => img.complete ? Promise.resolve() : new Promise(r => {
+                    img.onload = r;
+                    img.onerror = r;
+                    setTimeout(r, 2000);
+                })));
+
+                // Đợi DOM cập nhật
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // Render thành canvas
+                const canvas = await html2canvas(wrapper, { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+
+                // Chuyển canvas thành ảnh và download
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.png`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/png', 0.95);
+
+                // Dọn
+                document.body.removeChild(temp);
+
+                showNotification('✅ Đã xuất ảnh thành công!', 'success');
+            } catch (error) {
+                console.error('Error exporting image:', error);
+                showNotification('❌ Lỗi khi xuất ảnh: ' + error.message, 'error');
             }
         }
     </script>
