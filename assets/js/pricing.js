@@ -394,6 +394,28 @@ function renderPackages() {
     
     html += '</div>';
     container.innerHTML = html;
+
+    // Force exactly 5 cards visible at a time by setting item width
+    const track = container.querySelector(':scope > div');
+    if (track) {
+        const GAP = 24; // match gap-6 (~24px)
+        const VISIBLE = 5;
+        const applyWidths = () => {
+            const cards = Array.from(track.children);
+            if (cards.length === 0) return;
+            const containerWidth = container.clientWidth;
+            const targetWidth = Math.max(220, Math.floor((containerWidth - GAP * (VISIBLE - 1)) / VISIBLE));
+            cards.forEach(card => {
+                card.style.width = targetWidth + 'px';
+                card.style.minWidth = targetWidth + 'px';
+                card.style.flex = '0 0 auto';
+            });
+        };
+        applyWidths();
+        window.addEventListener('resize', applyWidths);
+        // small delay to ensure fonts/layout settled
+        setTimeout(applyWidths, 50);
+    }
 }
 
 // Helper functions
