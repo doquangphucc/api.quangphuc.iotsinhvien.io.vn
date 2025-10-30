@@ -1949,7 +1949,11 @@
             const batteryUnitCapacity = parseFloat(selectedBatteryOption.getAttribute('data-capacity-kwh')) || 0; // kWh/ bộ
             
             // Tạo object selectedBattery từ dropdown
-            const selectedBatteryUnits = batteryUnitCapacity > 0 ? Math.max(1, Math.ceil(batteryCapacityNeeded / batteryUnitCapacity)) : 1;
+            // Tính số bộ pin cần, cho phép sai số nhỏ (epsilon) để tránh làm tròn lên khi gần bằng
+            const EPS = 1e-3; // 0.001 kWh
+            const selectedBatteryUnits = batteryUnitCapacity > 0
+                ? Math.max(1, Math.ceil((batteryCapacityNeeded - EPS) / batteryUnitCapacity))
+                : 1;
             const selectedBattery = {
                 name: batteryTitle || 'Pin lưu trữ',
                 capacity: batteryUnitCapacity, // Dung lượng 1 bộ kWh
@@ -2437,7 +2441,7 @@
                                                 <small style="color: #718096;">• Thời gian dùng: ${usageTimeName}</small><br>
                                                 <small style="color: #718096;">• Tỷ lệ pin: ${(result.batteryRatio * 100).toFixed(0)}% điện tạo ra</small><br>
                                                 <small style="color: #718096;">• Pin cần: ${result.actualDailyKwh.toFixed(1)} × ${result.batteryRatio} = ${result.batteryCapacityNeeded.toFixed(2)}kWh</small><br>
-                                                <small style="color: #718096;">• Chọn pin: ${result.selectedBattery.capacity}kWh (≥ ${result.batteryCapacityNeeded.toFixed(2)}kWh)</small>
+                                                <small style="color: #718096;">• Chọn pin: ${result.selectedBattery.units} bộ × ${result.selectedBattery.capacity}kWh = ${(result.selectedBattery.units * result.selectedBattery.capacity).toFixed(2)}kWh ${ (result.selectedBattery.units * result.selectedBattery.capacity) + 1e-6 >= result.batteryCapacityNeeded ? '(≥' : '(<'} ${result.batteryCapacityNeeded.toFixed(2)}kWh${ (result.selectedBattery.units * result.selectedBattery.capacity) + 1e-6 >= result.batteryCapacityNeeded ? ')' : ')'} </small>
                                             </div>
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
                                         </div>
