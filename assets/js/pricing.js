@@ -400,14 +400,13 @@ function renderPackages() {
     if (track) {
         const GAP = 24; // match gap-6 (~24px)
         const VISIBLE = 5;
-        const MIN_W = 260; // không quá nhỏ trên màn hình hẹp
-        const MAX_W = 320; // không phóng to quá lớn khi màn hình rộng
+        const MIN_W = 180; // đảm bảo vẫn xem được trên màn hẹp
         const applyWidths = () => {
             const cards = Array.from(track.children);
             if (cards.length === 0) return;
             const containerWidth = container.clientWidth;
-            let computed = Math.floor((containerWidth - GAP * (VISIBLE - 1)) / VISIBLE);
-            const targetWidth = Math.max(MIN_W, Math.min(MAX_W, computed));
+            const computed = Math.floor((containerWidth - GAP * (VISIBLE - 1)) / VISIBLE);
+            const targetWidth = Math.max(MIN_W, computed); // luôn chia đều để luôn đúng 5 card
             cards.forEach(card => {
                 card.style.width = targetWidth + 'px';
                 card.style.minWidth = targetWidth + 'px';
