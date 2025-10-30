@@ -467,6 +467,19 @@
             document.getElementById('customerAddress').textContent = `Khu vực: ${survey.regionName || '-'}`;
             
             const r = survey.results;
+            // Helper: suy ra thương hiệu từ tên sản phẩm
+            function deriveBrandFromName(name) {
+                if (!name) return '-';
+                const n = name.toLowerCase();
+                if (n.includes('jinko')) return 'Jinko';
+                if (n.includes('luxpower') || n.includes('lux power')) return 'LuxPower';
+                if (n.includes('byd')) return 'BYD';
+                if (n.includes('cornex') || n.includes('a-cornex')) return 'A-Cornex';
+                if (n.includes('mc4')) return 'MC4';
+                if (n.includes('wifi')) return 'LuxPower';
+                if (n.includes('hybrid')) return 'Hybrid';
+                return name.split(' ')[0] || '-';
+            }
             
             // Debug: Log image URLs from API
             console.log('populateSurveyData - panelImage:', r?.panelImage);
@@ -614,7 +627,7 @@
             const products = [
                 {
                     name: r?.panelName || 'Tấm Pin',
-                    brand: r?.panelName ? (r.panelName.split(' ')[0] || '-') : '-',
+                    brand: deriveBrandFromName(r?.panelName),
                     warranty: '12 năm',
                     unit: 'Tấm',
                     qty: Number(r?.panelsNeeded ?? 0),
@@ -624,7 +637,7 @@
                 },
                 {
                     name: r?.inverterName || 'Inverter',
-                    brand: '-',
+                    brand: deriveBrandFromName(r?.inverterName),
                     warranty: '5 năm',
                     unit: 'Bộ',
                     qty: 1,
@@ -634,7 +647,7 @@
                 },
                 {
                     name: r?.batteryName || 'Pin lưu trữ',
-                    brand: '-',
+                    brand: deriveBrandFromName(r?.batteryName),
                     warranty: '10 năm',
                     unit: 'Bộ',
                     qty: Number(r?.batteryQuantity ?? 1),
@@ -644,7 +657,7 @@
                 },
                 {
                     name: r?.cabinetName || 'Tủ điện',
-                    brand: '-',
+                    brand: deriveBrandFromName(r?.cabinetName),
                     warranty: '3 năm',
                     unit: 'Tủ',
                     qty: 1,
@@ -655,7 +668,7 @@
                 // Push computed accessories as individual rows (always show all configured)
                 ...computedAccessories.map(a => ({
                     name: a.name,
-                    brand: '-',
+                    brand: deriveBrandFromName(a.name),
                     warranty: '1 năm',
                     unit: a.unit || 'mục',
                     qty: a.quantity,
