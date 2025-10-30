@@ -1213,18 +1213,16 @@
 
                 // Cấu hình html2pdf - tối ưu cho 1 trang A4
                 const opt = {
-                    margin: [0.5, 0.5, 0.5, 0.5], // Margin tối thiểu (cm)
+                    margin: [0.8, 0.8, 0.8, 0.8], // Margin hợp lý (cm)
                     filename: `BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.9 },
+                    image: { type: 'jpeg', quality: 0.92 },
                     html2canvas: { 
-                        scale: 0.75, // Scale nhỏ để fit vào 1 trang
+                        scale: 1, // Scale 1 để đảm bảo render được
                         useCORS: true,
-                        logging: false,
+                        logging: true, // Bật logging để debug
                         letterRendering: true,
                         allowTaint: false,
-                        backgroundColor: '#ffffff',
-                        windowWidth: 794, // A4 width in pixels at 96dpi
-                        windowHeight: 1123 // A4 height in pixels at 96dpi
+                        backgroundColor: '#ffffff'
                     },
                     jsPDF: { 
                         unit: 'cm', 
@@ -1246,107 +1244,70 @@
                 if (actionButtons) actionButtons.remove();
                 if (backButton) backButton.remove();
 
-                // Áp dụng CSS tối ưu cho PDF - thu gọn để fit 1 trang
-                clone.style.width = '19cm'; // A4 width - margin
-                clone.style.maxWidth = '19cm';
+                // Áp dụng CSS tối ưu cho PDF - giữ đơn giản
+                clone.style.width = '19.4cm'; // A4 width - margin (21 - 0.8*2)
+                clone.style.maxWidth = '19.4cm';
                 clone.style.margin = '0';
-                clone.style.padding = '0.3cm';
+                clone.style.padding = '0.5cm';
                 clone.style.backgroundColor = '#ffffff';
                 clone.style.color = '#000000';
-                clone.style.fontSize = '9px'; // Giảm font-size tổng thể
                 
-                // Giảm padding/margin cho tất cả các section
-                const sections = clone.querySelectorAll('.rounded-2xl, .p-4, .mb-4, .p-2');
-                sections.forEach(section => {
-                    section.style.padding = '0.3cm';
-                    section.style.marginBottom = '0.3cm';
-                    section.style.marginTop = '0.2cm';
-                });
-                
-                // Thu nhỏ tiêu đề
-                const titles = clone.querySelectorAll('h1, h2, h3');
-                titles.forEach(title => {
-                    title.style.fontSize = '11px';
-                    title.style.marginBottom = '0.2cm';
-                    title.style.marginTop = '0.2cm';
-                });
-                
-                // Đảm bảo các container con cũng có kích thước phù hợp
+                // Đảm bảo các container con có kích thước phù hợp
                 const containers = clone.querySelectorAll('.container, .max-w-5xl');
                 containers.forEach(container => {
                     container.style.maxWidth = '100%';
                     container.style.width = '100%';
-                    container.style.padding = '0';
+                    container.style.padding = '0.3cm';
                     container.style.margin = '0';
                 });
                 
-                // Tối ưu bảng cho PDF - thu nhỏ font và cell padding
+                // Tối ưu bảng cho PDF
                 const tables = clone.querySelectorAll('table');
                 tables.forEach(table => {
                     table.style.width = '100%';
-                    table.style.fontSize = '8px'; // Font nhỏ hơn
+                    table.style.fontSize = '10px';
                     table.style.borderCollapse = 'collapse';
-                    table.style.marginBottom = '0.3cm';
                 });
                 
                 // Giảm padding cho cells trong bảng
                 const cells = clone.querySelectorAll('table th, table td');
                 cells.forEach(cell => {
-                    cell.style.padding = '0.15cm';
-                    cell.style.fontSize = '8px';
+                    cell.style.padding = '0.2cm';
+                    cell.style.fontSize = '9px';
                 });
                 
                 // Thu nhỏ ảnh trong bảng
                 const tableImages = clone.querySelectorAll('table img');
                 tableImages.forEach(img => {
-                    img.style.maxWidth = '35px';
-                    img.style.maxHeight = '35px';
+                    img.style.maxWidth = '45px';
+                    img.style.maxHeight = '45px';
                     img.style.objectFit = 'cover';
                 });
                 
-                // Thu nhỏ logo công ty
-                const logos = clone.querySelectorAll('img[alt*="SOLAR"], img[alt*="logo"]');
-                logos.forEach(logo => {
-                    logo.style.maxWidth = '50px';
-                    logo.style.maxHeight = '50px';
-                });
-                
-                // Thu nhỏ text trong summary boxes
-                const summaryBoxes = clone.querySelectorAll('.bg-white.dark\\:bg-gray-700, .bg-gradient-to-br');
-                summaryBoxes.forEach(box => {
-                    box.style.padding = '0.2cm';
-                    box.style.margin = '0.15cm';
-                    const text = box.querySelectorAll('p');
-                    text.forEach(p => {
-                        p.style.fontSize = '8px';
-                        p.style.margin = '0.1cm';
-                    });
-                });
-                
-                // Giảm khoảng cách giữa các phần tử
-                clone.querySelectorAll('div').forEach(div => {
-                    const mb = window.getComputedStyle(div).marginBottom;
-                    if (mb && parseFloat(mb) > 10) {
-                        div.style.marginBottom = '0.3cm';
+                // Đảm bảo logo hiển thị
+                const logos = clone.querySelectorAll('img');
+                logos.forEach(img => {
+                    if (!img.style.maxWidth || img.style.maxWidth === 'auto') {
+                        img.style.maxWidth = '60px';
+                        img.style.maxHeight = '60px';
                     }
                 });
 
-                // Tạo một container tạm để render - vừa với A4
-                const tempContainer = document.createElement('div');
-                tempContainer.style.position = 'absolute';
-                tempContainer.style.left = '-9999px';
-                tempContainer.style.width = '21cm';
-                tempContainer.style.height = '29.7cm'; // A4 height
-                tempContainer.style.maxHeight = '29.7cm';
-                tempContainer.style.overflow = 'hidden';
-                tempContainer.style.backgroundColor = '#ffffff';
-                tempContainer.appendChild(clone);
-                document.body.appendChild(tempContainer);
+                // Đảm bảo clone hiển thị được trước khi render
+                clone.style.display = 'block';
+                clone.style.visibility = 'visible';
+                clone.style.opacity = '1';
+                clone.style.position = 'relative';
+                
+                // Thêm clone vào body tạm thời để html2canvas có thể render
+                clone.style.position = 'absolute';
+                clone.style.left = '-9999px';
+                document.body.appendChild(clone);
 
                 // Đảm bảo tất cả ảnh đã load
                 const images = clone.querySelectorAll('img');
                 const imagePromises = Array.from(images).map(img => {
-                    if (img.complete) return Promise.resolve();
+                    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
                     return new Promise((resolve) => {
                         img.onload = resolve;
                         img.onerror = resolve; // Tiếp tục ngay cả khi ảnh lỗi
@@ -1357,16 +1318,16 @@
                 await Promise.all(imagePromises);
                 
                 // Đợi một chút để DOM cập nhật và styles được áp dụng
-                await new Promise(resolve => setTimeout(resolve, 300));
+                await new Promise(resolve => setTimeout(resolve, 500));
 
-                // Export PDF - render từ clone element
+                // Export PDF - render trực tiếp từ clone
                 await html2pdf()
                     .set(opt)
                     .from(clone)
                     .save();
 
                 // Dọn dẹp
-                document.body.removeChild(tempContainer);
+                document.body.removeChild(clone);
 
                 showNotification('✅ Đã xuất PDF thành công!', 'success');
             } catch (error) {
