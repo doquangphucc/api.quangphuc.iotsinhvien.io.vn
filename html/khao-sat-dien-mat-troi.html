@@ -1911,6 +1911,12 @@
             if (availableInverters.length > 0) {
                 // Tìm inverter có công suất phù hợp (lớn hơn hoặc bằng hệ thống)
                 selectedInverter = availableInverters.find(inv => inv.power >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
+                // Nếu không parse được công suất (0W), cố gắng suy ra từ tên; nếu vẫn 0 thì gán = systemSizeWatt
+                if (!selectedInverter.power || selectedInverter.power === 0) {
+                    const pMatch = (selectedInverter.name || '').match(/(\d+)\s*K/i);
+                    if (pMatch) selectedInverter.power = parseInt(pMatch[1], 10) * 1000;
+                    if (!selectedInverter.power || selectedInverter.power === 0) selectedInverter.power = systemSizeWatt;
+                }
                 // Debug: Log inverter ID
                 console.log('Selected Inverter:', selectedInverter.name, 'ID:', selectedInverter.id);
             } else {
@@ -1946,7 +1952,15 @@
             const batteryPrice = parseFloat(selectedBatteryOption.getAttribute('data-price'));
             const batteryImage = selectedBatteryOption.getAttribute('data-image');
             const batteryTitle = selectedBatteryOption.getAttribute('data-title');
-            const batteryUnitCapacity = parseFloat(selectedBatteryOption.getAttribute('data-capacity-kwh')) || 0; // kWh/ bộ
+            // Dung lượng 1 bộ (kWh)
+            let batteryUnitCapacity = parseFloat(selectedBatteryOption.getAttribute('data-capacity-kwh')) || 0;
+            if (!batteryUnitCapacity) {
+                // Fallback: cố gắng bắt từ title (kWh hoặc kW) nếu chưa có
+                const titleCap = (batteryTitle || '').match(/(\d+\.?\d*)\s*kW(h)?/i);
+                if (titleCap) {
+                    batteryUnitCapacity = parseFloat(titleCap[1]);
+                }
+            }
             
             // Tạo object selectedBattery từ dropdown
             // Tính số bộ pin cần, cho phép sai số nhỏ (epsilon) để tránh làm tròn lên khi gần bằng
@@ -2912,9 +2926,14 @@
             if (products.battery) {
                 batteries.length = 0;
                 products.battery.forEach(bat => {
-                    // Extract capacity from title or description
-                    const capacityMatch = bat.title.match(/(\d+\.?\d*)kWh/i);
-                    const capacity = capacityMatch ? parseFloat(capacityMatch[1]) : 0;
+                    // Extract capacity from title or description (kWh hoặc kW)
+                    let capacity = 0;
+                    const capTitle = (bat.title || '').match(/(\d+\.?\d*)\s*kW(h)?/i);
+                    if (capTitle) capacity = parseFloat(capTitle[1]);
+                    if (!capacity && bat.technical_description) {
+                        const capDesc = bat.technical_description.match(/(\d+\.?\d*)\s*kW(h)?/i);
+                        if (capDesc) capacity = parseFloat(capDesc[1]);
+                    }
                     
                     batteries.push({
                         name: bat.title,
