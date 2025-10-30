@@ -2013,17 +2013,8 @@
             // Xây dựng danh sách phụ kiện: ưu tiên dynamicAccessories từ Admin; luôn thêm Tủ điện + Công thợ + Vận chuyển
             const baseAccessoryList = (Array.isArray(dynamicAccessories) && dynamicAccessories.length > 0) ? dynamicAccessories : accessories;
 
-            // Tủ điện luôn đứng đầu
-            const accessoriesWithCabinet = [
-                {
-                    name: selectedCabinet.name,
-                    unit: "cái",
-                    price: selectedCabinet.price,
-                    quantity: 1,
-                    image: selectedCabinet.image
-                },
-                ...baseAccessoryList
-            ];
+            // Chỉ hiển thị các phụ kiện được cấu hình (không gộp Tủ điện vào nhóm phụ kiện)
+            const accessoriesWithCabinet = [...baseAccessoryList];
             
             // Tính phụ kiện dựa trên số tấm pin
             const calculatedAccessories = accessoriesWithCabinet.map(acc => {
