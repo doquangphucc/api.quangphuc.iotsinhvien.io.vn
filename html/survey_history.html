@@ -334,6 +334,26 @@
             const createdAt = new Date(survey.createdAt).toLocaleDateString('vi-VN');
             const regionName = survey.regionName || 'Không xác định';
             const totalCost = survey.results?.totalCost ? survey.results.totalCost.toLocaleString('vi-VN') : '0';
+
+            // Payback calculations
+            const rawTotalCost = Number(survey.results?.totalCost || 0);
+            const monthlyBill = Number(survey.monthlyBill || 0);
+            const annualSavings = monthlyBill * 12 * 0.8; // ước tính tiết kiệm 80% tiền điện
+            const paybackYears = annualSavings > 0 ? Math.ceil(rawTotalCost / annualSavings) : '-';
+
+            // Discounted payback at 10% (approx: khi NPV tiết kiệm chiết khấu >= chi phí đầu tư)
+            function calcDiscountedPayback(cost, savingsPerYear, rate) {
+                if (savingsPerYear <= 0) return '-';
+                let cumNPV = 0;
+                let year = 0;
+                // giới hạn 30 năm để tránh vòng lặp vô hạn
+                while (year < 30 && cumNPV < cost) {
+                    year += 1;
+                    cumNPV += savingsPerYear / Math.pow(1 + rate, year);
+                }
+                return year >= 30 ? '>30' : year;
+            }
+            const discountedPaybackYears = calcDiscountedPayback(rawTotalCost, annualSavings, 0.10);
             
             return `
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -369,6 +389,10 @@
                                 <span class="text-gray-600 dark:text-gray-400">Tấm pin:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.panelName || 'N/A'}</span>
                             </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Hoàn vốn dự kiến:</span>
+                                <span class="font-semibold text-emerald-600">${paybackYears} năm</span>
+                            </div>
         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between">
@@ -382,6 +406,10 @@
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Hóa đơn:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.monthlyBill ? survey.monthlyBill.toLocaleString('vi-VN') : '0'}đ</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Hoàn vốn khi vay 10%:</span>
+                                <span class="font-semibold text-blue-600">${discountedPaybackYears} năm</span>
                             </div>
         </div>
                     </div>
