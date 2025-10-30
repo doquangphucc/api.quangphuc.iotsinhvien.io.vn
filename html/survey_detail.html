@@ -1358,34 +1358,16 @@
                 wrapper.style.boxSizing = 'border-box';
                 wrapper.style.background = 'white';
                 wrapper.style.overflow = 'hidden';
-                wrapper.style.display = 'flex';
-                wrapper.style.flexDirection = 'column';
-                wrapper.style.alignItems = 'center'; // Căn giữa ngang
-                wrapper.style.justifyContent = 'flex-start'; // Căn trên
                 wrapper.appendChild(clone);
 
                 const temp = document.createElement('div');
                 temp.style.position = 'fixed';
                 temp.style.left = '-10000px';
-                temp.style.display = 'flex';
-                temp.style.alignItems = 'center';
-                temp.style.justifyContent = 'center';
                 temp.appendChild(wrapper);
                 document.body.appendChild(temp);
 
                 // Fit clone vào A4 (đã có hàm của bạn)
                 fitElementToA4(clone, { marginMm: 5 });
-                
-                // Đảm bảo clone căn giữa sau khi scale
-                clone.style.marginLeft = 'auto';
-                clone.style.marginRight = 'auto';
-                
-                // Đảm bảo nội dung trong clone không có margin/padding lệch
-                const cloneContainers = clone.querySelectorAll('.container, .max-w-5xl, .mx-auto');
-                cloneContainers.forEach(container => {
-                    container.style.marginLeft = 'auto';
-                    container.style.marginRight = 'auto';
-                });
 
                 // Đợi ảnh
                 const imgs = wrapper.querySelectorAll('img');
@@ -1395,8 +1377,8 @@
                     setTimeout(r, 2000);
                 })));
 
-                // Đợi DOM cập nhật sau khi set flexbox và scale
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Đợi DOM cập nhật
+                await new Promise(resolve => setTimeout(resolve, 300));
 
                 // Render thành canvas 1 trang
                 const canvas = await html2canvas(wrapper, { 
@@ -1429,8 +1411,8 @@
                     h = pageH;
                     w = h * imgRatio;
                 }
-                const x = (pageW - w) / 2; // Căn giữa ngang
-                const y = 0; // Bắt đầu từ trên, không căn giữa dọc
+                const x = (pageW - w) / 2;
+                const y = (pageH - h) / 2;
                 pdf.addImage(imgData, 'JPEG', x, y, w, h, undefined, 'FAST');
 
                 pdf.save(`BaoGia_${surveyId || 'survey'}_${new Date().getTime()}.pdf`);
