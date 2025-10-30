@@ -662,7 +662,28 @@
                     image: a.image,
                     unitPrice: a.price,
                     totalPrice: a.totalPrice
-                }))
+                })),
+                {
+                    name: 'Chi phí công thợ lắp đặt trọn gói',
+                    brand: '-',
+                    warranty: '-',
+                    unit: 'Đội',
+                    qty: 1,
+                    image: null,
+                    unitPrice: Number(r?.laborCost ?? 0),
+                    totalPrice: Number(r?.laborCost ?? 0)
+                },
+                {
+                    name: 'Chi phí vận chuyển thiết bị',
+                    brand: '-',
+                    warranty: '-',
+                    unit: 'Chuyến',
+                    qty: 1,
+                    image: null,
+                    unitPrice: 0,
+                    totalPrice: 0,
+                    note: 'Tùy điều kiện'
+                }
             ];
             
             productsTableBody.innerHTML = products.map(item => {
@@ -928,15 +949,33 @@
                             image_url: getImageUrl(r?.batteryImage, r?.batteryName, 'battery')
                         }
                     ],
-                    // Accessories: chỉ các phụ kiện đã lưu/tính (không thêm các dòng tổng hợp)
-                    accessories: computedAccessories.map(a => ({
-                        id: 'accessory_' + a.name.replace(/\s+/g, '_'),
-                        title: a.name,
-                        price: a.price,
-                        quantity: a.quantity,
-                        image_url: a.image,
-                        isVirtual: true
-                    })),
+                    // Accessories: phụ kiện đã lưu/tính + luôn thêm Công thợ, Vận chuyển
+                    accessories: [
+                        ...computedAccessories.map(a => ({
+                            id: 'accessory_' + a.name.replace(/\s+/g, '_'),
+                            title: a.name,
+                            price: a.price,
+                            quantity: a.quantity,
+                            image_url: a.image,
+                            isVirtual: true
+                        })),
+                        {
+                            id: 'accessory_labor',
+                            title: 'Chi phí công thợ lắp đặt trọn gói',
+                            price: Number(r?.laborCost || 0),
+                            quantity: 1,
+                            image_url: '🔧',
+                            isVirtual: true
+                        },
+                        {
+                            id: 'accessory_transport',
+                            title: 'Chi phí vận chuyển thiết bị',
+                            price: 0,
+                            quantity: 1,
+                            image_url: '🚛',
+                            isVirtual: true
+                        }
+                    ],
                     // Summary info
                     summary: {
                         inverter: r?.inverterName || 'Inverter',
