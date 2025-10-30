@@ -1946,12 +1946,16 @@
             const batteryPrice = parseFloat(selectedBatteryOption.getAttribute('data-price'));
             const batteryImage = selectedBatteryOption.getAttribute('data-image');
             const batteryTitle = selectedBatteryOption.getAttribute('data-title');
+            const batteryUnitCapacity = parseFloat(selectedBatteryOption.getAttribute('data-capacity-kwh')) || 0; // kWh/ bộ
             
             // Tạo object selectedBattery từ dropdown
+            const selectedBatteryUnits = batteryUnitCapacity > 0 ? Math.max(1, Math.ceil(batteryCapacityNeeded / batteryUnitCapacity)) : 1;
             const selectedBattery = {
                 name: batteryTitle || 'Pin lưu trữ',
-                capacity: batteryCapacityNeeded, // Dùng dung lượng đã tính toán
+                capacity: batteryUnitCapacity, // Dung lượng 1 bộ kWh
+                units: selectedBatteryUnits,
                 price: batteryPrice,
+                totalPrice: selectedBatteryUnits * batteryPrice,
                 warranty: "10 năm",
                 image: batteryImage
             };
@@ -2050,7 +2054,7 @@
             const accessoriesTotal = calculatedAccessories.reduce((sum, acc) => sum + acc.totalPrice, 0);
             
             // Tổng cộng (đã bao gồm tất cả 12 thành phần)
-            const totalPrice = panelTotalPrice + selectedInverter.price + selectedBattery.price + accessoriesTotal;
+            const totalPrice = panelTotalPrice + selectedInverter.price + selectedBattery.totalPrice + accessoriesTotal;
             
             // Tính tiết kiệm hàng năm (tiết kiệm 80% tiền điện)
             const annualSavings = monthlyBill * 12 * 0.8;
@@ -2423,8 +2427,8 @@
                                         <div style="line-height: 1.4;">
                                             <strong style="color: #2d3748; font-size: 1.05rem;">${result.selectedBattery.name}</strong><br>
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(63,163,77,0.1); border-radius: 6px; border-left: 3px solid #3FA34D;">
-                                                <small style="color: #4a5568; font-weight: 600;">📊 Thông số kỹ thuật:</small><br>
-                                                <small style="color: #718096;">• Dung lượng: ${result.selectedBattery.capacity} kWh</small><br>
+                                            <small style="color: #4a5568; font-weight: 600;">📊 Thông số kỹ thuật:</small><br>
+                                            <small style="color: #718096;">• Dung lượng 1 bộ: ${result.selectedBattery.capacity} kWh</small><br>
                                                 <small style="color: #718096;">• Bảo hành: ${result.selectedBattery.warranty}</small>
                                             </div>
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(156,39,176,0.1); border-radius: 6px; border-left: 3px solid #9c27b0;">
@@ -2438,9 +2442,9 @@
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
                                         </div>
                                     </td>
-                                    <td class="center" style="width: 12%">1 bộ</td>
+                                    <td class="center" style="width: 12%">${result.selectedBattery.units} bộ</td>
                                     <td class="price-col" style="width: 17%">${result.selectedBattery.price.toLocaleString()}đ</td>
-                                    <td class="price-col" style="width: 17%"><strong>${result.selectedBattery.price.toLocaleString()}đ</strong></td>
+                                    <td class="price-col" style="width: 17%"><strong>${result.selectedBattery.totalPrice.toLocaleString()}đ</strong></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2543,7 +2547,7 @@
                             <div class="card-icon">🔋</div>
                             <div class="card-content">
                                 <div class="card-label">Pin lưu trữ</div>
-                                <div class="card-value">${result.selectedBattery.capacity} kWh</div>
+                                <div class="card-value">${(result.selectedBattery.units * result.selectedBattery.capacity).toFixed(2)} kWh (${result.selectedBattery.units} bộ)</div>
                             </div>
         </div>
                         
@@ -2835,6 +2839,8 @@
                 products.battery.forEach(battery => {
                     // Create formatted display text with tech specs
                     const displayText = formatDisplayText(battery.title, battery.technical_description);
+                    const capMatch = (battery.title || battery.technical_description || '').match(/(\d+\.?\d*)\s*kWh/i);
+                    const unitCap = capMatch ? parseFloat(capMatch[1]) : 0;
                     
                     // Use product_id as value for better tracking
                     const option = document.createElement('option');
@@ -2842,7 +2848,7 @@
                     option.textContent = displayText;
                     option.setAttribute('data-product-id', battery.id);
                     option.setAttribute('data-price', battery.price);
-                    option.setAttribute('data-capacity', battery.title); // Store original title
+                    option.setAttribute('data-capacity-kwh', unitCap);
                     option.setAttribute('data-title', battery.title); // Store original title
                     option.setAttribute('data-image', fixImageUrl(battery.image_url));
                     batterySelect.appendChild(option);
