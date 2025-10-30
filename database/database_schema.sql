@@ -69,6 +69,11 @@ CREATE TABLE IF NOT EXISTS survey_product_configs (
     inverter_power_watt INT DEFAULT NULL COMMENT 'Công suất inverter (W) - dùng cho khảo sát',
     battery_capacity_kwh DECIMAL(10,2) DEFAULT NULL COMMENT 'Dung lượng 1 bộ pin (kWh) - dùng cho khảo sát',
     cabinet_power_kw DECIMAL(10,2) DEFAULT NULL COMMENT 'Công suất tủ điện (kW) - dùng cho khảo sát',
+    -- Trường cấu hình phụ kiện (chỉ dùng khi survey_category = 'accessory')
+    accessory_unit VARCHAR(16) DEFAULT NULL COMMENT 'Đơn vị phụ kiện: bo/cai/met',
+    accessory_base_qty DECIMAL(10,2) DEFAULT NULL COMMENT 'Số lượng cơ bản theo đơn vị',
+    accessory_dependent_qty DECIMAL(10,2) DEFAULT NULL COMMENT 'Hệ số nhân theo đối tượng phụ thuộc',
+    accessory_dependent_target ENUM('panel','inverter','battery','cabinet','project') DEFAULT NULL COMMENT 'Đối tượng phụ thuộc',
     is_active BOOLEAN DEFAULT TRUE COMMENT 'Có hiển thị trong khảo sát',
     display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
     notes TEXT COMMENT 'Ghi chú',

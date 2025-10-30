@@ -1814,6 +1814,9 @@
             { name: "Vận Chuyển Đến Công Trình", unit: "chuyến", price: 0, quantity: 1, image: "🚛", isTransport: true }
         ];
 
+        // Dynamic accessories loaded from Admin (fallback to hardcoded if empty)
+        let dynamicAccessories = [];
+
         // Hàm tính kWh từ số tiền điện và trả về chi tiết từng bậc
         function calculateKwhFromBill(billAmount) {
             let remainingAmount = billAmount;
@@ -2009,7 +2012,10 @@
                 selectedCabinet = { id: 0, name: "Không có tủ điện phù hợp", power: 0, price: 0, image: "../assets/img/products/electrical-cabinet.jpg" };
             }
             
-            // Thêm tủ điện đã chọn vào đầu danh sách phụ kiện
+            // Xây dựng danh sách phụ kiện: ưu tiên dynamicAccessories từ Admin; luôn thêm Tủ điện + Công thợ + Vận chuyển
+            const baseAccessoryList = (Array.isArray(dynamicAccessories) && dynamicAccessories.length > 0) ? dynamicAccessories : accessories;
+
+            // Tủ điện luôn đứng đầu
             const accessoriesWithCabinet = [
                 {
                     name: selectedCabinet.name,
@@ -2018,30 +2024,46 @@
                     quantity: 1,
                     image: selectedCabinet.image
                 },
-                ...accessories
+                ...baseAccessoryList
             ];
             
             // Tính phụ kiện dựa trên số tấm pin
             const calculatedAccessories = accessoriesWithCabinet.map(acc => {
                 let quantity = acc.quantity;
                 let displayName = acc.name;
+                const isDynamic = typeof acc.baseQty !== 'undefined' || typeof acc.depQty !== 'undefined';
                 
                 // Tính toán số lượng theo từng loại phụ kiện
-                if (acc.name.includes("Bách Z")) {
-                    quantity = panelCount * 6; // 6 cái/tấm
-                    displayName = acc.name + " (6 cái/tấm)";
-                }
-                if (acc.name.includes("Kẹp Biên")) {
-                    quantity = panelCount * 6; // 6 bộ/tấm
-                    displayName = acc.name + " (6 bộ/tấm)";
-                }
-                if (acc.name.includes("MC4")) {
-                    quantity = panelCount + 3; // Số tấm pin + 3
-                    displayName = acc.name + " (Số tấm + 3)";
-                }
-                if (acc.name.includes("Dây Điện (AC/DC)")) {
-                    quantity = 100; // Dự trù 100m
-                    displayName = acc.name + " (Dự trù 100m, tùy công trình)";
+                if (isDynamic) {
+                    // Dynamic rule: quantity = baseQty + depQty * count(depTarget)
+                    const depTarget = (acc.depTarget || 'project');
+                    let targetCount = 1;
+                    if (depTarget === 'panel') targetCount = panelCount;
+                    else if (depTarget === 'inverter') targetCount = 1;
+                    else if (depTarget === 'battery') targetCount = selectedBatteryUnits;
+                    else if (depTarget === 'cabinet') targetCount = 1;
+                    else targetCount = 1; // project
+                    const baseQty = Number(acc.baseQty || 0);
+                    const depQty = Number(acc.depQty || 0);
+                    quantity = baseQty + depQty * targetCount;
+                    displayName = acc.name;
+                } else {
+                    if (acc.name.includes("Bách Z")) {
+                        quantity = panelCount * 6; // 6 cái/tấm
+                        displayName = acc.name + " (6 cái/tấm)";
+                    }
+                    if (acc.name.includes("Kẹp Biên")) {
+                        quantity = panelCount * 6; // 6 bộ/tấm
+                        displayName = acc.name + " (6 bộ/tấm)";
+                    }
+                    if (acc.name.includes("MC4")) {
+                        quantity = panelCount + 3; // Số tấm pin + 3
+                        displayName = acc.name + " (Số tấm + 3)";
+                    }
+                    if (acc.name.includes("Dây Điện (AC/DC)")) {
+                        quantity = 100; // Dự trù 100m
+                        displayName = acc.name + " (Dự trù 100m, tùy công trình)";
+                    }
                 }
                 if (acc.name.includes("Tủ Điện Hybrid")) {
                     quantity = 1; // 1 tủ/dự án
@@ -2070,6 +2092,18 @@
                     totalPrice: quantity * acc.price
                 };
             });
+
+            // Đảm bảo luôn có Công thợ và Vận chuyển nếu chưa có trong danh sách dynamic
+            const names = calculatedAccessories.map(a => a.name);
+            if (!names.some(n => n.includes('Công Thợ'))) {
+                // tính theo panelCount
+                let laborPrice = 6000000;
+                if (panelCount > 16) laborPrice = 6000000 + (panelCount - 16) * 300000;
+                calculatedAccessories.push({ name: 'Công Thợ Lắp Đặt Trọn Gói', unit: 'dự án', price: laborPrice, quantity: 1, image: '🔧', totalPrice: laborPrice });
+            }
+            if (!names.some(n => n.includes('Vận Chuyển'))) {
+                calculatedAccessories.push({ name: 'Vận Chuyển Đến Công Trình', unit: 'chuyến', price: 0, quantity: 1, image: '🚛', isTransport: true, totalPrice: 0 });
+            }
             
             const accessoriesTotal = calculatedAccessories.reduce((sum, acc) => sum + acc.totalPrice, 0);
             
@@ -3032,6 +3066,21 @@
                                     (products.electrical_cabinet['3_phase']?.length || 0) + 
                                     (products.electrical_cabinet['both']?.length || 0);
                 console.log('✅ Đã load', cabinetCount, 'loại tủ điện từ admin');
+            }
+
+            // Build dynamic accessories from API
+            if (products.accessory && Array.isArray(products.accessory)) {
+                dynamicAccessories = products.accessory.map(acc => ({
+                    id: acc.id,
+                    name: acc.title,
+                    unit: acc.accessory_unit || 'cái',
+                    price: acc.price || 0,
+                    image: fixImageUrl(acc.image_url),
+                    baseQty: typeof acc.accessory_base_qty === 'number' ? acc.accessory_base_qty : 0,
+                    depQty: typeof acc.accessory_dependent_qty === 'number' ? acc.accessory_dependent_qty : 0,
+                    depTarget: acc.accessory_dependent_target || 'project',
+                    notes: acc.notes || null
+                }));
             }
         }
 
