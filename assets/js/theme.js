@@ -28,6 +28,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         applyTheme(resolveInitialTheme());
 
+        // Inject minimal global styles to keep header consistent across all pages
+        try {
+            const style = document.createElement('style');
+            style.setAttribute('data-injected', 'hc-header-fixes');
+            style.textContent = `
+                /* Enforce single-line header and consistent sizing like index */
+                #header .container > div{height:5rem;}
+                #header nav{white-space:nowrap;}
+                #header .flex.items-center.gap-2{white-space:nowrap;}
+                #header nav a{font-size:0.875rem;line-height:1.25rem;padding:0.5rem 1rem;}
+            `;
+            document.head.appendChild(style);
+        } catch(_) {}
+
         document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
             toggle.addEventListener('click', toggleTheme);
             toggle.addEventListener('keydown', (event) => {
