@@ -2799,7 +2799,13 @@
             else if (category === 'inverter') ready = phaseType !== 'none' && !!invKW && invKW > 0;
             else if (category === 'battery') ready = !!battKwh && battKwh > 0;
             else if (category === 'electrical_cabinet') ready = phaseType !== 'none' && !!cabKW && cabKW > 0;
-            else ready = true; // accessory or others
+            else if (category === 'accessory') {
+                const accUnit = document.getElementById('survey_accessory_unit')?.value || '';
+                const accBase = parseFloat(document.getElementById('survey_accessory_base_qty')?.value || '');
+                const accDep = parseFloat(document.getElementById('survey_accessory_dependent_qty')?.value || '');
+                const accTarget = document.getElementById('survey_accessory_dependent_target')?.value || '';
+                ready = !!accUnit && !isNaN(accBase) && !isNaN(accDep) && !!accTarget;
+            } else ready = true;
 
             isActiveEl.disabled = !ready;
             if (!ready) {
@@ -2814,7 +2820,7 @@
 
          // Watch inputs to toggle activation availability
          document.addEventListener('input', function(e){
-            if (e.target && ['survey_category','survey_phase_type','survey_panel_power_watt','survey_inverter_power_watt','survey_battery_capacity_kwh','survey_cabinet_power_kw'].includes(e.target.id)) {
+            if (e.target && ['survey_category','survey_phase_type','survey_panel_power_watt','survey_inverter_power_watt','survey_battery_capacity_kwh','survey_cabinet_power_kw','survey_accessory_unit','survey_accessory_base_qty','survey_accessory_dependent_qty','survey_accessory_dependent_target'].includes(e.target.id)) {
                 updateSurveyActivationState();
             }
          });
@@ -2849,7 +2855,7 @@
             else if (surveyCategory === 'inverter') ready = phaseType !== 'none' && !!invKW && invKW > 0;
             else if (surveyCategory === 'battery') ready = !!battKwh && battKwh > 0;
             else if (surveyCategory === 'electrical_cabinet') ready = phaseType !== 'none' && !!cabKW && cabKW > 0;
-            else if (surveyCategory === 'accessory') ready = !!accUnit && (!isNaN(accBase) || !isNaN(accDep)) && !!accTarget;
+            else if (surveyCategory === 'accessory') ready = !!accUnit && (!isNaN(accBase)) && (!isNaN(accDep)) && !!accTarget;
             else ready = true;
             if (isActive && !ready) {
                 showToast('Vui lòng nhập đầy đủ thông số bắt buộc trước khi kích hoạt.', 'warning');
