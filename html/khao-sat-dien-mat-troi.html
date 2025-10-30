@@ -1914,6 +1914,15 @@
             }
             
             if (availableInverters.length > 0) {
+                // Chuẩn hóa công suất và sắp xếp tăng dần để luôn chọn inverter NHỎ NHẤT thỏa điều kiện
+                availableInverters = availableInverters.map(inv => {
+                    let p = Number(inv.power || 0);
+                    if (!p) {
+                        const m = (inv.name || '').match(/(\d+)\s*K/i);
+                        if (m) p = parseInt(m[1], 10) * 1000;
+                    }
+                    return { ...inv, power: p };
+                }).sort((a, b) => (a.power || 0) - (b.power || 0));
                 // Tìm inverter phù hợp theo quy tắc 1.5x: inverter có thể kéo tối đa ~1.5 × công suất DC
                 // Điều kiện chọn: inv.power * 1.5 >= systemSizeWatt
                 selectedInverter = availableInverters.find(inv => (inv.power * 1.5) >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
