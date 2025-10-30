@@ -120,15 +120,25 @@ async function injectContactFABs() {
         const res = await fetch('../api/get_contact_channels_public.php');
         const data = await res.json();
         if (data.success && Array.isArray(data.channels)) {
-            // Pick primary hotline (category=phone) and zalo (category=zalo) with smallest display_order
-            const phones = data.channels.filter(c => (c.category || '').toLowerCase() === 'phone');
-            const zalos = data.channels.filter(c => (c.category || '').toLowerCase() === 'zalo');
+            // Pick primary hotline (category=phone), zalo (category=zalo), facebook (category=facebook) with smallest display_order
+            const phones  = data.channels.filter(c => (c.category || '').toLowerCase() === 'phone');
+            const zalos   = data.channels.filter(c => (c.category || '').toLowerCase() === 'zalo');
+            const facebooks = data.channels.filter(c => (c.category || '').toLowerCase() === 'facebook');
             phones.sort((a,b)=> (a.display_order||999)-(b.display_order||999));
             zalos.sort((a,b)=> (a.display_order||999)-(b.display_order||999));
+            facebooks.sort((a,b)=> (a.display_order||999)-(b.display_order||999));
             hotlineNumber = (phones[0]?.content || '').replace(/\D/g,'') || null;
             zaloNumber = (zalos[0]?.content || '').replace(/\D/g,'') || hotlineNumber || null;
             if (phones[0]?.color) hotlineColor = phones[0].color;
             if (zalos[0]?.color) zaloColor = zalos[0].color;
+            // Facebook info
+            if (facebooks.length > 0) {
+                var facebookInfo = {
+                    url: facebooks[0].content ? facebooks[0].content : '',
+                    color: facebooks[0].color || '#1877f3',
+                    name: facebooks[0].name || 'Facebook',
+                };
+            }
         }
     } catch (e) {
         console.warn('Could not load contact channels, fallback to defaults');
@@ -206,4 +216,17 @@ async function injectContactFABs() {
     container.appendChild(zaloFab);
     container.appendChild(hotlineFab);
     document.body.appendChild(container);
+
+    // Facebook FAB (nếu có)
+    if (typeof facebookInfo !== 'undefined' && facebookInfo.url) {
+        const facebookFab = createFab({
+            id: 'fab-facebook',
+            bg: `linear-gradient(135deg, ${facebookInfo.color}, ${lighten(facebookInfo.color, 30)})`,
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="16" fill="#1877f3"/><path d="M22.75 24V17.11H25L25.35 14.04H22.75V12.23C22.75 11.36 23 10.78 24.22 10.78H25.43V8.06C25.21 8.03 24.47 7.95 23.6 7.95C21.7 7.95 20.43 9.11 20.43 11.97V14.04H18V17.11H20.43V24H22.75Z" fill="white"/></svg>`,
+            label: facebookInfo.name,
+            href: facebookInfo.url,
+            aria: 'Facebook'
+        });
+        container.appendChild(facebookFab);
+    }
 }
