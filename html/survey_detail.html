@@ -942,14 +942,22 @@
             }
 
             const chosenCabinet = (cabinetAlternatives && cabinetAlternatives.length>0) ? cabinetAlternatives[selectedCabinetIdx] : null;
+            // Helper to get product name with fallback (handles "0", null, undefined, empty)
+            const getProductName = (name, defaultName) => {
+                if (!name || name === '0' || name.trim() === '' || name === 'null' || name === 'undefined') {
+                    return defaultName;
+                }
+                return name.trim();
+            };
+            
             const products = [
                 {
-                    name: r?.panelName || 'Tấm Pin',
-                    brand: deriveBrandFromName(r?.panelName),
+                    name: getProductName(r?.panelName, 'Tấm Pin'),
+                    brand: deriveBrandFromName(getProductName(r?.panelName, 'Tấm Pin')),
                     warranty: '12 năm',
                     unit: 'Tấm',
                     qty: Number(r?.panelsNeeded ?? 0),
-                    image: getImageUrlForDisplay(r?.panelImage, r?.panelName, 'solar_panel'),
+                    image: getImageUrlForDisplay(r?.panelImage, getProductName(r?.panelName, 'Tấm Pin'), 'solar_panel'),
                     unitPrice: Number(r?.panelPrice ?? 0),
                     totalPrice: Number(r?.panelCost ?? 0),
                     category: 'solar_panel',
@@ -957,36 +965,36 @@
                     panelPower: r?.panelPower || null
                 },
                 {
-                    name: r?.inverterName || 'Inverter',
-                    brand: deriveBrandFromName(r?.inverterName),
+                    name: getProductName(r?.inverterName, 'Inverter'),
+                    brand: deriveBrandFromName(getProductName(r?.inverterName, 'Inverter')),
                     warranty: '5 năm',
                     unit: 'Bộ',
                     qty: 1,
-                    image: getImageUrlForDisplay(r?.inverterImage, r?.inverterName, 'inverter', survey.phase),
+                    image: getImageUrlForDisplay(r?.inverterImage, getProductName(r?.inverterName, 'Inverter'), 'inverter', survey.phase),
                     unitPrice: Number(r?.inverterPrice ?? 0),
                     totalPrice: Number(r?.inverterPrice ?? 0),
                     category: 'inverter',
                     currentProductId: r?.inverterId || null
                 },
                 {
-                    name: r?.batteryName || 'Pin lưu trữ',
-                    brand: deriveBrandFromName(r?.batteryName),
+                    name: getProductName(r?.batteryName, 'Pin lưu trữ'),
+                    brand: deriveBrandFromName(getProductName(r?.batteryName, 'Pin lưu trữ')),
                     warranty: '10 năm',
                     unit: 'Bộ',
                     qty: Number(r?.batteryQuantity ?? 1),
-                    image: getImageUrlForDisplay(r?.batteryImage, r?.batteryName, 'battery'),
+                    image: getImageUrlForDisplay(r?.batteryImage, getProductName(r?.batteryName, 'Pin lưu trữ'), 'battery'),
                     unitPrice: Number(r?.batteryUnitPrice ?? 0),
                     totalPrice: Number(r?.batteryCost ?? 0),
                     category: 'battery',
                     currentProductId: r?.batteryId || null
                 },
                 {
-                    name: r?.cabinetName || 'Tủ điện',
-                    brand: deriveBrandFromName(r?.cabinetName),
+                    name: getProductName(r?.cabinetName, 'Tủ điện'),
+                    brand: deriveBrandFromName(getProductName(r?.cabinetName, 'Tủ điện')),
                     warranty: '3 năm',
                     unit: 'Tủ',
                     qty: 1,
-                    image: getImageUrlForDisplay(r?.cabinetImage, r?.cabinetName, 'electrical_cabinet', survey.phase),
+                    image: getImageUrlForDisplay(r?.cabinetImage, getProductName(r?.cabinetName, 'Tủ điện'), 'electrical_cabinet', survey.phase),
                     unitPrice: Number(r?.cabinetPrice ?? 0),
                     totalPrice: Number(r?.cabinetPrice ?? 0),
                     category: 'electrical_cabinet',
@@ -1106,7 +1114,7 @@
                         <option value="">-- Chọn sản phẩm --</option>
                         ${productOptions}
                     </select>`;
-                    brandDisplay = `<span id="edit_${itemKey}_brand" class="text-sm">${item.brand}</span>`;
+                    brandDisplay = `<input type="text" id="edit_${itemKey}_brand" value="${item.brand}" class="w-full px-2 py-1 border rounded text-sm">`;
                     warrantyDisplay = `<input type="text" id="edit_${itemKey}_warranty" value="${item.warranty}" class="w-20 px-2 py-1 border rounded text-sm text-center">`;
                     
                     // For panels and battery, allow qty change; for inverter and cabinet, keep fixed at 1
@@ -1124,9 +1132,9 @@
                     unitPriceDisplay = `<input type="number" id="edit_${itemKey}_unitPrice" value="${item.unitPrice}" class="w-24 px-2 py-1 border rounded text-right text-sm" onchange="updateRowTotal('${itemKey}')">`;
                     totalPriceDisplay = `<span id="edit_${itemKey}_totalPrice" class="font-semibold">${item.totalPrice > 0 ? item.totalPrice.toLocaleString('vi-VN') : '-'}</span>`;
                 } else if (isEditMode && !isMainProduct && item.name !== 'Chi phí vận chuyển thiết bị') {
-                    // Edit mode: accessory items - chỉ sửa warranty, qty, unitPrice
+                    // Edit mode: accessory items - chỉ sửa warranty, qty, unitPrice, brand
                     nameDisplay = item.name;
-                    brandDisplay = item.brand;
+                    brandDisplay = `<input type="text" id="edit_${itemKey}_brand" value="${item.brand}" class="w-full px-2 py-1 border rounded text-sm">`;
                     warrantyDisplay = `<input type="text" id="edit_${itemKey}_warranty" value="${item.warranty}" class="w-20 px-2 py-1 border rounded text-sm text-center">`;
                     qtyDisplay = `<input type="number" id="edit_${itemKey}_qty" value="${item.qty}" min="1" class="w-16 px-2 py-1 border rounded text-sm text-center" onchange="updateRowTotal('${itemKey}')">`;
                     
@@ -1802,7 +1810,9 @@
                 // Update brand
                 const brandEl = document.getElementById(`edit_${itemKey}_brand`);
                 if (brandEl) {
-                    brandEl.textContent = product.title.split(' ')[0];
+                    // brandEl is now an input field, use value instead of textContent
+                    const brandName = product.title.split(' ')[0];
+                    brandEl.value = brandName;
                 }
                 
                 // Update image
@@ -1916,25 +1926,61 @@
                     const priceInput = document.getElementById(`edit_${mp.key}_unitPrice`);
                     const qtyInput = document.getElementById(`edit_${mp.key}_qty`);
                     
-                    // Get product ID from dropdown
+                    // Get product ID from dropdown (if selected new product)
                     if (productSelect && productSelect.value) {
                         updateData.results[mp.resultKeys.id] = parseInt(productSelect.value);
                         
                         // Get product name from selected option
                         const selectedOption = productSelect.options[productSelect.selectedIndex];
-                        if (selectedOption) {
-                            updateData.results[mp.resultKeys.name] = selectedOption.text;
+                        if (selectedOption && selectedOption.text) {
+                            updateData.results[mp.resultKeys.name] = selectedOption.text.trim();
+                        }
+                    } else if (productSelect && !productSelect.value) {
+                        // No new product selected - keep existing name to prevent "0" values
+                        // Always ensure we have a valid name value (use original if available and not "0")
+                        const originalName = r?.[mp.resultKeys.name];
+                        if (originalName && originalName !== '0' && originalName !== 'null' && originalName !== 'undefined' && originalName.trim() !== '') {
+                            updateData.results[mp.resultKeys.name] = originalName.trim();
+                        } else {
+                            // If original name is invalid, use default name based on category
+                            const defaultNames = {
+                                'panelName': 'Tấm Pin',
+                                'inverterName': 'Inverter',
+                                'batteryName': 'Pin lưu trữ',
+                                'cabinetName': 'Tủ điện'
+                            };
+                            updateData.results[mp.resultKeys.name] = defaultNames[mp.resultKeys.name] || 'Sản phẩm';
+                        }
+                        // Keep existing ID if no new selection
+                        if (r?.[mp.resultKeys.id]) {
+                            updateData.results[mp.resultKeys.id] = parseInt(r[mp.resultKeys.id]);
+                        }
+                    } else {
+                        // productSelect doesn't exist - use original values
+                        const originalName = r?.[mp.resultKeys.name];
+                        if (originalName && originalName !== '0' && originalName !== 'null' && originalName !== 'undefined' && originalName.trim() !== '') {
+                            updateData.results[mp.resultKeys.name] = originalName.trim();
+                        }
+                        if (r?.[mp.resultKeys.id]) {
+                            updateData.results[mp.resultKeys.id] = parseInt(r[mp.resultKeys.id]);
                         }
                     }
                     
-                    // Get price
+                    // Always get price (must have value)
                     if (priceInput) {
-                        updateData.results[mp.resultKeys.price] = parseFloat(priceInput.value) || 0;
+                        const priceValue = parseFloat(priceInput.value) || 0;
+                        updateData.results[mp.resultKeys.price] = priceValue;
+                    } else {
+                        // Fallback to original price if input doesn't exist
+                        updateData.results[mp.resultKeys.price] = parseFloat(r?.[mp.resultKeys.price]) || 0;
                     }
                     
                     // Get quantity (if applicable)
                     if (qtyInput && mp.resultKeys.qty) {
                         updateData.results[mp.resultKeys.qty] = parseInt(qtyInput.value) || 0;
+                    } else if (!qtyInput && mp.resultKeys.qty) {
+                        // Fallback to original quantity if input doesn't exist
+                        updateData.results[mp.resultKeys.qty] = parseInt(r?.[mp.resultKeys.qty]) || 0;
                     }
                 });
                 

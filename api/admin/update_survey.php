@@ -123,8 +123,18 @@ try {
             $sql = "UPDATE survey_results SET " . implode(', ', $updateFields) . " WHERE survey_id = ?";
             $stmt = $conn->prepare($sql);
             
-            // Build bind_param types string
-            $types = str_repeat('i', count($updateParams)) . 'i'; // All integers + survey_id
+            // Build bind_param types string (must match the actual data types)
+            $types = '';
+            foreach ($updateParams as $param) {
+                if (is_int($param)) {
+                    $types .= 'i';
+                } else if (is_float($param) || is_numeric($param)) {
+                    $types .= 'd';
+                } else {
+                    $types .= 's';
+                }
+            }
+            $types .= 'i'; // Add type for survey_id
             $updateParams[] = $surveyId;
             $stmt->bind_param($types, ...$updateParams);
             $stmt->execute();
