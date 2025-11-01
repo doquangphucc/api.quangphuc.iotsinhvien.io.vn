@@ -2126,7 +2126,13 @@
         // Tab Management
         function showTab(tabName) {
             // Check permission before switching tab
-            if (tabName !== 'users' && typeof hasPermission === 'function' && !hasPermission(tabName, 'view')) {
+            // Users tab is only for full admin
+            if (tabName === 'users') {
+                if (typeof isFullAdmin === 'undefined' || !isFullAdmin) {
+                    showPermissionDenied('truy cập Quản Lý Users. Chỉ Admin toàn quyền mới được phép.');
+                    return;
+                }
+            } else if (typeof hasPermission === 'function' && !hasPermission(tabName, 'view')) {
                 showPermissionDenied('xem module này');
                 return;
             }
