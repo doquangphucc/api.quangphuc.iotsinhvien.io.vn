@@ -3412,9 +3412,9 @@
                             id: result.batteryProductId,
                             name: result.selectedBattery.name,
                             capacity: result.selectedBattery.capacity,
-                            quantity: 1,
+                            quantity: result.selectedBattery.units, // Use units instead of hardcoded 1
                             price: result.selectedBattery.price,
-                            totalCost: result.selectedBattery.price
+                            totalCost: result.selectedBattery.totalPrice // Use totalPrice instead of price
                         }
                     ],
                     accessories: {
