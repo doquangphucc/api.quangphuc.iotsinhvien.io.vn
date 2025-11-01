@@ -4420,7 +4420,7 @@
                 document.getElementById('user_password').setAttribute('required', 'required');
                 document.getElementById('user_password').placeholder = 'Nhập mật khẩu';
                 document.getElementById('user_is_admin').checked = false;
-                toggleAdminPermissions();
+                toggleAdminPermissions(true); // Force uncheck khi tạo mới
             }
             
             modal.classList.add('show');
@@ -4430,14 +4430,14 @@
             document.getElementById('userModal').classList.remove('show');
         }
         
-        function toggleAdminPermissions() {
+        function toggleAdminPermissions(forceUncheck = false) {
             const isAdmin = document.getElementById('user_is_admin').checked;
             const permissionsGrid = document.getElementById('permissions-grid');
             const permissionsSection = document.getElementById('permissions-section');
             const allCheckboxes = document.querySelectorAll('.permission-checkbox');
             
             if (isAdmin) {
-                // Tick tất cả và disable
+                // Tick tất cả và disable khi là Admin
                 allCheckboxes.forEach(cb => {
                     cb.checked = true;
                     cb.disabled = true;
@@ -4445,8 +4445,11 @@
                 permissionsGrid.style.opacity = '0.5';
                 permissionsSection.querySelector('h4').innerHTML = '🔐 Phân quyền module <span class="text-red-600">(FULL QUYỀN - Tất cả quyền đã được tự động cấp)</span>';
             } else {
-                // Enable lại, không tự động untick (giữ nguyên trạng thái)
+                // Chỉ uncheck nếu forceUncheck = true, ngược lại chỉ enable
                 allCheckboxes.forEach(cb => {
+                    if (forceUncheck) {
+                        cb.checked = false;
+                    }
                     cb.disabled = false;
                 });
                 permissionsGrid.style.opacity = '1';
