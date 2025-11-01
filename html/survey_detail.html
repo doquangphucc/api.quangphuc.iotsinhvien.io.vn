@@ -318,11 +318,11 @@
         <div class="container mx-auto max-w-5xl">
             <!-- Back Button -->
             <div class="mb-6 back-button">
-                <a href="survey_history.html" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold">
+                <a id="backLink" href="survey_history.html" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
-                    Quay lại lịch sử khảo sát
+                    <span id="backLinkText">Quay lại lịch sử khảo sát</span>
                 </a>
             </div>
 
@@ -677,6 +677,16 @@
                 if (header) {
                     header.style.border = '2px solid #f59e0b';
                     header.style.borderRadius = '0.75rem';
+                }
+                
+                // Thay đổi back link để quay lại admin thay vì survey_history
+                const backLink = document.getElementById('backLink');
+                const backLinkText = document.getElementById('backLinkText');
+                if (backLink) {
+                    backLink.href = 'admin.html';
+                }
+                if (backLinkText) {
+                    backLinkText.textContent = 'Quay lại trang quản lý';
                 }
             }
             
