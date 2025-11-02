@@ -23,7 +23,10 @@ if (!hasPermission($conn, 'tickets', 'edit')) {
 $data = json_decode(file_get_contents('php://input'), true);
 $user_id = isset($data['user_id']) && $data['user_id'] > 0 ? intval($data['user_id']) : null;
 $ticket_status = $data['ticket_status'] ?? 'active';
-$reward_id = isset($data['reward_id']) && $data['reward_id'] !== null ? intval($data['reward_id']) : null;
+$reward_id = isset($data['reward_id']) && $data['reward_id'] !== null && $data['reward_id'] !== '0' ? intval($data['reward_id']) : null;
+
+// Log for debugging
+error_log("Set ALL rewards - user_id: " . var_export($user_id, true) . ", status: {$ticket_status}, reward_id: " . var_export($reward_id, true));
 
 // Start transaction
 $conn->begin_transaction();
@@ -70,6 +73,9 @@ try {
         // Remove reward (set to NULL) - "May mắn lần sau"
         $sql = "UPDATE lottery_tickets SET pre_assigned_reward_id = NULL" . $whereClause;
         
+        error_log("Executing SQL: " . $sql);
+        error_log("Params: " . json_encode($params));
+        
         if (!empty($params)) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param($types, ...$params);
@@ -80,6 +86,8 @@ try {
             $result = $conn->query($sql);
             $affected = $conn->affected_rows;
         }
+        
+        error_log("Updated {$affected} tickets to pre_assigned_reward_id = NULL");
     }
     
     $conn->commit();

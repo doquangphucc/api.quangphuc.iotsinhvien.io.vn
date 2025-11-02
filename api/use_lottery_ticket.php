@@ -48,18 +48,6 @@ try {
     if (count($tickets) < $quantity) {
         sendError("Không đủ vé để quay {$quantity} lần", 400);
     }
-
-    // Default rewards for random selection
-    $defaultRewards = [
-        ['name' => 'Voucher giảm 100.000đ', 'type' => 'voucher', 'value' => 100000, 'weight' => 30],
-        ['name' => 'Voucher giảm 200.000đ', 'type' => 'voucher', 'value' => 200000, 'weight' => 20],
-        ['name' => 'Tiền mặt 50.000đ', 'type' => 'cash', 'value' => 50000, 'weight' => 15],
-        ['name' => 'Tiền mặt 100.000đ', 'type' => 'cash', 'value' => 100000, 'weight' => 10],
-        ['name' => 'Quà tặng phụ kiện', 'type' => 'gift', 'value' => null, 'weight' => 10],
-        ['name' => 'Chúc may mắn lần sau!', 'type' => 'gift', 'value' => null, 'weight' => 15]
-    ];
-    
-    $totalWeight = array_sum(array_column($defaultRewards, 'weight'));
     
     // Process each ticket
     $rewards = [];
@@ -75,17 +63,30 @@ try {
             $voucherCode = null;
             
             // Determine reward for this ticket
-            if ($ticket['pre_assigned_reward_id'] && $ticket['reward_name']) {
+            // Get pre_assigned_reward_id (may be NULL from database)
+            $preAssignedRewardId = $ticket['pre_assigned_reward_id'] ?? null;
+            
+            // Check if this ticket has a pre-assigned reward
+            // PDO returns NULL as actual null value, so check if it's a valid integer > 0
+            $hasPreAssignedReward = false;
+            if ($preAssignedRewardId !== null) {
+                $preAssignedRewardIdInt = intval($preAssignedRewardId);
+                if ($preAssignedRewardIdInt > 0 && !empty($ticket['reward_name'])) {
+                    $hasPreAssignedReward = true;
+                }
+            }
+            
+            if ($hasPreAssignedReward) {
                 // Use pre-assigned reward from admin
                 $selectedReward = [
                     'name' => $ticket['reward_name'],
                     'type' => $ticket['reward_type'],
                     'value' => $ticket['reward_value'],
                     'description' => $ticket['reward_description'],
-                    'template_id' => $ticket['pre_assigned_reward_id']
+                    'template_id' => intval($preAssignedRewardId)
                 ];
             } else {
-                // pre_assigned_reward_id = NULL → "May mắn lần sau" (không random)
+                // pre_assigned_reward_id = NULL or 0 or invalid → "May mắn lần sau" (KHÔNG random)
                 $selectedReward = [
                     'name' => 'Chúc may mắn lần sau!',
                     'type' => 'gift',
@@ -120,15 +121,22 @@ try {
             
             $rewardStatus = 'pending';
             
+            // Ensure all values are properly formatted
+            $rewardTemplateId = $selectedReward['template_id'] ?? null;
+            $rewardName = $selectedReward['name'] ?? 'Chúc may mắn lần sau!';
+            $rewardType = $selectedReward['type'] ?? 'gift';
+            $rewardValue = isset($selectedReward['value']) && $selectedReward['value'] !== null ? floatval($selectedReward['value']) : null;
+            $rewardDescription = $selectedReward['description'] ?? $rewardName;
+            
             $rewardStmt = $pdo->prepare($rewardSql);
             $rewardStmt->execute([
                 $userId,
-                $selectedReward['template_id'] ?? null,
-                $selectedReward['name'],
-                $selectedReward['type'],
-                $selectedReward['value'] ?? null,
-                $selectedReward['description'] ?? $selectedReward['name'],
-                $voucherCode,
+                $rewardTemplateId,
+                $rewardName,
+                $rewardType,
+                $rewardValue,
+                $rewardDescription,
+                $voucherCode, // Can be null
                 $rewardStatus,
                 $ticket['id']
             ]);
@@ -169,6 +177,7 @@ try {
 
 } catch (Exception $e) {
     error_log("Use lottery ticket error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
     sendError('Không thể sử dụng vé quay: ' . $e->getMessage(), 500);
 }
 ?>
