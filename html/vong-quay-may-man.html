@@ -363,22 +363,56 @@
                             </div>
         </div>
 
-                        <!-- Spin Quantity Selector -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 text-center">
-                                Chọn số lượng quay:
-                            </label>
-                            <div class="flex items-center justify-center gap-4">
-                                <select id="spin-quantity" class="px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold text-center">
-                                    <option value="1">1 vé</option>
-                                    <option value="10">10 vé</option>
-                                    <option value="50">50 vé</option>
-                                    <option value="100">100 vé</option>
-                                    <option value="500">500 vé</option>
-                                </select>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">
-                                    (Tối đa: <span id="max-spin-quantity" class="font-bold">0</span> vé)
-                                </span>
+                        <!-- Spin Mode and Quantity -->
+                        <div class="mb-6 space-y-4">
+                            <div class="text-center">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                    Chọn chế độ quay:
+                                </label>
+                                <div class="flex flex-col gap-3 max-w-md mx-auto">
+                                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <input type="radio" name="spin-mode" value="single" class="w-4 h-4" checked>
+                                        <span class="flex-1 text-left">
+                                            <span class="font-semibold">Quay từng vé</span>
+                                            <span class="text-xs text-gray-500 block">Quay 1 vé, sau đó quay tiếp</span>
+                                        </span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <input type="radio" name="spin-mode" value="all" class="w-4 h-4">
+                                        <span class="flex-1 text-left">
+                                            <span class="font-semibold">Quay tất cả</span>
+                                            <span class="text-xs text-gray-500 block">Quay tất cả vé còn lại một lần</span>
+                                        </span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <input type="radio" name="spin-mode" value="custom" class="w-4 h-4">
+                                        <span class="flex-1 text-left">
+                                            <span class="font-semibold">Quay số lượng tự nhập</span>
+                                            <span class="text-xs text-gray-500 block">Nhập số lượng vé muốn quay</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Custom quantity input (only show for custom mode) -->
+                            <div id="custom-quantity-container" class="hidden">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 text-center">
+                                    Số lượng vé quay:
+                                </label>
+                                <div class="flex items-center justify-center gap-4">
+                                    <input 
+                                        type="number" 
+                                        id="spin-quantity" 
+                                        min="1" 
+                                        max="1000"
+                                        value="1"
+                                        class="px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold text-center w-32"
+                                        placeholder="Nhập số"
+                                    >
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                                        (Tối đa: <span id="max-spin-quantity" class="font-bold">0</span> vé)
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

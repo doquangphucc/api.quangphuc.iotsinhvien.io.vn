@@ -572,7 +572,11 @@ function renderTickets(tickets) {
                     ${getTicketTypeText(t.ticket_type)}
                 </span>
             </td>
-            <td class="px-4 py-3">${t.pre_assigned_reward_name || '-'}</td>
+            <td class="px-4 py-3">
+                ${(!t.pre_assigned_reward_id || t.pre_assigned_reward_id === null || t.pre_assigned_reward_id === 'null' || t.pre_assigned_reward_id === 0)
+                    ? '🎁 May mắn lần sau'
+                    : (t.pre_assigned_reward_name || '-')}
+            </td>
             <td class="px-4 py-3 text-center">
                 <span class="px-3 py-1 rounded-full text-sm ${getTicketStatusClass(t.status)}">
                     ${getTicketStatusText(t.status)}

@@ -135,7 +135,7 @@ async function loadTickets() {
 function updateTicketDisplay() {
     const ticketCount = document.getElementById('ticket-count');
     const maxQuantityEl = document.getElementById('max-spin-quantity');
-    const spinQuantitySelect = document.getElementById('spin-quantity');
+    const spinQuantityInput = document.getElementById('spin-quantity');
     
     if (ticketCount) {
         ticketCount.textContent = availableTickets;
@@ -143,31 +143,30 @@ function updateTicketDisplay() {
     
     if (maxQuantityEl) {
         maxQuantityEl.textContent = availableTickets;
-    }
-    
-    // Update quantity select options to not exceed available tickets
-    if (spinQuantitySelect) {
-        const currentValue = parseInt(spinQuantitySelect.value) || 1;
-        const maxValue = Math.min(500, availableTickets);
-        
-        // Keep current selection if still valid
-        if (currentValue > maxValue && maxValue > 0) {
-            spinQuantitySelect.value = maxValue.toString();
+        // Update max attribute of input
+        if (spinQuantityInput) {
+            spinQuantityInput.setAttribute('max', availableTickets);
         }
-        
-        // Disable options that exceed available tickets
-        Array.from(spinQuantitySelect.options).forEach(option => {
-            const value = parseInt(option.value);
-            if (value > availableTickets) {
-                option.disabled = true;
-                option.textContent = `${option.value} vé (Không đủ)`;
-            } else {
-                option.disabled = false;
-                option.textContent = `${option.value} vé`;
-            }
-        });
     }
 }
+
+// Handle spin mode change
+function handleSpinModeChange() {
+    const mode = document.querySelector('input[name="spin-mode"]:checked')?.value || 'single';
+    const customContainer = document.getElementById('custom-quantity-container');
+    
+    if (mode === 'custom') {
+        customContainer.classList.remove('hidden');
+        const input = document.getElementById('spin-quantity');
+        if (input) {
+            input.focus();
+            input.value = Math.min(1, availableTickets);
+        }
+    } else {
+        customContainer.classList.add('hidden');
+    }
+}
+
 
 // Spin the slot machine
 async function spinSlot() {
@@ -178,18 +177,30 @@ async function spinSlot() {
         return;
     }
     
-    // Get quantity from select
-    const spinQuantitySelect = document.getElementById('spin-quantity');
-    const quantity = parseInt(spinQuantitySelect?.value || 1);
+    // Get spin mode and quantity
+    const mode = document.querySelector('input[name="spin-mode"]:checked')?.value || 'single';
+    let quantity = 1;
     
-    if (quantity > availableTickets) {
-        alert(`Bạn chỉ có ${availableTickets} vé, không đủ để quay ${quantity} lần!`);
-        return;
-    }
-    
-    if (quantity < 1) {
-        alert('Số lượng quay không hợp lệ!');
-        return;
+    if (mode === 'all') {
+        // Quay tất cả vé còn lại
+        quantity = availableTickets;
+    } else if (mode === 'custom') {
+        // Quay số lượng tự nhập
+        const spinQuantityInput = document.getElementById('spin-quantity');
+        quantity = parseInt(spinQuantityInput?.value || 1);
+        
+        if (quantity > availableTickets) {
+            alert(`Bạn chỉ có ${availableTickets} vé, không đủ để quay ${quantity} lần!`);
+            return;
+        }
+        
+        if (quantity < 1) {
+            alert('Số lượng quay phải lớn hơn 0!');
+            return;
+        }
+    } else {
+        // mode === 'single' - Quay từng vé
+        quantity = 1;
     }
     
     isSpinning = true;
@@ -399,5 +410,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const spinButton = document.getElementById('spin-button');
     if (spinButton) {
         spinButton.addEventListener('click', spinSlot);
+    }
+    
+    // Initialize spin mode handlers
+    const spinModeInputs = document.querySelectorAll('input[name="spin-mode"]');
+    spinModeInputs.forEach(input => {
+        input.addEventListener('change', handleSpinModeChange);
+    });
+    
+    // Initialize custom quantity input max attribute
+    const spinQuantityInput = document.getElementById('spin-quantity');
+    if (spinQuantityInput && availableTickets > 0) {
+        spinQuantityInput.setAttribute('max', availableTickets);
     }
 });

@@ -54,6 +54,7 @@ if ($count_only) {
 
 // Get tickets with or without pagination
 $sql = "SELECT lt.*, u.full_name, u.username, u.phone,
+        lt.pre_assigned_reward_id,
         rt.reward_name as pre_assigned_reward_name
         FROM lottery_tickets lt
         LEFT JOIN users u ON lt.user_id = u.id
