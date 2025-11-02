@@ -26,6 +26,21 @@ async function loadRewardTemplates() {
                 quantity: template.reward_quantity,
                 image: template.reward_image
             }));
+            
+            // Always add "Chúc may mắn lần sau!" to prizes list if not already present
+            const hasNoPrize = prizes.some(p => p.name === 'Chúc may mắn lần sau!');
+            if (!hasNoPrize) {
+                prizes.push({
+                    id: -1, // Special ID for "no prize"
+                    name: 'Chúc may mắn lần sau!',
+                    icon: '😢',
+                    type: 'gift',
+                    value: null,
+                    description: 'Hãy thử lại lần sau nhé!',
+                    quantity: null,
+                    image: null
+                });
+            }
         } else {
             // Default prizes if no templates found
             prizes = [
@@ -253,20 +268,36 @@ async function spinSlot() {
             // Single spin - show animation
             const wonPrize = rewards[0];
             
-            // Find prize index
-            const prizeIndex = prizes.findIndex(p => p.name === wonPrize.reward_name);
-            const targetPrize = prizeIndex >= 0 ? prizes[prizeIndex] : prizes[5];
+            // Find prize index - check exact name match first
+            let prizeIndex = prizes.findIndex(p => p.name === wonPrize.reward_name);
+            
+            // If not found and it's "Chúc may mắn lần sau!", try to find it by checking for "may mắn"
+            if (prizeIndex < 0 && (wonPrize.reward_name === 'Chúc may mắn lần sau!' || wonPrize.reward_name?.includes('may mắn'))) {
+                prizeIndex = prizes.findIndex(p => p.name === 'Chúc may mắn lần sau!');
+            }
+            
+            // If still not found, use last prize (should be "may mắn lần sau" if added above)
+            if (prizeIndex < 0) {
+                prizeIndex = prizes.length - 1;
+            }
+            
+            const targetPrize = prizes[prizeIndex];
             
             // Calculate scroll distance
             const itemHeight = 180;
             const totalItems = prizes.length * 10;
+            
+            // Ensure prizeIndex is valid
+            if (prizeIndex < 0 || prizeIndex >= prizes.length) {
+                prizeIndex = prizes.length - 1; // Fallback to last prize (should be "may mắn lần sau")
+            }
             
             // Start with fast spinning
             reel.classList.add('spinning');
             
             // Spin through multiple cycles
             const spinCycles = 5;
-            const finalPosition = (spinCycles * prizes.length + (prizeIndex >= 0 ? prizeIndex : 5)) * itemHeight;
+            const finalPosition = (spinCycles * prizes.length + prizeIndex) * itemHeight;
             
             // Fast spin for 2 seconds
             let currentPos = 0;
