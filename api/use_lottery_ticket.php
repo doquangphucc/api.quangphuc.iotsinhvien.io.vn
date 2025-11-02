@@ -33,12 +33,13 @@ try {
     }
     
     // Get tickets to use (with pre-assigned reward if any)
+    // Sort by ID DESC (quay vé ID lớn trước, giảm dần)
     $sql = "SELECT lt.id, lt.pre_assigned_reward_id, rt.reward_name, rt.reward_type, 
                    rt.reward_value, rt.reward_description, rt.reward_quantity
             FROM lottery_tickets lt
             LEFT JOIN reward_templates rt ON lt.pre_assigned_reward_id = rt.id
             WHERE lt.user_id = ? AND lt.status = 'active' 
-            ORDER BY lt.created_at ASC 
+            ORDER BY lt.id DESC 
             LIMIT ?";
     
     $stmt = $pdo->prepare($sql);

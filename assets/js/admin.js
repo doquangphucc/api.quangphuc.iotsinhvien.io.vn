@@ -795,23 +795,23 @@ async function updateSetAllTicketsCount() {
     if (!countEl) return;
     
     try {
-        // Load tickets count from API based on current filters
-        const url = userId > 0 
-            ? `${API_BASE}/admin/get_tickets.php?user_id=${userId}&t=${Date.now()}`
-            : `${API_BASE}/admin/get_tickets.php?t=${Date.now()}`;
+        // Build URL with count_only parameter to get total count without pagination
+        let url = `${API_BASE}/admin/get_tickets.php?count_only=1&t=${Date.now()}`;
+        
+        if (userId > 0) {
+            url += `&user_id=${userId}`;
+        }
+        
+        if (status === 'active') {
+            url += `&status=active`;
+        }
         
         const response = await fetch(url, {credentials: 'include'});
         const data = await response.json();
         
         if (data.success) {
-            let filteredTickets = data.tickets || [];
-            
-            // Filter by status if needed
-            if (status === 'active') {
-                filteredTickets = filteredTickets.filter(t => t.status === 'active');
-            }
-            
-            countEl.textContent = filteredTickets.length;
+            // API returns count directly when count_only=1
+            countEl.textContent = data.count || 0;
         } else {
             countEl.textContent = '0';
         }
