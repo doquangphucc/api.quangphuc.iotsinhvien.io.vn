@@ -2824,9 +2824,15 @@
                 const res = await fetch(`${API_BASE}/get_survey_regions_public.php`);
                 const data = await res.json();
                 if (data.success && Array.isArray(data.regions)) {
-                    data.regions.filter(r => r.is_active).forEach(r => {
-                        regionSunHours[r.region_code] = Number(r.sun_hours || 0) || regionSunHours[r.region_code] || 0;
+                    // API đã lọc is_active = TRUE ở database level, nên không cần filter lại
+                    data.regions.forEach(r => {
+                        // Ưu tiên sử dụng giá trị từ API nếu hợp lệ (> 0), ngược lại dùng giá trị mặc định
+                        if (r.sun_hours && r.sun_hours > 0) {
+                            regionSunHours[r.region_code] = Number(r.sun_hours);
+                        }
+                        // Nếu không có hoặc không hợp lệ, giữ nguyên giá trị mặc định đã khởi tạo
                     });
+                    console.log('✅ Đã cập nhật giờ nắng từ Admin:', regionSunHours);
                     const regionSelect = document.querySelector('select[name="region"]');
                     if (regionSelect) {
                         Array.from(regionSelect.options).forEach(opt => {
