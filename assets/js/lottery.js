@@ -94,9 +94,13 @@ function initSlotMachine() {
     updatePrizeDisplay();
 }
 
-// Update prize display in sidebar
+// Update prize display in sidebar only (not main content)
 function updatePrizeDisplay() {
-    const prizeContainer = document.querySelector('.space-y-4');
+    // Only update sidebar - find the prizes sidebar container
+    const sidebarContainer = document.querySelector('.lg\\:col-span-1');
+    if (!sidebarContainer) return;
+    
+    const prizeContainer = sidebarContainer.querySelector('.space-y-4');
     if (!prizeContainer || !prizes || prizes.length === 0) return;
     
     let html = '';
