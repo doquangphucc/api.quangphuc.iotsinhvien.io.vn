@@ -85,17 +85,14 @@ try {
                     'template_id' => $ticket['pre_assigned_reward_id']
                 ];
             } else {
-                // Random reward
-                $random = mt_rand(1, $totalWeight);
-                $currentWeight = 0;
-                
-                foreach ($defaultRewards as $reward) {
-                    $currentWeight += $reward['weight'];
-                    if ($random <= $currentWeight) {
-                        $selectedReward = $reward;
-                        break;
-                    }
-                }
+                // pre_assigned_reward_id = NULL → "May mắn lần sau" (không random)
+                $selectedReward = [
+                    'name' => 'Chúc may mắn lần sau!',
+                    'type' => 'gift',
+                    'value' => null,
+                    'description' => 'Hãy thử lại lần sau nhé!',
+                    'template_id' => null
+                ];
             }
             
             // If reward is voucher, create voucher in vouchers table
