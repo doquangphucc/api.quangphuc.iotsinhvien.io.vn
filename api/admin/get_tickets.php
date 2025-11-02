@@ -16,18 +16,32 @@ if (!hasPermission($conn, 'tickets', 'view')) {
 }
 
 $user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$per_page = 100; // 100 vé mỗi trang
+$offset = ($page - 1) * $per_page;
 
+// Build WHERE clause
+$whereClause = "";
+if ($user_id > 0) {
+    $whereClause = " WHERE lt.user_id = " . $user_id;
+}
+
+// Get total count
+$countSql = "SELECT COUNT(*) as total FROM lottery_tickets lt" . $whereClause;
+$countResult = $conn->query($countSql);
+$totalRow = $countResult->fetch_assoc();
+$total = intval($totalRow['total'] ?? 0);
+$total_pages = ceil($total / $per_page);
+
+// Get tickets with pagination
 $sql = "SELECT lt.*, u.full_name, u.username, u.phone,
         rt.reward_name as pre_assigned_reward_name
         FROM lottery_tickets lt
         LEFT JOIN users u ON lt.user_id = u.id
-        LEFT JOIN reward_templates rt ON lt.pre_assigned_reward_id = rt.id";
-
-if ($user_id > 0) {
-    $sql .= " WHERE lt.user_id = " . $user_id;
-}
-
-$sql .= " ORDER BY lt.created_at DESC";
+        LEFT JOIN reward_templates rt ON lt.pre_assigned_reward_id = rt.id"
+        . $whereClause . 
+        " ORDER BY lt.created_at DESC
+        LIMIT " . $per_page . " OFFSET " . $offset;
 
 $result = $conn->query($sql);
 
@@ -38,7 +52,13 @@ while ($row = $result->fetch_assoc()) {
 
 echo json_encode([
     'success' => true,
-    'tickets' => $tickets
+    'tickets' => $tickets,
+    'pagination' => [
+        'page' => $page,
+        'per_page' => $per_page,
+        'total' => $total,
+        'total_pages' => $total_pages
+    ]
 ]);
 
 $conn->close();

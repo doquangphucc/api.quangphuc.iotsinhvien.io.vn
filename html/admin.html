@@ -455,6 +455,20 @@
                         + Thêm vé
                     </button>
                 </div>
+                <!-- Filter by User -->
+                <div class="mb-6 flex gap-4 items-end">
+                    <div class="flex-1">
+                        <label class="block text-sm font-semibold mb-2">Lọc theo người dùng</label>
+                        <select id="ticket-filter-user" class="w-full px-4 py-2 border rounded-lg" onchange="filterTicketsByUser()">
+                            <option value="0">-- Tất cả người dùng --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button onclick="openSetAllRewardsModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            🔧 Set ALL phần thưởng
+                        </button>
+                    </div>
+                </div>
                 <div id="tickets-list" class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-gray-100">
@@ -470,6 +484,8 @@
                         </thead>
                         <tbody id="tickets-tbody"></tbody>
                     </table>
+                    <!-- Pagination -->
+                    <div id="tickets-pagination" class="mt-4"></div>
                 </div>
             </div>
         </div>
@@ -837,6 +853,55 @@
                     </button>
                     <button type="button" onclick="closeTicketModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
                         Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Set All Rewards Modal -->
+    <div id="setAllRewardsModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4">Cấu hình phần thưởng hàng loạt</h3>
+            <form id="setAllRewardsForm" onsubmit="saveSetAllRewards(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Chọn người dùng</label>
+                        <select id="set-all-user-id" class="w-full px-4 py-2 border rounded-lg" onchange="updateSetAllTicketsCount()">
+                            <option value="0">-- Tất cả người dùng --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Lọc theo trạng thái</label>
+                        <select id="set-all-ticket-status" class="w-full px-4 py-2 border rounded-lg" onchange="updateSetAllTicketsCount()">
+                            <option value="active">Chỉ vé hoạt động (active)</option>
+                            <option value="all">Tất cả vé</option>
+                        </select>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm font-semibold mb-2">Số vé sẽ được cấu hình:</p>
+                        <p id="set-all-tickets-count" class="text-2xl font-bold text-blue-600">0</p>
+                        <p class="text-xs text-gray-600 mt-2">Các vé đã có phần thưởng set sẵn cũng sẽ bị ghi đè</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Chọn phần thưởng *</label>
+                        <select id="set-all-reward-id" required class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">-- Chọn phần thưởng --</option>
+                        </select>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-xs text-yellow-800">
+                            ⚠️ <strong>Lưu ý:</strong> Tính năng này sẽ cấu hình phần thưởng cho tất cả vé quay khớp với điều kiện lọc ở trên. 
+                            Hãy chắc chắn trước khi thực hiện!
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        ✅ Áp dụng cho tất cả
+                    </button>
+                    <button type="button" onclick="closeSetAllRewardsModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
                     </button>
                 </div>
             </form>
@@ -2176,7 +2241,10 @@
                      loadPackages(); 
                      break;
                  case 'orders': loadOrders(); break;
-                 case 'tickets': loadTickets(); break;
+                 case 'tickets': 
+                     loadTickets(currentTicketFilterUserId || 0, 1); 
+                     updateTicketFilterUsers(); 
+                     break;
                  case 'rewards': loadRewards(); break;
                  case 'intro-posts': loadIntroPosts(); break;
                 case 'projects': loadProjects(); break;

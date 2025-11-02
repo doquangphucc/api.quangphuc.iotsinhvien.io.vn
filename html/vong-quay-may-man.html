@@ -363,6 +363,25 @@
                             </div>
         </div>
 
+                        <!-- Spin Quantity Selector -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 text-center">
+                                Chọn số lượng quay:
+                            </label>
+                            <div class="flex items-center justify-center gap-4">
+                                <select id="spin-quantity" class="px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold text-center">
+                                    <option value="1">1 vé</option>
+                                    <option value="10">10 vé</option>
+                                    <option value="50">50 vé</option>
+                                    <option value="100">100 vé</option>
+                                    <option value="500">500 vé</option>
+                                </select>
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                    (Tối đa: <span id="max-spin-quantity" class="font-bold">0</span> vé)
+                                </span>
+                            </div>
+                        </div>
+
                         <!-- Spin Button -->
                         <button id="spin-button" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span id="spin-text">Quay Ngay!</span>

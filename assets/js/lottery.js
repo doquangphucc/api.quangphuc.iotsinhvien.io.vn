@@ -134,8 +134,38 @@ async function loadTickets() {
 // Update ticket display
 function updateTicketDisplay() {
     const ticketCount = document.getElementById('ticket-count');
+    const maxQuantityEl = document.getElementById('max-spin-quantity');
+    const spinQuantitySelect = document.getElementById('spin-quantity');
+    
     if (ticketCount) {
         ticketCount.textContent = availableTickets;
+    }
+    
+    if (maxQuantityEl) {
+        maxQuantityEl.textContent = availableTickets;
+    }
+    
+    // Update quantity select options to not exceed available tickets
+    if (spinQuantitySelect) {
+        const currentValue = parseInt(spinQuantitySelect.value) || 1;
+        const maxValue = Math.min(500, availableTickets);
+        
+        // Keep current selection if still valid
+        if (currentValue > maxValue && maxValue > 0) {
+            spinQuantitySelect.value = maxValue.toString();
+        }
+        
+        // Disable options that exceed available tickets
+        Array.from(spinQuantitySelect.options).forEach(option => {
+            const value = parseInt(option.value);
+            if (value > availableTickets) {
+                option.disabled = true;
+                option.textContent = `${option.value} vé (Không đủ)`;
+            } else {
+                option.disabled = false;
+                option.textContent = `${option.value} vé`;
+            }
+        });
     }
 }
 
@@ -148,6 +178,20 @@ async function spinSlot() {
         return;
     }
     
+    // Get quantity from select
+    const spinQuantitySelect = document.getElementById('spin-quantity');
+    const quantity = parseInt(spinQuantitySelect?.value || 1);
+    
+    if (quantity > availableTickets) {
+        alert(`Bạn chỉ có ${availableTickets} vé, không đủ để quay ${quantity} lần!`);
+        return;
+    }
+    
+    if (quantity < 1) {
+        alert('Số lượng quay không hợp lệ!');
+        return;
+    }
+    
     isSpinning = true;
     const spinButton = document.getElementById('spin-button');
     const spinText = document.getElementById('spin-text');
@@ -155,15 +199,16 @@ async function spinSlot() {
     
     // Disable button
     spinButton.disabled = true;
-    spinText.textContent = 'Đang quay...';
+    spinText.textContent = `Đang quay ${quantity} vé...`;
     
     try {
-        // Call API to use ticket and get result
+        // Call API to use tickets and get results
         const response = await fetch('../api/use_lottery_ticket.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
+            body: JSON.stringify({ quantity: quantity }),
             credentials: 'include'
         });
         
@@ -173,66 +218,84 @@ async function spinSlot() {
             throw new Error(result.message || 'Không thể sử dụng vé');
         }
         
-        // Kiểm tra xem có reward không
-        const wonPrize = result.data?.reward;
-        if (!wonPrize) {
+        // Get rewards from response
+        const rewards = result.data?.rewards || [];
+        const ticketsUsed = result.data?.tickets_used || quantity;
+        
+        if (rewards.length === 0) {
             throw new Error('Không nhận được thông tin phần thưởng từ server');
         }
         
-        // Find prize index
-        const prizeIndex = prizes.findIndex(p => p.name === wonPrize.reward_name);
-        const targetPrize = prizeIndex >= 0 ? prizes[prizeIndex] : prizes[5]; // Default to "no prize"
+        // Update available tickets
+        availableTickets -= ticketsUsed;
+        updateTicketDisplay();
         
-        // Calculate scroll distance
-        const itemHeight = 180; // Height of each slot item
-        const totalItems = prizes.length * 10; // Total items in reel
-        
-        // Start with fast spinning
-        reel.classList.add('spinning');
-        
-        // Spin through multiple cycles
-        const spinCycles = 5;
-        const finalPosition = (spinCycles * prizes.length + prizeIndex) * itemHeight;
-        
-        // Fast spin for 2 seconds
-        let currentPos = 0;
-        const fastSpinInterval = setInterval(() => {
-            currentPos -= itemHeight;
-            if (currentPos <= -totalItems * itemHeight) {
-                currentPos = 0;
-            }
-            reel.style.top = currentPos + 'px';
-        }, 50);
-        
-        // After 2 seconds, slow down and land on prize
-        setTimeout(() => {
-            clearInterval(fastSpinInterval);
-            reel.classList.remove('spinning');
+        // For multiple spins, show summary; for single spin, show animation
+        if (quantity === 1) {
+            // Single spin - show animation
+            const wonPrize = rewards[0];
             
-            // Smooth deceleration to final position
-            reel.style.top = -finalPosition + 'px';
+            // Find prize index
+            const prizeIndex = prizes.findIndex(p => p.name === wonPrize.reward_name);
+            const targetPrize = prizeIndex >= 0 ? prizes[prizeIndex] : prizes[5];
             
-            // Show result after animation
+            // Calculate scroll distance
+            const itemHeight = 180;
+            const totalItems = prizes.length * 10;
+            
+            // Start with fast spinning
+            reel.classList.add('spinning');
+            
+            // Spin through multiple cycles
+            const spinCycles = 5;
+            const finalPosition = (spinCycles * prizes.length + (prizeIndex >= 0 ? prizeIndex : 5)) * itemHeight;
+            
+            // Fast spin for 2 seconds
+            let currentPos = 0;
+            const fastSpinInterval = setInterval(() => {
+                currentPos -= itemHeight;
+                if (currentPos <= -totalItems * itemHeight) {
+                    currentPos = 0;
+                }
+                reel.style.top = currentPos + 'px';
+            }, 50);
+            
+            // After 2 seconds, slow down and land on prize
             setTimeout(() => {
-                showResult(wonPrize);
-                availableTickets--;
-                updateTicketDisplay();
+                clearInterval(fastSpinInterval);
+                reel.classList.remove('spinning');
                 
-                // Reset button
-                spinButton.disabled = false;
-                spinText.textContent = 'Quay Ngay!';
-                isSpinning = false;
+                // Smooth deceleration to final position
+                reel.style.top = -finalPosition + 'px';
                 
-                // Reset reel position for next spin
+                // Show result after animation
                 setTimeout(() => {
-                    reel.style.transition = 'none';
-                    reel.style.top = '0px';
+                    showResult(wonPrize);
+                    
+                    // Reset button
+                    spinButton.disabled = false;
+                    spinText.textContent = 'Quay Ngay!';
+                    isSpinning = false;
+                    
+                    // Reset reel position for next spin
                     setTimeout(() => {
-                        reel.style.transition = 'top 3s cubic-bezier(0.25, 0.1, 0.25, 1)';
-                    }, 50);
-                }, 500);
-            }, 3000);
-        }, 2000);
+                        reel.style.transition = 'none';
+                        reel.style.top = '0px';
+                        setTimeout(() => {
+                            reel.style.transition = 'top 3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                        }, 50);
+                    }, 500);
+                }, 3000);
+            }, 2000);
+        } else {
+            // Multiple spins - show summary immediately
+            showMultipleResults(rewards, quantity);
+            
+            // Reset button
+            spinButton.disabled = false;
+            spinText.textContent = 'Quay Ngay!';
+            isSpinning = false;
+        }
         
     } catch (error) {
         console.error('Spin error:', error);
@@ -250,7 +313,7 @@ function showResult(reward) {
     const modal = document.getElementById('result-modal');
     const resultText = document.getElementById('result-text');
     
-    if (reward.reward_type === 'no_prize') {
+    if (reward.reward_type === 'no_prize' || reward.reward_name === 'Chúc may mắn lần sau!') {
         resultText.innerHTML = `
             <div class="text-4xl mb-4">😢</div>
             <div class="text-xl font-bold text-gray-800 dark:text-white mb-2">Chúc may mắn lần sau!</div>
@@ -265,6 +328,65 @@ function showResult(reward) {
         `;
     }
     
+    modal.classList.remove('hidden');
+}
+
+// Show multiple results summary
+function showMultipleResults(rewards, quantity) {
+    const modal = document.getElementById('result-modal');
+    const resultText = document.getElementById('result-text');
+    
+    // Count rewards by type
+    const rewardCounts = {};
+    let totalWon = 0;
+    
+    rewards.forEach(reward => {
+        const name = reward.reward_name || 'Không xác định';
+        if (name === 'Chúc may mắn lần sau!') {
+            rewardCounts['Chúc may mắn lần sau!'] = (rewardCounts['Chúc may mắn lần sau!'] || 0) + 1;
+        } else {
+            if (!rewardCounts[name]) {
+                rewardCounts[name] = { count: 0, value: reward.reward_value };
+            }
+            rewardCounts[name].count++;
+            totalWon++;
+        }
+    });
+    
+    let summaryHTML = `
+        <div class="text-4xl mb-4">🎉</div>
+        <div class="text-xl font-bold text-gray-800 dark:text-white mb-4">Đã quay thành công ${quantity} vé!</div>
+        <div class="text-left space-y-2 mb-4 max-h-60 overflow-y-auto">
+    `;
+    
+    Object.entries(rewardCounts).forEach(([name, data]) => {
+        const count = typeof data === 'number' ? data : data.count;
+        const value = typeof data === 'number' ? null : data.value;
+        const isNoPrize = name === 'Chúc may mắn lần sau!';
+        
+        summaryHTML += `
+            <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                <span class="text-sm ${isNoPrize ? 'text-gray-600 dark:text-gray-400' : 'text-purple-600 dark:text-purple-400 font-semibold'}">
+                    ${isNoPrize ? '😢' : '🎁'} ${name}
+                </span>
+                <span class="text-sm font-bold text-gray-800 dark:text-white">x${count}</span>
+            </div>
+        `;
+    });
+    
+    summaryHTML += `
+        </div>
+        <div class="text-center">
+            <div class="text-lg font-bold text-purple-600 dark:text-purple-400">
+                Tổng phần thưởng: ${totalWon}/${quantity}
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                Kiểm tra phần thưởng chi tiết tại <a href="my-rewards.html" class="text-purple-600 dark:text-purple-400 underline">Phần Thưởng Của Tôi</a>
+            </div>
+        </div>
+    `;
+    
+    resultText.innerHTML = summaryHTML;
     modal.classList.remove('hidden');
 }
 

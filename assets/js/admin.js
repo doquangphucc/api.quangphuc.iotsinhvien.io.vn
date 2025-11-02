@@ -434,16 +434,127 @@ async function updateOrderStatus(orderId, newStatus) {
 }
 
 // Tickets Functions
-async function loadTickets() {
+let currentTicketFilterUserId = 0; // Store current filter user ID
+let currentTicketPage = 1; // Current page for tickets
+let ticketsPagination = null; // Store pagination info
+
+async function loadTickets(userId = 0, page = 1) {
     try {
-        const response = await fetch(`${API_BASE}/admin/get_tickets.php?t=${Date.now()}`, {credentials: 'include'});
+        currentTicketPage = page;
+        const url = userId > 0 
+            ? `${API_BASE}/admin/get_tickets.php?user_id=${userId}&page=${page}&t=${Date.now()}`
+            : `${API_BASE}/admin/get_tickets.php?page=${page}&t=${Date.now()}`;
+        const response = await fetch(url, {credentials: 'include'});
         const data = await response.json();
         if (data.success) {
             ticketsData = data.tickets;
+            ticketsPagination = data.pagination || null;
             renderTickets(data.tickets);
+            renderTicketsPagination();
+            
+            // Update filter dropdown
+            updateTicketFilterUsers();
         }
     } catch (error) {
         console.error('Error loading tickets:', error);
+    }
+}
+
+function filterTicketsByUser() {
+    const userId = parseInt(document.getElementById('ticket-filter-user').value) || 0;
+    currentTicketFilterUserId = userId;
+    loadTickets(userId, 1); // Reset to page 1 when filtering
+}
+
+function goToTicketsPage(page) {
+    loadTickets(currentTicketFilterUserId, page);
+}
+
+function renderTicketsPagination() {
+    const container = document.getElementById('tickets-pagination');
+    if (!container) return;
+    
+    if (!ticketsPagination || ticketsPagination.total_pages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    const { page, total_pages, total } = ticketsPagination;
+    
+    let html = '<div class="flex items-center justify-between mt-4">';
+    html += `<div class="text-sm text-gray-600 dark:text-gray-400">`;
+    html += `Hiển thị ${((page - 1) * 100) + 1}-${Math.min(page * 100, total)} trong tổng số ${total} vé`;
+    html += `</div>`;
+    
+    html += '<div class="flex items-center gap-2">';
+    
+    // Previous button
+    if (page > 1) {
+        html += `<button onclick="goToTicketsPage(${page - 1})" class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">Trước</button>`;
+    } else {
+        html += `<button disabled class="px-3 py-1 border rounded-lg opacity-50 cursor-not-allowed text-sm">Trước</button>`;
+    }
+    
+    // Page numbers
+    let startPage = Math.max(1, page - 2);
+    let endPage = Math.min(total_pages, page + 2);
+    
+    if (startPage > 1) {
+        html += `<button onclick="goToTicketsPage(1)" class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">1</button>`;
+        if (startPage > 2) {
+            html += `<span class="px-2 text-gray-500">...</span>`;
+        }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === page) {
+            html += `<button class="px-3 py-1 bg-blue-600 text-white rounded-lg font-semibold text-sm">${i}</button>`;
+        } else {
+            html += `<button onclick="goToTicketsPage(${i})" class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">${i}</button>`;
+        }
+    }
+    
+    if (endPage < total_pages) {
+        if (endPage < total_pages - 1) {
+            html += `<span class="px-2 text-gray-500">...</span>`;
+        }
+        html += `<button onclick="goToTicketsPage(${total_pages})" class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">${total_pages}</button>`;
+    }
+    
+    // Next button
+    if (page < total_pages) {
+        html += `<button onclick="goToTicketsPage(${page + 1})" class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">Sau</button>`;
+    } else {
+        html += `<button disabled class="px-3 py-1 border rounded-lg opacity-50 cursor-not-allowed text-sm">Sau</button>`;
+    }
+    
+    html += '</div>';
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function updateTicketFilterUsers() {
+    const select = document.getElementById('ticket-filter-user');
+    if (!select) return;
+    
+    // Keep current selection if exists
+    const currentValue = select.value;
+    
+    select.innerHTML = '<option value="0">-- Tất cả người dùng --</option>';
+    
+    if (usersData && usersData.length > 0) {
+        usersData.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = `${user.full_name || user.username} (${user.username})`;
+            select.appendChild(option);
+        });
+    }
+    
+    // Restore selection if exists
+    if (currentValue) {
+        select.value = currentValue;
     }
 }
 
@@ -581,7 +692,7 @@ async function saveTicket(event) {
         }
         if (data.success) {
             closeTicketModal();
-            loadTickets();
+            loadTickets(currentTicketFilterUserId, currentTicketPage);
         }
     } catch (error) {
         console.error('Error saving ticket:', error);
@@ -596,6 +707,177 @@ async function saveTicket(event) {
 function editTicket(id) {
     // Implement edit
     openTicketModal(id);
+}
+
+// Set ALL Rewards Functions
+function openSetAllRewardsModal() {
+    const modal = document.getElementById('setAllRewardsModal');
+    const form = document.getElementById('setAllRewardsForm');
+    form.reset();
+    
+    // Update user dropdown
+    updateSetAllUsers();
+    
+    // Update reward dropdown
+    updateSetAllRewards();
+    
+    // Reset filters
+    document.getElementById('set-all-user-id').value = currentTicketFilterUserId || '0';
+    document.getElementById('set-all-ticket-status').value = 'active';
+    
+    // Update count
+    updateSetAllTicketsCount();
+    
+    modal.classList.add('show');
+}
+
+function closeSetAllRewardsModal() {
+    document.getElementById('setAllRewardsModal').classList.remove('show');
+}
+
+function updateSetAllUsers() {
+    const select = document.getElementById('set-all-user-id');
+    if (!select) return;
+    
+    const currentValue = select.value;
+    
+    select.innerHTML = '<option value="0">-- Tất cả người dùng --</option>';
+    
+    if (usersData && usersData.length > 0) {
+        usersData.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = `${user.full_name || user.username} (${user.username})`;
+            select.appendChild(option);
+        });
+    }
+    
+    if (currentValue) {
+        select.value = currentValue;
+    }
+}
+
+function updateSetAllRewards() {
+    const select = document.getElementById('set-all-reward-id');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">-- Chọn phần thưởng --</option>';
+    
+    // Add "May mắn lần sau" option (no reward = NULL)
+    // Option này sẽ set pre_assigned_reward_id = NULL
+    const noRewardOption = document.createElement('option');
+    noRewardOption.value = '0';
+    noRewardOption.textContent = '🎁 May mắn lần sau (Không set phần thưởng)';
+    select.appendChild(noRewardOption);
+    
+    // Add "Separator" option
+    const separatorOption = document.createElement('option');
+    separatorOption.disabled = true;
+    separatorOption.textContent = '─────────────────';
+    select.appendChild(separatorOption);
+    
+    // Add reward templates
+    if (rewardTemplatesData && rewardTemplatesData.length > 0) {
+        rewardTemplatesData.filter(r => r.is_active).forEach(reward => {
+            const option = document.createElement('option');
+            option.value = reward.id;
+            option.textContent = reward.reward_name;
+            select.appendChild(option);
+        });
+    }
+}
+
+async function updateSetAllTicketsCount() {
+    const userId = parseInt(document.getElementById('set-all-user-id').value) || 0;
+    const status = document.getElementById('set-all-ticket-status').value;
+    const countEl = document.getElementById('set-all-tickets-count');
+    
+    if (!countEl) return;
+    
+    try {
+        // Load tickets count from API based on current filters
+        const url = userId > 0 
+            ? `${API_BASE}/admin/get_tickets.php?user_id=${userId}&t=${Date.now()}`
+            : `${API_BASE}/admin/get_tickets.php?t=${Date.now()}`;
+        
+        const response = await fetch(url, {credentials: 'include'});
+        const data = await response.json();
+        
+        if (data.success) {
+            let filteredTickets = data.tickets || [];
+            
+            // Filter by status if needed
+            if (status === 'active') {
+                filteredTickets = filteredTickets.filter(t => t.status === 'active');
+            }
+            
+            countEl.textContent = filteredTickets.length;
+        } else {
+            countEl.textContent = '0';
+        }
+    } catch (error) {
+        console.error('Error updating tickets count:', error);
+        countEl.textContent = '0';
+    }
+}
+
+async function saveSetAllRewards(event) {
+    event.preventDefault();
+    
+    const userId = parseInt(document.getElementById('set-all-user-id').value) || 0;
+    const status = document.getElementById('set-all-ticket-status').value;
+    const rewardId = document.getElementById('set-all-reward-id').value;
+    
+    if (!rewardId) {
+        showToast('Vui lòng chọn phần thưởng', 'error');
+        return;
+    }
+    
+    const countEl = document.getElementById('set-all-tickets-count');
+    const count = parseInt(countEl.textContent) || 0;
+    
+    if (count === 0) {
+        showToast('Không có vé nào khớp với điều kiện lọc', 'error');
+        return;
+    }
+    
+    if (!confirm(`Bạn có chắc muốn cấu hình phần thưởng cho ${count} vé quay?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/admin/set_all_ticket_rewards.php`, {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId > 0 ? userId : null,
+                ticket_status: status,
+                reward_id: rewardId === '0' ? null : parseInt(rewardId)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (typeof showToast === 'function') {
+            showToast(data.message, data.success ? 'success' : 'error');
+        } else {
+            alert(data.message);
+        }
+        
+        if (data.success) {
+            closeSetAllRewardsModal();
+            // Reload tickets with current filter and page
+            loadTickets(currentTicketFilterUserId, currentTicketPage);
+        }
+    } catch (error) {
+        console.error('Error setting all rewards:', error);
+        if (typeof showToast === 'function') {
+            showToast('Có lỗi xảy ra', 'error');
+        } else {
+            alert('Có lỗi xảy ra');
+        }
+    }
 }
 
 async function deleteTicket(id) {
@@ -613,7 +895,7 @@ async function deleteTicket(id) {
         } else {
             alert(data.message);
         }
-        if (data.success) loadTickets();
+        if (data.success) loadTickets(currentTicketFilterUserId, currentTicketPage);
     } catch (error) {
         console.error('Error deleting ticket:', error);
         if (typeof showToast === 'function') {
@@ -812,6 +1094,8 @@ async function loadUsers() {
         const data = await response.json();
         if (data.success) {
             usersData = data.users;
+            // Update ticket filter dropdown when users are loaded
+            updateTicketFilterUsers();
         }
     } catch (error) {
         console.error('Error loading users:', error);
