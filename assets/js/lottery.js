@@ -176,6 +176,9 @@ function handleSpinModeChange() {
 async function spinSlot() {
     if (isSpinning) return;
     
+    // Reload tickets to get latest count before spinning
+    await loadTickets();
+    
     if (availableTickets <= 0) {
         alert('Bạn không có vé quay! Hãy mua hàng để nhận vé.');
         return;

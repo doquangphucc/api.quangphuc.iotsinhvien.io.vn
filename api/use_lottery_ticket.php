@@ -25,8 +25,7 @@ try {
     $countSql = "SELECT COUNT(*) as total FROM lottery_tickets WHERE user_id = ? AND status = 'active'";
     $countStmt = $pdo->prepare($countSql);
     $countStmt->execute([$userId]);
-    $countResult = $countStmt->fetch(PDO::FETCH_ASSOC);
-    $availableTickets = intval($countResult['total'] || 0);
+    $availableTickets = (int)$countStmt->fetchColumn();
     
     if ($availableTickets < $quantity) {
         sendError("Bạn chỉ có {$availableTickets} vé quay, không đủ để quay {$quantity} vé", 400);
