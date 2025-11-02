@@ -938,7 +938,18 @@
                     else if (depTarget === 'battery') targetCount = selectedBatteryUnits;
                     else if (depTarget === 'cabinet') targetCount = 1;
                     else targetCount = 1; // project
-                    const qty = (depTarget === 'project') ? baseQty : baseQty * targetCount * depQty;
+                    
+                    // Logic hệ số phụ thuộc = 0: Luôn dùng số lượng bản thân, bất kể có bao nhiêu sản phẩm phụ thuộc
+                    let qty;
+                    if (depQty === 0) {
+                        qty = baseQty; // Luôn = số lượng bản thân
+                    } else if (depTarget === 'project') {
+                        qty = baseQty; // Project không phụ thuộc
+                    } else {
+                        // Hệ số != 0: Tính theo công thức
+                        qty = baseQty * targetCount * (depQty || 1);
+                    }
+                    
                     const unitPrice = Number(acc.price || 0);
                     return {
                         name: acc.title,
@@ -1499,7 +1510,18 @@
                         else if (depTarget === 'battery') targetCount = selectedBatteryUnits;
                         else if (depTarget === 'cabinet') targetCount = 1;
                         else targetCount = 1; // project
-                        const qty = (depTarget === 'project') ? baseQty : baseQty * targetCount * depQty;
+                        
+                        // Logic hệ số phụ thuộc = 0: Luôn dùng số lượng bản thân, bất kể có bao nhiêu sản phẩm phụ thuộc
+                        let qty;
+                        if (depQty === 0) {
+                            qty = baseQty; // Luôn = số lượng bản thân
+                        } else if (depTarget === 'project') {
+                            qty = baseQty; // Project không phụ thuộc
+                        } else {
+                            // Hệ số != 0: Tính theo công thức
+                            qty = baseQty * targetCount * (depQty || 1);
+                        }
+                        
                         const unitPrice = Number(acc.price || 0);
                         return {
                             name: acc.title,
