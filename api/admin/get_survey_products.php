@@ -75,6 +75,7 @@ while ($row = $result->fetch_assoc()) {
         'has_survey_config' => !is_null($row['survey_config_id']),
         'survey_config' => $row['survey_config_id'] ? [
             'id' => (int)$row['survey_config_id'],
+            'config_id' => (int)$row['survey_config_id'], // Alias để dùng trong frontend
             'survey_category' => $row['survey_category'],
             'phase_type' => $row['phase_type'],
             'price_type' => $row['price_type'],

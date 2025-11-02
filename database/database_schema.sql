@@ -83,6 +83,19 @@ CREATE TABLE IF NOT EXISTS survey_product_configs (
 ) COMMENT='Cấu hình sản phẩm cho trang khảo sát';
 
 -- =====================================================
+-- 3.2. BẢNG SURVEY_ACCESSORY_DEPENDENCIES (Mapping phụ kiện với sản phẩm phụ thuộc)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS survey_accessory_dependencies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    accessory_config_id INT NOT NULL COMMENT 'ID cấu hình phụ kiện (từ survey_product_configs)',
+    dependent_product_id INT NOT NULL COMMENT 'ID sản phẩm phụ thuộc (ví dụ: inverter ID, pin ID, tấm pin ID...)',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (accessory_config_id) REFERENCES survey_product_configs(id) ON DELETE CASCADE,
+    FOREIGN KEY (dependent_product_id) REFERENCES products(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_accessory_dependency (accessory_config_id, dependent_product_id)
+) COMMENT='Mapping phụ kiện với sản phẩm phụ thuộc - Chỉ hiển thị phụ kiện khi sản phẩm phụ thuộc được chọn';
+
+-- =====================================================
 -- 4. BẢNG PACKAGE_CATEGORIES (Danh mục gói)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS package_categories (

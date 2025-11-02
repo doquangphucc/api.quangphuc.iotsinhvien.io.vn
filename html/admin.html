@@ -2012,7 +2012,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold mb-1">Đối tượng phụ thuộc</label>
-                                <select id="survey_accessory_dependent_target" class="w-full px-4 py-2 border rounded-lg">
+                                <select id="survey_accessory_dependent_target" class="w-full px-4 py-2 border rounded-lg" onchange="handleDependentTargetChange()">
                                     <option value="">-- Chọn phụ thuộc --</option>
                                     <option value="panel">Tấm pin</option>
                                     <option value="inverter">Inverter</option>
@@ -2022,7 +2022,18 @@
                                 </select>
                             </div>
                         </div>
+                        <!-- Dropdown chọn sản phẩm phụ thuộc - chỉ hiện khi chọn đối tượng phụ thuộc != "project" -->
+                        <div id="survey-accessory-dependent-products-container" class="hidden mt-4">
+                            <label class="block text-xs font-semibold mb-2">Chọn sản phẩm phụ thuộc * (Có thể chọn nhiều)</label>
+                            <div class="border-2 border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto bg-gray-50">
+                                <div id="survey-dependent-products-list" class="space-y-2">
+                                    <p class="text-sm text-gray-500 text-center py-4">Vui lòng chọn đối tượng phụ thuộc trước</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">💡 Chỉ hiển thị phụ kiện này khi sản phẩm được chọn trong khảo sát nằm trong danh sách trên</p>
+                        </div>
                         <p class="text-xs text-gray-500 mt-2">Công thức: số lượng = Số lượng bản thân + (Hệ số × số lượng đối tượng phụ thuộc)</p>
+                        <p class="text-xs text-orange-600 mt-1">⚠️ Lưu ý: Nếu Hệ số = 0, số lượng luôn = Số lượng bản thân (không phụ thuộc vào số lượng sản phẩm)</p>
                     </div>
                 </div>
 
@@ -2723,6 +2734,9 @@
              
              // Reset form
              form.reset();
+             selectedDependentProductIds = []; // Reset dependencies
+             const container = document.getElementById('survey-accessory-dependent-products-container');
+             if (container) container.classList.add('hidden');
              document.getElementById('survey_product_id').value = productId;
              document.getElementById('surveyConfigModalTitle').textContent = `Cấu hình: ${product.title}`;
              
@@ -2754,16 +2768,33 @@
                 setVal('survey_accessory_base_qty', (config.accessory_base_qty ?? ''));
                 setVal('survey_accessory_dependent_qty', (config.accessory_dependent_qty ?? ''));
                 setVal('survey_accessory_dependent_target', config.accessory_dependent_target || '');
+                
+                // Load dependencies nếu có config_id
+                if (config.config_id) {
+                    loadAccessoryDependencies(config.config_id);
+                } else {
+                    selectedDependentProductIds = [];
+                }
+                
+                // Load danh sách sản phẩm phụ thuộc (nếu đối tượng phụ thuộc != project)
+                if (config.accessory_dependent_target && config.accessory_dependent_target !== 'project') {
+                    setTimeout(() => handleDependentTargetChange(), 100); // Delay để đảm bảo form đã được fill
+                }
+                
                 // Re-log applied values
                 console.debug('Accessory form values applied', {
                     unit: document.getElementById('survey_accessory_unit')?.value,
                     base: document.getElementById('survey_accessory_base_qty')?.value,
                     dep: document.getElementById('survey_accessory_dependent_qty')?.value,
-                    target: document.getElementById('survey_accessory_dependent_target')?.value
+                    target: document.getElementById('survey_accessory_dependent_target')?.value,
+                    config_id: config.config_id
                 });
                 // IMPORTANT: re-apply is_active after fields are populated because
                 // earlier validation may temporarily uncheck it
                 document.getElementById('survey_is_active').checked = !!config.is_active;
+            } else {
+                // Reset dependencies khi không có config
+                selectedDependentProductIds = [];
             }
             // Update activation UI state initially
             updateSurveyActivationState();
@@ -2773,6 +2804,10 @@
          
          function closeSurveyConfigModal() {
              document.getElementById('surveyConfigModal').classList.remove('show');
+             // Reset dependencies
+             selectedDependentProductIds = [];
+             const container = document.getElementById('survey-accessory-dependent-products-container');
+             if (container) container.classList.add('hidden');
          }
          
          function updateSurveyPhaseField() {
@@ -2808,6 +2843,134 @@
             }
             // Re-evaluate activation state when category/phase changes
             updateSurveyActivationState();
+            
+            // Nếu là accessory và đã có dependent_target, load danh sách sản phẩm phụ thuộc
+            if (category === 'accessory') {
+                const depTarget = document.getElementById('survey_accessory_dependent_target')?.value;
+                if (depTarget && depTarget !== 'project') {
+                    handleDependentTargetChange();
+                } else {
+                    const container = document.getElementById('survey-accessory-dependent-products-container');
+                    if (container) container.classList.add('hidden');
+                    selectedDependentProductIds = [];
+                }
+            }
+         }
+
+         // Biến lưu danh sách sản phẩm phụ thuộc đã chọn
+         let selectedDependentProductIds = [];
+
+         // Hàm xử lý khi đối tượng phụ thuộc thay đổi
+         async function handleDependentTargetChange() {
+             const category = document.getElementById('survey_category')?.value;
+             const depTarget = document.getElementById('survey_accessory_dependent_target')?.value;
+             const container = document.getElementById('survey-accessory-dependent-products-container');
+             const listContainer = document.getElementById('survey-dependent-products-list');
+
+             // Chỉ hiển thị khi là phụ kiện và đối tượng phụ thuộc != project
+             if (category === 'accessory' && depTarget && depTarget !== 'project') {
+                 container.classList.remove('hidden');
+                 listContainer.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Đang tải danh sách sản phẩm...</p>';
+
+                 try {
+                     // Load danh sách sản phẩm từ API
+                     const response = await fetch(`${API_BASE}/admin/get_dependent_products_for_accessory.php?dependent_target=${depTarget}`);
+                     const data = await response.json();
+
+                     if (data.success && Array.isArray(data.products)) {
+                         // Render checkbox list
+                         if (data.products.length === 0) {
+                             listContainer.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Không có sản phẩm nào thuộc loại này</p>';
+                         } else {
+                             let html = '';
+                             data.products.forEach(product => {
+                                 const isChecked = selectedDependentProductIds.includes(product.id);
+                                 const specText = product.power_watt ? `${(product.power_watt/1000).toFixed(1)}kW` : 
+                                                 product.panel_watt ? `${product.panel_watt}W` :
+                                                 product.battery_kwh ? `${product.battery_kwh}kWh` :
+                                                 product.cabinet_kw ? `${product.cabinet_kw}kW` : '';
+                                 
+                                 html += `
+                                     <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer border border-gray-200">
+                                         <input type="checkbox" 
+                                                value="${product.id}" 
+                                                class="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 dependent-product-checkbox"
+                                                ${isChecked ? 'checked' : ''}
+                                                onchange="toggleDependentProduct(${product.id}, this.checked)">
+                                         <div class="flex-1">
+                                             <div class="font-semibold text-sm">${product.title}</div>
+                                             ${specText ? `<div class="text-xs text-gray-500">${specText}</div>` : ''}
+                                         </div>
+                                     </label>
+                                 `;
+                             });
+                             listContainer.innerHTML = html;
+                             
+                             // Đảm bảo checkboxes được sync với selectedDependentProductIds
+                             setTimeout(() => {
+                                 const checkboxes = document.querySelectorAll('.dependent-product-checkbox');
+                                 checkboxes.forEach(checkbox => {
+                                     const productId = parseInt(checkbox.value);
+                                     checkbox.checked = selectedDependentProductIds.includes(productId);
+                                 });
+                             }, 100);
+                         }
+                     } else {
+                         listContainer.innerHTML = '<p class="text-sm text-red-500 text-center py-4">Lỗi khi tải danh sách sản phẩm</p>';
+                     }
+                 } catch (error) {
+                     console.error('Error loading dependent products:', error);
+                     listContainer.innerHTML = '<p class="text-sm text-red-500 text-center py-4">Lỗi khi tải danh sách sản phẩm</p>';
+                 }
+             } else {
+                 // Ẩn container nếu không phải accessory hoặc là project
+                 container.classList.add('hidden');
+                 selectedDependentProductIds = []; // Reset selection
+             }
+         }
+
+         // Hàm toggle checkbox
+         function toggleDependentProduct(productId, checked) {
+             if (checked) {
+                 if (!selectedDependentProductIds.includes(productId)) {
+                     selectedDependentProductIds.push(productId);
+                 }
+             } else {
+                 selectedDependentProductIds = selectedDependentProductIds.filter(id => id !== productId);
+             }
+             console.log('Selected dependent products:', selectedDependentProductIds);
+         }
+
+         // Hàm load dependencies đã lưu khi edit
+         async function loadAccessoryDependencies(configId) {
+             if (!configId) {
+                 selectedDependentProductIds = [];
+                 return;
+             }
+
+             try {
+                 const response = await fetch(`${API_BASE}/admin/get_accessory_dependencies.php?accessory_config_id=${configId}`);
+                 const data = await response.json();
+
+                 if (data.success && Array.isArray(data.dependent_product_ids)) {
+                     selectedDependentProductIds = data.dependent_product_ids;
+                     console.log('Loaded dependencies:', selectedDependentProductIds);
+                     
+                     // Update checkboxes sau khi danh sách sản phẩm được load
+                     setTimeout(() => {
+                         const checkboxes = document.querySelectorAll('.dependent-product-checkbox');
+                         checkboxes.forEach(checkbox => {
+                             const productId = parseInt(checkbox.value);
+                             checkbox.checked = selectedDependentProductIds.includes(productId);
+                         });
+                     }, 500); // Delay để đảm bảo danh sách đã render
+                 } else {
+                     selectedDependentProductIds = [];
+                 }
+             } catch (error) {
+                 console.error('Error loading dependencies:', error);
+                 selectedDependentProductIds = [];
+             }
          }
 
          function updateSurveyActivationState() {
@@ -2925,7 +3088,8 @@
                          accessory_unit: accUnit,
                          accessory_base_qty: isNaN(accBase) ? '' : accBase,
                          accessory_dependent_qty: isNaN(accDep) ? '' : accDep,
-                         accessory_dependent_target: accTarget
+                         accessory_dependent_target: accTarget,
+                         dependent_product_ids: selectedDependentProductIds // Array các product_id phụ thuộc đã chọn
                      })
                  });
                  

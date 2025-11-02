@@ -50,6 +50,10 @@ try {
     $accessory_base_qty = isset($data['accessory_base_qty']) && $data['accessory_base_qty'] !== '' ? floatval($data['accessory_base_qty']) : null;
     $accessory_dependent_qty = isset($data['accessory_dependent_qty']) && $data['accessory_dependent_qty'] !== '' ? floatval($data['accessory_dependent_qty']) : null;
     $accessory_dependent_target = isset($data['accessory_dependent_target']) ? $data['accessory_dependent_target'] : null;
+    // Dependencies: danh sách product_id phụ thuộc (chỉ dùng cho phụ kiện)
+    $dependent_product_ids = isset($data['dependent_product_ids']) && is_array($data['dependent_product_ids']) 
+        ? array_map('intval', $data['dependent_product_ids']) 
+        : [];
     if ($accessory_dependent_target === '') { $accessory_dependent_target = null; }
     // Normalize dependent_target to match ENUM('panel','inverter','battery','cabinet','project')
     if ($accessory_dependent_target) {
@@ -147,9 +151,42 @@ try {
     }
 
     if ($stmt->execute()) {
+        // Lấy config_id sau khi insert/update
+        $config_id = $existing ? $existing['id'] : $conn->insert_id;
+        
+        // Lưu dependencies nếu là phụ kiện và có dependent_target
+        if ($survey_category === 'accessory' && $accessory_dependent_target && $accessory_dependent_target !== 'project' && !empty($dependent_product_ids)) {
+            // Xóa dependencies cũ
+            $deleteSql = "DELETE FROM survey_accessory_dependencies WHERE accessory_config_id = ?";
+            $delStmt = $conn->prepare($deleteSql);
+            $delStmt->bind_param("i", $config_id);
+            $delStmt->execute();
+            $delStmt->close();
+            
+            // Insert dependencies mới
+            $insertSql = "INSERT INTO survey_accessory_dependencies (accessory_config_id, dependent_product_id) VALUES (?, ?)";
+            $insStmt = $conn->prepare($insertSql);
+            
+            foreach ($dependent_product_ids as $dep_product_id) {
+                if ($dep_product_id > 0) {
+                    $insStmt->bind_param("ii", $config_id, $dep_product_id);
+                    $insStmt->execute();
+                }
+            }
+            $insStmt->close();
+        } elseif ($survey_category === 'accessory' && ($accessory_dependent_target === 'project' || empty($dependent_product_ids))) {
+            // Nếu là project hoặc không có dependencies, xóa tất cả dependencies cũ
+            $deleteSql = "DELETE FROM survey_accessory_dependencies WHERE accessory_config_id = ?";
+            $delStmt = $conn->prepare($deleteSql);
+            $delStmt->bind_param("i", $config_id);
+            $delStmt->execute();
+            $delStmt->close();
+        }
+        
         echo json_encode([
             'success' => true, 
-            'message' => $existing ? 'Đã cập nhật cấu hình' : 'Đã thêm cấu hình mới'
+            'message' => $existing ? 'Đã cập nhật cấu hình' : 'Đã thêm cấu hình mới',
+            'config_id' => $config_id
         ], JSON_UNESCAPED_UNICODE);
     } else {
         echo json_encode([

@@ -24,6 +24,7 @@ try {
                 p.inverter_power_watt,
                 p.battery_capacity_kwh,
                 p.cabinet_power_kw,
+                spc.id AS config_id,
                 spc.survey_category,
                 spc.phase_type,
                 spc.price_type,
@@ -36,11 +37,20 @@ try {
                 spc.accessory_dependent_qty AS spc_accessory_dependent_qty,
                 spc.accessory_dependent_target AS spc_accessory_dependent_target,
                 spc.is_active,
-                spc.display_order
+                spc.display_order,
+                GROUP_CONCAT(sad.dependent_product_id ORDER BY sad.dependent_product_id) AS dependent_product_ids
             FROM products p
             INNER JOIN survey_product_configs spc ON p.id = spc.product_id
-            WHERE p.is_active = 1 
-              AND spc.is_active = 1
+            LEFT JOIN survey_accessory_dependencies sad ON spc.id = sad.accessory_config_id
+            WHERE spc.is_active = 1
+              -- Chỉ cần kiểm tra spc.is_active cho khảo sát, không cần p.is_active
+              -- vì có thể có phụ kiện chỉ dùng trong khảo sát mà không cần hiển thị ở trang sản phẩm
+            GROUP BY spc.id, p.id, p.title, p.market_price, p.category_price, p.technical_description, 
+                     p.image_url, p.panel_power_watt, p.inverter_power_watt, p.battery_capacity_kwh, 
+                     p.cabinet_power_kw, spc.survey_category, spc.phase_type, spc.price_type,
+                     spc.panel_power_watt, spc.inverter_power_watt, spc.battery_capacity_kwh, 
+                     spc.cabinet_power_kw, spc.accessory_unit, spc.accessory_base_qty, 
+                     spc.accessory_dependent_qty, spc.accessory_dependent_target, spc.is_active, spc.display_order
             ORDER BY spc.survey_category ASC, spc.phase_type ASC, spc.display_order ASC";
     
     $result = $conn->query($sql);
@@ -60,6 +70,12 @@ try {
         $batteryKwh = isset($row['spc_battery_capacity_kwh']) && $row['spc_battery_capacity_kwh'] !== null ? floatval($row['spc_battery_capacity_kwh']) : (isset($row['battery_capacity_kwh']) ? floatval($row['battery_capacity_kwh']) : null);
         $cabinetKw = isset($row['spc_cabinet_power_kw']) && $row['spc_cabinet_power_kw'] !== null ? floatval($row['spc_cabinet_power_kw']) : (isset($row['cabinet_power_kw']) ? floatval($row['cabinet_power_kw']) : null);
 
+        // Xử lý dependent_product_ids từ GROUP_CONCAT (chuỗi CSV) thành array
+        $dependentProductIds = null;
+        if (!empty($row['dependent_product_ids'])) {
+            $dependentProductIds = array_map('intval', explode(',', $row['dependent_product_ids']));
+        }
+
         $products[] = [
             'id' => (int)$row['id'],
             'title' => $row['title'],
@@ -76,6 +92,8 @@ try {
             'accessory_base_qty' => isset($row['spc_accessory_base_qty']) ? floatval($row['spc_accessory_base_qty']) : null,
             'accessory_dependent_qty' => isset($row['spc_accessory_dependent_qty']) ? floatval($row['spc_accessory_dependent_qty']) : null,
             'accessory_dependent_target' => $row['spc_accessory_dependent_target'] ?? null,
+            'dependent_product_ids' => $dependentProductIds, // Array các product_id phụ thuộc (null nếu không có)
+            'config_id' => (int)$row['config_id'], // ID của survey_product_configs
             'survey_category' => $row['survey_category'],
             'phase_type' => $row['phase_type'],
             'display_order' => (int)$row['display_order']

@@ -2041,19 +2041,56 @@
                 
                 // Tính toán số lượng theo từng loại phụ kiện
                 if (isDynamic) {
-                    // Quy tắc mới:
-                    // - Nếu phụ thuộc 'project' (cả công trình): số lượng = baseQty
-                    // - Ngược lại: số lượng = baseQty × targetCount × (depQty || 1)
                     const depTarget = (acc.depTarget || 'project');
+                    
+                    // KIỂM TRA DEPENDENCIES: Nếu có dependent_product_ids, chỉ thêm khi sản phẩm được chọn nằm trong danh sách
+                    // dependent_product_ids chứa product_id (từ bảng products), không phải config_id
+                    if (acc.dependentProductIds && Array.isArray(acc.dependentProductIds) && acc.dependentProductIds.length > 0) {
+                        let shouldInclude = false;
+                        
+                        if (depTarget === 'inverter') {
+                            // Kiểm tra inverter được chọn - selectedInverter.id là product_id
+                            const inverterProductId = selectedInverter?.id || selectedInverter?.product_id;
+                            shouldInclude = inverterProductId && acc.dependentProductIds.includes(inverterProductId);
+                        } else if (depTarget === 'panel') {
+                            // Kiểm tra tấm pin được chọn - solarPanelProductId là product_id
+                            shouldInclude = solarPanelProductId && acc.dependentProductIds.includes(solarPanelProductId);
+                        } else if (depTarget === 'battery') {
+                            // Kiểm tra pin lưu trữ được chọn - batteryProductId là product_id
+                            shouldInclude = batteryProductId && acc.dependentProductIds.includes(batteryProductId);
+                        } else if (depTarget === 'cabinet') {
+                            // Kiểm tra tủ điện được chọn - selectedCabinet.id có thể là product_id hoặc config_id
+                            // Cần kiểm tra cả 2 trường hợp
+                            const cabinetProductId = selectedCabinet?.product_id || null;
+                            shouldInclude = cabinetProductId && acc.dependentProductIds.includes(cabinetProductId);
+                        }
+                        
+                        // Nếu không khớp, bỏ qua phụ kiện này (sẽ return null và filter sau)
+                        if (!shouldInclude) {
+                            return null;
+                        }
+                    }
+                    
+                    // TÍNH SỐ LƯỢNG với logic hệ số phụ thuộc
                     let targetCount = 1;
                     if (depTarget === 'panel') targetCount = panelCount;
-                    else if (depTarget === 'inverter') targetCount = 1;
+                    else if (depTarget === 'inverter') targetCount = 1; // Chỉ tính 1 lần cho inverter được chọn
                     else if (depTarget === 'battery') targetCount = selectedBatteryUnits;
                     else if (depTarget === 'cabinet') targetCount = 1;
                     else targetCount = 1; // project
+                    
                     const baseQty = Number(acc.baseQty || 0);
-                    const depQty = Number(acc.depQty || 1);
-                    quantity = (depTarget === 'project') ? baseQty : baseQty * targetCount * depQty;
+                    const depQty = Number(acc.depQty || 0);
+                    
+                    // Logic hệ số phụ thuộc = 0: Luôn dùng số lượng bản thân, bất kể có bao nhiêu sản phẩm phụ thuộc
+                    if (depQty === 0) {
+                        quantity = baseQty; // Luôn = số lượng bản thân
+                    } else if (depTarget === 'project') {
+                        quantity = baseQty; // Project không phụ thuộc
+                    } else {
+                        // Hệ số != 0: Tính theo công thức
+                        quantity = baseQty * targetCount * (depQty || 1);
+                    }
                     displayName = acc.name;
                 } else {
                     if (acc.name.includes("Bách Z")) {
@@ -2099,7 +2136,7 @@
                     quantity: quantity,
                     totalPrice: quantity * acc.price
                 };
-            });
+            }).filter(acc => acc !== null); // Lọc bỏ các phụ kiện không khớp với dependencies
 
             // Đảm bảo luôn có Công thợ và Vận chuyển nếu chưa có trong danh sách dynamic
             const names = calculatedAccessories.map(a => a.name);
@@ -3134,8 +3171,13 @@
                     baseQty: typeof acc.accessory_base_qty === 'number' ? acc.accessory_base_qty : 0,
                     depQty: typeof acc.accessory_dependent_qty === 'number' ? acc.accessory_dependent_qty : 0,
                     depTarget: acc.accessory_dependent_target || 'project',
+                    dependentProductIds: acc.dependent_product_ids || null, // Array các product_id phụ thuộc (null nếu không có)
+                    config_id: acc.config_id || null, // ID của survey_product_configs
                     notes: acc.notes || null
                 }));
+                console.log('✅ Đã load', dynamicAccessories.length, 'phụ kiện từ admin:', dynamicAccessories.map(a => ({name: a.name, deps: a.dependentProductIds})));
+            } else {
+                console.log('⚠️ Không có phụ kiện nào được load từ API');
             }
         }
 
