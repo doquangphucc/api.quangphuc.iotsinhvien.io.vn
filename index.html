@@ -668,9 +668,8 @@
                 const href = link.getAttribute('href');
                 const linkPage = href.split('/').pop();
                 
-                // Check if this is the current page or if we're on index and it's gioi-thieu
-                const isActive = linkPage === currentPage || 
-                                (currentPage === 'index.html' && linkPage === 'gioi-thieu.html');
+                // Only highlight if this link matches the current page
+                const isActive = linkPage === currentPage;
                 
                 if (isActive) {
                     // Remove default classes
