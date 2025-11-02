@@ -383,7 +383,8 @@
 
         async function loadRewards(status = 'all') {
             try {
-                const response = await fetch(`../api/get_lottery_rewards.php?status=${status}&limit=100`, {
+                // Always load all rewards first to get accurate stats
+                const response = await fetch(`../api/get_lottery_rewards.php?status=all&limit=1000`, {
                     credentials: 'include'
                 });
 
@@ -391,8 +392,16 @@
                     const result = await response.json();
                     if (result.success) {
                         allRewards = result.data.rewards;
-                        displayRewards(allRewards);
+                        // Filter by current_status (not status in DB) for accurate filtering
                         displayStats(result.data.stats);
+                        
+                        // Apply filter based on current_status
+                        if (status === 'all') {
+                            displayRewards(allRewards);
+                        } else {
+                            const filtered = allRewards.filter(r => r.current_status === status);
+                            displayRewards(filtered);
+                        }
                     } else {
                         showError(result.message);
                     }
@@ -498,11 +507,15 @@
             event.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
             event.target.classList.add('bg-green-600', 'text-white');
 
-            // Filter rewards
+            // Filter rewards based on current_status (not status in DB)
             if (status === 'all') {
                 displayRewards(allRewards);
             } else {
-                const filtered = allRewards.filter(r => r.current_status === status);
+                const filtered = allRewards.filter(r => {
+                    // Filter by current_status, not status
+                    return r.current_status === status;
+                });
+                console.log(`Filtering ${status}: Found ${filtered.length} rewards from ${allRewards.length} total`);
                 displayRewards(filtered);
             }
         }
