@@ -262,10 +262,14 @@ function showEmptyOrder() {
     }
 }
 
-// Load cities (provinces) from Vietnam Open API
+// Load cities (provinces) from Vietnam Open API via proxy
 async function loadCities() {
     try {
-        const response = await fetch('https://provinces.open-api.vn/api/p/');
+        // Sử dụng proxy API để tránh lỗi SSL
+        const response = await fetch('../api/proxy_provinces.php?endpoint=api/p/');
+        if (!response.ok) {
+            throw new Error('Lỗi khi tải danh sách tỉnh/thành: ' + response.status);
+        }
         const provinces = await response.json();
         
         const citySelect = document.getElementById('city');
@@ -305,7 +309,11 @@ async function loadCities() {
 // Load districts for selected province
 async function loadDistricts(provinceCode) {
     try {
-        const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+        // Sử dụng proxy API để tránh lỗi SSL
+        const response = await fetch(`../api/proxy_provinces.php?endpoint=api/p/${provinceCode}&depth=2`);
+        if (!response.ok) {
+            throw new Error('Lỗi khi tải danh sách quận/huyện: ' + response.status);
+        }
         const province = await response.json();
         
         const districtSelect = document.getElementById('district');
@@ -343,7 +351,11 @@ async function handleDistrictChange(event) {
 // Load wards for selected district
 async function loadWards(districtCode) {
     try {
-        const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+        // Sử dụng proxy API để tránh lỗi SSL
+        const response = await fetch(`../api/proxy_provinces.php?endpoint=api/d/${districtCode}&depth=2`);
+        if (!response.ok) {
+            throw new Error('Lỗi khi tải danh sách phường/xã: ' + response.status);
+        }
         const district = await response.json();
         
         const wardSelect = document.getElementById('ward');

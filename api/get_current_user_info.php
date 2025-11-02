@@ -55,14 +55,20 @@ try {
     $user = $result->fetch_assoc();
     $stmt->close();
     
+    // Xử lý full_name: ưu tiên full_name, nếu không có thì dùng username
+    $fullName = !empty($user['full_name']) ? $user['full_name'] : ($user['username'] ?? '');
+    
+    // Xử lý phone: lấy phone nếu có, không thì để rỗng
+    $phone = !empty($user['phone']) ? $user['phone'] : '';
+    
     echo json_encode([
         'success' => true,
         'logged_in' => true,
         'user' => [
             'id' => (int)$user['id'],
             'username' => $user['username'],
-            'full_name' => $user['full_name'] || $user['username'], // Fallback về username nếu không có full_name
-            'phone' => $user['phone'] || ''
+            'full_name' => $fullName,
+            'phone' => $phone
         ]
     ], JSON_UNESCAPED_UNICODE);
 

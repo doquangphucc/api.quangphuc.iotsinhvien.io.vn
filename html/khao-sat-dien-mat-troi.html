@@ -2811,20 +2811,29 @@
                     const user = data.user;
                     
                     // Tự động điền fullname (ưu tiên full_name, nếu không có thì dùng username)
+                    // Chỉ điền khi có giá trị string hợp lệ (không phải boolean hoặc empty)
                     const fullnameInput = document.querySelector('input[name="fullname"]');
-                    if (fullnameInput && user.full_name) {
-                        fullnameInput.value = user.full_name;
-                    } else if (fullnameInput && user.username) {
-                        fullnameInput.value = user.username;
+                    if (fullnameInput) {
+                        const fullName = typeof user.full_name === 'string' && user.full_name.trim() 
+                            ? user.full_name.trim() 
+                            : (typeof user.username === 'string' && user.username.trim() ? user.username.trim() : '');
+                        
+                        if (fullName) {
+                            fullnameInput.value = fullName;
+                        }
                     }
                     
-                    // Tự động điền phone
+                    // Tự động điền phone - chỉ điền khi có giá trị string hợp lệ
                     const phoneInput = document.getElementById('survey-phone');
-                    if (phoneInput && user.phone) {
-                        phoneInput.value = user.phone;
+                    if (phoneInput && typeof user.phone === 'string' && user.phone.trim()) {
+                        phoneInput.value = user.phone.trim();
                     }
                     
-                    console.log('✅ Đã tự động điền thông tin user:', { full_name: user.full_name, phone: user.phone });
+                    console.log('✅ Đã tự động điền thông tin user:', { 
+                        full_name: user.full_name, 
+                        phone: user.phone,
+                        username: user.username 
+                    });
                 } else {
                     console.log('ℹ️ User chưa đăng nhập hoặc không có thông tin');
                 }
