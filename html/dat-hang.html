@@ -424,6 +424,47 @@
     <script src="../assets/js/cache-buster.js"></script>
     <script src="../assets/js/checkout-page.js"></script>
     <script>
+        // Auto-fill user info if logged in
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('../api/get_current_user_info.php', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success && data.logged_in && data.user) {
+                    const user = data.user;
+                    
+                    // Tự động điền fullname (ưu tiên full_name, nếu không có thì dùng username)
+                    const fullnameInput = document.getElementById('fullname');
+                    if (fullnameInput && user.full_name) {
+                        fullnameInput.value = user.full_name;
+                    } else if (fullnameInput && user.username) {
+                        fullnameInput.value = user.username;
+                    }
+                    
+                    // Tự động điền phone
+                    const phoneInput = document.getElementById('phone');
+                    if (phoneInput && user.phone) {
+                        phoneInput.value = user.phone;
+                    }
+                    
+                    console.log('✅ Đã tự động điền thông tin user:', { full_name: user.full_name, phone: user.phone });
+                } else {
+                    console.log('ℹ️ User chưa đăng nhập hoặc không có thông tin');
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin user:', error);
+                // Không làm gì nếu lỗi - form vẫn để trống
+            }
+        }
+
+        // Load user info when page is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Đợi một chút để đảm bảo auth.js đã load xong
+            setTimeout(loadUserInfo, 300);
+        });
+
         // Phone number validation - chỉ cho nhập số
         const phoneInput = document.getElementById('phone');
         if (phoneInput) {

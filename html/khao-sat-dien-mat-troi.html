@@ -2799,6 +2799,41 @@
             });
         }
 
+        // Auto-fill user info if logged in
+        async function loadUserInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/get_current_user_info.php`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success && data.logged_in && data.user) {
+                    const user = data.user;
+                    
+                    // Tự động điền fullname (ưu tiên full_name, nếu không có thì dùng username)
+                    const fullnameInput = document.querySelector('input[name="fullname"]');
+                    if (fullnameInput && user.full_name) {
+                        fullnameInput.value = user.full_name;
+                    } else if (fullnameInput && user.username) {
+                        fullnameInput.value = user.username;
+                    }
+                    
+                    // Tự động điền phone
+                    const phoneInput = document.getElementById('survey-phone');
+                    if (phoneInput && user.phone) {
+                        phoneInput.value = user.phone;
+                    }
+                    
+                    console.log('✅ Đã tự động điền thông tin user:', { full_name: user.full_name, phone: user.phone });
+                } else {
+                    console.log('ℹ️ User chưa đăng nhập hoặc không có thông tin');
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin user:', error);
+                // Không làm gì nếu lỗi - form vẫn để trống
+            }
+        }
+
         // Enhanced page animations and effects
         document.addEventListener('DOMContentLoaded', function() {
             // Load electricity prices from API
@@ -2808,6 +2843,10 @@
             loadSurveyProducts();
             // Load sun hours from Admin
             loadSurveyRegionsPublic();
+            
+            // Load user info and auto-fill form (if logged in)
+            // Đợi một chút để đảm bảo auth.js đã load xong
+            setTimeout(loadUserInfo, 300);
             
             // Add floating elements
             createFloatingElements();
