@@ -206,8 +206,11 @@
                                 <div>
                                     <label for="phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Số điện thoại <span class="text-red-500">*</span></label>
                                     <input type="tel" id="phone" name="phone" required 
+                                           pattern="^0[0-9]{9}$"
+                                           maxlength="10"
                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
                                            placeholder="0988919868" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">10 số, bắt đầu bằng 0</p>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Email</label>
@@ -421,6 +424,56 @@
     <script src="../assets/js/cache-buster.js"></script>
     <script src="../assets/js/checkout-page.js"></script>
     <script>
+        // Phone number validation - chỉ cho nhập số
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                // Chỉ giữ lại số
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Đảm bảo bắt đầu bằng 0
+                if (this.value.length > 0 && this.value[0] !== '0') {
+                    this.value = '0' + this.value.replace(/^0+/, '').substring(0, 9);
+                }
+                
+                // Giới hạn 10 số
+                if (this.value.length > 10) {
+                    this.value = this.value.substring(0, 10);
+                }
+            });
+            
+            phoneInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const numbersOnly = paste.replace(/[^0-9]/g, '');
+                let processedValue = numbersOnly;
+                
+                // Đảm bảo bắt đầu bằng 0
+                if (processedValue.length > 0 && processedValue[0] !== '0') {
+                    processedValue = '0' + processedValue.replace(/^0+/, '');
+                }
+                
+                // Giới hạn 10 số
+                if (processedValue.length > 10) {
+                    processedValue = processedValue.substring(0, 10);
+                }
+                
+                this.value = processedValue;
+            });
+            
+            // Validation khi blur (rời khỏi ô input)
+            phoneInput.addEventListener('blur', function(e) {
+                const phone = this.value.trim();
+                if (phone && !/^0[0-9]{9}$/.test(phone)) {
+                    this.setCustomValidity('Số điện thoại phải có 10 số và bắt đầu bằng 0');
+                    this.classList.add('border-red-500');
+                } else {
+                    this.setCustomValidity('');
+                    this.classList.remove('border-red-500');
+                }
+            });
+        }
+
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         mobileMenuButton.addEventListener('click', () => {
@@ -577,6 +630,14 @@
         if (checkoutForm) {
             checkoutForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                // Validate phone number
+                const phoneValue = document.getElementById('phone').value.trim();
+                if (!phoneValue || !/^0[0-9]{9}$/.test(phoneValue)) {
+                    alert('Vui lòng nhập số điện thoại hợp lệ (10 số, bắt đầu bằng 0)');
+                    document.getElementById('phone').focus();
+                    return;
+                }
                 
                 // Get cart items from window.orderItems (loaded by checkout-page.js)
                 const cart = window.orderItems || [];
