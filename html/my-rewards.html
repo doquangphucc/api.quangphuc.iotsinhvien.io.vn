@@ -275,11 +275,6 @@
             <div class="skeleton h-64 rounded-xl"></div>
         </div>
 
-        <!-- Pagination -->
-        <div id="rewards-pagination" class="flex items-center justify-center gap-2 mb-8">
-            <!-- Pagination controls will be inserted here -->
-        </div>
-
         <!-- Empty State -->
         <div id="empty-state" class="hidden text-center py-16">
             <div class="text-6xl mb-4">🎁</div>
@@ -380,8 +375,6 @@
         // Rewards management
         let currentFilter = 'all';
         let allRewards = [];
-        let currentPage = 1;
-        const itemsPerPage = 20;
 
         // Load rewards on page load
         document.addEventListener('DOMContentLoaded', async () => {
@@ -417,9 +410,6 @@
                             expired_count: allRewards.filter(r => r.current_status === 'expired').length
                         };
                         displayStats(filteredStats);
-                        
-                        // Reset to page 1 when loading
-                        currentPage = 1;
                         
                         // Apply filter based on current_status
                         if (status === 'all') {
@@ -472,161 +462,130 @@
             if (rewards.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
-                document.getElementById('rewards-pagination').innerHTML = '';
                 return;
             }
 
             emptyState.classList.add('hidden');
             
-            // Pagination
-            const totalPages = Math.ceil(rewards.length / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedRewards = rewards.slice(startIndex, endIndex);
+            // Group rewards by reward_name, reward_type, reward_value, and current_status
+            const groupedRewards = {};
+            rewards.forEach(reward => {
+                // Create a unique key for grouping
+                const key = `${reward.reward_name || ''}_${reward.reward_type || ''}_${reward.reward_value || ''}_${reward.current_status || ''}`;
+                
+                if (!groupedRewards[key]) {
+                    groupedRewards[key] = {
+                        reward_name: reward.reward_name,
+                        reward_type: reward.reward_type,
+                        reward_value: reward.reward_value,
+                        current_status: reward.current_status,
+                        quantity: 0,
+                        // Store earliest created_at and latest expires_at/used_at for display
+                        earliest_created_at: reward.created_at,
+                        latest_expires_at: reward.expires_at,
+                        latest_used_at: reward.used_at,
+                        days_until_expiry: reward.days_until_expiry,
+                        reward_codes: [] // Collect all reward codes
+                    };
+                }
+                
+                groupedRewards[key].quantity++;
+                
+                // Update earliest created_at
+                if (new Date(reward.created_at) < new Date(groupedRewards[key].earliest_created_at)) {
+                    groupedRewards[key].earliest_created_at = reward.created_at;
+                }
+                
+                // Update latest expires_at
+                if (reward.expires_at && (!groupedRewards[key].latest_expires_at || 
+                    new Date(reward.expires_at) > new Date(groupedRewards[key].latest_expires_at))) {
+                    groupedRewards[key].latest_expires_at = reward.expires_at;
+                }
+                
+                // Update latest used_at
+                if (reward.used_at && (!groupedRewards[key].latest_used_at || 
+                    new Date(reward.used_at) > new Date(groupedRewards[key].latest_used_at))) {
+                    groupedRewards[key].latest_used_at = reward.used_at;
+                }
+                
+                // Update days_until_expiry (use the minimum)
+                if (reward.days_until_expiry !== null && reward.days_until_expiry !== undefined) {
+                    if (groupedRewards[key].days_until_expiry === null || 
+                        groupedRewards[key].days_until_expiry === undefined ||
+                        reward.days_until_expiry < groupedRewards[key].days_until_expiry) {
+                        groupedRewards[key].days_until_expiry = reward.days_until_expiry;
+                    }
+                }
+                
+                // Collect reward codes
+                if (reward.reward_code) {
+                    if (!groupedRewards[key].reward_codes.includes(reward.reward_code)) {
+                        groupedRewards[key].reward_codes.push(reward.reward_code);
+                    }
+                }
+            });
+            
+            // Convert grouped object to array
+            const groupedRewardsArray = Object.values(groupedRewards);
             
             // Render rewards
-            container.innerHTML = paginatedRewards.map(reward => {
-                const statusClass = reward.current_status === 'pending' ? 'status-pending' :
-                                  reward.current_status === 'used' ? 'status-used' : 'status-expired';
-                const statusText = reward.current_status === 'pending' ? 'Chưa dùng' :
-                                 reward.current_status === 'used' ? 'Đã sử dụng' : 'Hết hạn';
+            container.innerHTML = groupedRewardsArray.map(grouped => {
+                const statusClass = grouped.current_status === 'pending' ? 'status-pending' :
+                                  grouped.current_status === 'used' ? 'status-used' : 'status-expired';
+                const statusText = grouped.current_status === 'pending' ? 'Chưa dùng' :
+                                 grouped.current_status === 'used' ? 'Đã sử dụng' : 'Hết hạn';
                 
-                const daysLeft = reward.days_until_expiry;
+                const daysLeft = grouped.days_until_expiry;
                 const expiryWarning = daysLeft <= 3 && daysLeft > 0 ? 
                     `<div class="text-xs text-orange-600 dark:text-orange-400 font-semibold">⚠️ Còn ${daysLeft} ngày hết hạn</div>` : '';
 
-                const rewardIcon = reward.reward_type === 'discount' ? '🎯' :
-                                 reward.reward_type === 'free_shipping' ? '🚚' :
-                                 reward.reward_type === 'accessory' ? '🎁' :
-                                 reward.reward_type === 'gift' ? '🎁' :
-                                 reward.reward_type === 'no_prize' ? '😔' : '💝';
+                const rewardIcon = grouped.reward_type === 'discount' ? '🎯' :
+                                 grouped.reward_type === 'free_shipping' ? '🚚' :
+                                 grouped.reward_type === 'accessory' ? '🎁' :
+                                 grouped.reward_type === 'gift' ? '🎁' :
+                                 grouped.reward_type === 'no_prize' ? '😔' : '💝';
 
                 return `
                     <div class="reward-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                         <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 text-white">
-                            <div class="text-4xl mb-2">${rewardIcon}</div>
-                            <h3 class="text-xl font-bold mb-1">${reward.reward_name}</h3>
-                            ${reward.reward_value ? `<div class="text-2xl font-bold">${reward.reward_value}</div>` : ''}
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-4xl">${rewardIcon}</div>
+                                <div class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold">
+                                    Số lượng: ${grouped.quantity}
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold mb-1">${grouped.reward_name}</h3>
+                            ${grouped.reward_value ? `<div class="text-2xl font-bold">${grouped.reward_value}</div>` : ''}
                         </div>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <span class="status-badge ${statusClass}">${statusText}</span>
                                 ${expiryWarning}
                             </div>
-                            ${reward.reward_code ? `
+                            ${grouped.reward_codes.length > 0 ? `
                                 <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                    <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Mã phần thưởng:</div>
-                                    <div class="font-mono font-bold text-lg text-gray-800 dark:text-white">${reward.reward_code}</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                                        ${grouped.reward_codes.length === 1 ? 'Mã phần thưởng:' : `Mã phần thưởng (${grouped.reward_codes.length} mã):`}
+                                    </div>
+                                    <div class="font-mono font-bold text-lg text-gray-800 dark:text-white">
+                                        ${grouped.reward_codes.slice(0, 3).join(', ')}
+                                        ${grouped.reward_codes.length > 3 ? ` +${grouped.reward_codes.length - 3} mã khác` : ''}
+                                    </div>
                                 </div>
                             ` : ''}
                             <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                                <div>🎁 Nhận lúc: ${new Date(reward.created_at).toLocaleString('vi-VN')}</div>
-                                ${reward.expires_at ? `<div>⏰ Hết hạn: ${new Date(reward.expires_at).toLocaleString('vi-VN')}</div>` : ''}
-                                ${reward.used_at ? `<div>✅ Đã dùng: ${new Date(reward.used_at).toLocaleString('vi-VN')}</div>` : ''}
+                                <div>🎁 Nhận lúc: ${new Date(grouped.earliest_created_at).toLocaleString('vi-VN')}</div>
+                                ${grouped.latest_expires_at ? `<div>⏰ Hết hạn: ${new Date(grouped.latest_expires_at).toLocaleString('vi-VN')}</div>` : ''}
+                                ${grouped.latest_used_at ? `<div>✅ Đã dùng: ${new Date(grouped.latest_used_at).toLocaleString('vi-VN')}</div>` : ''}
                             </div>
         </div>
                     </div>
                 `;
             }).join('');
-            
-            // Render pagination
-            renderPagination(rewards.length, totalPages);
-        }
-
-        function renderPagination(totalItems, totalPages) {
-            const paginationContainer = document.getElementById('rewards-pagination');
-            
-            if (totalPages <= 1) {
-                paginationContainer.innerHTML = '';
-                return;
-            }
-            
-            let paginationHTML = '<div class="flex items-center gap-2">';
-            
-            // Previous button
-            paginationHTML += `
-                <button onclick="goToPage(${currentPage - 1})" 
-                        ${currentPage === 1 ? 'disabled' : ''}
-                        class="px-4 py-2 rounded-lg ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}">
-                    ‹ Trước
-                </button>
-            `;
-            
-            // Page numbers
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-            
-            if (endPage - startPage < maxVisiblePages - 1) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-            
-            if (startPage > 1) {
-                paginationHTML += `<button onclick="goToPage(1)" class="px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">1</button>`;
-                if (startPage > 2) {
-                    paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
-                }
-            }
-            
-            for (let i = startPage; i <= endPage; i++) {
-                paginationHTML += `
-                    <button onclick="goToPage(${i})" 
-                            class="px-3 py-2 rounded-lg ${i === currentPage ? 'bg-green-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}">
-                        ${i}
-                    </button>
-                `;
-            }
-            
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
-                }
-                paginationHTML += `<button onclick="goToPage(${totalPages})" class="px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">${totalPages}</button>`;
-            }
-            
-            // Next button
-            paginationHTML += `
-                <button onclick="goToPage(${currentPage + 1})" 
-                        ${currentPage === totalPages ? 'disabled' : ''}
-                        class="px-4 py-2 rounded-lg ${currentPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}">
-                    Sau ›
-                </button>
-            `;
-            
-            paginationHTML += `</div>`;
-            
-            // Info text
-            const startItem = totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
-            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-            paginationHTML += `<div class="text-sm text-gray-600 dark:text-gray-400 ml-4">Hiển thị ${startItem}-${endItem} / ${totalItems} phần thưởng</div>`;
-            
-            paginationContainer.innerHTML = paginationHTML;
-        }
-
-        function goToPage(page) {
-            if (page < 1) return;
-            
-            // Get current filtered rewards
-            let filteredRewards = allRewards;
-            if (currentFilter !== 'all') {
-                filteredRewards = allRewards.filter(r => r.current_status === currentFilter);
-            }
-            
-            const totalPages = Math.ceil(filteredRewards.length / itemsPerPage);
-            if (page > totalPages) return;
-            
-            currentPage = page;
-            
-            // Re-display with new page
-            displayRewards(filteredRewards);
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function filterRewards(status) {
             currentFilter = status;
-            currentPage = 1; // Reset to first page when filtering
             
             // Update button states
             document.querySelectorAll('.filter-btn').forEach(btn => {
