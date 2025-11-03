@@ -376,6 +376,20 @@
         let currentFilter = 'all';
         let allRewards = [];
 
+        // Format reward value to remove .00 suffix
+        function formatRewardValue(value) {
+            if (!value) return '';
+            // Convert to number
+            const num = parseFloat(value);
+            if (isNaN(num)) return value; // Return original if not a number
+            // If it's a whole number (ends with .00), return without decimals
+            if (num % 1 === 0) {
+                return Math.floor(num).toString();
+            }
+            // Otherwise return with decimals but remove trailing zeros
+            return num.toString().replace(/\.?0+$/, '');
+        }
+
         // Load rewards on page load
         document.addEventListener('DOMContentLoaded', async () => {
             await loadRewards();
@@ -555,7 +569,7 @@
                                 </div>
                             </div>
                             <h3 class="text-xl font-bold mb-1">${grouped.reward_name}</h3>
-                            ${grouped.reward_value ? `<div class="text-2xl font-bold">${grouped.reward_value}</div>` : ''}
+                            ${grouped.reward_value ? `<div class="text-2xl font-bold">${formatRewardValue(grouped.reward_value)}</div>` : ''}
                         </div>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
