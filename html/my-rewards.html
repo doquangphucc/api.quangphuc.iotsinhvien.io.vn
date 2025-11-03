@@ -275,6 +275,11 @@
             <div class="skeleton h-64 rounded-xl"></div>
         </div>
 
+        <!-- Pagination -->
+        <div id="rewards-pagination" class="flex items-center justify-center gap-2 mb-8">
+            <!-- Pagination controls will be inserted here -->
+        </div>
+
         <!-- Empty State -->
         <div id="empty-state" class="hidden text-center py-16">
             <div class="text-6xl mb-4">🎁</div>
@@ -375,6 +380,8 @@
         // Rewards management
         let currentFilter = 'all';
         let allRewards = [];
+        let currentPage = 1;
+        const itemsPerPage = 20;
 
         // Load rewards on page load
         document.addEventListener('DOMContentLoaded', async () => {
@@ -391,9 +398,28 @@
                 if (response.ok) {
                     const result = await response.json();
                     if (result.success) {
-                        allRewards = result.data.rewards;
-                        // Filter by current_status (not status in DB) for accurate filtering
-                        displayStats(result.data.stats);
+                        // Filter out "may mắn lần sau" rewards (no_prize type or name contains "may mắn")
+                        allRewards = result.data.rewards.filter(r => {
+                            const isNoPrize = r.reward_type === 'no_prize';
+                            const hasMayManName = r.reward_name && (
+                                r.reward_name.toLowerCase().includes('may mắn lần sau') ||
+                                r.reward_name.toLowerCase().includes('chúc may mắn') ||
+                                r.reward_name.toLowerCase().includes('may mắn')
+                            );
+                            return !isNoPrize && !hasMayManName;
+                        });
+                        
+                        // Calculate stats based on filtered rewards (excluding "may mắn lần sau")
+                        const filteredStats = {
+                            total_rewards: allRewards.length,
+                            pending_count: allRewards.filter(r => r.current_status === 'pending').length,
+                            used_count: allRewards.filter(r => r.current_status === 'used').length,
+                            expired_count: allRewards.filter(r => r.current_status === 'expired').length
+                        };
+                        displayStats(filteredStats);
+                        
+                        // Reset to page 1 when loading
+                        currentPage = 1;
                         
                         // Apply filter based on current_status
                         if (status === 'all') {
@@ -446,12 +472,20 @@
             if (rewards.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
+                document.getElementById('rewards-pagination').innerHTML = '';
                 return;
             }
 
             emptyState.classList.add('hidden');
             
-            container.innerHTML = rewards.map(reward => {
+            // Pagination
+            const totalPages = Math.ceil(rewards.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedRewards = rewards.slice(startIndex, endIndex);
+            
+            // Render rewards
+            container.innerHTML = paginatedRewards.map(reward => {
                 const statusClass = reward.current_status === 'pending' ? 'status-pending' :
                                   reward.current_status === 'used' ? 'status-used' : 'status-expired';
                 const statusText = reward.current_status === 'pending' ? 'Chưa dùng' :
@@ -494,10 +528,105 @@
                     </div>
                 `;
             }).join('');
+            
+            // Render pagination
+            renderPagination(rewards.length, totalPages);
+        }
+
+        function renderPagination(totalItems, totalPages) {
+            const paginationContainer = document.getElementById('rewards-pagination');
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = '<div class="flex items-center gap-2">';
+            
+            // Previous button
+            paginationHTML += `
+                <button onclick="goToPage(${currentPage - 1})" 
+                        ${currentPage === 1 ? 'disabled' : ''}
+                        class="px-4 py-2 rounded-lg ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}">
+                    ‹ Trước
+                </button>
+            `;
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                paginationHTML += `<button onclick="goToPage(1)" class="px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button onclick="goToPage(${i})" 
+                            class="px-3 py-2 rounded-lg ${i === currentPage ? 'bg-green-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
+                }
+                paginationHTML += `<button onclick="goToPage(${totalPages})" class="px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">${totalPages}</button>`;
+            }
+            
+            // Next button
+            paginationHTML += `
+                <button onclick="goToPage(${currentPage + 1})" 
+                        ${currentPage === totalPages ? 'disabled' : ''}
+                        class="px-4 py-2 rounded-lg ${currentPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}">
+                    Sau ›
+                </button>
+            `;
+            
+            paginationHTML += `</div>`;
+            
+            // Info text
+            const startItem = totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            paginationHTML += `<div class="text-sm text-gray-600 dark:text-gray-400 ml-4">Hiển thị ${startItem}-${endItem} / ${totalItems} phần thưởng</div>`;
+            
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        function goToPage(page) {
+            if (page < 1) return;
+            
+            // Get current filtered rewards
+            let filteredRewards = allRewards;
+            if (currentFilter !== 'all') {
+                filteredRewards = allRewards.filter(r => r.current_status === currentFilter);
+            }
+            
+            const totalPages = Math.ceil(filteredRewards.length / itemsPerPage);
+            if (page > totalPages) return;
+            
+            currentPage = page;
+            
+            // Re-display with new page
+            displayRewards(filteredRewards);
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function filterRewards(status) {
             currentFilter = status;
+            currentPage = 1; // Reset to first page when filtering
             
             // Update button states
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -508,16 +637,15 @@
             event.target.classList.add('bg-green-600', 'text-white');
 
             // Filter rewards based on current_status (not status in DB)
-            if (status === 'all') {
-                displayRewards(allRewards);
-            } else {
-                const filtered = allRewards.filter(r => {
+            let filteredRewards = allRewards;
+            if (status !== 'all') {
+                filteredRewards = allRewards.filter(r => {
                     // Filter by current_status, not status
                     return r.current_status === status;
                 });
-                console.log(`Filtering ${status}: Found ${filtered.length} rewards from ${allRewards.length} total`);
-                displayRewards(filtered);
+                console.log(`Filtering ${status}: Found ${filteredRewards.length} rewards from ${allRewards.length} total`);
             }
+            displayRewards(filteredRewards);
         }
 
         function showError(message) {
