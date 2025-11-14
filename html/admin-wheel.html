@@ -125,11 +125,12 @@
 
     <script>
         const API_BASE = '../api';
+        const DEFAULT_POINTER_ANGLE = 270;
+        const wheelColors = ['#22c55e', '#6366f1', '#f97316', '#14b8a6', '#eab308', '#38bdf8', '#f43f5e', '#8b5cf6'];
         let wheelData = [];
         let wheelSegments = [];
         let currentRotation = 0;
         let isSpinning = false;
-        const wheelColors = ['#22c55e', '#6366f1', '#f97316', '#14b8a6', '#eab308', '#38bdf8', '#f43f5e', '#8b5cf6'];
 
         document.addEventListener('DOMContentLoaded', () => {
             initWheelAdmin();
@@ -234,12 +235,15 @@
                 text.textContent = prize.prize_name;
                 svgGroup.appendChild(text);
 
+                const rawWeight = Number(prize?.weight ?? prize?.chance ?? prize?.probability ?? prize?.win_rate);
+                const segmentWeight = Number.isFinite(rawWeight) && rawWeight > 0 ? rawWeight : 1;
+
                 wheelSegments.push({
                     prize,
                     startAngle,
                     endAngle,
                     midAngle,
-                    weight: 1,
+                    weight: segmentWeight,
                 });
 
                 startAngle = endAngle;
@@ -250,43 +254,113 @@
             // Prize list removed - no longer needed in new layout
         }
 
+        function normalizeAngle(angle) {
+            return ((angle % 360) + 360) % 360;
+        }
+
+        function getPointerAngle() {
+            const pointerElement = document.querySelector('.pointer');
+            const wheelElement = document.getElementById('wheel-svg');
+            if (!pointerElement || !wheelElement) {
+                return DEFAULT_POINTER_ANGLE;
+            }
+
+            const wheelRect = wheelElement.getBoundingClientRect();
+            const pointerRect = pointerElement.getBoundingClientRect();
+
+            const centerX = wheelRect.left + wheelRect.width / 2;
+            const centerY = wheelRect.top + wheelRect.height / 2;
+            const pointerTipX = pointerRect.left + pointerRect.width / 2;
+            const pointerTipY = pointerRect.bottom;
+
+            const angle = Math.atan2(pointerTipY - centerY, pointerTipX - centerX) * 180 / Math.PI;
+            return Number.isFinite(angle) ? normalizeAngle(angle) : DEFAULT_POINTER_ANGLE;
+        }
+
+        function selectWinningSegment(segments = wheelSegments) {
+            if (!segments.length) return null;
+            const totalWeight = segments.reduce((sum, segment) => sum + (segment.weight || 1), 0);
+            let random = Math.random() * totalWeight;
+            for (const segment of segments) {
+                random -= segment.weight || 1;
+                if (random <= 0) {
+                    return segment;
+                }
+            }
+            return segments[segments.length - 1];
+        }
+
+        function calculateRotationAmount(segment, extraSpins, pointerAngle) {
+            const currentNormalized = normalizeAngle(currentRotation);
+            const effectivePointerAngle = typeof pointerAngle === 'number' ? pointerAngle : DEFAULT_POINTER_ANGLE;
+            const targetNormalized = normalizeAngle(effectivePointerAngle - segment.midAngle);
+            const alignmentRotation = normalizeAngle(currentNormalized - targetNormalized);
+            return extraSpins * 360 + alignmentRotation;
+        }
+
         function spinWheel() {
             if (isSpinning || wheelSegments.length === 0) return;
+
+            const wheelGraphic = document.getElementById('wheel-graphic');
+            if (!wheelGraphic) {
+                showResultMessage('Không tìm thấy vòng quay để hiển thị.', true);
+                return;
+            }
+
+            const pointerAngle = getPointerAngle();
+            const segmentsSnapshot = wheelSegments.map(segment => ({ ...segment }));
+            const winningSegment = selectWinningSegment(segmentsSnapshot);
+            if (!winningSegment) {
+                showResultMessage('Không xác định được dữ liệu phần thưởng.', true);
+                return;
+            }
+
             isSpinning = true;
             disableSpinButton(true, 'Đang quay...');
 
-            // Random rotation: 4-6 full spins + random offset to keep unpredictability
-            const extraSpins = 4 + Math.random() * 2;
-            const randomOffset = Math.random() * 360;
-            const rotationAmount = extraSpins * 360 + randomOffset;
-            currentRotation -= rotationAmount; // negative for clockwise spin
-
-            const wheelGraphic = document.getElementById('wheel-graphic');
+            const extraSpins = 4 + Math.floor(Math.random() * 3);
+            const rotationAmount = calculateRotationAmount(winningSegment, extraSpins, pointerAngle);
+            currentRotation -= rotationAmount;
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
 
             setTimeout(() => {
                 isSpinning = false;
                 disableSpinButton(false, 'Click chuột hoặc nhấn Enter để quay');
                 
-                const actualWinner = getSegmentAtPointer();
-                if (actualWinner) {
-                    showWinnerResult(actualWinner.prize);
+                const pointerSegment = getSegmentAtPointer(pointerAngle, segmentsSnapshot);
+                let winnerSegment = pointerSegment || winningSegment;
+
+                if (!winnerSegment && segmentsSnapshot.length) {
+                    winnerSegment = segmentsSnapshot[0];
+                }
+
+                if (pointerSegment && winningSegment && pointerSegment !== winningSegment) {
+                    console.warn('Wheel pointer mismatch detected', {
+                        pointerAngle,
+                        pointerSegment: pointerSegment.prize?.prize_name,
+                        winningSegment: winningSegment.prize?.prize_name
+                    });
+                }
+
+                if (winnerSegment && winnerSegment.prize) {
+                    showWinnerResult(winnerSegment.prize);
                 } else {
                     showResultMessage('Không xác định được phần thưởng. Vui lòng quay lại.', true);
                 }
             }, 4600);
         }
         
-        function getSegmentAtPointer() {
-            // Pointer is fixed at 90 degrees (12 o'clock)
-            const pointerAngle = 90;
+        function getSegmentAtPointer(pointerAngle = getPointerAngle(), segments = wheelSegments) {
+            const activePointerAngle = typeof pointerAngle === 'number' ? pointerAngle : DEFAULT_POINTER_ANGLE;
+            const segmentSource = Array.isArray(segments) && segments.length ? segments : wheelSegments;
+            if (!segmentSource.length) return null;
             
             // Normalize current rotation to 0-360
-            const normalizedRotation = ((currentRotation % 360) + 360) % 360;
+            const normalizedRotation = normalizeAngle(currentRotation);
             // Determine which original angle now lies under the pointer
-            const angleAtPointer = (pointerAngle - normalizedRotation + 360) % 360;
+            const angleAtPointer = normalizeAngle(activePointerAngle - normalizedRotation);
             
-            for (const segment of wheelSegments) {
+            for (const segment of segmentSource) {
                 let start = ((segment.startAngle % 360) + 360) % 360;
                 let end = ((segment.endAngle % 360) + 360) % 360;
                 
