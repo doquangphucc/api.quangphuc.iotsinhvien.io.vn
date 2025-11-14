@@ -185,8 +185,9 @@
                 
                 // Split text into characters and arrange vertically along radius
                 const chars = prize.prize_name.split('');
-                const charSpacing = 14;
-                const startRadius = 150;
+                const charSpacing = 10;
+                const totalTextLength = chars.length * charSpacing;
+                const startRadius = 160;
                 
                 chars.forEach(function(char, charIndex) {
                     const currentRadius = startRadius - (charIndex * charSpacing);
@@ -195,8 +196,8 @@
                     text.setAttribute('x', charPoint.x);
                     text.setAttribute('y', charPoint.y);
                     text.setAttribute('fill', '#0f172a');
-                    text.setAttribute('font-size', '13');
-                    text.setAttribute('font-weight', '700');
+                    text.setAttribute('font-size', '11');
+                    text.setAttribute('font-weight', '600');
                     text.setAttribute('text-anchor', 'middle');
                     text.setAttribute('dominant-baseline', 'middle');
                     text.setAttribute('transform', 'rotate(' + (midAngle + 90) + ' ' + charPoint.x + ' ' + charPoint.y + ')');
