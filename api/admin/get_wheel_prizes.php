@@ -33,6 +33,9 @@ try {
               ORDER BY probability_weight DESC, prize_name ASC";
 
     $result = mysqli_query($conn, $query);
+    if (!$result) {
+        throw new Exception('Query error: ' . mysqli_error($conn));
+    }
     $prizes = [];
     while ($row = mysqli_fetch_assoc($result)) {
         $row['probability_weight'] = (int) $row['probability_weight'];
@@ -48,6 +51,9 @@ try {
             COALESCE(SUM(CASE WHEN is_active = 1 THEN probability_weight ELSE 0 END), 0) AS active_weight
         FROM wheel_prizes";
     $statsResult = mysqli_query($conn, $statsQuery);
+    if (!$statsResult) {
+        throw new Exception('Stats query error: ' . mysqli_error($conn));
+    }
     $stats = mysqli_fetch_assoc($statsResult);
 
     echo json_encode([
@@ -62,11 +68,11 @@ try {
             ]
         ]
     ], JSON_UNESCAPED_UNICODE);
-} catch (Exception $e) {
+} catch (Throwable $e) {
     error_log('Error fetching wheel prizes: ' . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'Không thể tải danh sách phần thưởng'
+        'message' => 'Không thể tải danh sách phần thưởng. Chi tiết: ' . $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }
 
