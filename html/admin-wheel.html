@@ -93,6 +93,7 @@
         let wheelSegments = [];
         let currentRotation = 0;
         let isSpinning = false;
+        const wheelColors = ['#22c55e', '#6366f1', '#f97316', '#14b8a6', '#eab308', '#38bdf8', '#f43f5e', '#8b5cf6'];
 
         document.addEventListener('DOMContentLoaded', () => {
             initWheelAdmin();
@@ -162,16 +163,18 @@
             svgGroup.innerHTML = '';
             wheelSegments = [];
 
-            const totalWeight = prizes.reduce((sum, prize) => sum + Math.max(prize.probability_weight || 1, 1), 0) || 1;
+            if (prizes.length === 0) return;
+
+            const sliceAngle = 360 / prizes.length;
             let startAngle = -90;
-            prizes.forEach((prize) => {
-                const weight = Math.max(prize.probability_weight || 1, 1);
-                const sliceAngle = (weight / totalWeight) * 360;
+
+            prizes.forEach((prize, index) => {
                 const endAngle = startAngle + sliceAngle;
+                const color = wheelColors[index % wheelColors.length];
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', describeArc(210, 210, 180, startAngle, endAngle));
-                path.setAttribute('fill', prize.prize_color || '#334155');
+                path.setAttribute('fill', color);
                 path.setAttribute('stroke', '#0f172a');
                 path.setAttribute('stroke-width', '2');
                 svgGroup.appendChild(path);
@@ -186,7 +189,7 @@
                 text.setAttribute('font-weight', '700');
                 text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('alignment-baseline', 'middle');
-                text.textContent = prize.prize_icon || '*';
+                text.textContent = prize.prize_name;
                 svgGroup.appendChild(text);
 
                 wheelSegments.push({
@@ -194,7 +197,7 @@
                     startAngle,
                     endAngle,
                     midAngle,
-                    weight,
+                    weight: 1,
                 });
 
                 startAngle = endAngle;
@@ -210,18 +213,14 @@
                 return;
             }
 
-            container.innerHTML = prizes.map(prize => `
+            container.innerHTML = prizes.map((prize, index) => `
                 <div class="p-4 rounded-2xl border border-slate-200 flex items-start gap-4">
-                    <div class="flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center text-2xl" style="background:${(prize.prize_color || '#e2e8f0')}20">
-                        ${prize.prize_icon || '*'}
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background:${wheelColors[index % wheelColors.length]}20">
+                        ${index + 1}
                     </div>
                     <div class="flex-1">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="text-lg font-bold text-slate-900">${prize.prize_name}</h3>
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">Trọng số: ${prize.probability_weight || 1}</span>
-                        </div>
-                        <p class="text-sm text-slate-600 mt-1">${prize.prize_description || 'Không có mô tả.'}</p>
-                        ${prize.prize_value ? `<p class="text-sm text-slate-500 mt-1">Giá trị: ${prize.prize_value}</p>` : ''}
+                        <h3 class="text-lg font-bold text-slate-900">${prize.prize_name}</h3>
+                        <p class="text-xs text-slate-500 mt-1">Đang hiển thị trên vòng quay</p>
                     </div>
                 </div>
             `).join('');
@@ -264,7 +263,7 @@
             }
             return \`
                 <strong>\${prize.prize_name}</strong>
-                <div class="text-slate-400 text-sm mt-1">\${prize.prize_value || prize.prize_description || 'Phần thưởng đặc biệt'}</div>
+                <div class="text-slate-400 text-sm mt-1">Chúc mừng! Bạn đã trúng phần thưởng này.</div>
             \`;
         }
 

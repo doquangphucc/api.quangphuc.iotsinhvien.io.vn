@@ -647,13 +647,13 @@ INSERT INTO reward_templates (id, reward_name, reward_type, reward_value, reward
 -- =====================================================
 -- DỮ LIỆU MẪU - WHEEL_PRIZES (Phần thưởng vòng quay admin)
 -- =====================================================
-INSERT INTO wheel_prizes (id, prize_name, prize_description, prize_value, prize_icon, prize_color, probability_weight, is_active, created_at, updated_at) VALUES
-(1, 'Voucher 500K', 'Giảm ngay 500.000đ cho đơn hàng bất kỳ', '500.000đ', '🎟️', '#F59E0B', 3, 1, NOW(), NOW()),
-(2, 'Pin dự phòng mini', 'Tặng pin dự phòng mini HC', 'Quà tặng', '🔋', '#3B82F6', 2, 1, NOW(), NOW()),
-(3, 'Giảm 15%', 'Giảm 15% cho gói khảo sát bất kỳ', '15%', '💚', '#10B981', 4, 1, NOW(), NOW()),
-(4, 'Combo vệ sinh hệ pin', 'Miễn phí vệ sinh hệ pin 1 lần', 'Dịch vụ', '🧽', '#6366F1', 2, 1, NOW(), NOW()),
-(5, 'Chúc may mắn lần sau', 'Không trúng, thử lại nhé!', 'May mắn lần sau', '🍀', '#9CA3AF', 5, 1, NOW(), NOW()),
-(6, 'Voucher 1 Triệu', 'Giảm 1.000.000đ cho đơn hàng > 30 triệu', '1.000.000đ', '💎', '#EC4899', 1, 1, NOW(), NOW());
+INSERT INTO wheel_prizes (id, prize_name, is_active, created_at, updated_at) VALUES
+(1, 'Voucher 500K', 1, NOW(), NOW()),
+(2, 'Pin dự phòng mini', 1, NOW(), NOW()),
+(3, 'Giảm 15%', 1, NOW(), NOW()),
+(4, 'Combo vệ sinh hệ pin', 1, NOW(), NOW()),
+(5, 'Chúc may mắn lần sau', 1, NOW(), NOW()),
+(6, 'Voucher 1 Triệu', 1, NOW(), NOW());
 
 -- =====================================================
 -- DỮ LIỆU TEST - USER MẪU (Để test)

@@ -28,9 +28,9 @@ if (!in_array($status, $allowedStatus)) {
 
 try {
     $where = $status === 'active' ? 'WHERE is_active = 1' : '';
-    $query = "SELECT id, prize_name, prize_description, prize_value, prize_icon, prize_color, probability_weight, is_active, created_at, updated_at 
+    $query = "SELECT id, prize_name, is_active, created_at, updated_at 
               FROM wheel_prizes {$where}
-              ORDER BY probability_weight DESC, prize_name ASC";
+              ORDER BY id ASC";
 
     $result = mysqli_query($conn, $query);
     if (!$result) {
@@ -38,7 +38,6 @@ try {
     }
     $prizes = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        $row['probability_weight'] = (int) $row['probability_weight'];
         $row['is_active'] = (bool) $row['is_active'];
         $prizes[] = $row;
     }
@@ -46,9 +45,7 @@ try {
     // Stats
     $statsQuery = "SELECT 
             COUNT(*) AS total_count,
-            SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_count,
-            COALESCE(SUM(probability_weight), 0) AS total_weight,
-            COALESCE(SUM(CASE WHEN is_active = 1 THEN probability_weight ELSE 0 END), 0) AS active_weight
+            SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_count
         FROM wheel_prizes";
     $statsResult = mysqli_query($conn, $statsQuery);
     if (!$statsResult) {
@@ -62,9 +59,7 @@ try {
             'prizes' => $prizes,
             'stats' => [
                 'total_count' => (int) ($stats['total_count'] ?? 0),
-                'active_count' => (int) ($stats['active_count'] ?? 0),
-                'total_weight' => (int) ($stats['total_weight'] ?? 0),
-                'active_weight' => (int) ($stats['active_weight'] ?? 0)
+                'active_count' => (int) ($stats['active_count'] ?? 0)
             ]
         ]
     ], JSON_UNESCAPED_UNICODE);

@@ -288,18 +288,12 @@ CREATE TABLE IF NOT EXISTS reward_templates (
 CREATE TABLE IF NOT EXISTS wheel_prizes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     prize_name VARCHAR(255) NOT NULL COMMENT 'Tên hiển thị trên vòng quay',
-    prize_description TEXT COMMENT 'Mô tả chi tiết hoặc ghi chú',
-    prize_value VARCHAR(255) DEFAULT NULL COMMENT 'Thông tin giá trị/ưu đãi',
-    prize_icon VARCHAR(50) DEFAULT '🎁' COMMENT 'Emoji hoặc biểu tượng',
-    prize_color VARCHAR(20) DEFAULT '#16a34a' COMMENT 'Màu hiển thị dạng hex',
-    probability_weight INT DEFAULT 1 COMMENT 'Trọng số xác suất (>=1)',
-    is_active BOOLEAN DEFAULT TRUE COMMENT 'Có hiển thị trên vòng quay hay không',
+    is_active BOOLEAN DEFAULT TRUE COMMENT '1 = hiển thị, 0 = ẩn',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_wheel_prizes_active ON wheel_prizes(is_active);
-CREATE INDEX idx_wheel_prizes_weight ON wheel_prizes(probability_weight);
 
 -- =====================================================
 -- 15. BẢNG LOTTERY_REWARDS (Phần thưởng vòng quay)

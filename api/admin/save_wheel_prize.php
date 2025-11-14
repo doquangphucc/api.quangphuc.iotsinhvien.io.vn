@@ -36,48 +36,29 @@ if (!hasPermission($conn, 'wheel', $action)) {
 }
 
 $prize_name = trim($payload['prize_name'] ?? '');
-$prize_description = trim($payload['prize_description'] ?? '');
-$prize_value = trim($payload['prize_value'] ?? '');
-$prize_icon = trim($payload['prize_icon'] ?? '🎁');
-$prize_color = trim($payload['prize_color'] ?? '#16a34a');
-$probability_weight = isset($payload['probability_weight']) ? intval($payload['probability_weight']) : 1;
-$is_active = isset($payload['is_active']) && $payload['is_active'] ? 1 : 0;
+$is_active = !empty($payload['is_active']) ? 1 : 0;
 
 if ($prize_name === '') {
     echo json_encode(['success' => false, 'message' => 'Tên phần thưởng không được để trống'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-if ($probability_weight < 1) {
-    $probability_weight = 1;
-}
-
 try {
     if ($id > 0) {
         $stmt = $conn->prepare("UPDATE wheel_prizes 
-            SET prize_name = ?, prize_description = ?, prize_value = ?, prize_icon = ?, prize_color = ?, probability_weight = ?, is_active = ?, updated_at = NOW()
+            SET prize_name = ?, is_active = ?, updated_at = NOW()
             WHERE id = ?");
         $stmt->bind_param(
-            'ssssssii',
+            'sii',
             $prize_name,
-            $prize_description,
-            $prize_value,
-            $prize_icon,
-            $prize_color,
-            $probability_weight,
             $is_active,
             $id
         );
     } else {
-        $stmt = $conn->prepare("INSERT INTO wheel_prizes (prize_name, prize_description, prize_value, prize_icon, prize_color, probability_weight, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO wheel_prizes (prize_name, is_active) VALUES (?, ?)");
         $stmt->bind_param(
-            'ssssssi',
+            'si',
             $prize_name,
-            $prize_description,
-            $prize_value,
-            $prize_icon,
-            $prize_color,
-            $probability_weight,
             $is_active
         );
     }
