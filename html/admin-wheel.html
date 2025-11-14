@@ -137,9 +137,7 @@
                     return;
                 }
                 wheelData = data.data?.prizes || [];
-                document.getElementById('wheel-prize-count').textContent = wheelData.length;
                 buildWheel(wheelData);
-                renderPrizeList(wheelData);
                 disableSpinButton(wheelData.length === 0);
                 if (wheelData.length === 0) {
                     showResultMessage('Chua co phan thuong nao hoat dong. Hay them tai tab "Vong quay" trong admin.', true);
