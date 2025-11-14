@@ -1774,6 +1774,29 @@
                                     </label>
                                 </div>
                             </div>
+
+                            <!-- Vòng quay -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">🎡 Vòng quay</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="wheel" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="wheel" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="wheel" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="wheel" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
                             
                             <!-- Phần thưởng -->
                             <div class="border rounded-lg p-4 bg-gray-50">
@@ -4822,7 +4845,7 @@
             // Collect permissions
             const permissions = {};
             if (!isAdmin) {
-                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home', 'contacts'];
+                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'wheel', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home', 'contacts'];
                 modules.forEach(module => {
                     permissions[module] = {
                         can_view: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="view"]`)?.checked || false,
