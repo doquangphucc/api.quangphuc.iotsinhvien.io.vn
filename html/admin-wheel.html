@@ -259,12 +259,13 @@
             const extraSpins = 4 + Math.random() * 2;
             
             // Pointer is at top (90 degrees in standard coordinates)
-            // We need winner.midAngle to align with 90 degrees after rotation
-            // targetAngle = 90 - winner.midAngle (to bring winner to top)
+            // CSS rotate() rotates COUNTER-CLOCKWISE for positive values
+            // To bring winner.midAngle to pointer (90 degrees), we need to rotate CLOCKWISE
+            // So we use NEGATIVE rotation: -(90 - winner.midAngle) = winner.midAngle - 90
             const pointerAngle = 90;
-            const targetAngle = pointerAngle - winner.midAngle;
+            const targetAngle = winner.midAngle - pointerAngle;
             const rotationAmount = extraSpins * 360 + targetAngle;
-            currentRotation += rotationAmount;
+            currentRotation -= rotationAmount;
 
             const wheelGraphic = document.getElementById('wheel-graphic');
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
@@ -283,40 +284,31 @@
             // Pointer is at 90 degrees (top) in fixed position
             const pointerAngle = 90;
             
-            console.log('Current rotation:', currentRotation);
-            console.log('Looking for segment at pointer angle:', pointerAngle);
-            
             // Find which segment is at the pointer position after rotation
+            // Since we now rotate with NEGATIVE values (clockwise), we subtract rotation
             for (const segment of wheelSegments) {
-                // Calculate where this segment is after rotation
-                const rotatedStart = segment.startAngle + currentRotation;
-                const rotatedEnd = segment.endAngle + currentRotation;
+                // Calculate where this segment is after rotation (subtract because rotation is negative/clockwise)
+                const rotatedStart = segment.startAngle - (-currentRotation);
+                const rotatedEnd = segment.endAngle - (-currentRotation);
                 
                 // Normalize to 0-360 range
                 const normalizedStart = ((rotatedStart % 360) + 360) % 360;
                 const normalizedEnd = ((rotatedEnd % 360) + 360) % 360;
                 
-                console.log(segment.prize.prize_name + ':', 
-                    'original:', segment.startAngle, '-', segment.endAngle,
-                    'rotated:', normalizedStart.toFixed(1), '-', normalizedEnd.toFixed(1));
-                
                 // Check if pointer angle (90) is within this segment
                 if (normalizedStart <= normalizedEnd) {
                     // Normal case: segment doesn't cross 0/360 boundary
                     if (pointerAngle >= normalizedStart && pointerAngle <= normalizedEnd) {
-                        console.log('WINNER:', segment.prize.prize_name);
                         return segment;
                     }
                 } else {
                     // Wrap-around case: segment crosses 0/360 boundary
                     if (pointerAngle >= normalizedStart || pointerAngle <= normalizedEnd) {
-                        console.log('WINNER (wrap):', segment.prize.prize_name);
                         return segment;
                     }
                 }
             }
             
-            console.log('No match found, returning first segment');
             return wheelSegments[0];
         }
 
