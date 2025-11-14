@@ -21,9 +21,9 @@
             position: absolute;
             width: 0;
             height: 0;
-            border-left: 30px solid transparent;
-            border-right: 30px solid transparent;
-            border-top: 60px solid #ff6b35;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 80px solid #ff6b35;
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
             z-index: 20;
         }
@@ -32,11 +32,11 @@
             position: absolute;
             width: 0;
             height: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-top: 50px solid #ffd93d;
-            left: -25px;
-            top: -50px;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 70px solid #ffd93d;
+            left: -14px;
+            top: -70px;
         }
         .result-box {
             background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
@@ -92,7 +92,7 @@
                 <!-- Wheel Section - 2/3 width -->
                 <section class="lg:col-span-2 rounded-3xl p-12 flex items-center justify-center" style="background: linear-gradient(135deg, #ffffff 0%, #f1f8e9 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid #c5e1a5;">
                     <div class="relative flex items-center justify-center">
-                        <div class="pointer" style="position: absolute; top: -40px; left: 50%; transform: translateX(-50%);"></div>
+                        <div class="pointer" style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%);"></div>
                         <svg id="wheel-svg" viewBox="0 0 420 420" width="560" height="560" style="filter: drop-shadow(0 10px 25px rgba(0,0,0,0.15));">
                             <g id="wheel-graphic"></g>
                             <circle cx="210" cy="210" r="45" fill="#558b2f" stroke="#7cb342" stroke-width="5"></circle>
@@ -270,8 +270,47 @@
             setTimeout(() => {
                 isSpinning = false;
                 disableSpinButton(false, 'Click chuột hoặc nhấn Enter để quay');
-                showWinnerResult(winner.prize);
+                
+                // Verify which segment is actually at the pointer position
+                const actualWinner = getSegmentAtPointer();
+                showWinnerResult(actualWinner ? actualWinner.prize : winner.prize);
             }, 4600);
+        }
+        
+        function getSegmentAtPointer() {
+            // Pointer is at 90 degrees (top)
+            // After rotation, we need to find which segment contains 90 degrees
+            const pointerAngle = 90;
+            
+            // Normalize current rotation to 0-360 range
+            const normalizedRotation = ((currentRotation % 360) + 360) % 360;
+            
+            // Calculate the actual angle at pointer position after rotation
+            const angleAtPointer = (pointerAngle - normalizedRotation + 360) % 360;
+            
+            // Find which segment contains this angle
+            for (const segment of wheelSegments) {
+                let start = segment.startAngle;
+                let end = segment.endAngle;
+                
+                // Normalize angles to positive values
+                start = ((start % 360) + 360) % 360;
+                end = ((end % 360) + 360) % 360;
+                
+                // Check if angleAtPointer is within this segment
+                if (start <= end) {
+                    if (angleAtPointer >= start && angleAtPointer <= end) {
+                        return segment;
+                    }
+                } else {
+                    // Handle wrap-around case
+                    if (angleAtPointer >= start || angleAtPointer <= end) {
+                        return segment;
+                    }
+                }
+            }
+            
+            return wheelSegments[0];
         }
 
         function pickRandomSegment() {
