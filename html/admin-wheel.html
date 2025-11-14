@@ -243,9 +243,11 @@
             const winner = pickRandomSegment();
             const extraSpins = 4 + Math.random() * 2;
             
-            // Calculate rotation so winner's midAngle points to top (0 degrees)
-            // Since wheel starts at -90 and pointer is at top (0), we need to align winner.midAngle to 0
-            const targetAngle = -winner.midAngle;
+            // Pointer is at top (90 degrees in standard coordinates)
+            // We need winner.midAngle to align with 90 degrees after rotation
+            // targetAngle = 90 - winner.midAngle (to bring winner to top)
+            const pointerAngle = 90;
+            const targetAngle = pointerAngle - winner.midAngle;
             const rotationAmount = extraSpins * 360 + targetAngle;
             currentRotation += rotationAmount;
 
