@@ -281,6 +281,9 @@
             // Pointer is at 90 degrees (top) in fixed position
             const pointerAngle = 90;
             
+            console.log('Current rotation:', currentRotation);
+            console.log('Looking for segment at pointer angle:', pointerAngle);
+            
             // Find which segment is at the pointer position after rotation
             for (const segment of wheelSegments) {
                 // Calculate where this segment is after rotation
@@ -291,20 +294,27 @@
                 const normalizedStart = ((rotatedStart % 360) + 360) % 360;
                 const normalizedEnd = ((rotatedEnd % 360) + 360) % 360;
                 
+                console.log(segment.prize.prize_name + ':', 
+                    'original:', segment.startAngle, '-', segment.endAngle,
+                    'rotated:', normalizedStart.toFixed(1), '-', normalizedEnd.toFixed(1));
+                
                 // Check if pointer angle (90) is within this segment
                 if (normalizedStart <= normalizedEnd) {
                     // Normal case: segment doesn't cross 0/360 boundary
                     if (pointerAngle >= normalizedStart && pointerAngle <= normalizedEnd) {
+                        console.log('WINNER:', segment.prize.prize_name);
                         return segment;
                     }
                 } else {
                     // Wrap-around case: segment crosses 0/360 boundary
                     if (pointerAngle >= normalizedStart || pointerAngle <= normalizedEnd) {
+                        console.log('WINNER (wrap):', segment.prize.prize_name);
                         return segment;
                     }
                 }
             }
             
+            console.log('No match found, returning first segment');
             return wheelSegments[0];
         }
 
