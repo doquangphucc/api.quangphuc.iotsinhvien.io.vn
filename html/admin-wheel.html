@@ -115,7 +115,8 @@
 
         async function checkAdminAccess() {
             try {
-                const response = await fetch(\`\${API_BASE}/check_admin_access.php?t=\${Date.now()}\`, { credentials: 'include' });
+                const url = API_BASE + '/check_admin_access.php?t=' + Date.now();
+                const response = await fetch(url, { credentials: 'include' });
                 const data = await response.json();
                 if (!data.success || !data.has_access) {
                     window.location.href = 'login.html';
@@ -131,12 +132,13 @@
 
         async function fetchWheelPrizes() {
             try {
-                const response = await fetch(\`\${API_BASE}/admin/get_wheel_prizes.php?status=active&t=\${Date.now()}\`, {
+                const url = API_BASE + '/admin/get_wheel_prizes.php?status=active&t=' + Date.now();
+                const response = await fetch(url, {
                     credentials: 'include'
                 });
                 const data = await response.json();
                 if (!data.success) {
-                    showResultMessage(data.message || 'Không thể tải phần thưởng', true);
+                    showResultMessage(data.message || 'Khong the tai phan thuong', true);
                     disableSpinButton(true);
                     return;
                 }
@@ -146,13 +148,13 @@
                 renderPrizeList(wheelData);
                 disableSpinButton(wheelData.length === 0);
                 if (wheelData.length === 0) {
-                    showResultMessage('Chưa có phần thưởng nào hoạt động. Hãy thêm tại tab "Vòng quay" trong admin.', true);
+                    showResultMessage('Chua co phan thuong nao hoat dong. Hay them tai tab "Vong quay" trong admin.', true);
                 } else {
-                    showResultMessage('Vòng quay đã sẵn sàng! Nhấn nút để bắt đầu.', false);
+                    showResultMessage('Vong quay da san sang! Nhan nut de bat dau.', false);
                 }
             } catch (error) {
                 console.error('Error loading wheel prizes:', error);
-                showResultMessage('Không thể tải dữ liệu phần thưởng.', true);
+                showResultMessage('Khong the tai du lieu phan thuong.', true);
                 disableSpinButton(true);
             }
         }
@@ -209,21 +211,25 @@
             if (!container) return;
 
             if (prizes.length === 0) {
-                container.innerHTML = '<div class="p-6 rounded-2xl bg-slate-100 text-slate-500 text-center">Chưa có phần thưởng hoạt động.</div>';
+                container.innerHTML = '<div class="p-6 rounded-2xl bg-slate-100 text-slate-500 text-center">Chua co phan thuong hoat dong.</div>';
                 return;
             }
 
-            container.innerHTML = prizes.map((prize, index) => `
-                <div class="p-4 rounded-2xl border border-slate-200 flex items-start gap-4">
-                    <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background:${wheelColors[index % wheelColors.length]}20">
-                        ${index + 1}
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-bold text-slate-900">${prize.prize_name}</h3>
-                        <p class="text-xs text-slate-500 mt-1">Đang hiển thị trên vòng quay</p>
-                    </div>
-                </div>
-            `).join('');
+            container.innerHTML = prizes.map(function (prize, index) {
+                const badge = '<div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background:' +
+                    wheelColors[index % wheelColors.length] + '20">' + (index + 1) + '</div>';
+
+                const title = '<h3 class="text-lg font-bold text-slate-900">' + prize.prize_name + '</h3>';
+                const desc = '<p class="text-xs text-slate-500 mt-1">Dang hien thi tren vong quay</p>';
+
+                return '<div class="p-4 rounded-2xl border border-slate-200 flex items-start gap-4">' +
+                    badge +
+                    '<div class="flex-1">' +
+                        title +
+                        desc +
+                    '</div>' +
+                '</div>';
+            }).join('');
         }
 
         function spinWheel() {
@@ -237,7 +243,7 @@
             currentRotation -= rotationAmount;
 
             const wheelGraphic = document.getElementById('wheel-graphic');
-            wheelGraphic.style.transform = \`rotate(\${currentRotation}deg)\`;
+            wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
 
             setTimeout(() => {
                 isSpinning = false;
@@ -257,14 +263,12 @@
         }
 
         function formatWinnerMessage(prize) {
-            if (!prize) return 'Không xác định kết quả.';
-            if (prize.prize_name?.toLowerCase().includes('chúc may mắn')) {
-                return \`Không trúng thưởng lần này.<br><small class="text-slate-400 block mt-1">Hãy thử quay lại nhé.</small>\`;
+            if (!prize) return 'Khong xac dinh ket qua.';
+            if (prize.prize_name?.toLowerCase().includes('chuc may man')) {
+                return 'Khong trung thuong lan nay.<br><small class="text-slate-400 block mt-1">Hay thu quay lai nhe.</small>';
             }
-            return \`
-                <strong>\${prize.prize_name}</strong>
-                <div class="text-slate-400 text-sm mt-1">Chúc mừng! Bạn đã trúng phần thưởng này.</div>
-            \`;
+            return '<strong>' + prize.prize_name + '</strong>' +
+                '<div class="text-slate-400 text-sm mt-1">Chuc mung! Ban da trung phan thuong nay.</div>';
         }
 
         function showResultMessage(message, isError = false) {
@@ -308,4 +312,3 @@
     </script>
 </body>
 </html>
-
