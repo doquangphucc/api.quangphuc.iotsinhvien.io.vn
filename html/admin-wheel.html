@@ -46,42 +46,36 @@
         </header>
 
         <main class="flex-1 container mx-auto px-6 py-10">
-            <div class="grid lg:grid-cols-2 gap-8">
-                <section class="bg-white rounded-3xl p-8 shadow-xl border border-slate-200 flex flex-col items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Wheel Section - 2/3 width -->
+                <section class="lg:col-span-2 bg-white rounded-3xl p-12 shadow-xl border border-slate-200 flex items-center justify-center">
                     <div class="relative">
                         <div class="absolute left-1/2 -translate-x-1/2 -top-10 pointer drop-shadow-lg"></div>
-                        <svg id="wheel-svg" viewBox="0 0 420 420" width="480" height="480" class="drop-shadow-2xl">
+                        <svg id="wheel-svg" viewBox="0 0 420 420" width="560" height="560" class="drop-shadow-2xl">
                             <g id="wheel-graphic"></g>
                             <circle cx="210" cy="210" r="40" fill="#0f172a" stroke="#94a3b8" stroke-width="4"></circle>
                             <text x="210" y="215" text-anchor="middle" fill="#f8fafc" font-size="14" font-weight="600">HC - ECO</text>
                         </svg>
                     </div>
-                    <div class="mt-8 text-center space-y-4 w-full max-w-md">
-                        <button id="spin-wheel-btn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white text-lg font-semibold shadow-lg shadow-orange-500/40 hover:shadow-orange-500/60 focus:ring-4 focus:ring-orange-400 transition">
-                            Click chuột hoặc nhấn Enter để quay
-                        </button>
-                        <p class="text-sm text-slate-500">Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
-                        <div id="wheel-result" class="bg-slate-100 border border-slate-300 rounded-2xl p-4 text-left min-h-[120px]">
-                            <p class="text-xs uppercase tracking-[0.3em] text-slate-600 mb-2">KẾT QUẢ</p>
-                            <div id="wheel-result-content" class="text-lg text-slate-900 font-semibold">Chưa quay lần nào.</div>
-                        </div>
-                    </div>
                 </section>
 
-                <section class="bg-white rounded-3xl p-8 shadow-2xl border border-slate-100 text-slate-900">
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <p class="text-sm text-slate-500 font-semibold uppercase tracking-[0.3em]">Danh sách phần thưởng</p>
-                            <h2 class="text-2xl font-bold text-slate-900">Đang hiển thị trên vòng quay</h2>
-                        </div>
-                        <div class="text-right">
-                            <p id="wheel-prize-count" class="text-3xl font-extrabold text-slate-900">0</p>
-                            <p class="text-sm text-slate-500">phần thưởng đang kích hoạt</p>
-                        </div>
+                <!-- Controls Section - 1/3 width -->
+                <section class="bg-white rounded-3xl p-8 shadow-xl border border-slate-200 flex flex-col justify-center space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 mb-2">Vòng Quay May Mắn</h2>
+                        <p class="text-sm text-slate-500">Nhấn nút bên dưới để bắt đầu quay</p>
                     </div>
-                    <div id="wheel-prize-list" class="space-y-4 max-h-[520px] overflow-auto pr-2">
-                        <div class="p-6 rounded-2xl bg-slate-100 text-slate-500 text-center">Đang tải dữ liệu...</div>
+                    
+                    <button id="spin-wheel-btn" class="w-full py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xl font-bold shadow-lg shadow-orange-500/40 hover:shadow-orange-500/60 focus:ring-4 focus:ring-orange-400 transition transform hover:scale-105">
+                        Click chuột hoặc nhấn Enter để quay
+                    </button>
+                    
+                    <div id="wheel-result" class="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-300 rounded-2xl p-6 min-h-[200px] flex flex-col justify-center">
+                        <p class="text-xs uppercase tracking-[0.3em] text-slate-600 mb-3 font-semibold">KẾT QUẢ</p>
+                        <div id="wheel-result-content" class="text-xl text-slate-900 font-bold">Chưa quay lần nào.</div>
                     </div>
+                    
+                    <p class="text-xs text-slate-400 text-center">Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
                 </section>
             </div>
         </main>
@@ -208,29 +202,7 @@
         }
 
         function renderPrizeList(prizes) {
-            const container = document.getElementById('wheel-prize-list');
-            if (!container) return;
-
-            if (prizes.length === 0) {
-                container.innerHTML = '<div class="p-6 rounded-2xl bg-slate-100 text-slate-500 text-center">Chua co phan thuong hoat dong.</div>';
-                return;
-            }
-
-            container.innerHTML = prizes.map(function (prize, index) {
-                const badge = '<div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background:' +
-                    wheelColors[index % wheelColors.length] + '20">' + (index + 1) + '</div>';
-
-                const title = '<h3 class="text-lg font-bold text-slate-900">' + prize.prize_name + '</h3>';
-                const desc = '<p class="text-xs text-slate-500 mt-1">Dang hien thi tren vong quay</p>';
-
-                return '<div class="p-4 rounded-2xl border border-slate-200 flex items-start gap-4">' +
-                    badge +
-                    '<div class="flex-1">' +
-                        title +
-                        desc +
-                    '</div>' +
-                '</div>';
-            }).join('');
+            // Prize list removed - no longer needed in new layout
         }
 
         function spinWheel() {
