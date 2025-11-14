@@ -121,6 +121,9 @@
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="rewards" onclick="showTab('rewards')">
                     🎁 Phần thưởng
                 </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="wheel" onclick="showTab('wheel')">
+                    🎡 Vòng quay
+                </button>
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="intro-posts" onclick="showTab('intro-posts')">
                     📝 Bài giới thiệu
                 </button>
@@ -500,6 +503,67 @@
                     </button>
                 </div>
                 <div id="rewards-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- Wheel Tab -->
+        <div id="tab-wheel" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">🎡 Quản lý vòng quay</h2>
+                        <p class="text-sm text-gray-600 mt-1">Thiết lập các phần thưởng sẽ hiển thị trên vòng quay admin.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="admin-wheel.html" target="_blank" class="px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold text-center hover:bg-blue-700">
+                            🚀 Mở trang vòng quay
+                        </a>
+                        <button onclick="openWheelPrizeModal()" class="px-5 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700">
+                            + Thêm phần thưởng
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                    <div class="p-4 rounded-2xl bg-green-50 border border-green-100">
+                        <p class="text-sm font-semibold text-green-700">Tổng phần thưởng</p>
+                        <p id="wheel-total-prizes" class="text-3xl font-bold text-green-900 mt-1">0</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+                        <p class="text-sm font-semibold text-emerald-700">Đang kích hoạt</p>
+                        <p id="wheel-active-prizes" class="text-3xl font-bold text-emerald-900 mt-1">0</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-100">
+                        <p class="text-sm font-semibold text-indigo-700">Tổng trọng số</p>
+                        <p id="wheel-total-weight" class="text-3xl font-bold text-indigo-900 mt-1">0</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-purple-50 border border-purple-100">
+                        <p class="text-sm font-semibold text-purple-700">Trọng số đang dùng</p>
+                        <p id="wheel-active-weight" class="text-3xl font-bold text-purple-900 mt-1">0</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Tên phần thưởng</th>
+                                <th class="px-4 py-3 text-center">Biểu tượng</th>
+                                <th class="px-4 py-3 text-center">Màu</th>
+                                <th class="px-4 py-3 text-center">Trọng số</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-left">Mô tả</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wheel-prizes-tbody">
+                            <tr>
+                                <td colspan="7" class="px-4 py-10 text-center text-gray-500">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">🎯 Danh sách được sắp xếp theo trọng số từ cao xuống thấp. Trọng số càng cao thì tỉ lệ xuất hiện càng lớn.</p>
             </div>
         </div>
 
@@ -952,6 +1016,66 @@
                     </button>
                     <button type="button" onclick="closeRewardModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
                         Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Wheel Prize Modal -->
+    <div id="wheelPrizeModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="wheelPrizeModalTitle">Thêm phần thưởng vòng quay</h3>
+            <form id="wheelPrizeForm" onsubmit="saveWheelPrize(event)">
+                <input type="hidden" id="wheel_prize_id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên phần thưởng *</label>
+                        <input type="text" id="wheel_prize_name" required class="w-full px-4 py-2 border rounded-lg" placeholder="Ví dụ: Voucher 500K">
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Biểu tượng (emoji)</label>
+                            <input type="text" id="wheel_prize_icon" maxlength="10" class="w-full px-4 py-2 border rounded-lg" placeholder="🎁">
+                            <p class="text-xs text-gray-500 mt-1">Có thể nhập emoji hoặc chữ (tối đa 10 ký tự)</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Màu hiển thị</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="wheel_prize_color" value="#16a34a" class="h-10 w-16 border rounded-lg">
+                                <input type="text" id="wheel_prize_color_hex" class="flex-1 px-4 py-2 border rounded-lg" placeholder="#16a34a">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Chọn màu hoặc nhập mã hex</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Trọng số xác suất *</label>
+                            <input type="number" id="wheel_prize_weight" min="1" value="1" required class="w-full px-4 py-2 border rounded-lg">
+                            <p class="text-xs text-gray-500 mt-1">Trọng số càng lớn thì tỉ lệ xuất hiện càng cao</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Giá trị / ghi chú</label>
+                            <input type="text" id="wheel_prize_value" class="w-full px-4 py-2 border rounded-lg" placeholder="Ví dụ: 500.000đ">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Mô tả chi tiết</label>
+                        <textarea id="wheel_prize_description" rows="3" class="w-full px-4 py-2 border rounded-lg" placeholder="Thông tin chi tiết, điều kiện áp dụng..."></textarea>
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="wheel_prize_is_active" checked>
+                            <span class="font-semibold">Kích hoạt trên vòng quay</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        💾 Lưu phần thưởng
+                    </button>
+                    <button type="button" onclick="closeWheelPrizeModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
                     </button>
                 </div>
             </form>
@@ -2245,7 +2369,8 @@
                      loadTickets(currentTicketFilterUserId || 0, 1); 
                      updateTicketFilterUsers(); 
                      break;
-                 case 'rewards': loadRewards(); break;
+                case 'rewards': loadRewards(); break;
+                case 'wheel': loadWheelPrizes(); break;
                  case 'intro-posts': loadIntroPosts(); break;
                 case 'projects': loadProjects(); break;
                 case 'dich-vu': loadDichVu(); break;

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vòng Quay Admin - HC Eco System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #wheel-graphic {
+            transition: transform 4.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-origin: 50% 50%;
+        }
+        .pointer {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid #f97316;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 min-h-screen text-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-slate-900/80 border-b border-slate-800">
+            <div class="container mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.3em] text-orange-400">HC Eco System</p>
+                    <h1 class="text-2xl font-extrabold text-white">Bảng Điều Khiển Vòng Quay</h1>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="admin.html" class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800 transition">
+                        Quay về Admin
+                    </a>
+                    <button id="refresh-prizes" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-900 font-semibold hover:bg-white transition">
+                        Tải lại phần thưởng
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 container mx-auto px-6 py-10">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <section class="bg-slate-900 rounded-3xl p-8 shadow-2xl border border-slate-800 flex flex-col items-center">
+                    <div class="relative">
+                        <div class="absolute left-1/2 -translate-x-1/2 -top-8 pointer drop-shadow-lg"></div>
+                        <svg id="wheel-svg" viewBox="0 0 420 420" width="360" height="360" class="drop-shadow-2xl">
+                            <g id="wheel-graphic"></g>
+                            <circle cx="210" cy="210" r="40" fill="#0f172a" stroke="#94a3b8" stroke-width="4"></circle>
+                            <text x="210" y="215" text-anchor="middle" fill="#f8fafc" font-size="14" font-weight="600">HC • ECO</text>
+                        </svg>
+                    </div>
+                    <div class="mt-8 text-center space-y-4 w-full max-w-md">
+                        <button id="spin-wheel-btn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white text-lg font-semibold shadow-lg shadow-orange-500/40 hover:shadow-orange-500/60 focus:ring-4 focus:ring-orange-400 transition">
+                            Click chuột hoặc nhấn Enter để quay
+                        </button>
+                        <p class="text-sm text-slate-400">🎯 Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
+                        <div id="wheel-result" class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-left min-h-[120px]">
+                            <p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-2">KẾT QUẢ</p>
+                            <div id="wheel-result-content" class="text-lg text-slate-100 font-semibold">Chưa quay lần nào.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-3xl p-8 shadow-2xl border border-slate-100 text-slate-900">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <p class="text-sm text-slate-500 font-semibold uppercase tracking-[0.3em]">Danh sách phần thưởng</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Đang hiển thị trên vòng quay</h2>
+                        </div>
+                        <div class="text-right">
+                            <p id="wheel-prize-count" class="text-3xl font-extrabold text-slate-900">0</p>
+                            <p class="text-sm text-slate-500">phần thưởng đang kích hoạt</p>
+                        </div>
+                    </div>
+                    <div id="wheel-prize-list" class="space-y-4 max-h-[520px] overflow-auto pr-2">
+                        <div class="p-6 rounded-2xl bg-slate-100 text-slate-500 text-center">Đang tải dữ liệu...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = '../api';
+        let wheelData = [];
+        let wheelSegments = [];
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initWheelAdmin();
+            document.getElementById('spin-wheel-btn').addEventListener('click', spinWheel);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !isSpinning) {
+                    spinWheel();
+                }
+            });
+            document.getElementById('refresh-prizes').addEventListener('click', fetchWheelPrizes);
+        });
+
+        async function initWheelAdmin() {
+            const hasAccess = await checkAdminAccess();
+            if (hasAccess) {
+                fetchWheelPrizes();
+            }
+        }
+
+        async function checkAdminAccess() {
+            try {
+                const response = await fetch(\`\${API_BASE}/check_admin_access.php?t=\${Date.now()}\`, { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success || !data.has_access) {
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Admin check failed:', error);
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+
+        async function fetchWheelPrizes() {
+            try {
+                const response = await fetch(\`\${API_BASE}/admin/get_wheel_prizes.php?status=active&t=\${Date.now()}\`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    showResultMessage(data.message || 'Không thể tải phần thưởng', true);
+                    disableSpinButton(true);
+                    return;
+                }
+                wheelData = data.data?.prizes || [];
+                document.getElementById('wheel-prize-count').textContent = wheelData.length;
+                buildWheel(wheelData);
+                renderPrizeList(wheelData);
+                disableSpinButton(wheelData.length === 0);
+                if (wheelData.length === 0) {
+                    showResultMessage('Chưa có phần thưởng nào hoạt động. Hãy thêm tại tab "Vòng quay" trong admin.', true);
+                } else {
+                    showResultMessage('Vòng quay đã sẵn sàng! Nhấn nút để bắt đầu.', false);
+                }
+            } catch (error) {
+                console.error('Error loading wheel prizes:', error);
+                showResultMessage('Không thể tải dữ liệu phần thưởng.', true);
+                disableSpinButton(true);
+            }
+        }
+
+        function buildWheel(prizes) {
+            const svgGroup = document.getElementById('wheel-graphic');
+            if (!svgGroup) return;
+            svgGroup.innerHTML = '';
+            wheelSegments = [];
+
+            const totalWeight = prizes.reduce((sum, prize) => sum + Math.max(prize.probability_weight || 1, 1), 0) || 1;
+            let startAngle = -90;
+            prizes.forEach((prize) => {
+                const weight = Math.max(prize.probability_weight || 1, 1);
+                const sliceAngle = (weight / totalWeight) * 360;
+                const endAngle = startAngle + sliceAngle;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', describeArc(210, 210, 180, startAngle, endAngle));
+                path.setAttribute('fill', prize.prize_color || '#334155');
+                path.setAttribute('stroke', '#0f172a');
+                path.setAttribute('stroke-width', '2');
+                svgGroup.appendChild(path);
+
+                const midAngle = startAngle + sliceAngle / 2;
+                const textPoint = polarToCartesian(210, 210, 115, midAngle);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', textPoint.x);
+                text.setAttribute('y', textPoint.y);
+                text.setAttribute('fill', '#0f172a');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-weight', '700');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('alignment-baseline', 'middle');
+                text.textContent = prize.prize_icon || '🎁';
+                svgGroup.appendChild(text);
+
+                wheelSegments.push({
+                    prize,
+                    startAngle,
+                    endAngle,
+                    midAngle,
+                    weight,
+                });
+
+                startAngle = endAngle;
+            });
+        }
+
+        function renderPrizeList(prizes) {
+            const container = document.getElementById('wheel-prize-list');
+            if (!container) return;
+
+            if (prizes.length === 0) {
+                container.innerHTML = '<div class="p-6 rounded-2xl bg-slate-100 text-slate-500 text-center">Chưa có phần thưởng hoạt động.</div>';
+                return;
+            }
+
+            container.innerHTML = prizes.map(prize => `
+                <div class="p-4 rounded-2xl border border-slate-200 flex items-start gap-4">
+                    <div class="flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center text-2xl" style="background:${(prize.prize_color || '#e2e8f0')}20">
+                        ${prize.prize_icon || '🎁'}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-lg font-bold text-slate-900">${prize.prize_name}</h3>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">Trọng số: ${prize.probability_weight || 1}</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-1">${prize.prize_description || 'Không có mô tả.'}</p>
+                        ${prize.prize_value ? `<p class="text-sm text-slate-500 mt-1">Giá trị: ${prize.prize_value}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function spinWheel() {
+            if (isSpinning || wheelSegments.length === 0) return;
+            isSpinning = true;
+            disableSpinButton(true, 'Đang quay...');
+
+            const winner = pickRandomSegment();
+            const extraSpins = 4 + Math.random() * 2;
+            const rotationAmount = extraSpins * 360 + (winner.midAngle + 90);
+            currentRotation -= rotationAmount;
+
+            const wheelGraphic = document.getElementById('wheel-graphic');
+            wheelGraphic.style.transform = \`rotate(\${currentRotation}deg)\`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                disableSpinButton(false, 'Click chuột hoặc nhấn Enter để quay');
+                showResultMessage(formatWinnerMessage(winner.prize), false);
+            }, 4600);
+        }
+
+        function pickRandomSegment() {
+            const total = wheelSegments.reduce((sum, seg) => sum + seg.weight, 0);
+            let random = Math.random() * total;
+            for (const segment of wheelSegments) {
+                random -= segment.weight;
+                if (random <= 0) return segment;
+            }
+            return wheelSegments[wheelSegments.length - 1];
+        }
+
+        function formatWinnerMessage(prize) {
+            if (!prize) return 'Không xác định kết quả.';
+            if (prize.prize_name?.toLowerCase().includes('chúc may mắn')) {
+                return \`😢 Chúc may mắn lần sau! \n<small class="text-slate-400 block mt-1">Hãy thử quay lại nhé.</small>\`;
+            }
+            return \`
+                🎉 <strong>\${prize.prize_name}</strong>
+                <div class="text-slate-400 text-sm mt-1">\${prize.prize_value || prize.prize_description || 'Phần thưởng đặc biệt'}</div>
+            \`;
+        }
+
+        function showResultMessage(message, isError = false) {
+            const resultArea = document.getElementById('wheel-result-content');
+            if (!resultArea) return;
+            resultArea.innerHTML = message;
+            resultArea.classList.toggle('text-red-400', isError);
+            resultArea.classList.toggle('text-slate-100', !isError);
+        }
+
+        function disableSpinButton(state, text) {
+            const button = document.getElementById('spin-wheel-btn');
+            if (!button) return;
+            button.disabled = state;
+            if (text) button.textContent = text;
+            button.classList.toggle('opacity-60', state);
+            button.classList.toggle('cursor-not-allowed', state);
+        }
+
+        function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+            const angleInRadians = (angleInDegrees) * Math.PI / 180.0;
+            return {
+                x: centerX + radius * Math.cos(angleInRadians),
+                y: centerY + radius * Math.sin(angleInRadians)
+            };
+        }
+
+        function describeArc(x, y, radius, startAngle, endAngle) {
+            const start = polarToCartesian(x, y, radius, endAngle);
+            const end = polarToCartesian(x, y, radius, startAngle);
+            const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+            return [
+                'M', x, y,
+                'L', start.x, start.y,
+                'A', radius, radius, 0, largeArcFlag, 0, end.x, end.y,
+                'Z'
+            ].join(' ');
+        }
+    </script>
+</body>
+</html>
+

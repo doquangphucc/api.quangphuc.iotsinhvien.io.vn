@@ -283,6 +283,25 @@ CREATE TABLE IF NOT EXISTS reward_templates (
 );
 
 -- =====================================================
+-- 14.1 BẢNG WHEEL_PRIZES (Phần thưởng dành riêng cho vòng quay admin)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS wheel_prizes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    prize_name VARCHAR(255) NOT NULL COMMENT 'Tên hiển thị trên vòng quay',
+    prize_description TEXT COMMENT 'Mô tả chi tiết hoặc ghi chú',
+    prize_value VARCHAR(255) DEFAULT NULL COMMENT 'Thông tin giá trị/ưu đãi',
+    prize_icon VARCHAR(50) DEFAULT '🎁' COMMENT 'Emoji hoặc biểu tượng',
+    prize_color VARCHAR(20) DEFAULT '#16a34a' COMMENT 'Màu hiển thị dạng hex',
+    probability_weight INT DEFAULT 1 COMMENT 'Trọng số xác suất (>=1)',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Có hiển thị trên vòng quay hay không',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_wheel_prizes_active ON wheel_prizes(is_active);
+CREATE INDEX idx_wheel_prizes_weight ON wheel_prizes(probability_weight);
+
+-- =====================================================
 -- 15. BẢNG LOTTERY_REWARDS (Phần thưởng vòng quay)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS lottery_rewards (
@@ -507,7 +526,7 @@ CREATE INDEX idx_dich_vu_display_order ON dich_vu(display_order);
 CREATE TABLE IF NOT EXISTS user_permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL COMMENT 'ID người dùng',
-    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu, users, home, contacts)',
+    permission_key VARCHAR(50) NOT NULL COMMENT 'Khóa quyền (categories, products, survey, packages, orders, tickets, rewards, intro-posts, projects, dich-vu, users, home, contacts, wheel)',
     can_view BOOLEAN DEFAULT FALSE COMMENT 'Quyền xem',
     can_create BOOLEAN DEFAULT FALSE COMMENT 'Quyền tạo mới',
     can_edit BOOLEAN DEFAULT FALSE COMMENT 'Quyền sửa',

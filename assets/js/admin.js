@@ -5,6 +5,8 @@ let productsData = [];
 let rewardTemplatesData = [];
 let usersData = [];
 let ticketsData = [];
+let wheelPrizesData = [];
+let wheelColorSyncInitialized = false;
 
 // Permissions Management
 let userPermissions = {};
@@ -1088,6 +1090,219 @@ async function deleteReward(id) {
         } else {
             alert('Có lỗi xảy ra');
         }
+    }
+}
+
+// Wheel prizes
+async function loadWheelPrizes() {
+    try {
+        const response = await fetch(`${API_BASE}/admin/get_wheel_prizes.php?status=all&t=${Date.now()}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!data.success) {
+            if (typeof showToast === 'function') showToast(data.message || 'Không thể tải phần thưởng vòng quay', 'error');
+            return;
+        }
+        wheelPrizesData = data.data?.prizes || [];
+        updateWheelStatsDisplay(data.data?.stats || {});
+        renderWheelPrizes(wheelPrizesData);
+    } catch (error) {
+        console.error('Error loading wheel prizes:', error);
+        if (typeof showToast === 'function') showToast('Không thể tải phần thưởng vòng quay', 'error');
+    }
+}
+
+function updateWheelStatsDisplay(stats) {
+    const total = document.getElementById('wheel-total-prizes');
+    const active = document.getElementById('wheel-active-prizes');
+    const totalWeight = document.getElementById('wheel-total-weight');
+    const activeWeight = document.getElementById('wheel-active-weight');
+    if (total) total.textContent = stats.total_count ?? 0;
+    if (active) active.textContent = stats.active_count ?? 0;
+    if (totalWeight) totalWeight.textContent = stats.total_weight ?? 0;
+    if (activeWeight) activeWeight.textContent = stats.active_weight ?? 0;
+}
+
+function renderWheelPrizes(prizes) {
+    const tbody = document.getElementById('wheel-prizes-tbody');
+    if (!tbody) return;
+
+    if (!prizes || prizes.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-4 py-10 text-center text-gray-500">
+                    Chưa có phần thưởng nào. Nhấn "Thêm phần thưởng" để bắt đầu.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = prizes.map(prize => `
+        <tr class="border-b hover:bg-gray-50">
+            <td class="px-4 py-3">
+                <div class="font-semibold text-gray-900">${prize.prize_name}</div>
+                ${prize.prize_value ? `<div class="text-sm text-gray-500">${prize.prize_value}</div>` : ''}
+            </td>
+            <td class="px-4 py-3 text-center text-2xl">${prize.prize_icon || '🎁'}</td>
+            <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center gap-2">
+                    <span class="h-6 w-6 rounded-full border" style="background:${prize.prize_color || '#d1d5db'}"></span>
+                    <span class="font-mono text-sm">${prize.prize_color || '-'}</span>
+                </span>
+            </td>
+            <td class="px-4 py-3 text-center font-semibold text-gray-800">${prize.probability_weight}</td>
+            <td class="px-4 py-3 text-center">
+                <span class="px-3 py-1 rounded-full text-sm font-medium ${prize.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}">
+                    ${prize.is_active ? 'Đang dùng' : 'Tạm ẩn'}
+                </span>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-600">
+                ${prize.prize_description || '-'}
+            </td>
+            <td class="px-4 py-3 text-center">
+                <div class="flex flex-col gap-2">
+                    <button onclick="openWheelPrizeModal(${prize.id})" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                        Sửa
+                    </button>
+                    <button onclick="deleteWheelPrize(${prize.id})" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
+                        Xóa
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openWheelPrizeModal(id = null) {
+    const modal = document.getElementById('wheelPrizeModal');
+    if (!modal) return;
+    setupWheelColorSync();
+
+    const isEdit = Boolean(id);
+    document.getElementById('wheelPrizeModalTitle').textContent = isEdit ? 'Sửa phần thưởng vòng quay' : 'Thêm phần thưởng vòng quay';
+    document.getElementById('wheel_prize_id').value = id || '';
+    document.getElementById('wheel_prize_name').value = '';
+    document.getElementById('wheel_prize_icon').value = '🎁';
+    document.getElementById('wheel_prize_color').value = '#16a34a';
+    document.getElementById('wheel_prize_color_hex').value = '#16a34a';
+    document.getElementById('wheel_prize_weight').value = 1;
+    document.getElementById('wheel_prize_value').value = '';
+    document.getElementById('wheel_prize_description').value = '';
+    document.getElementById('wheel_prize_is_active').checked = true;
+
+    if (isEdit) {
+        const prize = wheelPrizesData.find(p => p.id == id);
+        if (prize) {
+            document.getElementById('wheel_prize_name').value = prize.prize_name || '';
+            document.getElementById('wheel_prize_icon').value = prize.prize_icon || '🎁';
+            document.getElementById('wheel_prize_color').value = prize.prize_color || '#16a34a';
+            document.getElementById('wheel_prize_color_hex').value = prize.prize_color || '#16a34a';
+            document.getElementById('wheel_prize_weight').value = prize.probability_weight || 1;
+            document.getElementById('wheel_prize_value').value = prize.prize_value || '';
+            document.getElementById('wheel_prize_description').value = prize.prize_description || '';
+            document.getElementById('wheel_prize_is_active').checked = !!prize.is_active;
+        }
+    }
+
+    modal.classList.add('show');
+}
+
+function closeWheelPrizeModal() {
+    const modal = document.getElementById('wheelPrizeModal');
+    if (modal) modal.classList.remove('show');
+}
+
+function setupWheelColorSync() {
+    if (wheelColorSyncInitialized) return;
+    const colorInput = document.getElementById('wheel_prize_color');
+    const colorHexInput = document.getElementById('wheel_prize_color_hex');
+    if (!colorInput || !colorHexInput) return;
+    colorInput.addEventListener('input', (e) => {
+        colorHexInput.value = e.target.value;
+    });
+    colorHexInput.addEventListener('input', (e) => {
+        let value = e.target.value.trim();
+        if (!value.startsWith('#')) {
+            value = '#' + value.replace('#', '');
+        }
+        if (/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value)) {
+            colorInput.value = value;
+        }
+    });
+    wheelColorSyncInitialized = true;
+}
+
+function getWheelColorValue() {
+    const colorInput = document.getElementById('wheel_prize_color');
+    const colorHexInput = document.getElementById('wheel_prize_color_hex');
+    let value = colorHexInput?.value?.trim() || colorInput?.value || '#16a34a';
+    if (!value.startsWith('#')) {
+        value = '#' + value.replace(/[^0-9a-fA-F]/g, '');
+    }
+    if (!/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value)) {
+        value = '#16a34a';
+    }
+    if (colorInput) colorInput.value = value;
+    if (colorHexInput) colorHexInput.value = value;
+    return value;
+}
+
+async function saveWheelPrize(event) {
+    event.preventDefault();
+    const payload = {
+        id: document.getElementById('wheel_prize_id').value || 0,
+        prize_name: document.getElementById('wheel_prize_name').value.trim(),
+        prize_icon: document.getElementById('wheel_prize_icon').value.trim() || '🎁',
+        prize_color: getWheelColorValue(),
+        probability_weight: parseInt(document.getElementById('wheel_prize_weight').value, 10) || 1,
+        prize_value: document.getElementById('wheel_prize_value').value.trim(),
+        prize_description: document.getElementById('wheel_prize_description').value.trim(),
+        is_active: document.getElementById('wheel_prize_is_active').checked
+    };
+
+    if (!payload.prize_name) {
+        if (typeof showToast === 'function') showToast('Tên phần thưởng không được để trống', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/admin/save_wheel_prize.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (typeof showToast === 'function') showToast(data.message, data.success ? 'success' : 'error');
+        if (data.success) {
+            closeWheelPrizeModal();
+            loadWheelPrizes();
+        }
+    } catch (error) {
+        console.error('Error saving wheel prize:', error);
+        if (typeof showToast === 'function') showToast('Không thể lưu phần thưởng', 'error');
+    }
+}
+
+async function deleteWheelPrize(id) {
+    if (!await customConfirm('Bạn có chắc muốn xóa phần thưởng này?')) return;
+    try {
+        const response = await fetch(`${API_BASE}/admin/delete_wheel_prize.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+        if (typeof showToast === 'function') showToast(data.message, data.success ? 'success' : 'error');
+        if (data.success) {
+            loadWheelPrizes();
+        }
+    } catch (error) {
+        console.error('Error deleting wheel prize:', error);
+        if (typeof showToast === 'function') showToast('Không thể xóa phần thưởng', 'error');
     }
 }
 
