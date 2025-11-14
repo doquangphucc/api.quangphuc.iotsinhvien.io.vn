@@ -278,33 +278,28 @@
         }
         
         function getSegmentAtPointer() {
-            // Pointer is at 90 degrees (top)
-            // After rotation, we need to find which segment contains 90 degrees
+            // Pointer is at 90 degrees (top) in fixed position
             const pointerAngle = 90;
             
-            // Normalize current rotation to 0-360 range
-            const normalizedRotation = ((currentRotation % 360) + 360) % 360;
-            
-            // Calculate the actual angle at pointer position after rotation
-            const angleAtPointer = (pointerAngle - normalizedRotation + 360) % 360;
-            
-            // Find which segment contains this angle
+            // Find which segment is at the pointer position after rotation
             for (const segment of wheelSegments) {
-                let start = segment.startAngle;
-                let end = segment.endAngle;
+                // Calculate where this segment is after rotation
+                const rotatedStart = segment.startAngle + currentRotation;
+                const rotatedEnd = segment.endAngle + currentRotation;
                 
-                // Normalize angles to positive values
-                start = ((start % 360) + 360) % 360;
-                end = ((end % 360) + 360) % 360;
+                // Normalize to 0-360 range
+                const normalizedStart = ((rotatedStart % 360) + 360) % 360;
+                const normalizedEnd = ((rotatedEnd % 360) + 360) % 360;
                 
-                // Check if angleAtPointer is within this segment
-                if (start <= end) {
-                    if (angleAtPointer >= start && angleAtPointer <= end) {
+                // Check if pointer angle (90) is within this segment
+                if (normalizedStart <= normalizedEnd) {
+                    // Normal case: segment doesn't cross 0/360 boundary
+                    if (pointerAngle >= normalizedStart && pointerAngle <= normalizedEnd) {
                         return segment;
                     }
                 } else {
-                    // Handle wrap-around case
-                    if (angleAtPointer >= start || angleAtPointer <= end) {
+                    // Wrap-around case: segment crosses 0/360 boundary
+                    if (pointerAngle >= normalizedStart || pointerAngle <= normalizedEnd) {
                         return segment;
                     }
                 }
