@@ -20,24 +20,38 @@
         .pointer {
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid #558b2f;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 50px solid #558b2f;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
         .result-box {
             background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
             border: 3px solid #7cb342;
             transition: all 0.3s ease;
+            min-height: 180px;
         }
         .result-box.show-result {
             animation: resultPulse 0.6s ease-in-out;
             border-color: #558b2f;
-            box-shadow: 0 0 20px rgba(124, 179, 66, 0.5);
+            box-shadow: 0 0 25px rgba(124, 179, 66, 0.6);
         }
         @keyframes resultPulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.08); }
+        }
+        .spin-button {
+            background: linear-gradient(135deg, #7cb342 0%, #8bc34a 50%, #9ccc65 100%);
+            box-shadow: 0 6px 20px rgba(124, 179, 66, 0.4);
+            transition: all 0.3s ease;
+        }
+        .spin-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 179, 66, 0.6);
+        }
+        .spin-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -65,7 +79,7 @@
                 <!-- Wheel Section - 2/3 width -->
                 <section class="lg:col-span-2 rounded-3xl p-12 flex items-center justify-center" style="background: linear-gradient(135deg, #ffffff 0%, #f1f8e9 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid #c5e1a5;">
                     <div class="relative">
-                        <div class="absolute left-1/2 -translate-x-1/2 -top-12 pointer"></div>
+                        <div class="absolute left-1/2 -translate-x-1/2 top-0 pointer" style="z-index: 10;"></div>
                         <svg id="wheel-svg" viewBox="0 0 420 420" width="560" height="560" style="filter: drop-shadow(0 10px 25px rgba(0,0,0,0.15));">
                             <g id="wheel-graphic"></g>
                             <circle cx="210" cy="210" r="45" fill="#558b2f" stroke="#7cb342" stroke-width="5"></circle>
@@ -81,12 +95,12 @@
                         <p class="text-base" style="color: #7cb342;">Nhấn nút bên dưới để bắt đầu quay</p>
                     </div>
                     
-                    <button id="spin-wheel-btn" class="w-full py-5 rounded-xl text-white text-xl font-bold shadow-lg transition transform hover:scale-105" style="background: linear-gradient(135deg, #7cb342 0%, #9ccc65 100%); box-shadow: 0 6px 20px rgba(124, 179, 66, 0.4);">
+                    <button id="spin-wheel-btn" class="spin-button w-full py-5 rounded-xl text-white text-xl font-bold">
                         Click chuột hoặc nhấn Enter để quay
                     </button>
                     
-                    <div id="wheel-result" class="result-box rounded-2xl p-6 min-h-[220px] flex flex-col justify-center" style="display: none;">
-                        <p class="text-sm uppercase tracking-widest mb-3 font-bold" style="color: #558b2f; letter-spacing: 0.2em;">KẾT QUẢ</p>
+                    <div id="wheel-result" class="result-box rounded-2xl p-6 flex flex-col justify-center" style="display: none;">
+                        <p class="text-sm uppercase tracking-widest mb-3 font-bold" style="color: #558b2f; letter-spacing: 0.2em;">PHẦN THƯỞNG</p>
                         <div id="wheel-result-content" class="text-2xl font-bold" style="color: #33691e;"></div>
                     </div>
                     
@@ -155,10 +169,12 @@
                 buildWheel(wheelData);
                 disableSpinButton(wheelData.length === 0);
                 
-                // Hide result box initially
                 const resultBox = document.getElementById('wheel-result');
-                if (resultBox) {
-                    resultBox.style.display = 'none';
+                if (wheelData.length === 0) {
+                    if (resultBox) resultBox.style.display = 'flex';
+                    showResultMessage('Chưa có phần thưởng nào hoạt động. Hãy thêm tại tab "Vòng quay" trong admin.', true);
+                } else {
+                    if (resultBox) resultBox.style.display = 'none';
                 }
             } catch (error) {
                 console.error('Error loading wheel prizes:', error);
@@ -235,7 +251,7 @@
             setTimeout(() => {
                 isSpinning = false;
                 disableSpinButton(false, 'Click chuột hoặc nhấn Enter để quay');
-                showResultMessage(formatWinnerMessage(winner.prize), false);
+                showWinnerResult(winner.prize);
             }, 4600);
         }
 
@@ -249,13 +265,28 @@
             return wheelSegments[wheelSegments.length - 1];
         }
 
-        function formatWinnerMessage(prize) {
-            if (!prize) return 'Khong xac dinh ket qua.';
-            if (prize.prize_name?.toLowerCase().includes('chuc may man')) {
-                return 'Khong trung thuong lan nay.<br><small class="text-slate-400 block mt-1">Hay thu quay lai nhe.</small>';
-            }
-            return '<strong>' + prize.prize_name + '</strong>' +
-                '<div class="text-slate-400 text-sm mt-1">Chuc mung! Ban da trung phan thuong nay.</div>';
+        function showWinnerResult(prize) {
+            const resultBox = document.getElementById('wheel-result');
+            const resultArea = document.getElementById('wheel-result-content');
+            if (!resultArea || !resultBox) return;
+            
+            resultBox.style.display = 'flex';
+            resultBox.classList.remove('show-result');
+            
+            setTimeout(() => {
+                if (!prize || !prize.prize_name) {
+                    resultArea.innerHTML = '<span style="color: #f44336;">Không xác định kết quả</span>';
+                } else if (prize.prize_name.toLowerCase().includes('chuc may man') || 
+                           prize.prize_name.toLowerCase().includes('chúc may mắn')) {
+                    resultArea.innerHTML = '<div style="text-align: center;"><div style="font-size: 1.8em; margin-bottom: 0.5em;">😔</div>' +
+                        '<div style="color: #ff9800; font-size: 1.3em;">Chúc bạn may mắn lần sau!</div></div>';
+                } else {
+                    resultArea.innerHTML = '<div style="text-align: center;"><div style="font-size: 2em; margin-bottom: 0.5em;">🎉</div>' +
+                        '<div style="font-size: 1.5em; color: #558b2f; margin-bottom: 0.3em;">' + prize.prize_name + '</div>' +
+                        '<div style="color: #7cb342; font-size: 1em;">Chúc mừng bạn đã trúng thưởng!</div></div>';
+                }
+                resultBox.classList.add('show-result');
+            }, 100);
         }
 
         function showResultMessage(message, isError = false) {
@@ -268,6 +299,9 @@
             
             setTimeout(() => {
                 resultArea.innerHTML = message;
+                if (isError) {
+                    resultArea.style.color = '#f44336';
+                }
                 resultBox.classList.add('show-result');
             }, 100);
         }
