@@ -26,19 +26,19 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 min-h-screen text-gray-100">
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen text-gray-900">
     <div class="min-h-screen flex flex-col">
-        <header class="bg-slate-900/80 border-b border-slate-800">
+        <header class="bg-white/80 backdrop-blur-sm border-b border-slate-200 shadow-sm">
             <div class="container mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <p class="text-sm uppercase tracking-[0.3em] text-orange-400">HC Eco System</p>
-                    <h1 class="text-2xl font-extrabold text-white">Bảng Điều Khiển Vòng Quay</h1>
+                    <p class="text-sm uppercase tracking-[0.3em] text-orange-500 font-semibold">HC Eco System</p>
+                    <h1 class="text-2xl font-extrabold text-slate-900">Bảng Điều Khiển Vòng Quay</h1>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="admin.html" class="px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:bg-slate-800 transition">
+                    <a href="admin.html" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 transition">
                         Quay về Admin
                     </a>
-                    <button id="refresh-prizes" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-900 font-semibold hover:bg-white transition">
+                    <button id="refresh-prizes" class="px-4 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-600 transition">
                         Tải lại phần thưởng
                     </button>
                 </div>
@@ -47,10 +47,10 @@
 
         <main class="flex-1 container mx-auto px-6 py-10">
             <div class="grid lg:grid-cols-2 gap-8">
-                <section class="bg-slate-900 rounded-3xl p-8 shadow-2xl border border-slate-800 flex flex-col items-center">
+                <section class="bg-white rounded-3xl p-8 shadow-xl border border-slate-200 flex flex-col items-center">
                     <div class="relative">
-                        <div class="absolute left-1/2 -translate-x-1/2 -top-8 pointer drop-shadow-lg"></div>
-                        <svg id="wheel-svg" viewBox="0 0 420 420" width="360" height="360" class="drop-shadow-2xl">
+                        <div class="absolute left-1/2 -translate-x-1/2 -top-10 pointer drop-shadow-lg"></div>
+                        <svg id="wheel-svg" viewBox="0 0 420 420" width="480" height="480" class="drop-shadow-2xl">
                             <g id="wheel-graphic"></g>
                             <circle cx="210" cy="210" r="40" fill="#0f172a" stroke="#94a3b8" stroke-width="4"></circle>
                             <text x="210" y="215" text-anchor="middle" fill="#f8fafc" font-size="14" font-weight="600">HC - ECO</text>
@@ -60,10 +60,10 @@
                         <button id="spin-wheel-btn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white text-lg font-semibold shadow-lg shadow-orange-500/40 hover:shadow-orange-500/60 focus:ring-4 focus:ring-orange-400 transition">
                             Click chuột hoặc nhấn Enter để quay
                         </button>
-                        <p class="text-sm text-slate-400">Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
-                        <div id="wheel-result" class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-left min-h-[120px]">
-                            <p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-2">KẾT QUẢ</p>
-                            <div id="wheel-result-content" class="text-lg text-slate-100 font-semibold">Chưa quay lần nào.</div>
+                        <p class="text-sm text-slate-500">Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
+                        <div id="wheel-result" class="bg-slate-100 border border-slate-300 rounded-2xl p-4 text-left min-h-[120px]">
+                            <p class="text-xs uppercase tracking-[0.3em] text-slate-600 mb-2">KẾT QUẢ</p>
+                            <div id="wheel-result-content" class="text-lg text-slate-900 font-semibold">Chưa quay lần nào.</div>
                         </div>
                     </div>
                 </section>
