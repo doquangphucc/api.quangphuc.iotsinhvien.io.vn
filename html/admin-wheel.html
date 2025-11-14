@@ -53,14 +53,14 @@
                         <svg id="wheel-svg" viewBox="0 0 420 420" width="360" height="360" class="drop-shadow-2xl">
                             <g id="wheel-graphic"></g>
                             <circle cx="210" cy="210" r="40" fill="#0f172a" stroke="#94a3b8" stroke-width="4"></circle>
-                            <text x="210" y="215" text-anchor="middle" fill="#f8fafc" font-size="14" font-weight="600">HC • ECO</text>
+                            <text x="210" y="215" text-anchor="middle" fill="#f8fafc" font-size="14" font-weight="600">HC - ECO</text>
                         </svg>
                     </div>
                     <div class="mt-8 text-center space-y-4 w-full max-w-md">
                         <button id="spin-wheel-btn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 text-white text-lg font-semibold shadow-lg shadow-orange-500/40 hover:shadow-orange-500/60 focus:ring-4 focus:ring-orange-400 transition">
                             Click chuột hoặc nhấn Enter để quay
                         </button>
-                        <p class="text-sm text-slate-400">🎯 Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
+                        <p class="text-sm text-slate-400">Vòng quay dùng dữ liệu thực tế từ tab "Vòng quay" trong Admin.</p>
                         <div id="wheel-result" class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-left min-h-[120px]">
                             <p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-2">KẾT QUẢ</p>
                             <div id="wheel-result-content" class="text-lg text-slate-100 font-semibold">Chưa quay lần nào.</div>
@@ -186,7 +186,7 @@
                 text.setAttribute('font-weight', '700');
                 text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('alignment-baseline', 'middle');
-                text.textContent = prize.prize_icon || '🎁';
+                text.textContent = prize.prize_icon || '*';
                 svgGroup.appendChild(text);
 
                 wheelSegments.push({
@@ -213,7 +213,7 @@
             container.innerHTML = prizes.map(prize => `
                 <div class="p-4 rounded-2xl border border-slate-200 flex items-start gap-4">
                     <div class="flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center text-2xl" style="background:${(prize.prize_color || '#e2e8f0')}20">
-                        ${prize.prize_icon || '🎁'}
+                        ${prize.prize_icon || '*'}
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 flex-wrap">
@@ -260,10 +260,10 @@
         function formatWinnerMessage(prize) {
             if (!prize) return 'Không xác định kết quả.';
             if (prize.prize_name?.toLowerCase().includes('chúc may mắn')) {
-                return \`😢 Chúc may mắn lần sau! \n<small class="text-slate-400 block mt-1">Hãy thử quay lại nhé.</small>\`;
+                return \`Không trúng thưởng lần này.<br><small class="text-slate-400 block mt-1">Hãy thử quay lại nhé.</small>\`;
             }
             return \`
-                🎉 <strong>\${prize.prize_name}</strong>
+                <strong>\${prize.prize_name}</strong>
                 <div class="text-slate-400 text-sm mt-1">\${prize.prize_value || prize.prize_description || 'Phần thưởng đặc biệt'}</div>
             \`;
         }
@@ -305,6 +305,7 @@
                 'Z'
             ].join(' ');
         }
+
     </script>
 </body>
 </html>
