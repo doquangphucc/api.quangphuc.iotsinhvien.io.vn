@@ -242,8 +242,12 @@
 
             const winner = pickRandomSegment();
             const extraSpins = 4 + Math.random() * 2;
-            const rotationAmount = extraSpins * 360 + (winner.midAngle + 90);
-            currentRotation -= rotationAmount;
+            
+            // Calculate rotation so winner's midAngle points to top (0 degrees)
+            // Since wheel starts at -90 and pointer is at top (0), we need to align winner.midAngle to 0
+            const targetAngle = -winner.midAngle;
+            const rotationAmount = extraSpins * 360 + targetAngle;
+            currentRotation += rotationAmount;
 
             const wheelGraphic = document.getElementById('wheel-graphic');
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
