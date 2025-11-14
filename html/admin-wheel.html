@@ -255,17 +255,11 @@
             isSpinning = true;
             disableSpinButton(true, 'Đang quay...');
 
-            const winner = pickRandomSegment();
+            // Random rotation: 4-6 full spins + random offset to keep unpredictability
             const extraSpins = 4 + Math.random() * 2;
-            
-            // Pointer is at top (90 degrees in standard coordinates)
-            // CSS rotate() rotates COUNTER-CLOCKWISE for positive values
-            // To bring winner.midAngle to pointer (90 degrees), we need to rotate CLOCKWISE
-            // So we use NEGATIVE rotation: -(90 - winner.midAngle) = winner.midAngle - 90
-            const pointerAngle = 90;
-            const targetAngle = winner.midAngle - pointerAngle;
-            const rotationAmount = extraSpins * 360 + targetAngle;
-            currentRotation -= rotationAmount;
+            const randomOffset = Math.random() * 360;
+            const rotationAmount = extraSpins * 360 + randomOffset;
+            currentRotation -= rotationAmount; // negative for clockwise spin
 
             const wheelGraphic = document.getElementById('wheel-graphic');
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
@@ -274,52 +268,40 @@
                 isSpinning = false;
                 disableSpinButton(false, 'Click chuột hoặc nhấn Enter để quay');
                 
-                // Verify which segment is actually at the pointer position
                 const actualWinner = getSegmentAtPointer();
-                showWinnerResult(actualWinner ? actualWinner.prize : winner.prize);
+                if (actualWinner) {
+                    showWinnerResult(actualWinner.prize);
+                } else {
+                    showResultMessage('Không xác định được phần thưởng. Vui lòng quay lại.', true);
+                }
             }, 4600);
         }
         
         function getSegmentAtPointer() {
-            // Pointer is at 90 degrees (top) in fixed position
+            // Pointer is fixed at 90 degrees (12 o'clock)
             const pointerAngle = 90;
             
-            // Find which segment is at the pointer position after rotation
-            // Since we now rotate with NEGATIVE values (clockwise), we subtract rotation
+            // Normalize current rotation to 0-360
+            const normalizedRotation = ((currentRotation % 360) + 360) % 360;
+            // Determine which original angle now lies under the pointer
+            const angleAtPointer = (pointerAngle - normalizedRotation + 360) % 360;
+            
             for (const segment of wheelSegments) {
-                // Calculate where this segment is after rotation (subtract because rotation is negative/clockwise)
-                const rotatedStart = segment.startAngle - (-currentRotation);
-                const rotatedEnd = segment.endAngle - (-currentRotation);
+                let start = ((segment.startAngle % 360) + 360) % 360;
+                let end = ((segment.endAngle % 360) + 360) % 360;
                 
-                // Normalize to 0-360 range
-                const normalizedStart = ((rotatedStart % 360) + 360) % 360;
-                const normalizedEnd = ((rotatedEnd % 360) + 360) % 360;
-                
-                // Check if pointer angle (90) is within this segment
-                if (normalizedStart <= normalizedEnd) {
-                    // Normal case: segment doesn't cross 0/360 boundary
-                    if (pointerAngle >= normalizedStart && pointerAngle <= normalizedEnd) {
+                if (start <= end) {
+                    if (angleAtPointer >= start && angleAtPointer <= end) {
                         return segment;
                     }
                 } else {
-                    // Wrap-around case: segment crosses 0/360 boundary
-                    if (pointerAngle >= normalizedStart || pointerAngle <= normalizedEnd) {
+                    if (angleAtPointer >= start || angleAtPointer <= end) {
                         return segment;
                     }
                 }
             }
             
-            return wheelSegments[0];
-        }
-
-        function pickRandomSegment() {
-            const total = wheelSegments.reduce((sum, seg) => sum + seg.weight, 0);
-            let random = Math.random() * total;
-            for (const segment of wheelSegments) {
-                random -= segment.weight;
-                if (random <= 0) return segment;
-            }
-            return wheelSegments[wheelSegments.length - 1];
+            return null;
         }
 
         function showWinnerResult(prize) {
