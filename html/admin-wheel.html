@@ -182,28 +182,18 @@
                 svgGroup.appendChild(path);
 
                 const midAngle = startAngle + sliceAngle / 2;
-                
-                // Split text into characters and arrange vertically along radius
-                const chars = prize.prize_name.split('');
-                const charSpacing = 10;
-                const totalTextLength = chars.length * charSpacing;
-                const startRadius = 160;
-                
-                chars.forEach(function(char, charIndex) {
-                    const currentRadius = startRadius - (charIndex * charSpacing);
-                    const charPoint = polarToCartesian(210, 210, currentRadius, midAngle);
-                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', charPoint.x);
-                    text.setAttribute('y', charPoint.y);
-                    text.setAttribute('fill', '#0f172a');
-                    text.setAttribute('font-size', '11');
-                    text.setAttribute('font-weight', '600');
-                    text.setAttribute('text-anchor', 'middle');
-                    text.setAttribute('dominant-baseline', 'middle');
-                    text.setAttribute('transform', 'rotate(' + (midAngle + 90) + ' ' + charPoint.x + ' ' + charPoint.y + ')');
-                    text.textContent = char;
-                    svgGroup.appendChild(text);
-                });
+                const textPoint = polarToCartesian(210, 210, 120, midAngle);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', textPoint.x);
+                text.setAttribute('y', textPoint.y);
+                text.setAttribute('fill', '#0f172a');
+                text.setAttribute('font-size', '11');
+                text.setAttribute('font-weight', '700');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dominant-baseline', 'middle');
+                text.setAttribute('transform', 'rotate(' + midAngle + ' ' + textPoint.x + ' ' + textPoint.y + ')');
+                text.textContent = prize.prize_name;
+                svgGroup.appendChild(text);
 
                 wheelSegments.push({
                     prize,
