@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://api.quangphuc.iotsinhvien.io.vn/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Public pages (clean URLs; .htaccess maps to /html/*.html) -->
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/gioi-thieu</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/tam-nhin-su-menh</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/dich-vu</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/du-an</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/tin-tuc</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/pricing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/khao-sat-dien-mat-troi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/dat-hang</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/gio-hang</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/login</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/register</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/user_profile</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/order_history</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/order_detail</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/my-rewards</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/vong-quay-may-man</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/survey_history</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/survey_detail</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/lien-he</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/tro-thanh-nha-phan-phoi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Legal/policy pages -->
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/chinh-sach-bao-hanh</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/chinh-sach-bao-mat-thong-tin-ca-nhan</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/chinh-sach-bao-mat-thong-tin-thanh-toan</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/chinh-sach-doi-tra</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/dieu-khoan-dieu-kien</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+
+  <!-- Pricing landing aliases at project root -->
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/bao-gia-dong</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://api.quangphuc.iotsinhvien.io.vn/bao-gia-dong-fixed</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+</urlset>
+
+
