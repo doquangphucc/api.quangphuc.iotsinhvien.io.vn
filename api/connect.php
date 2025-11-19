@@ -19,6 +19,8 @@ $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 $allowedOrigins = [
     'http://localhost',
     'http://127.0.0.1',
+    'https://hceco.io.vn',
+    'http://hceco.io.vn',
     'https://api.quangphuc.iotsinhvien.io.vn',
     'http://api.quangphuc.iotsinhvien.io.vn'
 ];
