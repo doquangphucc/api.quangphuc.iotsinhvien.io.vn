@@ -80,7 +80,7 @@ function createPostElement(post, index) {
     const contentHTML = `
         <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}">
             ${post.highlight_text ? `<span style="color: ${highlightColor};" class="font-bold text-base uppercase tracking-wider">${escapeHtml(post.highlight_text)}</span>` : ''}
-            <h3 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-green-600 via-green-500 to-emerald-600 bg-clip-text text-transparent dark:from-green-400 dark:via-green-300 dark:to-emerald-400 mt-4 mb-6 leading-tight">${escapeHtml(post.title)}</h3>
+            <h3 class="home-post-title text-4xl sm:text-5xl lg:text-6xl font-extrabold mt-4 mb-6 leading-tight">${escapeHtml(post.title)}</h3>
             <p class="text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">${escapeHtml(post.description)}</p>
             ${featuresHTML ? `<ul class="space-y-3 mb-8">${featuresHTML}</ul>` : ''}
             ${post.button_text && post.button_url ? `
