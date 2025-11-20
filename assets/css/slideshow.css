@@ -1,257 +1,152 @@
-/* Background Slideshow Styles */
+/* =========================================================
+   Dynamic Aurora Background (replaces legacy slideshow)
+   ========================================================= */
+:root {
+    --slideshow-deep: #031a12;
+    --slideshow-accent: #062c1e;
+    --slideshow-aurora-1: rgba(15, 118, 110, 0.45);
+    --slideshow-aurora-2: rgba(52, 211, 153, 0.4);
+    --slideshow-aurora-3: rgba(59, 130, 246, 0.35);
+}
+
+body[data-theme="dark"] {
+    --slideshow-deep: #00070a;
+    --slideshow-accent: #02121a;
+    --slideshow-aurora-1: rgba(16, 185, 129, 0.3);
+    --slideshow-aurora-2: rgba(59, 130, 246, 0.25);
+    --slideshow-aurora-3: rgba(129, 140, 248, 0.3);
+}
+
 .slideshow-background {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100vw;
     height: 100vh;
     z-index: -1;
     overflow: hidden;
-    background: #000;
+    background: radial-gradient(circle at 20% 20%, rgba(38, 156, 120, 0.25), transparent 45%),
+                radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.2), transparent 45%),
+                linear-gradient(135deg, var(--slideshow-deep), var(--slideshow-accent));
 }
 
-.slideshow-slide {
+.slideshow-background::before,
+.slideshow-background::after {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: -20%;
+    background: radial-gradient(circle, var(--slideshow-aurora-1), transparent 55%);
+    filter: blur(60px);
+    animation: auroraShift 18s ease-in-out infinite alternate;
+}
+
+.slideshow-background::after {
+    background: radial-gradient(circle, var(--slideshow-aurora-2), transparent 55%);
+    animation-duration: 22s;
+    animation-delay: 3s;
+}
+
+.slideshow-background .aurora-layer {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 70%, rgba(59, 130, 246, 0.15), transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(16, 185, 129, 0.15), transparent 45%);
+    filter: blur(40px);
+    mix-blend-mode: screen;
+    animation: auroraDrift 24s ease-in-out infinite alternate;
+}
+
+.slideshow-background .grid-glow {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 120px 120px;
+    opacity: 0.35;
+    transform: perspective(800px) rotateX(45deg);
+    transform-origin: top;
+    animation: gridPulse 12s ease-in-out infinite;
+}
+
+.particle-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
+    mix-blend-mode: screen;
 }
 
-.slideshow-slide.active {
-    opacity: 1;
-}
-
-.slideshow-slide img,
-.slideshow-slide video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    min-width: 100%;
-    min-height: 100%;
-    max-width: none;
-    max-height: none;
-}
-
-/* Special handling for slideshow background images only */
-.slideshow-background .slideshow-slide img {
-    width: 100vw !important;
-    height: 100vh !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-/* Ensure product images are NOT affected by slideshow styles */
-.product-image,
-.product-image-container img,
-.slideshow-container img,
-.slideshow-slide img:not(.slideshow-background .slideshow-slide img) {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    object-position: center !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-}
-
-/* Overlay gradient for better text readability */
 .slideshow-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.3) 0%,
-        rgba(0, 0, 0, 0.1) 50%,
-        rgba(0, 0, 0, 0.4) 100%
-    );
+    inset: 0;
+    background: radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.12), transparent 55%),
+                linear-gradient(180deg, rgba(1, 10, 7, 0.1), rgba(0, 0, 0, 0.35));
+    z-index: 2;
+    pointer-events: none;
+}
+
+body[data-theme="dark"] .slideshow-overlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.65));
+}
+
+.noise-layer {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    mix-blend-mode: soft-light;
     z-index: 1;
 }
 
-/* Dark mode overlay */
-body[data-theme="dark"] .slideshow-overlay {
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.6) 0%,
-        rgba(0, 0, 0, 0.4) 50%,
-        rgba(0, 0, 0, 0.7) 100%
-    );
-}
-
-/* Animation effects */
-.slideshow-slide.fade-in {
-    animation: fadeIn 2s ease-in-out;
-}
-
-.slideshow-slide.fade-out {
-    animation: fadeOut 2s ease-in-out;
-}
-
-.slideshow-slide.zoom {
-    animation: zoomEffect 8s ease-in-out infinite alternate;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-@keyframes zoomEffect {
+@keyframes auroraShift {
     0% {
-        transform: scale(1);
+        transform: translate3d(-10%, -5%, 0) scale(1);
     }
     100% {
-        transform: scale(1.1);
+        transform: translate3d(10%, 5%, 0) scale(1.15);
     }
 }
 
-/* Ken Burns effect - subtle pan and zoom */
-.slideshow-slide.ken-burns {
-    animation: kenBurns 15s ease-in-out infinite alternate;
+@keyframes auroraDrift {
+    0% {
+        transform: translate3d(-5%, 0, 0) scale(1);
+    }
+    100% {
+        transform: translate3d(5%, 0, 0) scale(1.05);
+    }
 }
 
-@keyframes kenBurns {
+@keyframes gridPulse {
     0% {
-        transform: scale(1) translateX(0);
+        opacity: 0.2;
     }
     50% {
-        transform: scale(1.15) translateX(-3%);
+        opacity: 0.4;
     }
     100% {
-        transform: scale(1) translateX(0);
+        opacity: 0.2;
     }
 }
 
-/* Slide from right */
-.slideshow-slide.slide-right {
-    animation: slideRight 2s ease-out;
-}
-
-@keyframes slideRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Loading indicator */
-.slideshow-loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 1.5rem;
-    z-index: 10;
-}
-
-/* Slideshow controls - hidden by default, positioned at bottom center */
-.slideshow-controls {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 50;
-    display: none; /* Hidden by default */
-    gap: 10px;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Show controls on desktop when hovering over slideshow */
-@media (min-width: 769px) {
-    .slideshow-background:hover .slideshow-controls {
-        display: flex;
-    }
-}
-
-.slideshow-control-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.slideshow-control-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-}
-
-.slideshow-control-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* Progress indicator */
-.slideshow-progress {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.2);
-    z-index: 49;
-}
-
-.slideshow-progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #3FA34D, #C5E384);
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-/* Mobile optimization */
 @media (max-width: 768px) {
-    /* Hide slideshow controls on mobile to avoid disturbing users */
-    .slideshow-controls {
-        display: none !important;
+    .slideshow-background::before,
+    .slideshow-background::after {
+        filter: blur(40px);
     }
-    
-    /* Disable animations on mobile for better performance */
-    .slideshow-slide.zoom,
-    .slideshow-slide.ken-burns {
-        animation: none;
+
+    .slideshow-background .grid-glow {
+        background-size: 90px 90px;
+        opacity: 0.25;
     }
 }
 
-/* Preload hint */
-.slideshow-slide img,
-.slideshow-slide video {
-    image-rendering: -webkit-optimize-contrast;
+@media (prefers-reduced-motion: reduce) {
+    .slideshow-background::before,
+    .slideshow-background::after,
+    .slideshow-background .aurora-layer,
+    .slideshow-background .grid-glow {
+        animation: none !important;
+    }
 }
 

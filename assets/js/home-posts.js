@@ -1,10 +1,21 @@
 // Home Posts Dynamic Rendering
 // Load and render home posts from database
 
+const HOME_POSTS_API_URL = (function() {
+    const origin = window.location && window.location.origin;
+    if (origin && origin !== 'null' && origin !== 'file://') {
+        return `${origin.replace(/\/$/, '')}/api/get_home_posts_public.php`;
+    }
+    return 'https://api.quangphuc.iotsinhvien.io.vn/api/get_home_posts_public.php';
+})();
+
 // Load home posts from API
 async function loadHomePosts() {
     try {
-        const response = await fetch('api/get_home_posts_public.php');
+        const response = await fetch(HOME_POSTS_API_URL, { cache: 'no-cache' });
+        if (!response.ok) {
+            throw new Error(`Server responded ${response.status}`);
+        }
         const data = await response.json();
         
         if (data.success && data.posts && data.posts.length > 0) {
