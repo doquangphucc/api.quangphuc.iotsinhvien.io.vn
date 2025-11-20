@@ -30,22 +30,15 @@ async function loadHomePosts() {
 
 // Render home posts to the solutions section
 function renderHomePosts(posts) {
-    const solutionsSection = document.getElementById('solutions');
-    if (!solutionsSection) return;
-    
-    // Find the container where posts should be inserted
-    let postsContainer = solutionsSection.querySelector('.home-posts-container');
-    
-    // If container doesn't exist, create it at the END of the container (after static posts)
+    const dynamicSection = document.getElementById('home-dynamic-section');
+    if (!dynamicSection) return;
+
+    let postsContainer = dynamicSection.querySelector('.home-posts-container');
     if (!postsContainer) {
         postsContainer = document.createElement('div');
-        postsContainer.className = 'home-posts-container mt-20'; // Add top margin to separate from static posts
-        
-        // Append to the end of the main container (after static posts)
-        const mainContainer = solutionsSection.querySelector('.container');
-        if (mainContainer) {
-            mainContainer.appendChild(postsContainer);
-        }
+        postsContainer.className = 'home-posts-container space-y-20';
+        const container = dynamicSection.querySelector('.container') || dynamicSection;
+        container.appendChild(postsContainer);
     }
     
     // Clear existing content
