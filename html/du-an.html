@@ -439,34 +439,7 @@
         </div>
                     </div>
 
-                    <!-- View More Button -->
-                    <div class="text-center mt-12">
-                        <button class="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-green-700 hover:to-blue-700 transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            Xem Thêm Dự Án
-                        </button>
-                    </div>
         </div>
-            </div>
-        </section>
-
-        <!-- Filter Tabs -->
-        <section class="py-8 bg-white dark:bg-gray-800 sticky top-20 z-40 border-b border-gray-200 dark:border-gray-700">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-wrap gap-3 justify-center">
-                    <button onclick="filterProjects('all')" class="filter-btn active px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-green-600 text-white">
-                        Tất cả
-                    </button>
-                    <button onclick="filterProjects('residential')" class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-gray-600">
-                        Gia đình
-                    </button>
-                    <button onclick="filterProjects('commercial')" class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-gray-600">
-                        Doanh nghiệp
-                    </button>
-                    <button onclick="filterProjects('industrial')" class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-gray-600">
-                        Công nghiệp
-                    </button>
-                </div>
             </div>
         </section>
 
@@ -594,27 +567,6 @@
         })();
 
         // Filter projects
-        function filterProjects(category) {
-            const projects = document.querySelectorAll('.video-card');
-            const buttons = document.querySelectorAll('.filter-btn');
-            
-            buttons.forEach(btn => {
-                btn.classList.remove('active', 'bg-green-600', 'text-white');
-                btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            });
-            
-            event.target.classList.add('active', 'bg-green-600', 'text-white');
-            event.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            
-            projects.forEach(project => {
-                if (category === 'all' || project.dataset.category === category) {
-                    project.style.display = 'block';
-                } else {
-                    project.style.display = 'none';
-                }
-            });
-        }
-
         // Lightbox functions
         function openLightbox(videoSrc) {
             const lightbox = document.getElementById('lightbox');
