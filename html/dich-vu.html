@@ -381,7 +381,7 @@
                 const card = document.createElement('div');
                 card.className = 'bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2';
                 
-                const logoHtml = service.logo_url ? `<img src="${service.logo_url}" alt="${service.name}" class="w-full h-full rounded-xl object-contain" onerror="this.style.display='none'" />` : '<div class="w-20 h-20 rounded-xl bg-gray-200 flex items-center justify-center"><span class="text-3xl">🏢</span></div>';
+                const logoHtml = service.logo_url ? `<img src="${service.logo_url}" alt="${service.name}" class="w-24 h-24 rounded-2xl object-cover" onerror="this.style.display='none'" />` : '<div class="w-24 h-24 rounded-2xl bg-gray-200 flex items-center justify-center"><span class="text-3xl">🏢</span></div>';
                 
                 const linkTarget = service.link_type === 'custom' ? '_blank' : '';
                 const linkRel = service.link_type === 'custom' ? 'noopener noreferrer' : '';
@@ -393,9 +393,7 @@
                 
                 card.innerHTML = `
                     <div class="flex items-center gap-6 mb-6">
-                        <div class="w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden" style="background: linear-gradient(135deg, ${service.highlight_color}, ${service.highlight_color}dd);">
-                            ${logoHtml}
-                        </div>
+                        ${logoHtml}
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-white">${service.name}</h2>
                         </div>
