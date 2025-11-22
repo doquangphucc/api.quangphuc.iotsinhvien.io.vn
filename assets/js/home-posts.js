@@ -87,7 +87,7 @@ function createPostElement(post, index) {
                     <span class="h-2 w-2 rounded-full" style="background-color:${highlightColor};"></span>
                     ${escapeHtml(post.highlight_text)}
                 </div>` : ''}
-            <h3 class="home-post-title text-3xl sm:text-4xl lg:text-5xl font-extrabold mt-5 mb-6 leading-tight" style="word-break: break-word; overflow-wrap: break-word; max-width: 100%;">${escapeHtml(post.title)}</h3>
+            <h3 class="home-post-title text-2xl sm:text-3xl lg:text-4xl font-extrabold mt-5 mb-6 leading-tight" style="word-break: break-word; overflow-wrap: break-word; max-width: 100%; width: 100%; display: block; box-sizing: border-box;">${escapeHtml(post.title)}</h3>
             <p class="text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">${escapeHtml(post.description)}</p>
             ${featuresHTML ? `<div class="bg-white/70 dark:bg-slate-900/40 border border-white/50 dark:border-white/5 rounded-2xl p-6 mb-8 shadow-inner">
                     <ul class="space-y-3">${featuresHTML}</ul>
