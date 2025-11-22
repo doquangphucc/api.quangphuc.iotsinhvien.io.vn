@@ -3930,18 +3930,23 @@
 </body>
 </html>`;
                 
-                // Gửi trực tiếp qua FormSubmit API (giống dự án My Web)
+                // Gửi trực tiếp qua FormSubmit API - Gửi HTML email
+                // FormSubmit sẽ tự động detect HTML và render
                 const formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
                 const subject = `Báo Giá Điện Mặt Trời - Khách hàng: ${fullname} (${phone})`;
                 
+                // Tạo plain text summary cho subject line
+                const plainTextSummary = `BÁO GIÁ ĐIỆN MẶT TRỜI\n\nKhách hàng: ${fullname}\nSĐT: ${phone}\nEmail: ${email}\nKhu vực: ${regionName}\nLoại điện: ${phaseName}\nTổng chi phí: ${formatCurrency(totalPrice)} VNĐ\n\nXem chi tiết báo giá trong email HTML bên dưới.`;
+                
                 const formDataToSend = new FormData();
                 formDataToSend.append('_subject', subject);
-                formDataToSend.append('_template', 'table');
                 formDataToSend.append('_captcha', 'false');
+                // Không dùng _template để FormSubmit tự render HTML
                 formDataToSend.append('name', fullname);
                 formDataToSend.append('email', email);
                 formDataToSend.append('phone', phone);
-                formDataToSend.append('message', emailHTML);
+                // Gửi cả plain text summary và HTML - FormSubmit sẽ chọn HTML nếu detect được
+                formDataToSend.append('message', plainTextSummary + '\n\n' + emailHTML);
                 
                 console.log('Sending survey email directly to FormSubmit...');
                 
