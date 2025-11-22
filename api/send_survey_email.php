@@ -99,16 +99,21 @@ try {
  * Build HTML email content from survey data
  */
 function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) {
-    // Safe array access helper
-    $getValue = function($array, $key, $default = 'N/A') {
-        return isset($array) && is_array($array) && isset($array[$key]) ? $array[$key] : $default;
-    };
+    // Helper function to safely get array value
+    if (!function_exists('safeGetValue')) {
+        function safeGetValue($array, $key, $default = 'N/A') {
+            return isset($array) && is_array($array) && isset($array[$key]) ? $array[$key] : $default;
+        }
+    }
     
-    $getNestedValue = function($array, $key1, $key2, $default = 'N/A') {
-        return isset($array) && is_array($array) && isset($array[$key1]) && is_array($array[$key1]) && isset($array[$key1][$key2]) 
-            ? $array[$key1][$key2] 
-            : $default;
-    };
+    // Helper function to safely get nested array value
+    if (!function_exists('safeGetNestedValue')) {
+        function safeGetNestedValue($array, $key1, $key2, $default = 'N/A') {
+            return isset($array) && is_array($array) && isset($array[$key1]) && is_array($array[$key1]) && isset($array[$key1][$key2]) 
+                ? $array[$key1][$key2] 
+                : $default;
+        }
+    }
     
     // Get region name
     $regionMap = [
@@ -116,11 +121,11 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
         'mien-trung' => 'Miền Trung',
         'mien-nam' => 'Miền Nam'
     ];
-    $region = $getValue($surveyData, 'region', 'N/A');
+    $region = safeGetValue($surveyData, 'region', 'N/A');
     $regionName = isset($regionMap[$region]) ? $regionMap[$region] : $region;
     
     // Get phase name
-    $phase = $getValue($surveyData, 'phase', 1);
+    $phase = safeGetValue($surveyData, 'phase', 1);
     $phaseName = ($phase == 1 || $phase == '1') ? '1 Pha' : '3 Pha';
     
     // Get usage time name
@@ -129,8 +134,46 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
         'balanced' => 'Cả ngày đều',
         'night' => 'Ban đêm nhiều'
     ];
-    $usageTime = $getValue($surveyData, 'usageTime', 'balanced');
+    $usageTime = safeGetValue($surveyData, 'usageTime', 'balanced');
     $usageTimeName = isset($usageTimeMap[$usageTime]) ? $usageTimeMap[$usageTime] : $usageTime;
+    
+    // Pre-calculate all values to avoid issues in string concatenation
+    $monthlyBill = (float)safeGetValue($results, 'monthlyBill', 0);
+    $monthlyKwh = (float)safeGetValue($results, 'monthlyKwh', 0);
+    $dailyKwh = (float)safeGetValue($results, 'dailyKwh', 0);
+    $peakSunHours = (float)safeGetValue($results, 'peakSunHours', 0);
+    $roofArea = (float)safeGetValue($results, 'roofArea', 0);
+    
+    $solarPanelName = safeGetValue($results, 'solarPanelName', 'N/A');
+    $solarPanelWatt = safeGetValue($results, 'solarPanelWatt', 0);
+    $panelCount = safeGetValue($results, 'panelCount', 0);
+    $solarPanelPrice = (float)safeGetValue($results, 'solarPanelPrice', 0);
+    $panelTotalPrice = (float)safeGetValue($results, 'panelTotalPrice', 0);
+    
+    $inverterName = safeGetNestedValue($results, 'selectedInverter', 'name', 'N/A');
+    $inverterPower = safeGetNestedValue($results, 'selectedInverter', 'power', 0);
+    $inverterPrice = (float)safeGetNestedValue($results, 'selectedInverter', 'price', 0);
+    
+    $cabinetName = safeGetNestedValue($results, 'selectedCabinet', 'name', 'N/A');
+    $cabinetPrice = (float)safeGetNestedValue($results, 'selectedCabinet', 'price', 0);
+    
+    $batteryName = safeGetNestedValue($results, 'selectedBattery', 'name', 'N/A');
+    $batteryCapacity = (float)safeGetNestedValue($results, 'selectedBattery', 'capacity', 0);
+    $batteryUnits = safeGetNestedValue($results, 'selectedBattery', 'units', 0);
+    $batteryPrice = (float)safeGetNestedValue($results, 'selectedBattery', 'price', 0);
+    $batteryTotalPrice = (float)safeGetNestedValue($results, 'selectedBattery', 'totalPrice', 0);
+    
+    $accessoriesTotal = (float)safeGetValue($results, 'accessoriesTotal', 0);
+    $totalPrice = (float)safeGetValue($results, 'totalPrice', 0);
+    
+    $systemSizeKw = (float)safeGetValue($results, 'systemSizeKw', 0);
+    $annualSavings = (float)safeGetValue($results, 'annualSavings', 0);
+    $paybackPeriod = safeGetValue($results, 'paybackPeriod', 0);
+    
+    $accessories = safeGetValue($results, 'accessories', []);
+    if (!is_array($accessories)) {
+        $accessories = [];
+    }
     
     $html = '<!DOCTYPE html>
 <html lang="vi">
@@ -179,11 +222,11 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
             <div class="section">
                 <div class="section-title">📊 PHÂN TÍCH NHU CẦU</div>
                 <table>
-                    <tr><td><strong>Hóa đơn điện/tháng:</strong></td><td>' . number_format((float)$getValue($results, 'monthlyBill', 0), 0, ',', '.') . ' VNĐ</td></tr>
-                    <tr><td><strong>Mức tiêu thụ điện/tháng:</strong></td><td><strong style="color: #00C851;">' . number_format((float)$getValue($results, 'monthlyKwh', 0), 1, ',', '.') . ' kWh</strong></td></tr>
-                    <tr><td><strong>Tiêu thụ điện/ngày:</strong></td><td>' . number_format((float)$getValue($results, 'dailyKwh', 0), 1, ',', '.') . ' kWh</td></tr>
-                    <tr><td><strong>Giờ nắng trung bình:</strong></td><td>' . number_format((float)$getValue($results, 'peakSunHours', 0), 1, ',', '.') . ' giờ/ngày</td></tr>
-                    <tr><td><strong>Diện tích mái cần thiết:</strong></td><td>' . number_format((float)$getValue($results, 'roofArea', 0), 1, ',', '.') . ' m²</td></tr>
+                    <tr><td><strong>Hóa đơn điện/tháng:</strong></td><td>' . number_format($monthlyBill, 0, ',', '.') . ' VNĐ</td></tr>
+                    <tr><td><strong>Mức tiêu thụ điện/tháng:</strong></td><td><strong style="color: #00C851;">' . number_format($monthlyKwh, 1, ',', '.') . ' kWh</strong></td></tr>
+                    <tr><td><strong>Tiêu thụ điện/ngày:</strong></td><td>' . number_format($dailyKwh, 1, ',', '.') . ' kWh</td></tr>
+                    <tr><td><strong>Giờ nắng trung bình:</strong></td><td>' . number_format($peakSunHours, 1, ',', '.') . ' giờ/ngày</td></tr>
+                    <tr><td><strong>Diện tích mái cần thiết:</strong></td><td>' . number_format($roofArea, 1, ',', '.') . ' m²</td></tr>
                 </table>
             </div>
             
@@ -204,10 +247,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($getValue($results, 'solarPanelName', 'N/A')) . ' (' . $getValue($results, 'solarPanelWatt', 0) . 'W)</td>
-                            <td>' . $getValue($results, 'panelCount', 0) . ' tấm</td>
-                            <td>' . number_format((float)$getValue($results, 'solarPanelPrice', 0), 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format((float)$getValue($results, 'panelTotalPrice', 0), 0, ',', '.') . ' đ</strong></td>
+                            <td>' . htmlspecialchars($solarPanelName) . ' (' . $solarPanelWatt . 'W)</td>
+                            <td>' . $panelCount . ' tấm</td>
+                            <td>' . number_format($solarPanelPrice, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format($panelTotalPrice, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -225,10 +268,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($getNestedValue($results, 'selectedInverter', 'name', 'N/A')) . ' (' . $getNestedValue($results, 'selectedInverter', 'power', 0) . 'W)</td>
+                            <td>' . htmlspecialchars($inverterName) . ' (' . $inverterPower . 'W)</td>
                             <td>1 bộ</td>
-                            <td>' . number_format((float)$getNestedValue($results, 'selectedInverter', 'price', 0), 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format((float)$getNestedValue($results, 'selectedInverter', 'price', 0), 0, ',', '.') . ' đ</strong></td>
+                            <td>' . number_format($inverterPrice, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format($inverterPrice, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -246,10 +289,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($getNestedValue($results, 'selectedCabinet', 'name', 'N/A')) . '</td>
+                            <td>' . htmlspecialchars($cabinetName) . '</td>
                             <td>1 cái</td>
-                            <td>' . number_format((float)$getNestedValue($results, 'selectedCabinet', 'price', 0), 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format((float)$getNestedValue($results, 'selectedCabinet', 'price', 0), 0, ',', '.') . ' đ</strong></td>
+                            <td>' . number_format($cabinetPrice, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format($cabinetPrice, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -267,10 +310,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($getNestedValue($results, 'selectedBattery', 'name', 'N/A')) . ' (' . number_format((float)$getNestedValue($results, 'selectedBattery', 'capacity', 0), 2, ',', '.') . ' kWh/bộ)</td>
-                            <td>' . $getNestedValue($results, 'selectedBattery', 'units', 0) . ' bộ</td>
-                            <td>' . number_format((float)$getNestedValue($results, 'selectedBattery', 'price', 0), 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format((float)$getNestedValue($results, 'selectedBattery', 'totalPrice', 0), 0, ',', '.') . ' đ</strong></td>
+                            <td>' . htmlspecialchars($batteryName) . ' (' . number_format($batteryCapacity, 2, ',', '.') . ' kWh/bộ)</td>
+                            <td>' . $batteryUnits . ' bộ</td>
+                            <td>' . number_format($batteryPrice, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format($batteryTotalPrice, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -289,15 +332,19 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     <tbody>';
     
     // Add accessories
-    $accessories = $getValue($results, 'accessories', []);
     if (is_array($accessories) && !empty($accessories)) {
         foreach ($accessories as $acc) {
             if (!is_array($acc)) continue;
+            $accName = safeGetValue($acc, 'name', 'N/A');
+            $accQuantity = safeGetValue($acc, 'quantity', 0);
+            $accUnit = safeGetValue($acc, 'unit', 'cái');
+            $accPrice = (float)safeGetValue($acc, 'price', 0);
+            $accTotalPrice = (float)safeGetValue($acc, 'totalPrice', 0);
             $html .= '<tr>
-                <td>' . htmlspecialchars($getValue($acc, 'name', 'N/A')) . '</td>
-                <td>' . $getValue($acc, 'quantity', 0) . ' ' . $getValue($acc, 'unit', 'cái') . '</td>
-                <td>' . number_format((float)$getValue($acc, 'price', 0), 0, ',', '.') . ' đ</td>
-                <td>' . number_format((float)$getValue($acc, 'totalPrice', 0), 0, ',', '.') . ' đ</td>
+                <td>' . htmlspecialchars($accName) . '</td>
+                <td>' . $accQuantity . ' ' . $accUnit . '</td>
+                <td>' . number_format($accPrice, 0, ',', '.') . ' đ</td>
+                <td>' . number_format($accTotalPrice, 0, ',', '.') . ' đ</td>
             </tr>';
         }
     }
@@ -312,15 +359,15 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                 <table>
                     <tr>
                         <td><strong>Tổng thiết bị:</strong></td>
-                        <td style="text-align: right;">' . number_format((float)$getValue($results, 'totalPrice', 0) - (float)$getValue($results, 'accessoriesTotal', 0), 0, ',', '.') . ' đ</td>
+                        <td style="text-align: right;">' . number_format($totalPrice - $accessoriesTotal, 0, ',', '.') . ' đ</td>
                     </tr>
                     <tr>
                         <td><strong>Phụ kiện & lắp đặt:</strong></td>
-                        <td style="text-align: right;">' . number_format((float)$getValue($results, 'accessoriesTotal', 0), 0, ',', '.') . ' đ</td>
+                        <td style="text-align: right;">' . number_format($accessoriesTotal, 0, ',', '.') . ' đ</td>
                     </tr>
                 </table>
                 <div class="total">
-                    TỔNG CHI PHÍ ĐẦU TƯ: ' . number_format((float)$getValue($results, 'totalPrice', 0), 0, ',', '.') . ' VNĐ
+                    TỔNG CHI PHÍ ĐẦU TƯ: ' . number_format($totalPrice, 0, ',', '.') . ' VNĐ
                 </div>
             </div>
             
@@ -328,12 +375,12 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
             <div class="section">
                 <div class="section-title">🎯 TỔNG QUAN HỆ THỐNG</div>
                 <table>
-                    <tr><td><strong>Hệ thống:</strong></td><td>' . number_format((float)$getValue($results, 'systemSizeKw', 0), 2, ',', '.') . ' kWp</td></tr>
-                    <tr><td><strong>Tấm pin:</strong></td><td>' . $getValue($results, 'panelCount', 0) . ' tấm</td></tr>
-                    <tr><td><strong>Inverter:</strong></td><td>' . htmlspecialchars($getNestedValue($results, 'selectedInverter', 'name', 'N/A')) . '</td></tr>
-                    <tr><td><strong>Pin lưu trữ:</strong></td><td>' . number_format((float)$getNestedValue($results, 'selectedBattery', 'units', 0) * (float)$getNestedValue($results, 'selectedBattery', 'capacity', 0), 2, ',', '.') . ' kWh (' . $getNestedValue($results, 'selectedBattery', 'units', 0) . ' bộ)</td></tr>
-                    <tr><td><strong>Tiết kiệm/năm:</strong></td><td>' . number_format((float)$getValue($results, 'annualSavings', 0) / 1000000, 1, ',', '.') . ' triệu VNĐ</td></tr>
-                    <tr><td><strong>Hoàn vốn:</strong></td><td>' . $getValue($results, 'paybackPeriod', 0) . ' năm</td></tr>
+                    <tr><td><strong>Hệ thống:</strong></td><td>' . number_format($systemSizeKw, 2, ',', '.') . ' kWp</td></tr>
+                    <tr><td><strong>Tấm pin:</strong></td><td>' . $panelCount . ' tấm</td></tr>
+                    <tr><td><strong>Inverter:</strong></td><td>' . htmlspecialchars($inverterName) . '</td></tr>
+                    <tr><td><strong>Pin lưu trữ:</strong></td><td>' . number_format($batteryUnits * $batteryCapacity, 2, ',', '.') . ' kWh (' . $batteryUnits . ' bộ)</td></tr>
+                    <tr><td><strong>Tiết kiệm/năm:</strong></td><td>' . number_format($annualSavings / 1000000, 1, ',', '.') . ' triệu VNĐ</td></tr>
+                    <tr><td><strong>Hoàn vốn:</strong></td><td>' . $paybackPeriod . ' năm</td></tr>
                 </table>
             </div>
             
