@@ -3653,11 +3653,144 @@
                     return new Intl.NumberFormat('vi-VN').format(num || 0);
                 };
                 
-                // Helper function để escape HTML
-                const escapeHtml = (text) => {
-                    const div = document.createElement('div');
-                    div.textContent = text;
-                    return div.innerHTML;
+                // Helper function để format label từ key (ví dụ: "monthlyBill" -> "Hóa đơn điện/tháng")
+                const formatLabel = (key) => {
+                    const labelMap = {
+                        'fullname': 'Họ và tên',
+                        'phone': 'Số điện thoại',
+                        'email': 'Email',
+                        'region': 'Khu vực',
+                        'phase': 'Loại điện',
+                        'usageTime': 'Thời gian sử dụng',
+                        'monthlyBill': 'Hóa đơn điện/tháng',
+                        'monthlyKwh': 'Mức tiêu thụ điện/tháng',
+                        'dailyKwh': 'Tiêu thụ điện/ngày',
+                        'peakSunHours': 'Giờ nắng trung bình',
+                        'roofArea': 'Diện tích mái cần thiết',
+                        'solarPanelName': 'Tấm Pin - Tên',
+                        'solarPanelWatt': 'Tấm Pin - Công suất',
+                        'panelCount': 'Tấm Pin - Số lượng',
+                        'solarPanelPrice': 'Tấm Pin - Đơn giá',
+                        'panelTotalPrice': 'Tấm Pin - Thành tiền',
+                        'inverterName': 'Biến Tần - Tên',
+                        'inverterPower': 'Biến Tần - Công suất',
+                        'inverterPrice': 'Biến Tần - Đơn giá',
+                        'cabinetName': 'Tủ Điện - Tên',
+                        'cabinetPrice': 'Tủ Điện - Đơn giá',
+                        'batteryName': 'Pin Lưu Trữ - Tên',
+                        'batteryCapacity': 'Pin Lưu Trữ - Dung lượng',
+                        'batteryUnits': 'Pin Lưu Trữ - Số lượng',
+                        'batteryPrice': 'Pin Lưu Trữ - Đơn giá',
+                        'batteryTotalPrice': 'Pin Lưu Trữ - Thành tiền',
+                        'accessoriesTotal': 'Phụ kiện & lắp đặt',
+                        'totalPrice': 'TỔNG CHI PHÍ ĐẦU TƯ',
+                        'systemSizeKw': 'Hệ thống',
+                        'annualSavings': 'Tiết kiệm/năm',
+                        'paybackPeriod': 'Hoàn vốn'
+                    };
+                    return labelMap[key] || key;
+                };
+                
+                // Helper function để format giá trị
+                const formatValue = (key, value) => {
+                    if (value === null || value === undefined) return 'N/A';
+                    
+                    // Format số tiền
+                    if (key.includes('Price') || key.includes('Bill') || key.includes('Savings') || key.includes('Cost') || key === 'totalPrice') {
+                        return formatCurrency(value) + ' VNĐ';
+                    }
+                    
+                    // Format số lượng với đơn vị
+                    if (key === 'panelCount') return value + ' tấm';
+                    if (key === 'batteryUnits') return value + ' bộ';
+                    if (key === 'peakSunHours') return value.toFixed(1) + ' giờ/ngày';
+                    if (key === 'roofArea') return value.toFixed(1) + ' m²';
+                    if (key === 'monthlyKwh' || key === 'dailyKwh') return value.toFixed(1) + ' kWh';
+                    if (key === 'systemSizeKw') return value.toFixed(2) + ' kWp';
+                    if (key === 'annualSavings') return (value / 1000000).toFixed(1) + ' triệu VNĐ';
+                    if (key === 'paybackPeriod') return value + ' năm';
+                    if (key === 'batteryCapacity') return value.toFixed(2) + ' kWh/bộ';
+                    if (key === 'solarPanelWatt') return value + 'W';
+                    if (key === 'inverterPower') return value + 'W';
+                    
+                    // Format boolean
+                    if (typeof value === 'boolean') return value ? 'Có' : 'Không';
+                    
+                    // Format object/array thành string
+                    if (typeof value === 'object') {
+                        if (Array.isArray(value)) {
+                            return value.length + ' mục';
+                        }
+                        return JSON.stringify(value);
+                    }
+                    
+                    return String(value);
+                };
+                
+                // Helper function để tự động duyệt qua object và thêm vào FormData
+                const addObjectToFormData = (formDataToSend, obj, prefix = '') => {
+                    for (const [key, value] of Object.entries(obj)) {
+                        if (value === null || value === undefined) continue;
+                        
+                        const fullKey = prefix ? `${prefix} - ${key}` : key;
+                        
+                        // Xử lý nested objects (selectedInverter, selectedCabinet, selectedBattery)
+                        if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+                            // Nếu là object có các property cơ bản (name, price, etc.) thì xử lý riêng
+                            if (key === 'selectedInverter' || key === 'selectedCabinet' || key === 'selectedBattery') {
+                                const itemName = value.name || 'N/A';
+                                const itemPower = value.power || value.capacity || 0;
+                                const itemPrice = value.price || 0;
+                                const itemTotal = value.totalPrice || value.price || 0;
+                                const itemUnits = value.units || 1;
+                                
+                                if (key === 'selectedInverter') {
+                                    formDataToSend.append('Biến Tần - Tên', itemName + (itemPower ? ` (${itemPower}W)` : ''));
+                                    formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
+                                    formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(itemPrice) + ' đ');
+                                    formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(itemPrice) + ' đ');
+                                } else if (key === 'selectedCabinet') {
+                                    formDataToSend.append('Tủ Điện - Tên', itemName);
+                                    formDataToSend.append('Tủ Điện - Số lượng', '1 cái');
+                                    formDataToSend.append('Tủ Điện - Đơn giá', formatCurrency(itemPrice) + ' đ');
+                                    formDataToSend.append('Tủ Điện - Thành tiền', formatCurrency(itemPrice) + ' đ');
+                                } else if (key === 'selectedBattery') {
+                                    formDataToSend.append('Pin Lưu Trữ - Tên', itemName + (itemPower ? ` (${itemPower.toFixed(2)} kWh/bộ)` : ''));
+                                    formDataToSend.append('Pin Lưu Trữ - Số lượng', itemUnits + ' bộ');
+                                    formDataToSend.append('Pin Lưu Trữ - Đơn giá', formatCurrency(itemPrice) + ' đ');
+                                    formDataToSend.append('Pin Lưu Trữ - Thành tiền', formatCurrency(itemTotal) + ' đ');
+                                }
+                            } else {
+                                // Recursive cho các nested objects khác
+                                addObjectToFormData(formDataToSend, value, fullKey);
+                            }
+                        }
+                        // Xử lý arrays (accessories)
+                        else if (Array.isArray(value)) {
+                            if (key === 'accessories') {
+                                value.forEach((acc, index) => {
+                                    formDataToSend.append(`Phụ Kiện ${index + 1} - Tên`, acc.name || 'N/A');
+                                    formDataToSend.append(`Phụ Kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
+                                    formDataToSend.append(`Phụ Kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
+                                    formDataToSend.append(`Phụ Kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
+                                });
+                            } else {
+                                value.forEach((item, index) => {
+                                    if (typeof item === 'object') {
+                                        addObjectToFormData(formDataToSend, item, `${fullKey}[${index}]`);
+                                    } else {
+                                        formDataToSend.append(`${fullKey}[${index}]`, formatValue(key, item));
+                                    }
+                                });
+                            }
+                        }
+                        // Xử lý primitive values
+                        else {
+                            const label = formatLabel(key);
+                            const formattedValue = formatValue(key, value);
+                            formDataToSend.append(label, formattedValue);
+                        }
+                    }
                 };
                 
                 // Lấy email từ form (đã được validate)
@@ -3684,252 +3817,6 @@
                 };
                 const usageTimeName = usageTimeMap[formData.usageTime] || formData.usageTime || 'N/A';
                 
-                // Lấy các giá trị từ result
-                const monthlyBill = result.monthlyBill || 0;
-                const monthlyKwh = result.monthlyKwh || 0;
-                const dailyKwh = result.dailyKwh || 0;
-                const peakSunHours = result.peakSunHours || 0;
-                const roofArea = parseFloat(result.roofArea) || 0;
-                
-                const solarPanelName = result.solarPanelName || 'N/A';
-                const solarPanelWatt = result.solarPanelWatt || 0;
-                const panelCount = result.panelCount || 0;
-                const solarPanelPrice = result.solarPanelPrice || 0;
-                const panelTotalPrice = result.panelTotalPrice || 0;
-                
-                const inverterName = result.selectedInverter?.name || 'N/A';
-                const inverterPower = result.selectedInverter?.power || 0;
-                const inverterPrice = result.selectedInverter?.price || 0;
-                
-                const cabinetName = result.selectedCabinet?.name || 'N/A';
-                const cabinetPrice = result.selectedCabinet?.price || 0;
-                
-                const batteryName = result.selectedBattery?.name || 'N/A';
-                const batteryCapacity = result.selectedBattery?.capacity || 0;
-                const batteryUnits = result.selectedBattery?.units || 0;
-                const batteryPrice = result.selectedBattery?.price || 0;
-                const batteryTotalPrice = result.selectedBattery?.totalPrice || 0;
-                
-                const accessories = result.accessories || [];
-                const accessoriesTotal = result.accessoriesTotal || 0;
-                const totalPrice = result.totalPrice || 0;
-                const systemSizeKw = result.systemSizeKw || 0;
-                const annualSavings = result.annualSavings || 0;
-                const paybackPeriod = result.paybackPeriod || 0;
-                
-                // Tạo HTML email
-                const emailHTML = `<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Giá Điện Mặt Trời</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #00C851 0%, #00E676 100%); color: white; padding: 20px; border-radius: 10px 10px 0 0; }
-        .content { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
-        .section { margin-bottom: 30px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #00C851; }
-        .section-title { color: #00C851; font-size: 18px; font-weight: bold; margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-        table th { background: #00C851; color: white; padding: 10px; text-align: left; }
-        table td { padding: 8px; border-bottom: 1px solid #ddd; }
-        table tr:hover { background: #f5f5f5; }
-        .highlight { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 10px 0; }
-        .total { background: #00C851; color: white; padding: 15px; border-radius: 5px; font-size: 20px; font-weight: bold; text-align: center; margin: 20px 0; }
-        .footer { background: #333; color: white; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📋 BÁO GIÁ HỆ THỐNG ĐIỆN MẶT TRỜI</h1>
-            <p>HC Eco System - Hệ sinh thái cho tương lai</p>
-        </div>
-        
-        <div class="content">
-            <!-- Thông tin khách hàng -->
-            <div class="section">
-                <div class="section-title">👤 THÔNG TIN KHÁCH HÀNG</div>
-                <table>
-                    <tr><td><strong>Họ và tên:</strong></td><td>${escapeHtml(fullname)}</td></tr>
-                    <tr><td><strong>Số điện thoại:</strong></td><td>${escapeHtml(phone)}</td></tr>
-                    <tr><td><strong>Email:</strong></td><td>${escapeHtml(email)}</td></tr>
-                    <tr><td><strong>Khu vực:</strong></td><td>${escapeHtml(regionName)}</td></tr>
-                    <tr><td><strong>Loại điện:</strong></td><td>${escapeHtml(phaseName)}</td></tr>
-                    <tr><td><strong>Thời gian sử dụng:</strong></td><td>${escapeHtml(usageTimeName)}</td></tr>
-                </table>
-            </div>
-            
-            <!-- Phân tích nhu cầu -->
-            <div class="section">
-                <div class="section-title">📊 PHÂN TÍCH NHU CẦU</div>
-                <table>
-                    <tr><td><strong>Hóa đơn điện/tháng:</strong></td><td>${formatCurrency(monthlyBill)} VNĐ</td></tr>
-                    <tr><td><strong>Mức tiêu thụ điện/tháng:</strong></td><td><strong style="color: #00C851;">${monthlyKwh.toFixed(1)} kWh</strong></td></tr>
-                    <tr><td><strong>Tiêu thụ điện/ngày:</strong></td><td>${dailyKwh.toFixed(1)} kWh</td></tr>
-                    <tr><td><strong>Giờ nắng trung bình:</strong></td><td>${peakSunHours.toFixed(1)} giờ/ngày</td></tr>
-                    <tr><td><strong>Diện tích mái cần thiết:</strong></td><td>${roofArea.toFixed(1)} m²</td></tr>
-                </table>
-            </div>
-            
-            <!-- Bảng báo giá chi tiết -->
-            <div class="section">
-                <div class="section-title">📋 BẢNG BÁO GIÁ CHI TIẾT</div>
-                
-                <!-- Tấm Pin -->
-                <h3 style="color: #00C851; margin-top: 20px;">⚡ Tấm Pin Mặt Trời</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tên thiết bị</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${escapeHtml(solarPanelName)} (${solarPanelWatt}W)</td>
-                            <td>${panelCount} tấm</td>
-                            <td>${formatCurrency(solarPanelPrice)} đ</td>
-                            <td><strong>${formatCurrency(panelTotalPrice)} đ</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Inverter -->
-                <h3 style="color: #00C851; margin-top: 20px;">🔌 Biến Tần (Inverter)</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tên thiết bị</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${escapeHtml(inverterName)} (${inverterPower}W)</td>
-                            <td>1 bộ</td>
-                            <td>${formatCurrency(inverterPrice)} đ</td>
-                            <td><strong>${formatCurrency(inverterPrice)} đ</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Tủ Điện -->
-                <h3 style="color: #00C851; margin-top: 20px;">🧰 Tủ Điện Hybrid</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tên thiết bị</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${escapeHtml(cabinetName)}</td>
-                            <td>1 cái</td>
-                            <td>${formatCurrency(cabinetPrice)} đ</td>
-                            <td><strong>${formatCurrency(cabinetPrice)} đ</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Pin Lưu Trữ -->
-                <h3 style="color: #00C851; margin-top: 20px;">🔋 Pin Lưu Trữ (Battery)</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tên thiết bị</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${escapeHtml(batteryName)} (${batteryCapacity.toFixed(2)} kWh/bộ)</td>
-                            <td>${batteryUnits} bộ</td>
-                            <td>${formatCurrency(batteryPrice)} đ</td>
-                            <td><strong>${formatCurrency(batteryTotalPrice)} đ</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Phụ Kiện -->
-                <h3 style="color: #00C851; margin-top: 20px;">🔧 Phụ Kiện & Vật Tư Lắp Đặt</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tên phụ kiện</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${accessories.map(acc => `
-                        <tr>
-                            <td>${escapeHtml(acc.name || 'N/A')}</td>
-                            <td>${acc.quantity || 0} ${acc.unit || 'cái'}</td>
-                            <td>${formatCurrency(acc.price || 0)} đ</td>
-                            <td>${formatCurrency(acc.totalPrice || 0)} đ</td>
-                        </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Tổng kết -->
-            <div class="section">
-                <div class="section-title">💰 TỔNG KẾT CHI PHÍ</div>
-                <table>
-                    <tr>
-                        <td><strong>Tổng thiết bị:</strong></td>
-                        <td style="text-align: right;">${formatCurrency(totalPrice - accessoriesTotal)} đ</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Phụ kiện & lắp đặt:</strong></td>
-                        <td style="text-align: right;">${formatCurrency(accessoriesTotal)} đ</td>
-                    </tr>
-                </table>
-                <div class="total">
-                    TỔNG CHI PHÍ ĐẦU TƯ: ${formatCurrency(totalPrice)} VNĐ
-                </div>
-            </div>
-            
-            <!-- Thông tin hệ thống -->
-            <div class="section">
-                <div class="section-title">🎯 TỔNG QUAN HỆ THỐNG</div>
-                <table>
-                    <tr><td><strong>Hệ thống:</strong></td><td>${systemSizeKw.toFixed(2)} kWp</td></tr>
-                    <tr><td><strong>Tấm pin:</strong></td><td>${panelCount} tấm</td></tr>
-                    <tr><td><strong>Inverter:</strong></td><td>${escapeHtml(inverterName)}</td></tr>
-                    <tr><td><strong>Pin lưu trữ:</strong></td><td>${(batteryUnits * batteryCapacity).toFixed(2)} kWh (${batteryUnits} bộ)</td></tr>
-                    <tr><td><strong>Tiết kiệm/năm:</strong></td><td>${(annualSavings / 1000000).toFixed(1)} triệu VNĐ</td></tr>
-                    <tr><td><strong>Hoàn vốn:</strong></td><td>${paybackPeriod} năm</td></tr>
-                </table>
-            </div>
-            
-            <div class="highlight">
-                <strong>⚠️ Lưu ý:</strong> Báo giá chưa bao gồm chi phí vận chuyển đến công trình. Chi phí vận chuyển sẽ được tính dựa trên khoảng cách từ kho đến công trình của bạn.
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>© 2025 HC Eco System - Hệ sinh thái cho tương lai</p>
-            <p>Hotline: 0969 397 434 | Email: hcecosystem@gmail.com</p>
-            <p>Website: hceco.io.vn</p>
-        </div>
-    </div>
-</body>
-</html>`;
-                
                 // Gửi trực tiếp qua FormSubmit với các field riêng lẻ (giống My Web)
                 // FormSubmit sẽ tự động format thành bảng đẹp với _template: 'table'
                 const formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
@@ -3940,7 +3827,7 @@
                 formDataToSend.append('_template', 'table'); // FormSubmit sẽ format thành bảng
                 formDataToSend.append('_captcha', 'false');
                 
-                // Gửi các field riêng lẻ - FormSubmit sẽ tự động format thành bảng đẹp
+                // Thông tin khách hàng (từ formData)
                 formDataToSend.append('Họ và tên', fullname);
                 formDataToSend.append('Số điện thoại', phone);
                 formDataToSend.append('Email', email);
@@ -3948,57 +3835,30 @@
                 formDataToSend.append('Loại điện', phaseName);
                 formDataToSend.append('Thời gian sử dụng', usageTimeName);
                 
-                // Phân tích nhu cầu
-                formDataToSend.append('Hóa đơn điện/tháng', formatCurrency(monthlyBill) + ' VNĐ');
-                formDataToSend.append('Mức tiêu thụ điện/tháng', monthlyKwh.toFixed(1) + ' kWh');
-                formDataToSend.append('Tiêu thụ điện/ngày', dailyKwh.toFixed(1) + ' kWh');
-                formDataToSend.append('Giờ nắng trung bình', peakSunHours.toFixed(1) + ' giờ/ngày');
-                formDataToSend.append('Diện tích mái cần thiết', roofArea.toFixed(1) + ' m²');
+                // Tự động duyệt qua object result và thêm tất cả các field
+                // Điều này đảm bảo nếu sau này thêm field mới vào result, nó sẽ tự động được gửi
+                addObjectToFormData(formDataToSend, result);
                 
-                // Tấm Pin
-                formDataToSend.append('Tấm Pin - Tên', solarPanelName + ' (' + solarPanelWatt + 'W)');
-                formDataToSend.append('Tấm Pin - Số lượng', panelCount + ' tấm');
-                formDataToSend.append('Tấm Pin - Đơn giá', formatCurrency(solarPanelPrice) + ' đ');
-                formDataToSend.append('Tấm Pin - Thành tiền', formatCurrency(panelTotalPrice) + ' đ');
-                
-                // Inverter
-                formDataToSend.append('Biến Tần - Tên', inverterName + ' (' + inverterPower + 'W)');
-                formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
-                formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(inverterPrice) + ' đ');
-                formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(inverterPrice) + ' đ');
-                
-                // Tủ Điện
-                formDataToSend.append('Tủ Điện - Tên', cabinetName);
-                formDataToSend.append('Tủ Điện - Số lượng', '1 cái');
-                formDataToSend.append('Tủ Điện - Đơn giá', formatCurrency(cabinetPrice) + ' đ');
-                formDataToSend.append('Tủ Điện - Thành tiền', formatCurrency(cabinetPrice) + ' đ');
-                
-                // Pin Lưu Trữ
-                formDataToSend.append('Pin Lưu Trữ - Tên', batteryName + ' (' + batteryCapacity.toFixed(2) + ' kWh/bộ)');
-                formDataToSend.append('Pin Lưu Trữ - Số lượng', batteryUnits + ' bộ');
-                formDataToSend.append('Pin Lưu Trữ - Đơn giá', formatCurrency(batteryPrice) + ' đ');
-                formDataToSend.append('Pin Lưu Trữ - Thành tiền', formatCurrency(batteryTotalPrice) + ' đ');
-                
-                // Phụ Kiện
-                accessories.forEach((acc, index) => {
-                    formDataToSend.append(`Phụ Kiện ${index + 1} - Tên`, acc.name || 'N/A');
-                    formDataToSend.append(`Phụ Kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
-                    formDataToSend.append(`Phụ Kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
-                    formDataToSend.append(`Phụ Kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
-                });
+                // Thêm một số field tổng hợp đặc biệt
+                const accessories = result.accessories || [];
+                const accessoriesTotal = result.accessoriesTotal || 0;
+                const totalPrice = result.totalPrice || 0;
+                const batteryUnits = result.selectedBattery?.units || 0;
+                const batteryCapacity = result.selectedBattery?.capacity || 0;
+                const inverterName = result.selectedInverter?.name || 'N/A';
+                const panelCount = result.panelCount || 0;
+                const systemSizeKw = result.systemSizeKw || 0;
                 
                 // Tổng kết
                 formDataToSend.append('Tổng thiết bị', formatCurrency(totalPrice - accessoriesTotal) + ' đ');
-                formDataToSend.append('Phụ kiện & lắp đặt', formatCurrency(accessoriesTotal) + ' đ');
-                formDataToSend.append('TỔNG CHI PHÍ ĐẦU TƯ', formatCurrency(totalPrice) + ' VNĐ');
                 
-                // Tổng quan hệ thống
-                formDataToSend.append('Hệ thống', systemSizeKw.toFixed(2) + ' kWp');
-                formDataToSend.append('Tấm pin', panelCount + ' tấm');
-                formDataToSend.append('Inverter', inverterName);
-                formDataToSend.append('Pin lưu trữ', (batteryUnits * batteryCapacity).toFixed(2) + ' kWh (' + batteryUnits + ' bộ)');
-                formDataToSend.append('Tiết kiệm/năm', (annualSavings / 1000000).toFixed(1) + ' triệu VNĐ');
-                formDataToSend.append('Hoàn vốn', paybackPeriod + ' năm');
+                // Tổng quan hệ thống (nếu chưa có trong result)
+                if (!result.hasOwnProperty('systemSizeKw') || result.systemSizeKw === undefined) {
+                    formDataToSend.append('Hệ thống', systemSizeKw.toFixed(2) + ' kWp');
+                }
+                if (batteryUnits > 0 && batteryCapacity > 0) {
+                    formDataToSend.append('Pin lưu trữ (tổng)', (batteryUnits * batteryCapacity).toFixed(2) + ' kWh (' + batteryUnits + ' bộ)');
+                }
                 
                 console.log('Sending survey email via FormSubmit (table template)...');
                 
