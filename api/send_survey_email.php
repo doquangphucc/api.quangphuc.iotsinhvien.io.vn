@@ -4,8 +4,24 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// Set error handler to capture errors
+// Set error handler to capture errors and output JSON
 $errorDetails = [];
+$fatalError = false;
+
+// Register shutdown function to catch fatal errors
+register_shutdown_function(function() use (&$fatalError, &$errorDetails) {
+    $error = error_get_last();
+    if ($error !== NULL && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        $fatalError = true;
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Fatal Error: ' . $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line']
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+});
+
 set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$errorDetails) {
     $errorDetails[] = [
         'type' => 'Error',
@@ -17,18 +33,49 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$errorDeta
     return false; // Continue with normal error handling
 });
 
-require_once 'connect.php';
+try {
+    require_once 'connect.php';
+} catch (Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error loading connect.php: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine()
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendError('Phương thức không được hỗ trợ', 405);
+    if (function_exists('sendError')) {
+        sendError('Phương thức không được hỗ trợ', 405);
+    } else {
+        http_response_code(405);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Phương thức không được hỗ trợ'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 }
 
 // Get JSON input
-$input = json_decode(file_get_contents('php://input'), true);
-
-if (json_last_error() !== JSON_ERROR_NONE) {
-    sendError('Dữ liệu JSON không hợp lệ');
+try {
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        if (function_exists('sendError')) {
+            sendError('Dữ liệu JSON không hợp lệ: ' . json_last_error_msg());
+        } else {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu JSON không hợp lệ: ' . json_last_error_msg()], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Lỗi đọc input: ' . $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
 // Validate required fields
