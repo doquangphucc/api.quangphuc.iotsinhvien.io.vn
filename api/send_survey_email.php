@@ -96,24 +96,29 @@ try {
 }
 
 /**
+ * Helper function to safely get array value
+ */
+if (!function_exists('safeGetValue')) {
+    function safeGetValue($array, $key, $default = 'N/A') {
+        return isset($array) && is_array($array) && isset($array[$key]) ? $array[$key] : $default;
+    }
+}
+
+/**
+ * Helper function to safely get nested array value
+ */
+if (!function_exists('safeGetNestedValue')) {
+    function safeGetNestedValue($array, $key1, $key2, $default = 'N/A') {
+        return isset($array) && is_array($array) && isset($array[$key1]) && is_array($array[$key1]) && isset($array[$key1][$key2]) 
+            ? $array[$key1][$key2] 
+            : $default;
+    }
+}
+
+/**
  * Build HTML email content from survey data
  */
 function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) {
-    // Helper function to safely get array value
-    if (!function_exists('safeGetValue')) {
-        function safeGetValue($array, $key, $default = 'N/A') {
-            return isset($array) && is_array($array) && isset($array[$key]) ? $array[$key] : $default;
-        }
-    }
-    
-    // Helper function to safely get nested array value
-    if (!function_exists('safeGetNestedValue')) {
-        function safeGetNestedValue($array, $key1, $key2, $default = 'N/A') {
-            return isset($array) && is_array($array) && isset($array[$key1]) && is_array($array[$key1]) && isset($array[$key1][$key2]) 
-                ? $array[$key1][$key2] 
-                : $default;
-        }
-    }
     
     // Get region name
     $regionMap = [
@@ -138,44 +143,51 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
     $usageTimeName = isset($usageTimeMap[$usageTime]) ? $usageTimeMap[$usageTime] : $usageTime;
     
     // Pre-calculate all values to avoid issues in string concatenation
-    $monthlyBill = (float)safeGetValue($results, 'monthlyBill', 0);
-    $monthlyKwh = (float)safeGetValue($results, 'monthlyKwh', 0);
-    $dailyKwh = (float)safeGetValue($results, 'dailyKwh', 0);
-    $peakSunHours = (float)safeGetValue($results, 'peakSunHours', 0);
-    $roofArea = (float)safeGetValue($results, 'roofArea', 0);
-    
-    $solarPanelName = safeGetValue($results, 'solarPanelName', 'N/A');
-    $solarPanelWatt = safeGetValue($results, 'solarPanelWatt', 0);
-    $panelCount = safeGetValue($results, 'panelCount', 0);
-    $solarPanelPrice = (float)safeGetValue($results, 'solarPanelPrice', 0);
-    $panelTotalPrice = (float)safeGetValue($results, 'panelTotalPrice', 0);
-    
-    $inverterName = safeGetNestedValue($results, 'selectedInverter', 'name', 'N/A');
-    $inverterPower = safeGetNestedValue($results, 'selectedInverter', 'power', 0);
-    $inverterPrice = (float)safeGetNestedValue($results, 'selectedInverter', 'price', 0);
-    
-    $cabinetName = safeGetNestedValue($results, 'selectedCabinet', 'name', 'N/A');
-    $cabinetPrice = (float)safeGetNestedValue($results, 'selectedCabinet', 'price', 0);
-    
-    $batteryName = safeGetNestedValue($results, 'selectedBattery', 'name', 'N/A');
-    $batteryCapacity = (float)safeGetNestedValue($results, 'selectedBattery', 'capacity', 0);
-    $batteryUnits = safeGetNestedValue($results, 'selectedBattery', 'units', 0);
-    $batteryPrice = (float)safeGetNestedValue($results, 'selectedBattery', 'price', 0);
-    $batteryTotalPrice = (float)safeGetNestedValue($results, 'selectedBattery', 'totalPrice', 0);
-    
-    $accessoriesTotal = (float)safeGetValue($results, 'accessoriesTotal', 0);
-    $totalPrice = (float)safeGetValue($results, 'totalPrice', 0);
-    
-    $systemSizeKw = (float)safeGetValue($results, 'systemSizeKw', 0);
-    $annualSavings = (float)safeGetValue($results, 'annualSavings', 0);
-    $paybackPeriod = safeGetValue($results, 'paybackPeriod', 0);
-    
-    $accessories = safeGetValue($results, 'accessories', []);
-    if (!is_array($accessories)) {
-        $accessories = [];
+    try {
+        $monthlyBill = (float)safeGetValue($results, 'monthlyBill', 0);
+        $monthlyKwh = (float)safeGetValue($results, 'monthlyKwh', 0);
+        $dailyKwh = (float)safeGetValue($results, 'dailyKwh', 0);
+        $peakSunHours = (float)safeGetValue($results, 'peakSunHours', 0);
+        $roofArea = (float)safeGetValue($results, 'roofArea', 0);
+        
+        $solarPanelName = (string)safeGetValue($results, 'solarPanelName', 'N/A');
+        $solarPanelWatt = (int)safeGetValue($results, 'solarPanelWatt', 0);
+        $panelCount = (int)safeGetValue($results, 'panelCount', 0);
+        $solarPanelPrice = (float)safeGetValue($results, 'solarPanelPrice', 0);
+        $panelTotalPrice = (float)safeGetValue($results, 'panelTotalPrice', 0);
+        
+        $inverterName = (string)safeGetNestedValue($results, 'selectedInverter', 'name', 'N/A');
+        $inverterPower = (int)safeGetNestedValue($results, 'selectedInverter', 'power', 0);
+        $inverterPrice = (float)safeGetNestedValue($results, 'selectedInverter', 'price', 0);
+        
+        $cabinetName = (string)safeGetNestedValue($results, 'selectedCabinet', 'name', 'N/A');
+        $cabinetPrice = (float)safeGetNestedValue($results, 'selectedCabinet', 'price', 0);
+        
+        $batteryName = (string)safeGetNestedValue($results, 'selectedBattery', 'name', 'N/A');
+        $batteryCapacity = (float)safeGetNestedValue($results, 'selectedBattery', 'capacity', 0);
+        $batteryUnits = (int)safeGetNestedValue($results, 'selectedBattery', 'units', 0);
+        $batteryPrice = (float)safeGetNestedValue($results, 'selectedBattery', 'price', 0);
+        $batteryTotalPrice = (float)safeGetNestedValue($results, 'selectedBattery', 'totalPrice', 0);
+        
+        $accessoriesTotal = (float)safeGetValue($results, 'accessoriesTotal', 0);
+        $totalPrice = (float)safeGetValue($results, 'totalPrice', 0);
+        
+        $systemSizeKw = (float)safeGetValue($results, 'systemSizeKw', 0);
+        $annualSavings = (float)safeGetValue($results, 'annualSavings', 0);
+        $paybackPeriod = (string)safeGetValue($results, 'paybackPeriod', 0);
+        
+        $accessories = safeGetValue($results, 'accessories', []);
+        if (!is_array($accessories)) {
+            $accessories = [];
+        }
+    } catch (Exception $e) {
+        error_log("Error calculating values in buildSurveyEmailHTML: " . $e->getMessage());
+        throw $e;
     }
     
-    $html = '<!DOCTYPE html>
+    // Build HTML string with error handling
+    try {
+        $html = '<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -335,9 +347,9 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
     if (is_array($accessories) && !empty($accessories)) {
         foreach ($accessories as $acc) {
             if (!is_array($acc)) continue;
-            $accName = safeGetValue($acc, 'name', 'N/A');
-            $accQuantity = safeGetValue($acc, 'quantity', 0);
-            $accUnit = safeGetValue($acc, 'unit', 'cái');
+            $accName = (string)safeGetValue($acc, 'name', 'N/A');
+            $accQuantity = (int)safeGetValue($acc, 'quantity', 0);
+            $accUnit = (string)safeGetValue($acc, 'unit', 'cái');
             $accPrice = (float)safeGetValue($acc, 'price', 0);
             $accTotalPrice = (float)safeGetValue($acc, 'totalPrice', 0);
             $html .= '<tr>
@@ -398,6 +410,15 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
 </body>
 </html>';
     
-    return $html;
+        return $html;
+    } catch (Exception $e) {
+        error_log("Error building HTML string: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        throw new Exception("Lỗi khi tạo HTML email: " . $e->getMessage());
+    } catch (Error $e) {
+        error_log("Fatal error building HTML string: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        throw new Error("Lỗi hệ thống khi tạo HTML email: " . $e->getMessage());
+    }
 }
 
