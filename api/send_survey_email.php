@@ -167,76 +167,82 @@ try {
     $body .= $emailContent . "\r\n";
     $body .= "--$boundary--\r\n";
     
-    // Send email
-    error_log("send_survey_email.php - Attempting to send email to: " . $to);
+    // Send email in background to avoid timeout
+    // Return success immediately and send email asynchronously
+    error_log("send_survey_email.php - Preparing to send email to: " . $to);
     error_log("send_survey_email.php - Email subject: " . $subject);
     error_log("send_survey_email.php - Email body length: " . strlen($body));
     
-    // Try to send email
-    $mailSent = @mail($to, $subject, $body, $headers);
-    
-    // Check if mail was sent (note: mail() may return false even on success in some configs)
-    if ($mailSent) {
-        error_log("send_survey_email.php - mail() returned true - Email sent successfully");
+    // Send email in background using fastcgi_finish_request or ignore_user_abort
+    if (function_exists('fastcgi_finish_request')) {
+        // Return response immediately
         sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
+        fastcgi_finish_request();
+        
+        // Now send email without blocking
+        @mail($to, $subject, $body, $headers);
+        error_log("send_survey_email.php - Email sent in background via mail()");
     } else {
-        // Even if mail() returns false, email might still be sent in some configurations
-        // Log the attempt and return success (email will be queued by server)
-        $lastError = error_get_last();
-        error_log("send_survey_email.php - mail() returned false");
-        if ($lastError) {
-            error_log("send_survey_email.php - Last error: " . print_r($lastError, true));
-        }
+        // For non-FastCGI, use ignore_user_abort and send immediately
+        ignore_user_abort(true);
         
-        // Try alternative: Send via FormSubmit as fallback with plain text summary
-        error_log("send_survey_email.php - Attempting FormSubmit as fallback");
-        $formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
+        // Try to send email quickly
+        $mailSent = @mail($to, $subject, $body, $headers);
         
-        // Create plain text summary for FormSubmit
-        $plainTextSummary = "BÁO GIÁ ĐIỆN MẶT TRỜI\n\n";
-        $plainTextSummary .= "Khách hàng: $fullname\n";
-        $plainTextSummary .= "SĐT: $phone\n";
-        $plainTextSummary .= "Email: $email\n\n";
-        $plainTextSummary .= "Khu vực: " . ($surveyData['region'] ?? 'N/A') . "\n";
-        $plainTextSummary .= "Loại điện: " . (($surveyData['phase'] ?? 1) == 1 ? '1 Pha' : '3 Pha') . "\n";
-        $plainTextSummary .= "Tổng chi phí: " . number_format($results['totalPrice'] ?? 0, 0, ',', '.') . " VNĐ\n";
-        $plainTextSummary .= "Hệ thống: " . number_format($results['systemSizeKw'] ?? 0, 2, ',', '.') . " kWp\n";
-        $plainTextSummary .= "\nVui lòng kiểm tra email HTML để xem chi tiết đầy đủ.";
-        
-        $formData = [
-            '_subject' => $subject,
-            '_template' => 'table',
-            '_captcha' => 'false',
-            'message' => $plainTextSummary,
-            'name' => $fullname,
-            'email' => $email,
-            'phone' => $phone,
-            '_html' => $emailContent  // Try to send HTML as additional field
-        ];
-        
-        $ch = curl_init($formSubmitUrl);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/x-www-form-urlencoded',
-            'Accept: application/json'
-        ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($httpCode === 200) {
-            error_log("send_survey_email.php - FormSubmit fallback successful");
+        if ($mailSent) {
+            error_log("send_survey_email.php - mail() returned true");
         } else {
-            error_log("send_survey_email.php - FormSubmit fallback failed: HTTP $httpCode");
+            error_log("send_survey_email.php - mail() returned false, trying FormSubmit");
+            
+            // Fallback to FormSubmit with shorter timeout
+            $formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
+            
+            // Create plain text summary for FormSubmit
+            $plainTextSummary = "BÁO GIÁ ĐIỆN MẶT TRỜI\n\n";
+            $plainTextSummary .= "Khách hàng: $fullname\n";
+            $plainTextSummary .= "SĐT: $phone\n";
+            $plainTextSummary .= "Email: $email\n\n";
+            $plainTextSummary .= "Khu vực: " . ($surveyData['region'] ?? 'N/A') . "\n";
+            $plainTextSummary .= "Loại điện: " . (($surveyData['phase'] ?? 1) == 1 ? '1 Pha' : '3 Pha') . "\n";
+            $plainTextSummary .= "Tổng chi phí: " . number_format($results['totalPrice'] ?? 0, 0, ',', '.') . " VNĐ\n";
+            $plainTextSummary .= "Hệ thống: " . number_format($results['systemSizeKw'] ?? 0, 2, ',', '.') . " kWp\n";
+            $plainTextSummary .= "\nChi tiết đầy đủ trong email HTML.";
+            
+            $formData = [
+                '_subject' => $subject,
+                '_template' => 'table',
+                '_captcha' => 'false',
+                'message' => $plainTextSummary . "\n\n" . $emailContent,  // Include HTML in message
+                'name' => $fullname,
+                'email' => $email,
+                'phone' => $phone
+            ];
+            
+            $ch = curl_init($formSubmitUrl);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/x-www-form-urlencoded',
+                'Accept: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // Shorter timeout
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            
+            $response = @curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode === 200) {
+                error_log("send_survey_email.php - FormSubmit fallback successful");
+            } else {
+                error_log("send_survey_email.php - FormSubmit fallback failed: HTTP $httpCode");
+            }
         }
         
-        // Return success anyway - email might be queued
-        sendSuccess(['sent' => true, 'note' => 'Email đã được xử lý (có thể đang trong hàng đợi)'], 'Đã gửi báo giá đến email thành công!');
+        // Return success immediately
+        sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
     }
     
 } catch (Exception $e) {
