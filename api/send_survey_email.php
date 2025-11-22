@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 require_once 'connect.php';
 
 // Only allow POST requests
@@ -22,19 +27,24 @@ if (!empty($missingFields)) {
 }
 
 try {
-    $fullname = sanitizeInput($input['fullname']);
-    $phone = sanitizeInput($input['phone']);
-    $email = sanitizeInput($input['email']);
-    $surveyData = $input['surveyData'];
-    $results = $input['results'];
+    $fullname = sanitizeInput($input['fullname'] ?? '');
+    $phone = sanitizeInput($input['phone'] ?? '');
+    $email = sanitizeInput($input['email'] ?? '');
+    $surveyData = $input['surveyData'] ?? [];
+    $results = $input['results'] ?? [];
     
     // Validate email format
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         sendError('Địa chỉ email không hợp lệ');
     }
     
     // Build HTML email content
-    $emailContent = buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results);
+    try {
+        $emailContent = buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results);
+    } catch (Exception $e) {
+        error_log("Error building email HTML: " . $e->getMessage());
+        sendError('Lỗi khi tạo nội dung email: ' . $e->getMessage(), 500);
+    }
     
     // Email configuration
     $to = 'doquangphuc21@gmail.com';
@@ -53,11 +63,18 @@ try {
     if ($mailSent) {
         sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
     } else {
+        // Log error details
+        $lastError = error_get_last();
+        error_log("Failed to send email. Last error: " . print_r($lastError, true));
         sendError('Không thể gửi email, vui lòng thử lại sau');
     }
     
 } catch (Exception $e) {
+    error_log("Exception in send_survey_email.php: " . $e->getMessage() . "\n" . $e->getTraceAsString());
     sendError('Lỗi khi gửi email: ' . $e->getMessage(), 500);
+} catch (Error $e) {
+    error_log("Error in send_survey_email.php: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+    sendError('Lỗi hệ thống: ' . $e->getMessage(), 500);
 }
 
 /**
@@ -171,10 +188,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($results['selectedInverter']['name'] ?? 'N/A') . ' (' . ($results['selectedInverter']['power'] ?? 0) . 'W)</td>
+                            <td>' . htmlspecialchars(isset($results['selectedInverter']) && is_array($results['selectedInverter']) ? ($results['selectedInverter']['name'] ?? 'N/A') : 'N/A') . ' (' . (isset($results['selectedInverter']) && is_array($results['selectedInverter']) ? ($results['selectedInverter']['power'] ?? 0) : 0) . 'W)</td>
                             <td>1 bộ</td>
-                            <td>' . number_format($results['selectedInverter']['price'] ?? 0, 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format($results['selectedInverter']['price'] ?? 0, 0, ',', '.') . ' đ</strong></td>
+                            <td>' . number_format(isset($results['selectedInverter']) && is_array($results['selectedInverter']) ? ($results['selectedInverter']['price'] ?? 0) : 0, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format(isset($results['selectedInverter']) && is_array($results['selectedInverter']) ? ($results['selectedInverter']['price'] ?? 0) : 0, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -192,10 +209,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($results['selectedCabinet']['name'] ?? 'N/A') . '</td>
+                            <td>' . htmlspecialchars(isset($results['selectedCabinet']) && is_array($results['selectedCabinet']) ? ($results['selectedCabinet']['name'] ?? 'N/A') : 'N/A') . '</td>
                             <td>1 cái</td>
-                            <td>' . number_format($results['selectedCabinet']['price'] ?? 0, 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format($results['selectedCabinet']['price'] ?? 0, 0, ',', '.') . ' đ</strong></td>
+                            <td>' . number_format(isset($results['selectedCabinet']) && is_array($results['selectedCabinet']) ? ($results['selectedCabinet']['price'] ?? 0) : 0, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format(isset($results['selectedCabinet']) && is_array($results['selectedCabinet']) ? ($results['selectedCabinet']['price'] ?? 0) : 0, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -213,10 +230,10 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                     </thead>
                     <tbody>
                         <tr>
-                            <td>' . htmlspecialchars($results['selectedBattery']['name'] ?? 'N/A') . ' (' . number_format($results['selectedBattery']['capacity'] ?? 0, 2, ',', '.') . ' kWh/bộ)</td>
-                            <td>' . ($results['selectedBattery']['units'] ?? 0) . ' bộ</td>
-                            <td>' . number_format($results['selectedBattery']['price'] ?? 0, 0, ',', '.') . ' đ</td>
-                            <td><strong>' . number_format($results['selectedBattery']['totalPrice'] ?? 0, 0, ',', '.') . ' đ</strong></td>
+                            <td>' . htmlspecialchars(isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['name'] ?? 'N/A') : 'N/A') . ' (' . number_format(isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['capacity'] ?? 0) : 0, 2, ',', '.') . ' kWh/bộ)</td>
+                            <td>' . (isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['units'] ?? 0) : 0) . ' bộ</td>
+                            <td>' . number_format(isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['price'] ?? 0) : 0, 0, ',', '.') . ' đ</td>
+                            <td><strong>' . number_format(isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['totalPrice'] ?? 0) : 0, 0, ',', '.') . ' đ</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -274,8 +291,8 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
                 <table>
                     <tr><td><strong>Hệ thống:</strong></td><td>' . number_format($results['systemSizeKw'] ?? 0, 2, ',', '.') . ' kWp</td></tr>
                     <tr><td><strong>Tấm pin:</strong></td><td>' . ($results['panelCount'] ?? 0) . ' tấm</td></tr>
-                    <tr><td><strong>Inverter:</strong></td><td>' . htmlspecialchars($results['selectedInverter']['name'] ?? 'N/A') . '</td></tr>
-                    <tr><td><strong>Pin lưu trữ:</strong></td><td>' . number_format(($results['selectedBattery']['units'] ?? 0) * ($results['selectedBattery']['capacity'] ?? 0), 2, ',', '.') . ' kWh (' . ($results['selectedBattery']['units'] ?? 0) . ' bộ)</td></tr>
+                    <tr><td><strong>Inverter:</strong></td><td>' . htmlspecialchars(isset($results['selectedInverter']) && is_array($results['selectedInverter']) ? ($results['selectedInverter']['name'] ?? 'N/A') : 'N/A') . '</td></tr>
+                    <tr><td><strong>Pin lưu trữ:</strong></td><td>' . number_format((isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['units'] ?? 0) : 0) * (isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['capacity'] ?? 0) : 0), 2, ',', '.') . ' kWh (' . (isset($results['selectedBattery']) && is_array($results['selectedBattery']) ? ($results['selectedBattery']['units'] ?? 0) : 0) . ' bộ)</td></tr>
                     <tr><td><strong>Tiết kiệm/năm:</strong></td><td>' . number_format(($results['annualSavings'] ?? 0) / 1000000, 1, ',', '.') . ' triệu VNĐ</td></tr>
                     <tr><td><strong>Hoàn vốn:</strong></td><td>' . ($results['paybackPeriod'] ?? 0) . ' năm</td></tr>
                 </table>

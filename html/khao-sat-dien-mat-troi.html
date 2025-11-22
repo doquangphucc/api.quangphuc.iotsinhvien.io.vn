@@ -3716,14 +3716,36 @@
                     body: JSON.stringify(emailData)
                 });
                 
-                const responseData = await response.json();
+                // Parse response text first (can only read once)
+                const responseText = await response.text();
                 
-                if (responseData.success) {
+                // Kiểm tra response status
+                if (!response.ok) {
+                    console.error('❌ HTTP Error:', response.status, responseText);
+                    // Vẫn không throw error để không gián đoạn user experience
+                    return;
+                }
+                
+                // Parse JSON response
+                let responseData;
+                try {
+                    if (!responseText || responseText.trim() === '') {
+                        console.error('❌ Empty response from server');
+                        return;
+                    }
+                    responseData = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    console.error('Response text:', responseText);
+                    return;
+                }
+                
+                if (responseData && responseData.success) {
                     console.log('✅ Email đã được gửi thành công!');
                     // Có thể hiển thị thông báo nhẹ nhàng cho user
                     // showNotification('📧 Báo giá đã được gửi đến email của bạn!', 'success');
                 } else {
-                    console.error('❌ Lỗi khi gửi email:', responseData.message);
+                    console.error('❌ Lỗi khi gửi email:', responseData?.message || 'Unknown error');
                 }
             } catch (error) {
                 console.error('❌ Lỗi khi gửi email:', error);
