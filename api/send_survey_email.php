@@ -106,6 +106,59 @@ if (!empty($missingFields)) {
     sendError('Thiếu các trường bắt buộc: ' . implode(', ', $missingFields));
 }
 
+/**
+ * Fallback function: Gửi email qua FormSubmit nếu mail() fail
+ */
+if (!function_exists('sendEmailViaFormSubmit')) {
+    function sendEmailViaFormSubmit($formSubmitUrl, $subject, $fullname, $email, $phone, $emailContent, $surveyData, $results) {
+        // Tạo plain text summary vì FormSubmit không render HTML
+        $plainTextSummary = "BÁO GIÁ ĐIỆN MẶT TRỜI\n\n";
+        $plainTextSummary .= "Khách hàng: $fullname\n";
+        $plainTextSummary .= "SĐT: $phone\n";
+        $plainTextSummary .= "Email: $email\n\n";
+        $plainTextSummary .= "Khu vực: " . safeGetValue($surveyData, 'region', 'N/A') . "\n";
+        $phase = safeGetValue($surveyData, 'phase', 1);
+        $plainTextSummary .= "Loại điện: " . (($phase == 1 || $phase == '1') ? '1 Pha' : '3 Pha') . "\n";
+        $plainTextSummary .= "Tổng chi phí: " . number_format(safeGetValue($results, 'totalPrice', 0), 0, ',', '.') . " VNĐ\n";
+        $plainTextSummary .= "Hệ thống: " . number_format(safeGetValue($results, 'systemSizeKw', 0), 2, ',', '.') . " kWp\n";
+        $plainTextSummary .= "\n\nChi tiết đầy đủ:\n";
+        $plainTextSummary .= "- Tấm pin: " . safeGetValue($results, 'panelCount', 0) . " tấm\n";
+        $plainTextSummary .= "- Inverter: " . safeGetNestedValue($results, 'selectedInverter', 'name', 'N/A') . "\n";
+        $plainTextSummary .= "- Pin lưu trữ: " . safeGetNestedValue($results, 'selectedBattery', 'name', 'N/A') . "\n";
+        
+        $formData = [
+            '_subject' => $subject,
+            '_captcha' => 'false',
+            'name' => $fullname,
+            'email' => $email,
+            'phone' => $phone,
+            'message' => $plainTextSummary
+        ];
+        
+        $ch = curl_init($formSubmitUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Accept: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        
+        $response = @curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode === 200) {
+            error_log("send_survey_email.php - FormSubmit fallback sent successfully");
+        } else {
+            error_log("send_survey_email.php - FormSubmit fallback failed: HTTP $httpCode");
+        }
+    }
+}
+
 try {
     $fullname = sanitizeInput($input['fullname'] ?? '');
     $phone = sanitizeInput($input['phone'] ?? '');
@@ -188,57 +241,6 @@ try {
         }
         
         sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
-    }
-}
-
-/**
- * Fallback function: Gửi email qua FormSubmit nếu mail() fail
- */
-function sendEmailViaFormSubmit($formSubmitUrl, $subject, $fullname, $email, $phone, $emailContent, $surveyData, $results) {
-    // Tạo plain text summary vì FormSubmit không render HTML
-    $plainTextSummary = "BÁO GIÁ ĐIỆN MẶT TRỜI\n\n";
-    $plainTextSummary .= "Khách hàng: $fullname\n";
-    $plainTextSummary .= "SĐT: $phone\n";
-    $plainTextSummary .= "Email: $email\n\n";
-    $plainTextSummary .= "Khu vực: " . safeGetValue($surveyData, 'region', 'N/A') . "\n";
-    $phase = safeGetValue($surveyData, 'phase', 1);
-    $plainTextSummary .= "Loại điện: " . (($phase == 1 || $phase == '1') ? '1 Pha' : '3 Pha') . "\n";
-    $plainTextSummary .= "Tổng chi phí: " . number_format(safeGetValue($results, 'totalPrice', 0), 0, ',', '.') . " VNĐ\n";
-    $plainTextSummary .= "Hệ thống: " . number_format(safeGetValue($results, 'systemSizeKw', 0), 2, ',', '.') . " kWp\n";
-    $plainTextSummary .= "\n\nChi tiết đầy đủ:\n";
-    $plainTextSummary .= "- Tấm pin: " . safeGetValue($results, 'panelCount', 0) . " tấm\n";
-    $plainTextSummary .= "- Inverter: " . safeGetNestedValue($results, 'selectedInverter', 'name', 'N/A') . "\n";
-    $plainTextSummary .= "- Pin lưu trữ: " . safeGetNestedValue($results, 'selectedBattery', 'name', 'N/A') . "\n";
-    
-    $formData = [
-        '_subject' => $subject,
-        '_captcha' => 'false',
-        'name' => $fullname,
-        'email' => $email,
-        'phone' => $phone,
-        'message' => $plainTextSummary
-    ];
-    
-    $ch = curl_init($formSubmitUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/x-www-form-urlencoded',
-        'Accept: application/json'
-    ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-    
-    $response = @curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    if ($httpCode === 200) {
-        error_log("send_survey_email.php - FormSubmit fallback sent successfully");
-    } else {
-        error_log("send_survey_email.php - FormSubmit fallback failed: HTTP $httpCode");
     }
     
 } catch (Exception $e) {
