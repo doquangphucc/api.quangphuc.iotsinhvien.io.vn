@@ -3897,10 +3897,10 @@
                 
                 // Tấm Pin
                 formDataToSend.append('⚡ Tấm Pin Mặt Trời', '');
-                formDataToSend.append('  - Tên thiết bị', (result.solarPanelName || 'N/A') + ' (' + toNumber(result.solarPanelWatt || 0) + 'W)');
-                formDataToSend.append('  - Số lượng', toNumber(result.panelCount || 0) + ' tấm');
-                formDataToSend.append('  - Đơn giá', formatCurrency(result.solarPanelPrice || 0) + ' đ');
-                formDataToSend.append('  - Thành tiền', formatCurrency(result.panelTotalPrice || 0) + ' đ');
+                formDataToSend.append('Tấm Pin - Tên thiết bị', (result.solarPanelName || 'N/A') + ' (' + toNumber(result.solarPanelWatt || 0) + 'W)');
+                formDataToSend.append('Tấm Pin - Số lượng', toNumber(result.panelCount || 0) + ' tấm');
+                formDataToSend.append('Tấm Pin - Đơn giá', formatCurrency(result.solarPanelPrice || 0) + ' đ');
+                formDataToSend.append('Tấm Pin - Thành tiền', formatCurrency(result.panelTotalPrice || 0) + ' đ');
                 
                 // Biến Tần (Inverter)
                 const selectedInverter = result.selectedInverter || {};
@@ -3911,10 +3911,10 @@
                 console.log('Email - Inverter data:', { name: inverterName, power: inverterPower, price: inverterPrice });
                 
                 formDataToSend.append('🔌 Biến Tần (Inverter)', '');
-                formDataToSend.append('  - Tên thiết bị', inverterName + (inverterPower ? ` (${toNumber(inverterPower)}W)` : ''));
-                formDataToSend.append('  - Số lượng', '1 bộ');
-                formDataToSend.append('  - Đơn giá', formatCurrency(inverterPrice) + ' đ');
-                formDataToSend.append('  - Thành tiền', formatCurrency(inverterPrice) + ' đ');
+                formDataToSend.append('Biến Tần - Tên thiết bị', inverterName + (inverterPower ? ` (${toNumber(inverterPower)}W)` : ''));
+                formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
+                formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(inverterPrice) + ' đ');
+                formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(inverterPrice) + ' đ');
                 
                 // Tủ Điện
                 const selectedCabinet = result.selectedCabinet || {};
@@ -3924,10 +3924,10 @@
                 console.log('Email - Cabinet data:', { name: cabinetName, price: cabinetPrice });
                 
                 formDataToSend.append('🧰 Tủ Điện Hybrid', '');
-                formDataToSend.append('  - Tên thiết bị', cabinetName);
-                formDataToSend.append('  - Số lượng', '1 cái');
-                formDataToSend.append('  - Đơn giá', formatCurrency(cabinetPrice) + ' đ');
-                formDataToSend.append('  - Thành tiền', formatCurrency(cabinetPrice) + ' đ');
+                formDataToSend.append('Tủ Điện - Tên thiết bị', cabinetName);
+                formDataToSend.append('Tủ Điện - Số lượng', '1 cái');
+                formDataToSend.append('Tủ Điện - Đơn giá', formatCurrency(cabinetPrice) + ' đ');
+                formDataToSend.append('Tủ Điện - Thành tiền', formatCurrency(cabinetPrice) + ' đ');
                 
                 // Pin Lưu Trữ (Battery)
                 const selectedBattery = result.selectedBattery || {};
@@ -3940,20 +3940,20 @@
                 console.log('Email - Battery data:', { name: batteryName, capacity: batteryCapacity, units: batteryUnits, price: batteryPrice, totalPrice: batteryTotalPrice });
                 
                 formDataToSend.append('🔋 Pin Lưu Trữ (Battery)', '');
-                formDataToSend.append('  - Tên thiết bị', batteryName + (batteryCapacity ? ` (${toNumber(batteryCapacity).toFixed(2)} kWh/bộ)` : ''));
-                formDataToSend.append('  - Số lượng', batteryUnits + ' bộ');
-                formDataToSend.append('  - Đơn giá', formatCurrency(batteryPrice) + ' đ');
-                formDataToSend.append('  - Thành tiền', formatCurrency(batteryTotalPrice) + ' đ');
+                formDataToSend.append('Pin Lưu Trữ - Tên thiết bị', batteryName + (batteryCapacity ? ` (${toNumber(batteryCapacity).toFixed(2)} kWh/bộ)` : ''));
+                formDataToSend.append('Pin Lưu Trữ - Số lượng', batteryUnits + ' bộ');
+                formDataToSend.append('Pin Lưu Trữ - Đơn giá', formatCurrency(batteryPrice) + ' đ');
+                formDataToSend.append('Pin Lưu Trữ - Thành tiền', formatCurrency(batteryTotalPrice) + ' đ');
                 
                 // Phụ Kiện
                 const accessories = result.accessories || [];
                 if (accessories.length > 0) {
                     formDataToSend.append('🔧 Phụ Kiện & Vật Tư Lắp Đặt', '');
                     accessories.forEach((acc, index) => {
-                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Tên thiết bị`, acc.name || 'N/A');
-                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
-                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
-                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
+                        formDataToSend.append(`Phụ kiện ${index + 1} - Tên thiết bị`, acc.name || 'N/A');
+                        formDataToSend.append(`Phụ kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
+                        formDataToSend.append(`Phụ kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
+                        formDataToSend.append(`Phụ kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
                     });
                 }
                 
