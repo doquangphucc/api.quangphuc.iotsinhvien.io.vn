@@ -3742,7 +3742,8 @@
                     'id', 'image', 'images', 'img', 'photo', 'photos', 'url', 'link', 'href',
                     'productId', 'solarPanelProductId', 'batteryProductId', 'inverterId', 'cabinetId',
                     'kwhBreakdown', 'cabinetAlternatives', 'actualDailyKwh', 'systemSizeWatt',
-                    'batteryCapacityNeeded', 'selectedInverter', 'selectedCabinet', 'selectedBattery'
+                    'batteryCapacityNeeded', 'selectedInverter', 'selectedCabinet', 'selectedBattery',
+                    'usageTime' // Bỏ qua vì đã gửi thủ công với tên đã map
                 ];
                 
                 // Danh sách các field quan trọng cần gửi (chỉ gửi các field này)
@@ -3874,10 +3875,11 @@
                 formDataToSend.append('Email', email);
                 formDataToSend.append('Khu vực', regionName);
                 formDataToSend.append('Loại điện', phaseName);
-                formDataToSend.append('Thời gian sử dụng', usageTimeName);
+                formDataToSend.append('Thời gian sử dụng', usageTimeName); // Dùng tên đã map thay vì value
                 
                 // Tự động duyệt qua object result và thêm tất cả các field
                 // Điều này đảm bảo nếu sau này thêm field mới vào result, nó sẽ tự động được gửi
+                // Lưu ý: usageTime đã được skip trong fieldsToSkip để tránh gửi trùng
                 addObjectToFormData(formDataToSend, result);
                 
                 // Thêm một số field tổng hợp đặc biệt
