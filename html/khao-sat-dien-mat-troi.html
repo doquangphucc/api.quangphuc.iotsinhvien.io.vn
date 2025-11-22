@@ -3886,6 +3886,12 @@
                 formDataToSend.append('Giờ nắng trung bình', toNumber(result.peakSunHours || 0).toFixed(1) + ' giờ/ngày');
                 formDataToSend.append('Diện tích mái cần thiết', toNumber(result.roofArea || 0).toFixed(1) + ' m²');
                 
+                // Debug: Log result object để kiểm tra
+                console.log('Email - Full result object:', result);
+                console.log('Email - selectedInverter:', result.selectedInverter);
+                console.log('Email - selectedCabinet:', result.selectedCabinet);
+                console.log('Email - selectedBattery:', result.selectedBattery);
+                
                 // ========== 📋 BẢNG BÁO GIÁ CHI TIẾT ==========
                 formDataToSend.append('📋 BẢNG BÁO GIÁ CHI TIẾT', '');
                 
@@ -3897,9 +3903,13 @@
                 formDataToSend.append('  - Thành tiền', formatCurrency(result.panelTotalPrice || 0) + ' đ');
                 
                 // Biến Tần (Inverter)
-                const inverterName = result.selectedInverter?.name || 'N/A';
-                const inverterPower = result.selectedInverter?.power || 0;
-                const inverterPrice = result.selectedInverter?.price || 0;
+                const selectedInverter = result.selectedInverter || {};
+                const inverterName = selectedInverter.name || 'N/A';
+                const inverterPower = selectedInverter.power || 0;
+                const inverterPrice = selectedInverter.price || 0;
+                
+                console.log('Email - Inverter data:', { name: inverterName, power: inverterPower, price: inverterPrice });
+                
                 formDataToSend.append('🔌 Biến Tần (Inverter)', '');
                 formDataToSend.append('  - Tên thiết bị', inverterName + (inverterPower ? ` (${toNumber(inverterPower)}W)` : ''));
                 formDataToSend.append('  - Số lượng', '1 bộ');
@@ -3907,8 +3917,12 @@
                 formDataToSend.append('  - Thành tiền', formatCurrency(inverterPrice) + ' đ');
                 
                 // Tủ Điện
-                const cabinetName = result.selectedCabinet?.name || 'N/A';
-                const cabinetPrice = result.selectedCabinet?.price || 0;
+                const selectedCabinet = result.selectedCabinet || {};
+                const cabinetName = selectedCabinet.name || 'N/A';
+                const cabinetPrice = selectedCabinet.price || 0;
+                
+                console.log('Email - Cabinet data:', { name: cabinetName, price: cabinetPrice });
+                
                 formDataToSend.append('🧰 Tủ Điện Hybrid', '');
                 formDataToSend.append('  - Tên thiết bị', cabinetName);
                 formDataToSend.append('  - Số lượng', '1 cái');
@@ -3916,11 +3930,15 @@
                 formDataToSend.append('  - Thành tiền', formatCurrency(cabinetPrice) + ' đ');
                 
                 // Pin Lưu Trữ (Battery)
-                const batteryName = result.selectedBattery?.name || 'N/A';
-                const batteryCapacity = result.selectedBattery?.capacity || 0;
-                const batteryUnits = result.selectedBattery?.units || 0;
-                const batteryPrice = result.selectedBattery?.price || 0;
-                const batteryTotalPrice = result.selectedBattery?.totalPrice || 0;
+                const selectedBattery = result.selectedBattery || {};
+                const batteryName = selectedBattery.name || 'N/A';
+                const batteryCapacity = selectedBattery.capacity || 0;
+                const batteryUnits = selectedBattery.units || 0;
+                const batteryPrice = selectedBattery.price || 0;
+                const batteryTotalPrice = selectedBattery.totalPrice || 0;
+                
+                console.log('Email - Battery data:', { name: batteryName, capacity: batteryCapacity, units: batteryUnits, price: batteryPrice, totalPrice: batteryTotalPrice });
+                
                 formDataToSend.append('🔋 Pin Lưu Trữ (Battery)', '');
                 formDataToSend.append('  - Tên thiết bị', batteryName + (batteryCapacity ? ` (${toNumber(batteryCapacity).toFixed(2)} kWh/bộ)` : ''));
                 formDataToSend.append('  - Số lượng', batteryUnits + ' bộ');
