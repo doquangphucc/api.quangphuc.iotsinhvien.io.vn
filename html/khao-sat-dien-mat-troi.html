@@ -3930,8 +3930,7 @@
 </body>
 </html>`;
                 
-                // Gửi qua PHP backend để gửi HTML email đúng cách
-                // FormSubmit không render HTML trong message field, nên quay lại PHP
+                // Gửi HTML email form qua PHP backend để email client render HTML đúng cách
                 const emailData = {
                     fullname: fullname,
                     phone: phone,
@@ -3985,7 +3984,7 @@
                     }
                 };
                 
-                console.log('Sending survey email via PHP backend...');
+                console.log('Sending survey email form via PHP backend...');
                 
                 const response = await fetch(`${API_BASE}/send_survey_email.php`, {
                     method: 'POST',
@@ -4006,7 +4005,7 @@
                 try {
                     const responseData = JSON.parse(responseText);
                     if (responseData && responseData.success) {
-                        console.log('✅ Email đã được gửi thành công!');
+                        console.log('✅ Email form đã được gửi thành công!');
                     } else {
                         console.error('❌ Lỗi khi gửi email:', responseData?.message || 'Unknown error');
                     }
