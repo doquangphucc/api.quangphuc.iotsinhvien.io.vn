@@ -3721,7 +3721,26 @@
                 
                 // Kiểm tra response status
                 if (!response.ok) {
-                    console.error('❌ HTTP Error:', response.status, responseText);
+                    console.error('❌ HTTP Error:', response.status);
+                    console.error('❌ Response Text:', responseText);
+                    
+                    // Try to parse as JSON to get error details
+                    try {
+                        const errorData = JSON.parse(responseText);
+                        if (errorData && errorData.message) {
+                            console.error('❌ Error Message:', errorData.message);
+                            // Log full error details
+                            if (errorData.message.includes('\n')) {
+                                const errorLines = errorData.message.split('\n');
+                                errorLines.forEach(line => console.error('   ', line));
+                            }
+                        }
+                    } catch (e) {
+                        // Not JSON, might be HTML error page
+                        console.error('❌ Response is not JSON, might be HTML error page');
+                        console.error('❌ First 500 chars:', responseText.substring(0, 500));
+                    }
+                    
                     // Vẫn không throw error để không gián đoạn user experience
                     return;
                 }
@@ -3736,7 +3755,7 @@
                     responseData = JSON.parse(responseText);
                 } catch (parseError) {
                     console.error('❌ JSON Parse Error:', parseError);
-                    console.error('Response text:', responseText);
+                    console.error('❌ Response text (first 1000 chars):', responseText.substring(0, 1000));
                     return;
                 }
                 
@@ -3746,6 +3765,15 @@
                     // showNotification('📧 Báo giá đã được gửi đến email của bạn!', 'success');
                 } else {
                     console.error('❌ Lỗi khi gửi email:', responseData?.message || 'Unknown error');
+                    if (responseData?.message) {
+                        // Log full error message with line breaks
+                        const errorMsg = responseData.message;
+                        if (errorMsg.includes('\n')) {
+                            const errorLines = errorMsg.split('\n');
+                            console.error('❌ Error Details:');
+                            errorLines.forEach(line => console.error('   ', line));
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('❌ Lỗi khi gửi email:', error);

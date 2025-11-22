@@ -4,6 +4,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
+// Set error handler to capture errors
+$errorDetails = [];
+set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$errorDetails) {
+    $errorDetails[] = [
+        'type' => 'Error',
+        'code' => $errno,
+        'message' => $errstr,
+        'file' => $errfile,
+        'line' => $errline
+    ];
+    return false; // Continue with normal error handling
+});
+
 require_once 'connect.php';
 
 // Only allow POST requests
@@ -89,10 +102,30 @@ try {
     
 } catch (Exception $e) {
     error_log("Exception in send_survey_email.php: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-    sendError('Lỗi khi gửi email: ' . $e->getMessage(), 500);
+    // Return detailed error for debugging
+    $errorMessage = 'Lỗi khi gửi email: ' . $e->getMessage();
+    $errorMessage .= "\nFile: " . $e->getFile() . " Line: " . $e->getLine();
+    if (!empty($errorDetails)) {
+        $errorMessage .= "\nAdditional errors: " . json_encode($errorDetails, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+    sendError($errorMessage, 500);
 } catch (Error $e) {
     error_log("Error in send_survey_email.php: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-    sendError('Lỗi hệ thống: ' . $e->getMessage(), 500);
+    // Return detailed error for debugging
+    $errorMessage = 'Lỗi hệ thống: ' . $e->getMessage();
+    $errorMessage .= "\nFile: " . $e->getFile() . " Line: " . $e->getLine();
+    if (!empty($errorDetails)) {
+        $errorMessage .= "\nAdditional errors: " . json_encode($errorDetails, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+    sendError($errorMessage, 500);
+} catch (Throwable $e) {
+    error_log("Throwable in send_survey_email.php: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+    $errorMessage = 'Lỗi không xác định: ' . $e->getMessage();
+    $errorMessage .= "\nFile: " . $e->getFile() . " Line: " . $e->getLine();
+    if (!empty($errorDetails)) {
+        $errorMessage .= "\nAdditional errors: " . json_encode($errorDetails, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+    sendError($errorMessage, 500);
 }
 
 /**
