@@ -3869,39 +3869,83 @@
                 formDataToSend.append('_template', 'table'); // FormSubmit sẽ format thành bảng
                 formDataToSend.append('_captcha', 'false');
                 
-                // Thông tin khách hàng (từ formData)
+                // ========== 👤 THÔNG TIN KHÁCH HÀNG ==========
+                formDataToSend.append('👤 THÔNG TIN KHÁCH HÀNG', '');
                 formDataToSend.append('Họ và tên', fullname);
                 formDataToSend.append('Số điện thoại', phone);
                 formDataToSend.append('Email', email);
                 formDataToSend.append('Khu vực', regionName);
                 formDataToSend.append('Loại điện', phaseName);
-                formDataToSend.append('Thời gian sử dụng', usageTimeName); // Dùng tên đã map thay vì value
+                formDataToSend.append('Thời gian sử dụng', usageTimeName);
                 
-                // Tự động duyệt qua object result và thêm tất cả các field
-                // Điều này đảm bảo nếu sau này thêm field mới vào result, nó sẽ tự động được gửi
-                // Lưu ý: usageTime đã được skip trong fieldsToSkip để tránh gửi trùng
-                addObjectToFormData(formDataToSend, result);
+                // ========== 📊 PHÂN TÍCH NHU CẦU ==========
+                formDataToSend.append('📊 PHÂN TÍCH NHU CẦU', '');
+                formDataToSend.append('Hóa đơn điện/tháng', formatCurrency(result.monthlyBill || 0) + ' VNĐ');
+                formDataToSend.append('Mức tiêu thụ điện/tháng', toNumber(result.monthlyKwh || 0).toFixed(1) + ' kWh');
+                formDataToSend.append('Tiêu thụ điện/ngày', toNumber(result.dailyKwh || 0).toFixed(1) + ' kWh');
+                formDataToSend.append('Giờ nắng trung bình', toNumber(result.peakSunHours || 0).toFixed(1) + ' giờ/ngày');
+                formDataToSend.append('Diện tích mái cần thiết', toNumber(result.roofArea || 0).toFixed(1) + ' m²');
                 
-                // Thêm một số field tổng hợp đặc biệt
+                // ========== 📋 BẢNG BÁO GIÁ CHI TIẾT ==========
+                formDataToSend.append('📋 BẢNG BÁO GIÁ CHI TIẾT', '');
+                
+                // Tấm Pin
+                formDataToSend.append('⚡ Tấm Pin Mặt Trời', '');
+                formDataToSend.append('  - Tên thiết bị', (result.solarPanelName || 'N/A') + ' (' + toNumber(result.solarPanelWatt || 0) + 'W)');
+                formDataToSend.append('  - Số lượng', toNumber(result.panelCount || 0) + ' tấm');
+                formDataToSend.append('  - Đơn giá', formatCurrency(result.solarPanelPrice || 0) + ' đ');
+                formDataToSend.append('  - Thành tiền', formatCurrency(result.panelTotalPrice || 0) + ' đ');
+                
+                // Biến Tần (Inverter)
+                const inverterName = result.selectedInverter?.name || 'N/A';
+                const inverterPower = result.selectedInverter?.power || 0;
+                const inverterPrice = result.selectedInverter?.price || 0;
+                formDataToSend.append('🔌 Biến Tần (Inverter)', '');
+                formDataToSend.append('  - Tên thiết bị', inverterName + (inverterPower ? ` (${toNumber(inverterPower)}W)` : ''));
+                formDataToSend.append('  - Số lượng', '1 bộ');
+                formDataToSend.append('  - Đơn giá', formatCurrency(inverterPrice) + ' đ');
+                formDataToSend.append('  - Thành tiền', formatCurrency(inverterPrice) + ' đ');
+                
+                // Tủ Điện
+                const cabinetName = result.selectedCabinet?.name || 'N/A';
+                const cabinetPrice = result.selectedCabinet?.price || 0;
+                formDataToSend.append('🧰 Tủ Điện Hybrid', '');
+                formDataToSend.append('  - Tên thiết bị', cabinetName);
+                formDataToSend.append('  - Số lượng', '1 cái');
+                formDataToSend.append('  - Đơn giá', formatCurrency(cabinetPrice) + ' đ');
+                formDataToSend.append('  - Thành tiền', formatCurrency(cabinetPrice) + ' đ');
+                
+                // Pin Lưu Trữ (Battery)
+                const batteryName = result.selectedBattery?.name || 'N/A';
+                const batteryCapacity = result.selectedBattery?.capacity || 0;
+                const batteryUnits = result.selectedBattery?.units || 0;
+                const batteryPrice = result.selectedBattery?.price || 0;
+                const batteryTotalPrice = result.selectedBattery?.totalPrice || 0;
+                formDataToSend.append('🔋 Pin Lưu Trữ (Battery)', '');
+                formDataToSend.append('  - Tên thiết bị', batteryName + (batteryCapacity ? ` (${toNumber(batteryCapacity).toFixed(2)} kWh/bộ)` : ''));
+                formDataToSend.append('  - Số lượng', batteryUnits + ' bộ');
+                formDataToSend.append('  - Đơn giá', formatCurrency(batteryPrice) + ' đ');
+                formDataToSend.append('  - Thành tiền', formatCurrency(batteryTotalPrice) + ' đ');
+                
+                // Phụ Kiện
                 const accessories = result.accessories || [];
+                if (accessories.length > 0) {
+                    formDataToSend.append('🔧 Phụ Kiện & Vật Tư Lắp Đặt', '');
+                    accessories.forEach((acc, index) => {
+                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Tên thiết bị`, acc.name || 'N/A');
+                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
+                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
+                        formDataToSend.append(`  - Phụ kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
+                    });
+                }
+                
+                // ========== 💰 TỔNG KẾT CHI PHÍ ==========
                 const accessoriesTotal = result.accessoriesTotal || 0;
                 const totalPrice = result.totalPrice || 0;
-                const batteryUnits = result.selectedBattery?.units || 0;
-                const batteryCapacity = result.selectedBattery?.capacity || 0;
-                const inverterName = result.selectedInverter?.name || 'N/A';
-                const panelCount = result.panelCount || 0;
-                const systemSizeKw = result.systemSizeKw || 0;
-                
-                // Tổng kết
+                formDataToSend.append('💰 TỔNG KẾT CHI PHÍ', '');
                 formDataToSend.append('Tổng thiết bị', formatCurrency(totalPrice - accessoriesTotal) + ' đ');
-                
-                // Tổng quan hệ thống (nếu chưa có trong result)
-                if (!result.hasOwnProperty('systemSizeKw') || result.systemSizeKw === undefined) {
-                    formDataToSend.append('Hệ thống', systemSizeKw.toFixed(2) + ' kWp');
-                }
-                if (batteryUnits > 0 && batteryCapacity > 0) {
-                    formDataToSend.append('Pin lưu trữ (tổng)', (batteryUnits * batteryCapacity).toFixed(2) + ' kWh (' + batteryUnits + ' bộ)');
-                }
+                formDataToSend.append('Phụ kiện & lắp đặt', formatCurrency(accessoriesTotal) + ' đ');
+                formDataToSend.append('TỔNG CHI PHÍ ĐẦU TƯ', formatCurrency(totalPrice) + ' VNĐ');
                 
                 console.log('Sending survey email via FormSubmit (table template)...');
                 
