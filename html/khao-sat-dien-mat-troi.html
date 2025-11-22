@@ -3695,23 +3695,33 @@
                 const formatValue = (key, value) => {
                     if (value === null || value === undefined) return 'N/A';
                     
+                    // Helper để convert sang số an toàn
+                    const toNumber = (val) => {
+                        if (typeof val === 'number') return val;
+                        if (typeof val === 'string') {
+                            const num = parseFloat(val);
+                            return isNaN(num) ? 0 : num;
+                        }
+                        return 0;
+                    };
+                    
                     // Format số tiền
                     if (key.includes('Price') || key.includes('Bill') || key.includes('Savings') || key.includes('Cost') || key === 'totalPrice') {
-                        return formatCurrency(value) + ' VNĐ';
+                        return formatCurrency(toNumber(value)) + ' VNĐ';
                     }
                     
                     // Format số lượng với đơn vị
-                    if (key === 'panelCount') return value + ' tấm';
-                    if (key === 'batteryUnits') return value + ' bộ';
-                    if (key === 'peakSunHours') return value.toFixed(1) + ' giờ/ngày';
-                    if (key === 'roofArea') return value.toFixed(1) + ' m²';
-                    if (key === 'monthlyKwh' || key === 'dailyKwh') return value.toFixed(1) + ' kWh';
-                    if (key === 'systemSizeKw') return value.toFixed(2) + ' kWp';
-                    if (key === 'annualSavings') return (value / 1000000).toFixed(1) + ' triệu VNĐ';
-                    if (key === 'paybackPeriod') return value + ' năm';
-                    if (key === 'batteryCapacity') return value.toFixed(2) + ' kWh/bộ';
-                    if (key === 'solarPanelWatt') return value + 'W';
-                    if (key === 'inverterPower') return value + 'W';
+                    if (key === 'panelCount') return toNumber(value) + ' tấm';
+                    if (key === 'batteryUnits') return toNumber(value) + ' bộ';
+                    if (key === 'peakSunHours') return toNumber(value).toFixed(1) + ' giờ/ngày';
+                    if (key === 'roofArea') return toNumber(value).toFixed(1) + ' m²';
+                    if (key === 'monthlyKwh' || key === 'dailyKwh') return toNumber(value).toFixed(1) + ' kWh';
+                    if (key === 'systemSizeKw') return toNumber(value).toFixed(2) + ' kWp';
+                    if (key === 'annualSavings') return (toNumber(value) / 1000000).toFixed(1) + ' triệu VNĐ';
+                    if (key === 'paybackPeriod') return toNumber(value) + ' năm';
+                    if (key === 'batteryCapacity') return toNumber(value).toFixed(2) + ' kWh/bộ';
+                    if (key === 'solarPanelWatt') return toNumber(value) + 'W';
+                    if (key === 'inverterPower') return toNumber(value) + 'W';
                     
                     // Format boolean
                     if (typeof value === 'boolean') return value ? 'Có' : 'Không';
