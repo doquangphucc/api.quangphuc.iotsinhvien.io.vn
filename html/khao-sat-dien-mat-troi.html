@@ -3930,88 +3930,92 @@
 </body>
 </html>`;
                 
-                // Gửi HTML email form qua PHP backend để email client render HTML đúng cách
-                const emailData = {
-                    fullname: fullname,
-                    phone: phone,
-                    email: email,
-                    surveyData: {
-                        region: formData.region,
-                        phase: formData.phase,
-                        solarPanel: formData.solarPanel,
-                        monthlyBill: parseFloat(formData.monthlyBill.replace(/[^\d]/g, '')),
-                        usageTime: formData.usageTime
-                    },
-                    results: {
-                        monthlyBill: monthlyBill,
-                        monthlyKwh: monthlyKwh,
-                        dailyKwh: dailyKwh,
-                        peakSunHours: peakSunHours,
-                        roofArea: roofArea,
-                        systemSizeKw: systemSizeKw,
-                        panelCount: panelCount,
-                        solarPanelWatt: solarPanelWatt,
-                        solarPanelPrice: solarPanelPrice,
-                        solarPanelName: solarPanelName,
-                        panelTotalPrice: panelTotalPrice,
-                        selectedInverter: {
-                            name: inverterName,
-                            power: inverterPower,
-                            price: inverterPrice
-                        },
-                        selectedCabinet: {
-                            name: cabinetName,
-                            price: cabinetPrice
-                        },
-                        selectedBattery: {
-                            name: batteryName,
-                            capacity: batteryCapacity,
-                            units: batteryUnits,
-                            price: batteryPrice,
-                            totalPrice: batteryTotalPrice
-                        },
-                        accessories: accessories.map(acc => ({
-                            name: acc.name || 'N/A',
-                            quantity: acc.quantity || 0,
-                            unit: acc.unit || 'cái',
-                            price: acc.price || 0,
-                            totalPrice: acc.totalPrice || 0
-                        })),
-                        accessoriesTotal: accessoriesTotal,
-                        totalPrice: totalPrice,
-                        annualSavings: annualSavings,
-                        paybackPeriod: paybackPeriod
-                    }
-                };
+                // Gửi trực tiếp qua FormSubmit với các field riêng lẻ (giống My Web)
+                // FormSubmit sẽ tự động format thành bảng đẹp với _template: 'table'
+                const formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
+                const subject = `Báo Giá Điện Mặt Trời - Khách hàng: ${fullname} (${phone})`;
                 
-                console.log('Sending survey email form via PHP backend...');
+                const formDataToSend = new FormData();
+                formDataToSend.append('_subject', subject);
+                formDataToSend.append('_template', 'table'); // FormSubmit sẽ format thành bảng
+                formDataToSend.append('_captcha', 'false');
                 
-                const response = await fetch(`${API_BASE}/send_survey_email.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(emailData)
+                // Gửi các field riêng lẻ - FormSubmit sẽ tự động format thành bảng đẹp
+                formDataToSend.append('Họ và tên', fullname);
+                formDataToSend.append('Số điện thoại', phone);
+                formDataToSend.append('Email', email);
+                formDataToSend.append('Khu vực', regionName);
+                formDataToSend.append('Loại điện', phaseName);
+                formDataToSend.append('Thời gian sử dụng', usageTimeName);
+                
+                // Phân tích nhu cầu
+                formDataToSend.append('Hóa đơn điện/tháng', formatCurrency(monthlyBill) + ' VNĐ');
+                formDataToSend.append('Mức tiêu thụ điện/tháng', monthlyKwh.toFixed(1) + ' kWh');
+                formDataToSend.append('Tiêu thụ điện/ngày', dailyKwh.toFixed(1) + ' kWh');
+                formDataToSend.append('Giờ nắng trung bình', peakSunHours.toFixed(1) + ' giờ/ngày');
+                formDataToSend.append('Diện tích mái cần thiết', roofArea.toFixed(1) + ' m²');
+                
+                // Tấm Pin
+                formDataToSend.append('Tấm Pin - Tên', solarPanelName + ' (' + solarPanelWatt + 'W)');
+                formDataToSend.append('Tấm Pin - Số lượng', panelCount + ' tấm');
+                formDataToSend.append('Tấm Pin - Đơn giá', formatCurrency(solarPanelPrice) + ' đ');
+                formDataToSend.append('Tấm Pin - Thành tiền', formatCurrency(panelTotalPrice) + ' đ');
+                
+                // Inverter
+                formDataToSend.append('Biến Tần - Tên', inverterName + ' (' + inverterPower + 'W)');
+                formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
+                formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(inverterPrice) + ' đ');
+                formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(inverterPrice) + ' đ');
+                
+                // Tủ Điện
+                formDataToSend.append('Tủ Điện - Tên', cabinetName);
+                formDataToSend.append('Tủ Điện - Số lượng', '1 cái');
+                formDataToSend.append('Tủ Điện - Đơn giá', formatCurrency(cabinetPrice) + ' đ');
+                formDataToSend.append('Tủ Điện - Thành tiền', formatCurrency(cabinetPrice) + ' đ');
+                
+                // Pin Lưu Trữ
+                formDataToSend.append('Pin Lưu Trữ - Tên', batteryName + ' (' + batteryCapacity.toFixed(2) + ' kWh/bộ)');
+                formDataToSend.append('Pin Lưu Trữ - Số lượng', batteryUnits + ' bộ');
+                formDataToSend.append('Pin Lưu Trữ - Đơn giá', formatCurrency(batteryPrice) + ' đ');
+                formDataToSend.append('Pin Lưu Trữ - Thành tiền', formatCurrency(batteryTotalPrice) + ' đ');
+                
+                // Phụ Kiện
+                accessories.forEach((acc, index) => {
+                    formDataToSend.append(`Phụ Kiện ${index + 1} - Tên`, acc.name || 'N/A');
+                    formDataToSend.append(`Phụ Kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
+                    formDataToSend.append(`Phụ Kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
+                    formDataToSend.append(`Phụ Kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
                 });
                 
-                const responseText = await response.text();
+                // Tổng kết
+                formDataToSend.append('Tổng thiết bị', formatCurrency(totalPrice - accessoriesTotal) + ' đ');
+                formDataToSend.append('Phụ kiện & lắp đặt', formatCurrency(accessoriesTotal) + ' đ');
+                formDataToSend.append('TỔNG CHI PHÍ ĐẦU TƯ', formatCurrency(totalPrice) + ' VNĐ');
                 
-                if (!response.ok) {
-                    console.error('❌ HTTP Error:', response.status);
-                    console.error('❌ Response:', responseText);
-                    return;
-                }
+                // Tổng quan hệ thống
+                formDataToSend.append('Hệ thống', systemSizeKw.toFixed(2) + ' kWp');
+                formDataToSend.append('Tấm pin', panelCount + ' tấm');
+                formDataToSend.append('Inverter', inverterName);
+                formDataToSend.append('Pin lưu trữ', (batteryUnits * batteryCapacity).toFixed(2) + ' kWh (' + batteryUnits + ' bộ)');
+                formDataToSend.append('Tiết kiệm/năm', (annualSavings / 1000000).toFixed(1) + ' triệu VNĐ');
+                formDataToSend.append('Hoàn vốn', paybackPeriod + ' năm');
                 
-                try {
-                    const responseData = JSON.parse(responseText);
-                    if (responseData && responseData.success) {
-                        console.log('✅ Email form đã được gửi thành công!');
-                    } else {
-                        console.error('❌ Lỗi khi gửi email:', responseData?.message || 'Unknown error');
+                console.log('Sending survey email via FormSubmit (table template)...');
+                
+                const response = await fetch(formSubmitUrl, {
+                    method: 'POST',
+                    body: formDataToSend,
+                    headers: {
+                        'Accept': 'application/json'
                     }
-                } catch (e) {
-                    console.error('❌ JSON Parse Error:', e);
-                    console.error('❌ Response text:', responseText.substring(0, 500));
+                });
+                
+                const responseData = await response.json();
+                
+                if (responseData && responseData.success) {
+                    console.log('✅ Email đã được gửi thành công qua FormSubmit!');
+                } else {
+                    console.error('❌ Lỗi khi gửi email qua FormSubmit:', responseData?.message || 'Unknown error');
                 }
             } catch (error) {
                 console.error('❌ Lỗi khi gửi email:', error);
