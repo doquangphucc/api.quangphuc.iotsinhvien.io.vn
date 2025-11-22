@@ -81,13 +81,13 @@ function createPostElement(post, index) {
     
     // Content section HTML
     const contentHTML = `
-        <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}" style="min-width: 0; overflow: hidden;">
+        <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}" style="min-width: 0; overflow: visible;">
             ${post.highlight_text ? `
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-[0.2em] uppercase" style="color:${highlightColor};background-color:${highlightColor}1a">
                     <span class="h-2 w-2 rounded-full" style="background-color:${highlightColor};"></span>
                     ${escapeHtml(post.highlight_text)}
                 </div>` : ''}
-            <h3 class="home-post-title text-2xl sm:text-3xl lg:text-4xl font-extrabold mt-5 mb-6 leading-tight" style="word-break: break-word; overflow-wrap: break-word; max-width: 100%; width: 100%; display: block; box-sizing: border-box;">${escapeHtml(post.title)}</h3>
+            <h3 class="home-post-title text-2xl sm:text-3xl lg:text-4xl font-extrabold mt-5 mb-6" style="word-break: break-word; overflow-wrap: break-word; max-width: 100%; width: 100%; display: block; box-sizing: border-box; line-height: 1.4; padding-top: 0.5rem; padding-bottom: 0.5rem; overflow: visible;">${escapeHtml(post.title)}</h3>
             <p class="text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">${escapeHtml(post.description)}</p>
             ${featuresHTML ? `<div class="bg-white/70 dark:bg-slate-900/40 border border-white/50 dark:border-white/5 rounded-2xl p-6 mb-8 shadow-inner">
                     <ul class="space-y-3">${featuresHTML}</ul>
