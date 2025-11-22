@@ -1194,7 +1194,7 @@
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
                         <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Giải pháp bền vững cho năng lượng tương lai</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Hệ sinh thái cho tương lai</p>
                     </div>
                 </a>
 
@@ -1210,10 +1210,6 @@
 
                 <!-- Actions -->
                 <div class="flex items-center gap-2">
-                    <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
-                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                    </button>
                     <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
                     
                     <!-- Auth buttons will appear here, integrated into the header -->
@@ -1280,6 +1276,16 @@
                                    title="Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0" />
                             <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
                                 📱 Nhập đúng 10 số, bắt đầu bằng 0
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="survey-email" name="email" required placeholder="example@gmail.com" 
+                                   pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}"
+                                   title="Vui lòng nhập địa chỉ email hợp lệ" />
+                            <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+                                📧 Báo giá sẽ được gửi đến email này
                             </small>
                         </div>
 
@@ -1648,7 +1654,7 @@
                             <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
                         </div>
                     </a>
-                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
+                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
                     <!-- Ecosystem Logos Animation -->
                     <div class="mt-6 relative overflow-hidden" style="height: 80px;">
                         <div id="ecosystem-logos-container" class="flex gap-6">
@@ -1665,7 +1671,7 @@
                         <li><strong>Hotline phụ:</strong> 0988 919 868</li>
                         <li><strong>Zalo:</strong> 0969 397 434</li>
                         <li><strong>Email:</strong> hcecosystem@gmail.com</li>
-                        <li><strong>Website:</strong> hcecosystem.vn</li>
+                        <li><strong>Website:</strong> hceco.io.vn</li>
                         <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
                     </ul>
                 </div>
@@ -1687,8 +1693,16 @@
         </div>
     </footer>
     
+    <!-- Copyright Bar -->
+    <div class="bg-gray-900 dark:bg-black border-t border-gray-700">
+        <div class="container mx-auto px-4 py-3">
+            <p class="text-center text-sm text-gray-400">
+                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-gray-300 hover:text-white underline">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-gray-400 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+            </p>
+        </div>
+    </div>
+    
     <!-- Scripts (IDs preserved) -->
-    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script>
@@ -1701,9 +1715,17 @@
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const header = document.getElementById('header');
+        let menuJustOpened = false; // Flag to prevent immediate closing after user opens menu
 
-        mobileMenuButton.addEventListener('click', () => {
+        mobileMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            menuJustOpened = true; // Set flag when user manually opens menu
             mobileMenu.classList.toggle('hidden');
+            
+            // Reset flag after a short delay to allow scroll handler to work again
+            setTimeout(() => {
+                menuJustOpened = false;
+            }, 300);
         });
         
         // Close menu when a link is clicked
@@ -1713,12 +1735,12 @@
             }
         });
         
-        // Hide menu on scroll for better UX
+        // Hide menu on scroll down for better UX (but only if user didn't just open it)
         let lastScrollTop = 0;
         window.addEventListener("scroll", function(){ 
            var st = window.pageYOffset || document.documentElement.scrollTop; 
-           if (st > lastScrollTop){
-              // downscroll
+           if (st > lastScrollTop && !menuJustOpened){
+              // downscroll - only close if user didn't just open the menu
               mobileMenu.classList.add('hidden');
            }
            lastScrollTop = st <= 0 ? 0 : st;
@@ -2209,9 +2231,21 @@
             const data = Object.fromEntries(formData);
             
             // Validate form
-            if (!data.fullname || !data.phone || !data.region || !data.phase || 
+            if (!data.fullname || !data.phone || !data.email || !data.region || !data.phase || 
                 !data.solarPanel || !data.monthlyBill || !data.usageTime) {
                 alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+            
+            // Validate email format
+            const emailPattern = /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/i;
+            if (!emailPattern.test(data.email)) {
+                alert('Vui lòng nhập địa chỉ email hợp lệ.');
+                const emailInput = document.getElementById('survey-email');
+                if (emailInput) {
+                    emailInput.focus();
+                    emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 return;
             }
             
@@ -2233,6 +2267,9 @@
             
             // Hiển thị kết quả
             displayResults(result, data);
+            
+            // Tự động gửi email với toàn bộ dữ liệu
+            sendSurveyEmailToAdmin(data, result);
         });
 
         // Helper functions for accessory descriptions
@@ -2829,9 +2866,16 @@
                         phoneInput.value = user.phone.trim();
                     }
                     
+                    // Tự động điền email - chỉ điền khi có giá trị string hợp lệ
+                    const emailInput = document.getElementById('survey-email');
+                    if (emailInput && typeof user.email === 'string' && user.email.trim()) {
+                        emailInput.value = user.email.trim();
+                    }
+                    
                     console.log('✅ Đã tự động điền thông tin user:', { 
                         full_name: user.full_name, 
                         phone: user.phone,
+                        email: user.email,
                         username: user.username 
                     });
                 } else {
@@ -3601,6 +3645,92 @@
             }, 5000);
         }
 
+        // Function to send survey email to admin
+        async function sendSurveyEmailToAdmin(formData, result) {
+            try {
+                // Lấy email từ form (đã được validate)
+                const email = formData.email;
+                
+                // Chuẩn bị dữ liệu để gửi email
+                const emailData = {
+                    fullname: formData.fullname,
+                    phone: formData.phone,
+                    email: email,
+                    surveyData: {
+                        region: formData.region,
+                        phase: formData.phase,
+                        solarPanel: formData.solarPanel,
+                        monthlyBill: parseFloat(formData.monthlyBill.replace(/[^\d]/g, '')),
+                        usageTime: formData.usageTime
+                    },
+                    results: {
+                        monthlyBill: result.monthlyBill || 0,
+                        monthlyKwh: result.monthlyKwh || 0,
+                        dailyKwh: result.dailyKwh || 0,
+                        peakSunHours: result.peakSunHours || 0,
+                        roofArea: parseFloat(result.roofArea) || 0,
+                        systemSizeKw: result.systemSizeKw || 0,
+                        panelCount: result.panelCount || 0,
+                        solarPanelWatt: result.solarPanelWatt || 0,
+                        solarPanelPrice: result.solarPanelPrice || 0,
+                        solarPanelName: result.solarPanelName || 'N/A',
+                        panelTotalPrice: result.panelTotalPrice || 0,
+                        selectedInverter: {
+                            name: result.selectedInverter?.name || 'N/A',
+                            power: result.selectedInverter?.power || 0,
+                            price: result.selectedInverter?.price || 0
+                        },
+                        selectedCabinet: {
+                            name: result.selectedCabinet?.name || 'N/A',
+                            price: result.selectedCabinet?.price || 0
+                        },
+                        selectedBattery: {
+                            name: result.selectedBattery?.name || 'N/A',
+                            capacity: result.selectedBattery?.capacity || 0,
+                            units: result.selectedBattery?.units || 0,
+                            price: result.selectedBattery?.price || 0,
+                            totalPrice: result.selectedBattery?.totalPrice || 0
+                        },
+                        accessories: (result.accessories || []).map(acc => ({
+                            name: acc.name || 'N/A',
+                            quantity: acc.quantity || 0,
+                            unit: acc.unit || 'cái',
+                            price: acc.price || 0,
+                            totalPrice: acc.totalPrice || 0
+                        })),
+                        accessoriesTotal: result.accessoriesTotal || 0,
+                        totalPrice: result.totalPrice || 0,
+                        annualSavings: result.annualSavings || 0,
+                        paybackPeriod: result.paybackPeriod || 0
+                    }
+                };
+                
+                console.log('Sending survey email with data:', emailData);
+                
+                // Gửi email qua API
+                const response = await fetch(`${API_BASE}/send_survey_email.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(emailData)
+                });
+                
+                const responseData = await response.json();
+                
+                if (responseData.success) {
+                    console.log('✅ Email đã được gửi thành công!');
+                    // Có thể hiển thị thông báo nhẹ nhàng cho user
+                    // showNotification('📧 Báo giá đã được gửi đến email của bạn!', 'success');
+                } else {
+                    console.error('❌ Lỗi khi gửi email:', responseData.message);
+                }
+            } catch (error) {
+                console.error('❌ Lỗi khi gửi email:', error);
+                // Không hiển thị lỗi cho user để không làm gián đoạn trải nghiệm
+            }
+        }
+
         // Function to prepare survey package and go to checkout
         function buyPackage() {
             console.log('buyPackage function called');
@@ -3730,4 +3860,5 @@
     </script>
 </body>
 </html>
+
 

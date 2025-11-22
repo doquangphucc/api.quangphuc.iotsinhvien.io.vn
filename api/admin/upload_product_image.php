@@ -15,8 +15,8 @@ require_once __DIR__ . '/../auth_helpers.php';
 
 // Handle CORS properly for same-origin with credentials
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin === 'https://api.quangphuc.iotsinhvien.io.vn' || empty($origin)) {
-    header('Access-Control-Allow-Origin: https://api.quangphuc.iotsinhvien.io.vn');
+if ($origin === 'https://hceco.io.vn' || empty($origin)) {
+    header('Access-Control-Allow-Origin: https://hceco.io.vn');
     header('Access-Control-Allow-Credentials: true');
 }
 header('Access-Control-Allow-Methods: POST, OPTIONS');

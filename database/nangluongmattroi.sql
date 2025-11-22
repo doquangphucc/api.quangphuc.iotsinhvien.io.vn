@@ -25,7 +25,8 @@ DELIMITER $$
 --
 -- Thủ tục
 --
-CREATE DEFINER=`nangluongmattroi`@`localhost` PROCEDURE `CleanupExpiredPayments` ()   BEGIN
+DROP PROCEDURE IF EXISTS `CleanupExpiredPayments`$$
+CREATE DEFINER=`nangluongmattroi`@`localhost` PROCEDURE `CleanupExpiredPayments`()  BEGIN
     -- Update expired transactions
     UPDATE payment_transactions 
     SET status = 'expired', updated_at = NOW()

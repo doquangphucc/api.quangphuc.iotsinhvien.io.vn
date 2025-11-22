@@ -409,7 +409,7 @@
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
                         <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Giải pháp bền vững cho năng lượng tương lai</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Hệ sinh thái cho tương lai</p>
                     </div>
                 </a>
 
@@ -425,10 +425,6 @@
 
                 <!-- Actions -->
                 <div class="flex items-center gap-2">
-                    <button class="theme-toggle h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" type="button" data-theme-toggle aria-label="Chuyển giao diện">
-                        <svg class="theme-toggle__icon theme-toggle__icon--sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <svg class="theme-toggle__icon theme-toggle__icon--moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                    </button>
                     <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
                     
                     <!-- Auth buttons will appear here, integrated into the header -->
@@ -563,7 +559,7 @@
         <strong>
          Website:
         </strong>
-        hcecosystem.vn
+        hceco.io.vn
        </li>
        <li>
         <strong>
@@ -594,7 +590,7 @@
                             <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
                         </div>
                     </a>
-                    <p class="text-sm text-gray-400">&copy; 2024 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
+                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
                     <!-- Ecosystem Logos Animation -->
                     <div class="mt-6 relative overflow-hidden" style="height: 80px;">
                         <div id="ecosystem-logos-container" class="flex gap-6">
@@ -611,7 +607,7 @@
                         <li><strong>Hotline phụ:</strong> 0988 919 868</li>
                         <li><strong>Zalo:</strong> 0969 397 434</li>
                         <li><strong>Email:</strong> hcecosystem@gmail.com</li>
-                        <li><strong>Website:</strong> hcecosystem.vn</li>
+                        <li><strong>Website:</strong> hceco.io.vn</li>
                         <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
                     </ul>
                 </div>
@@ -633,8 +629,16 @@
         </div>
     </footer>
     
+    <!-- Copyright Bar -->
+    <div class="bg-gray-900 dark:bg-black border-t border-gray-700">
+        <div class="container mx-auto px-4 py-3">
+            <p class="text-center text-sm text-gray-400">
+                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-gray-300 hover:text-white underline">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-gray-400 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+            </p>
+        </div>
+    </div>
+    
     <!-- Scripts (IDs preserved) -->
-    <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/shopping-cart.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script>
@@ -642,9 +646,17 @@
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const header = document.getElementById('header');
+        let menuJustOpened = false; // Flag to prevent immediate closing after user opens menu
 
-        mobileMenuButton.addEventListener('click', () => {
+        mobileMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            menuJustOpened = true; // Set flag when user manually opens menu
             mobileMenu.classList.toggle('hidden');
+            
+            // Reset flag after a short delay to allow scroll handler to work again
+            setTimeout(() => {
+                menuJustOpened = false;
+            }, 300);
         });
         
         // Close menu when a link is clicked
@@ -654,12 +666,12 @@
             }
         });
         
-        // Hide menu on scroll for better UX
+        // Hide menu on scroll down for better UX (but only if user didn't just open it)
         let lastScrollTop = 0;
         window.addEventListener("scroll", function(){ 
            var st = window.pageYOffset || document.documentElement.scrollTop; 
-           if (st > lastScrollTop){
-              // downscroll
+           if (st > lastScrollTop && !menuJustOpened){
+              // downscroll - only close if user didn't just open the menu
               mobileMenu.classList.add('hidden');
            }
            lastScrollTop = st <= 0 ? 0 : st;
@@ -722,6 +734,7 @@
     </script>
 </body>
 </html>
+
 
 
 
