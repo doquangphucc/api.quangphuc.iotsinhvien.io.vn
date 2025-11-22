@@ -3645,135 +3645,320 @@
             }, 5000);
         }
 
-        // Function to send survey email to admin
+        // Function to send survey email to admin - Gửi trực tiếp qua FormSubmit như dự án My Web
         async function sendSurveyEmailToAdmin(formData, result) {
             try {
-                // Lấy email từ form (đã được validate)
-                const email = formData.email;
-                
-                // Chuẩn bị dữ liệu để gửi email
-                const emailData = {
-                    fullname: formData.fullname,
-                    phone: formData.phone,
-                    email: email,
-                    surveyData: {
-                        region: formData.region,
-                        phase: formData.phase,
-                        solarPanel: formData.solarPanel,
-                        monthlyBill: parseFloat(formData.monthlyBill.replace(/[^\d]/g, '')),
-                        usageTime: formData.usageTime
-                    },
-                    results: {
-                        monthlyBill: result.monthlyBill || 0,
-                        monthlyKwh: result.monthlyKwh || 0,
-                        dailyKwh: result.dailyKwh || 0,
-                        peakSunHours: result.peakSunHours || 0,
-                        roofArea: parseFloat(result.roofArea) || 0,
-                        systemSizeKw: result.systemSizeKw || 0,
-                        panelCount: result.panelCount || 0,
-                        solarPanelWatt: result.solarPanelWatt || 0,
-                        solarPanelPrice: result.solarPanelPrice || 0,
-                        solarPanelName: result.solarPanelName || 'N/A',
-                        panelTotalPrice: result.panelTotalPrice || 0,
-                        selectedInverter: {
-                            name: result.selectedInverter?.name || 'N/A',
-                            power: result.selectedInverter?.power || 0,
-                            price: result.selectedInverter?.price || 0
-                        },
-                        selectedCabinet: {
-                            name: result.selectedCabinet?.name || 'N/A',
-                            price: result.selectedCabinet?.price || 0
-                        },
-                        selectedBattery: {
-                            name: result.selectedBattery?.name || 'N/A',
-                            capacity: result.selectedBattery?.capacity || 0,
-                            units: result.selectedBattery?.units || 0,
-                            price: result.selectedBattery?.price || 0,
-                            totalPrice: result.selectedBattery?.totalPrice || 0
-                        },
-                        accessories: (result.accessories || []).map(acc => ({
-                            name: acc.name || 'N/A',
-                            quantity: acc.quantity || 0,
-                            unit: acc.unit || 'cái',
-                            price: acc.price || 0,
-                            totalPrice: acc.totalPrice || 0
-                        })),
-                        accessoriesTotal: result.accessoriesTotal || 0,
-                        totalPrice: result.totalPrice || 0,
-                        annualSavings: result.annualSavings || 0,
-                        paybackPeriod: result.paybackPeriod || 0
-                    }
+                // Helper function để format số tiền
+                const formatCurrency = (num) => {
+                    return new Intl.NumberFormat('vi-VN').format(num || 0);
                 };
                 
-                console.log('Sending survey email with data:', emailData);
+                // Helper function để escape HTML
+                const escapeHtml = (text) => {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                };
                 
-                // Gửi email qua API
-                const response = await fetch(`${API_BASE}/send_survey_email.php`, {
+                // Lấy email từ form (đã được validate)
+                const email = formData.email;
+                const fullname = formData.fullname || 'N/A';
+                const phone = formData.phone || 'N/A';
+                
+                // Map region name
+                const regionMap = {
+                    'mien-bac': 'Miền Bắc',
+                    'mien-trung': 'Miền Trung',
+                    'mien-nam': 'Miền Nam'
+                };
+                const regionName = regionMap[formData.region] || formData.region || 'N/A';
+                
+                // Map phase name
+                const phaseName = (formData.phase == 1 || formData.phase == '1') ? '1 Pha' : '3 Pha';
+                
+                // Map usage time name
+                const usageTimeMap = {
+                    'day': 'Ban ngày nhiều',
+                    'balanced': 'Cả ngày đều',
+                    'night': 'Ban đêm nhiều'
+                };
+                const usageTimeName = usageTimeMap[formData.usageTime] || formData.usageTime || 'N/A';
+                
+                // Lấy các giá trị từ result
+                const monthlyBill = result.monthlyBill || 0;
+                const monthlyKwh = result.monthlyKwh || 0;
+                const dailyKwh = result.dailyKwh || 0;
+                const peakSunHours = result.peakSunHours || 0;
+                const roofArea = parseFloat(result.roofArea) || 0;
+                
+                const solarPanelName = result.solarPanelName || 'N/A';
+                const solarPanelWatt = result.solarPanelWatt || 0;
+                const panelCount = result.panelCount || 0;
+                const solarPanelPrice = result.solarPanelPrice || 0;
+                const panelTotalPrice = result.panelTotalPrice || 0;
+                
+                const inverterName = result.selectedInverter?.name || 'N/A';
+                const inverterPower = result.selectedInverter?.power || 0;
+                const inverterPrice = result.selectedInverter?.price || 0;
+                
+                const cabinetName = result.selectedCabinet?.name || 'N/A';
+                const cabinetPrice = result.selectedCabinet?.price || 0;
+                
+                const batteryName = result.selectedBattery?.name || 'N/A';
+                const batteryCapacity = result.selectedBattery?.capacity || 0;
+                const batteryUnits = result.selectedBattery?.units || 0;
+                const batteryPrice = result.selectedBattery?.price || 0;
+                const batteryTotalPrice = result.selectedBattery?.totalPrice || 0;
+                
+                const accessories = result.accessories || [];
+                const accessoriesTotal = result.accessoriesTotal || 0;
+                const totalPrice = result.totalPrice || 0;
+                const systemSizeKw = result.systemSizeKw || 0;
+                const annualSavings = result.annualSavings || 0;
+                const paybackPeriod = result.paybackPeriod || 0;
+                
+                // Tạo HTML email
+                const emailHTML = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Giá Điện Mặt Trời</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #00C851 0%, #00E676 100%); color: white; padding: 20px; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .section { margin-bottom: 30px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #00C851; }
+        .section-title { color: #00C851; font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        table th { background: #00C851; color: white; padding: 10px; text-align: left; }
+        table td { padding: 8px; border-bottom: 1px solid #ddd; }
+        table tr:hover { background: #f5f5f5; }
+        .highlight { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .total { background: #00C851; color: white; padding: 15px; border-radius: 5px; font-size: 20px; font-weight: bold; text-align: center; margin: 20px 0; }
+        .footer { background: #333; color: white; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 BÁO GIÁ HỆ THỐNG ĐIỆN MẶT TRỜI</h1>
+            <p>HC Eco System - Hệ sinh thái cho tương lai</p>
+        </div>
+        
+        <div class="content">
+            <!-- Thông tin khách hàng -->
+            <div class="section">
+                <div class="section-title">👤 THÔNG TIN KHÁCH HÀNG</div>
+                <table>
+                    <tr><td><strong>Họ và tên:</strong></td><td>${escapeHtml(fullname)}</td></tr>
+                    <tr><td><strong>Số điện thoại:</strong></td><td>${escapeHtml(phone)}</td></tr>
+                    <tr><td><strong>Email:</strong></td><td>${escapeHtml(email)}</td></tr>
+                    <tr><td><strong>Khu vực:</strong></td><td>${escapeHtml(regionName)}</td></tr>
+                    <tr><td><strong>Loại điện:</strong></td><td>${escapeHtml(phaseName)}</td></tr>
+                    <tr><td><strong>Thời gian sử dụng:</strong></td><td>${escapeHtml(usageTimeName)}</td></tr>
+                </table>
+            </div>
+            
+            <!-- Phân tích nhu cầu -->
+            <div class="section">
+                <div class="section-title">📊 PHÂN TÍCH NHU CẦU</div>
+                <table>
+                    <tr><td><strong>Hóa đơn điện/tháng:</strong></td><td>${formatCurrency(monthlyBill)} VNĐ</td></tr>
+                    <tr><td><strong>Mức tiêu thụ điện/tháng:</strong></td><td><strong style="color: #00C851;">${monthlyKwh.toFixed(1)} kWh</strong></td></tr>
+                    <tr><td><strong>Tiêu thụ điện/ngày:</strong></td><td>${dailyKwh.toFixed(1)} kWh</td></tr>
+                    <tr><td><strong>Giờ nắng trung bình:</strong></td><td>${peakSunHours.toFixed(1)} giờ/ngày</td></tr>
+                    <tr><td><strong>Diện tích mái cần thiết:</strong></td><td>${roofArea.toFixed(1)} m²</td></tr>
+                </table>
+            </div>
+            
+            <!-- Bảng báo giá chi tiết -->
+            <div class="section">
+                <div class="section-title">📋 BẢNG BÁO GIÁ CHI TIẾT</div>
+                
+                <!-- Tấm Pin -->
+                <h3 style="color: #00C851; margin-top: 20px;">⚡ Tấm Pin Mặt Trời</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên thiết bị</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${escapeHtml(solarPanelName)} (${solarPanelWatt}W)</td>
+                            <td>${panelCount} tấm</td>
+                            <td>${formatCurrency(solarPanelPrice)} đ</td>
+                            <td><strong>${formatCurrency(panelTotalPrice)} đ</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Inverter -->
+                <h3 style="color: #00C851; margin-top: 20px;">🔌 Biến Tần (Inverter)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên thiết bị</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${escapeHtml(inverterName)} (${inverterPower}W)</td>
+                            <td>1 bộ</td>
+                            <td>${formatCurrency(inverterPrice)} đ</td>
+                            <td><strong>${formatCurrency(inverterPrice)} đ</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Tủ Điện -->
+                <h3 style="color: #00C851; margin-top: 20px;">🧰 Tủ Điện Hybrid</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên thiết bị</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${escapeHtml(cabinetName)}</td>
+                            <td>1 cái</td>
+                            <td>${formatCurrency(cabinetPrice)} đ</td>
+                            <td><strong>${formatCurrency(cabinetPrice)} đ</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Pin Lưu Trữ -->
+                <h3 style="color: #00C851; margin-top: 20px;">🔋 Pin Lưu Trữ (Battery)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên thiết bị</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${escapeHtml(batteryName)} (${batteryCapacity.toFixed(2)} kWh/bộ)</td>
+                            <td>${batteryUnits} bộ</td>
+                            <td>${formatCurrency(batteryPrice)} đ</td>
+                            <td><strong>${formatCurrency(batteryTotalPrice)} đ</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Phụ Kiện -->
+                <h3 style="color: #00C851; margin-top: 20px;">🔧 Phụ Kiện & Vật Tư Lắp Đặt</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên phụ kiện</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${accessories.map(acc => `
+                        <tr>
+                            <td>${escapeHtml(acc.name || 'N/A')}</td>
+                            <td>${acc.quantity || 0} ${acc.unit || 'cái'}</td>
+                            <td>${formatCurrency(acc.price || 0)} đ</td>
+                            <td>${formatCurrency(acc.totalPrice || 0)} đ</td>
+                        </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Tổng kết -->
+            <div class="section">
+                <div class="section-title">💰 TỔNG KẾT CHI PHÍ</div>
+                <table>
+                    <tr>
+                        <td><strong>Tổng thiết bị:</strong></td>
+                        <td style="text-align: right;">${formatCurrency(totalPrice - accessoriesTotal)} đ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phụ kiện & lắp đặt:</strong></td>
+                        <td style="text-align: right;">${formatCurrency(accessoriesTotal)} đ</td>
+                    </tr>
+                </table>
+                <div class="total">
+                    TỔNG CHI PHÍ ĐẦU TƯ: ${formatCurrency(totalPrice)} VNĐ
+                </div>
+            </div>
+            
+            <!-- Thông tin hệ thống -->
+            <div class="section">
+                <div class="section-title">🎯 TỔNG QUAN HỆ THỐNG</div>
+                <table>
+                    <tr><td><strong>Hệ thống:</strong></td><td>${systemSizeKw.toFixed(2)} kWp</td></tr>
+                    <tr><td><strong>Tấm pin:</strong></td><td>${panelCount} tấm</td></tr>
+                    <tr><td><strong>Inverter:</strong></td><td>${escapeHtml(inverterName)}</td></tr>
+                    <tr><td><strong>Pin lưu trữ:</strong></td><td>${(batteryUnits * batteryCapacity).toFixed(2)} kWh (${batteryUnits} bộ)</td></tr>
+                    <tr><td><strong>Tiết kiệm/năm:</strong></td><td>${(annualSavings / 1000000).toFixed(1)} triệu VNĐ</td></tr>
+                    <tr><td><strong>Hoàn vốn:</strong></td><td>${paybackPeriod} năm</td></tr>
+                </table>
+            </div>
+            
+            <div class="highlight">
+                <strong>⚠️ Lưu ý:</strong> Báo giá chưa bao gồm chi phí vận chuyển đến công trình. Chi phí vận chuyển sẽ được tính dựa trên khoảng cách từ kho đến công trình của bạn.
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 HC Eco System - Hệ sinh thái cho tương lai</p>
+            <p>Hotline: 0969 397 434 | Email: hcecosystem@gmail.com</p>
+            <p>Website: hceco.io.vn</p>
+        </div>
+    </div>
+</body>
+</html>`;
+                
+                // Gửi trực tiếp qua FormSubmit API (giống dự án My Web)
+                const formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
+                const subject = `Báo Giá Điện Mặt Trời - Khách hàng: ${fullname} (${phone})`;
+                
+                const formDataToSend = new FormData();
+                formDataToSend.append('_subject', subject);
+                formDataToSend.append('_template', 'table');
+                formDataToSend.append('_captcha', 'false');
+                formDataToSend.append('name', fullname);
+                formDataToSend.append('email', email);
+                formDataToSend.append('phone', phone);
+                formDataToSend.append('message', emailHTML);
+                
+                console.log('Sending survey email directly to FormSubmit...');
+                
+                const response = await fetch(formSubmitUrl, {
                     method: 'POST',
+                    body: formDataToSend,
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(emailData)
+                        'Accept': 'application/json'
+                    }
                 });
                 
-                // Parse response text first (can only read once)
-                const responseText = await response.text();
-                
-                // Kiểm tra response status
-                if (!response.ok) {
-                    console.error('❌ HTTP Error:', response.status);
-                    console.error('❌ Response Text:', responseText);
-                    
-                    // Try to parse as JSON to get error details
-                    try {
-                        const errorData = JSON.parse(responseText);
-                        if (errorData && errorData.message) {
-                            console.error('❌ Error Message:', errorData.message);
-                            // Log full error details
-                            if (errorData.message.includes('\n')) {
-                                const errorLines = errorData.message.split('\n');
-                                errorLines.forEach(line => console.error('   ', line));
-                            }
-                        }
-                    } catch (e) {
-                        // Not JSON, might be HTML error page
-                        console.error('❌ Response is not JSON, might be HTML error page');
-                        console.error('❌ First 500 chars:', responseText.substring(0, 500));
-                    }
-                    
-                    // Vẫn không throw error để không gián đoạn user experience
-                    return;
-                }
-                
-                // Parse JSON response
-                let responseData;
-                try {
-                    if (!responseText || responseText.trim() === '') {
-                        console.error('❌ Empty response from server');
-                        return;
-                    }
-                    responseData = JSON.parse(responseText);
-                } catch (parseError) {
-                    console.error('❌ JSON Parse Error:', parseError);
-                    console.error('❌ Response text (first 1000 chars):', responseText.substring(0, 1000));
-                    return;
-                }
+                const responseData = await response.json();
                 
                 if (responseData && responseData.success) {
-                    console.log('✅ Email đã được gửi thành công!');
-                    // Có thể hiển thị thông báo nhẹ nhàng cho user
-                    // showNotification('📧 Báo giá đã được gửi đến email của bạn!', 'success');
+                    console.log('✅ Email đã được gửi thành công qua FormSubmit!');
                 } else {
-                    console.error('❌ Lỗi khi gửi email:', responseData?.message || 'Unknown error');
-                    if (responseData?.message) {
-                        // Log full error message with line breaks
-                        const errorMsg = responseData.message;
-                        if (errorMsg.includes('\n')) {
-                            const errorLines = errorMsg.split('\n');
-                            console.error('❌ Error Details:');
-                            errorLines.forEach(line => console.error('   ', line));
-                        }
-                    }
+                    console.error('❌ Lỗi khi gửi email qua FormSubmit:', responseData?.message || 'Unknown error');
                 }
             } catch (error) {
                 console.error('❌ Lỗi khi gửi email:', error);
