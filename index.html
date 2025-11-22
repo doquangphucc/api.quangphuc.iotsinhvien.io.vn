@@ -181,6 +181,44 @@
             max-width: 100%;
             hyphens: auto;
             overflow: hidden;
+            box-sizing: border-box;
+            width: 100%;
+            display: block;
+            line-height: 1.2;
+        }
+        
+        /* Responsive font size adjustments */
+        @media (max-width: 1024px) {
+            .home-post-title {
+                font-size: 2rem !important; /* Override lg:text-5xl on smaller screens */
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .home-post-title {
+                font-size: 1.75rem !important; /* Override sm:text-4xl on mobile */
+            }
+        }
+        
+        /* Ensure parent container allows text wrapping */
+        .home-posts-container > div {
+            min-width: 0;
+        }
+        
+        .home-posts-container > div > div {
+            min-width: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        /* Fix grid layout to prevent overflow */
+        .home-posts-container .grid {
+            min-width: 0;
+        }
+        
+        .home-posts-container .grid > div {
+            min-width: 0;
+            overflow: hidden;
         }
 
         @supports (-webkit-background-clip: text) {
