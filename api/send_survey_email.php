@@ -139,32 +139,57 @@ try {
         sendError('Lỗi hệ thống khi tạo nội dung email: ' . $e->getMessage(), 500);
     }
     
-    // Email configuration
-    $to = 'doquangphuc21@gmail.com';
+    // Use FormSubmit API to send email (more reliable than PHP mail())
+    $formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
     $subject = "Báo Giá Điện Mặt Trời - Khách hàng: $fullname ($phone)";
     
-    // Email headers
-    $headers = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: HC Eco System <noreply@hceco.io.vn>\r\n";
-    $headers .= "Reply-To: $email\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+    // Prepare form data for FormSubmit
+    $formData = [
+        '_subject' => $subject,
+        '_template' => 'table',
+        '_captcha' => 'false',
+        'message' => $emailContent,
+        'name' => $fullname,
+        'email' => $email,
+        'phone' => $phone
+    ];
     
-    // Send email
-    error_log("send_survey_email.php - Attempting to send email to: " . $to);
-    $mailSent = @mail($to, $subject, $emailContent, $headers);
+    // Send email via FormSubmit API
+    error_log("send_survey_email.php - Attempting to send email via FormSubmit to: doquangphuc21@gmail.com");
     
-    if ($mailSent) {
-        error_log("send_survey_email.php - Email sent successfully");
-        sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
+    $ch = curl_init($formSubmitUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/x-www-form-urlencoded',
+        'Accept: application/json'
+    ]);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+    
+    if ($curlError) {
+        error_log("send_survey_email.php - cURL Error: " . $curlError);
+        sendError('Lỗi kết nối khi gửi email: ' . $curlError, 500);
+    }
+    
+    if ($httpCode === 200) {
+        $responseData = json_decode($response, true);
+        if ($responseData && isset($responseData['success']) && $responseData['success']) {
+            error_log("send_survey_email.php - Email sent successfully via FormSubmit");
+            sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
+        } else {
+            error_log("send_survey_email.php - FormSubmit returned error: " . $response);
+            sendError('Không thể gửi email, vui lòng thử lại sau', 500);
+        }
     } else {
-        // Log error details
-        $lastError = error_get_last();
-        error_log("send_survey_email.php - Failed to send email. Last error: " . print_r($lastError, true));
-        // Note: mail() function may return false even on success in some configurations
-        // So we'll consider it a success if no exception was thrown
-        error_log("send_survey_email.php - Mail function returned false, but this might be a configuration issue");
-        sendSuccess(['sent' => true, 'note' => 'Email đã được xử lý'], 'Đã gửi báo giá đến email thành công!');
+        error_log("send_survey_email.php - FormSubmit HTTP Error: " . $httpCode . " Response: " . $response);
+        sendError('Lỗi khi gửi email (HTTP ' . $httpCode . '), vui lòng thử lại sau', 500);
     }
     
 } catch (Exception $e) {
