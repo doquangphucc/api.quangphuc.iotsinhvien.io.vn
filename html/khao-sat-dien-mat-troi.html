@@ -3691,19 +3691,19 @@
                     return labelMap[key] || key;
                 };
                 
+                // Helper để convert sang số an toàn (dùng chung)
+                const toNumber = (val) => {
+                    if (typeof val === 'number') return val;
+                    if (typeof val === 'string') {
+                        const num = parseFloat(val);
+                        return isNaN(num) ? 0 : num;
+                    }
+                    return 0;
+                };
+                
                 // Helper function để format giá trị
                 const formatValue = (key, value) => {
                     if (value === null || value === undefined) return 'N/A';
-                    
-                    // Helper để convert sang số an toàn
-                    const toNumber = (val) => {
-                        if (typeof val === 'number') return val;
-                        if (typeof val === 'string') {
-                            const num = parseFloat(val);
-                            return isNaN(num) ? 0 : num;
-                        }
-                        return 0;
-                    };
                     
                     // Format số tiền
                     if (key.includes('Price') || key.includes('Bill') || key.includes('Savings') || key.includes('Cost') || key === 'totalPrice') {
@@ -3737,10 +3737,46 @@
                     return String(value);
                 };
                 
-                // Helper function để tự động duyệt qua object và thêm vào FormData
+                // Danh sách các field cần bỏ qua (không gửi trong email)
+                const fieldsToSkip = [
+                    'id', 'image', 'images', 'img', 'photo', 'photos', 'url', 'link', 'href',
+                    'productId', 'solarPanelProductId', 'batteryProductId', 'inverterId', 'cabinetId',
+                    'kwhBreakdown', 'cabinetAlternatives', 'actualDailyKwh', 'systemSizeWatt',
+                    'batteryCapacityNeeded', 'selectedInverter', 'selectedCabinet', 'selectedBattery'
+                ];
+                
+                // Danh sách các field quan trọng cần gửi (chỉ gửi các field này)
+                const importantFields = [
+                    'monthlyBill', 'monthlyKwh', 'dailyKwh', 'peakSunHours', 'roofArea',
+                    'solarPanelName', 'solarPanelWatt', 'panelCount', 'solarPanelPrice', 'panelTotalPrice',
+                    'systemSizeKw', 'accessories', 'accessoriesTotal', 'totalPrice',
+                    'annualSavings', 'paybackPeriod'
+                ];
+                
+                // Helper function để kiểm tra field có nên bỏ qua không
+                const shouldSkipField = (key) => {
+                    const lowerKey = key.toLowerCase();
+                    // Bỏ qua nếu có trong danh sách skip
+                    if (fieldsToSkip.some(skip => lowerKey.includes(skip.toLowerCase()))) {
+                        return true;
+                    }
+                    // Bỏ qua nếu là field kỹ thuật (có chứa 'Id', 'id', 'image', 'url', etc.)
+                    if (lowerKey.includes('id') && !lowerKey.includes('kwh')) {
+                        return true;
+                    }
+                    if (lowerKey.includes('image') || lowerKey.includes('img') || lowerKey.includes('photo') || lowerKey.includes('url') || lowerKey.includes('link')) {
+                        return true;
+                    }
+                    return false;
+                };
+                
+                // Helper function để tự động duyệt qua object và thêm vào FormData (chỉ các field quan trọng)
                 const addObjectToFormData = (formDataToSend, obj, prefix = '') => {
                     for (const [key, value] of Object.entries(obj)) {
                         if (value === null || value === undefined) continue;
+                        
+                        // Bỏ qua các field không cần thiết
+                        if (shouldSkipField(key)) continue;
                         
                         const fullKey = prefix ? `${prefix} - ${key}` : key;
                         
@@ -3755,7 +3791,7 @@
                                 const itemUnits = value.units || 1;
                                 
                                 if (key === 'selectedInverter') {
-                                    formDataToSend.append('Biến Tần - Tên', itemName + (itemPower ? ` (${itemPower}W)` : ''));
+                                    formDataToSend.append('Biến Tần - Tên', itemName + (itemPower ? ` (${toNumber(itemPower)}W)` : ''));
                                     formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
                                     formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(itemPrice) + ' đ');
                                     formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(itemPrice) + ' đ');
@@ -3765,40 +3801,35 @@
                                     formDataToSend.append('Tủ Điện - Đơn giá', formatCurrency(itemPrice) + ' đ');
                                     formDataToSend.append('Tủ Điện - Thành tiền', formatCurrency(itemPrice) + ' đ');
                                 } else if (key === 'selectedBattery') {
-                                    formDataToSend.append('Pin Lưu Trữ - Tên', itemName + (itemPower ? ` (${itemPower.toFixed(2)} kWh/bộ)` : ''));
+                                    formDataToSend.append('Pin Lưu Trữ - Tên', itemName + (itemPower ? ` (${toNumber(itemPower).toFixed(2)} kWh/bộ)` : ''));
                                     formDataToSend.append('Pin Lưu Trữ - Số lượng', itemUnits + ' bộ');
                                     formDataToSend.append('Pin Lưu Trữ - Đơn giá', formatCurrency(itemPrice) + ' đ');
                                     formDataToSend.append('Pin Lưu Trữ - Thành tiền', formatCurrency(itemTotal) + ' đ');
                                 }
-                            } else {
-                                // Recursive cho các nested objects khác
-                                addObjectToFormData(formDataToSend, value, fullKey);
                             }
+                            // Không recursive cho các nested objects khác (tránh gửi quá nhiều field)
                         }
                         // Xử lý arrays (accessories)
                         else if (Array.isArray(value)) {
                             if (key === 'accessories') {
                                 value.forEach((acc, index) => {
+                                    // Chỉ gửi name, quantity, price, totalPrice (bỏ qua image, id, etc.)
                                     formDataToSend.append(`Phụ Kiện ${index + 1} - Tên`, acc.name || 'N/A');
                                     formDataToSend.append(`Phụ Kiện ${index + 1} - Số lượng`, (acc.quantity || 0) + ' ' + (acc.unit || 'cái'));
                                     formDataToSend.append(`Phụ Kiện ${index + 1} - Đơn giá`, formatCurrency(acc.price || 0) + ' đ');
                                     formDataToSend.append(`Phụ Kiện ${index + 1} - Thành tiền`, formatCurrency(acc.totalPrice || 0) + ' đ');
                                 });
-                            } else {
-                                value.forEach((item, index) => {
-                                    if (typeof item === 'object') {
-                                        addObjectToFormData(formDataToSend, item, `${fullKey}[${index}]`);
-                                    } else {
-                                        formDataToSend.append(`${fullKey}[${index}]`, formatValue(key, item));
-                                    }
-                                });
                             }
+                            // Bỏ qua các arrays khác (tránh gửi quá nhiều field)
                         }
-                        // Xử lý primitive values
+                        // Xử lý primitive values - chỉ gửi các field quan trọng
                         else {
-                            const label = formatLabel(key);
-                            const formattedValue = formatValue(key, value);
-                            formDataToSend.append(label, formattedValue);
+                            // Chỉ gửi nếu là field quan trọng hoặc không có trong danh sách skip
+                            if (importantFields.includes(key) || !shouldSkipField(key)) {
+                                const label = formatLabel(key);
+                                const formattedValue = formatValue(key, value);
+                                formDataToSend.append(label, formattedValue);
+                            }
                         }
                     }
                 };
