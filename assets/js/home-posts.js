@@ -81,13 +81,13 @@ function createPostElement(post, index) {
     
     // Content section HTML
     const contentHTML = `
-        <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}">
+        <div class="${isImageLeft ? 'order-1 lg:order-2' : ''}" style="min-width: 0; overflow: hidden;">
             ${post.highlight_text ? `
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-[0.2em] uppercase" style="color:${highlightColor};background-color:${highlightColor}1a">
                     <span class="h-2 w-2 rounded-full" style="background-color:${highlightColor};"></span>
                     ${escapeHtml(post.highlight_text)}
                 </div>` : ''}
-            <h3 class="home-post-title text-3xl sm:text-4xl lg:text-5xl font-extrabold mt-5 mb-6 leading-tight">${escapeHtml(post.title)}</h3>
+            <h3 class="home-post-title text-3xl sm:text-4xl lg:text-5xl font-extrabold mt-5 mb-6 leading-tight" style="word-break: break-word; overflow-wrap: break-word; max-width: 100%;">${escapeHtml(post.title)}</h3>
             <p class="text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">${escapeHtml(post.description)}</p>
             ${featuresHTML ? `<div class="bg-white/70 dark:bg-slate-900/40 border border-white/50 dark:border-white/5 rounded-2xl p-6 mb-8 shadow-inner">
                     <ul class="space-y-3">${featuresHTML}</ul>
@@ -155,7 +155,7 @@ function createPostElement(post, index) {
     div.innerHTML = `
         <div class="relative p-1 rounded-[40px] bg-gradient-to-br from-white/40 via-white/10 to-transparent dark:from-white/10 dark:via-white/5 dark:to-transparent">
             <div class="rounded-[36px] bg-white/90 dark:bg-slate-900/70 border border-white/40 dark:border-white/5 shadow-2xl overflow-hidden">
-                <div class="grid lg:grid-cols-2 gap-12 items-center p-8 sm:p-12">
+                <div class="grid lg:grid-cols-2 gap-12 items-center p-8 sm:p-12" style="min-width: 0;">
                     ${isImageLeft ? imageHTML + contentHTML : contentHTML + imageHTML}
                 </div>
                 ${mediaGalleryHTML}
