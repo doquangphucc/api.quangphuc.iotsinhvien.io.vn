@@ -248,8 +248,25 @@ function sendSuccess($data = [], $message = '') {
 function validateRequired($data, $fields) {
     $missing = [];
     foreach ($fields as $field) {
-        if (!isset($data[$field]) || trim($data[$field]) === '') {
+        if (!isset($data[$field])) {
             $missing[] = $field;
+        } else {
+            // Handle different types: string, array, etc.
+            $value = $data[$field];
+            if (is_string($value)) {
+                // For strings, check if empty after trimming
+                if (trim($value) === '') {
+                    $missing[] = $field;
+                }
+            } elseif (is_array($value)) {
+                // For arrays, check if empty
+                if (empty($value)) {
+                    $missing[] = $field;
+                }
+            } else {
+                // For other types (int, bool, etc.), just check if set
+                // They are considered valid if set
+            }
         }
     }
     return $missing;
