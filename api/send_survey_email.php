@@ -45,6 +45,26 @@ try {
     exit;
 }
 
+/**
+ * Helper function to safely get array value
+ */
+if (!function_exists('safeGetValue')) {
+    function safeGetValue($array, $key, $default = 'N/A') {
+        return isset($array) && is_array($array) && isset($array[$key]) ? $array[$key] : $default;
+    }
+}
+
+/**
+ * Helper function to safely get nested array value
+ */
+if (!function_exists('safeGetNestedValue')) {
+    function safeGetNestedValue($array, $key1, $key2, $default = 'N/A') {
+        return isset($array) && is_array($array) && isset($array[$key1]) && is_array($array[$key1]) && isset($array[$key1][$key2]) 
+            ? $array[$key1][$key2] 
+            : $default;
+    }
+}
+
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     if (function_exists('sendError')) {
@@ -173,26 +193,6 @@ try {
         $errorMessage .= "\nAdditional errors: " . json_encode($errorDetails, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
     sendError($errorMessage, 500);
-}
-
-/**
- * Helper function to safely get array value
- */
-if (!function_exists('safeGetValue')) {
-    function safeGetValue($array, $key, $default = 'N/A') {
-        return isset($array) && is_array($array) && isset($array[$key]) ? $array[$key] : $default;
-    }
-}
-
-/**
- * Helper function to safely get nested array value
- */
-if (!function_exists('safeGetNestedValue')) {
-    function safeGetNestedValue($array, $key1, $key2, $default = 'N/A') {
-        return isset($array) && is_array($array) && isset($array[$key1]) && is_array($array[$key1]) && isset($array[$key1][$key2]) 
-            ? $array[$key1][$key2] 
-            : $default;
-    }
 }
 
 /**
