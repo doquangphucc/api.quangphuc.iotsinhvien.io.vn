@@ -3930,40 +3930,89 @@
 </body>
 </html>`;
                 
-                // Gửi trực tiếp qua FormSubmit API - Gửi HTML email
-                // FormSubmit sẽ tự động detect HTML và render
-                const formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
-                const subject = `Báo Giá Điện Mặt Trời - Khách hàng: ${fullname} (${phone})`;
-                
-                // Tạo plain text summary cho subject line
-                const plainTextSummary = `BÁO GIÁ ĐIỆN MẶT TRỜI\n\nKhách hàng: ${fullname}\nSĐT: ${phone}\nEmail: ${email}\nKhu vực: ${regionName}\nLoại điện: ${phaseName}\nTổng chi phí: ${formatCurrency(totalPrice)} VNĐ\n\nXem chi tiết báo giá trong email HTML bên dưới.`;
-                
-                const formDataToSend = new FormData();
-                formDataToSend.append('_subject', subject);
-                formDataToSend.append('_captcha', 'false');
-                // Không dùng _template để FormSubmit tự render HTML
-                formDataToSend.append('name', fullname);
-                formDataToSend.append('email', email);
-                formDataToSend.append('phone', phone);
-                // Gửi cả plain text summary và HTML - FormSubmit sẽ chọn HTML nếu detect được
-                formDataToSend.append('message', plainTextSummary + '\n\n' + emailHTML);
-                
-                console.log('Sending survey email directly to FormSubmit...');
-                
-                const response = await fetch(formSubmitUrl, {
-                    method: 'POST',
-                    body: formDataToSend,
-                    headers: {
-                        'Accept': 'application/json'
+                // Gửi qua PHP backend để gửi HTML email đúng cách
+                // FormSubmit không render HTML trong message field, nên quay lại PHP
+                const emailData = {
+                    fullname: fullname,
+                    phone: phone,
+                    email: email,
+                    surveyData: {
+                        region: formData.region,
+                        phase: formData.phase,
+                        solarPanel: formData.solarPanel,
+                        monthlyBill: parseFloat(formData.monthlyBill.replace(/[^\d]/g, '')),
+                        usageTime: formData.usageTime
+                    },
+                    results: {
+                        monthlyBill: monthlyBill,
+                        monthlyKwh: monthlyKwh,
+                        dailyKwh: dailyKwh,
+                        peakSunHours: peakSunHours,
+                        roofArea: roofArea,
+                        systemSizeKw: systemSizeKw,
+                        panelCount: panelCount,
+                        solarPanelWatt: solarPanelWatt,
+                        solarPanelPrice: solarPanelPrice,
+                        solarPanelName: solarPanelName,
+                        panelTotalPrice: panelTotalPrice,
+                        selectedInverter: {
+                            name: inverterName,
+                            power: inverterPower,
+                            price: inverterPrice
+                        },
+                        selectedCabinet: {
+                            name: cabinetName,
+                            price: cabinetPrice
+                        },
+                        selectedBattery: {
+                            name: batteryName,
+                            capacity: batteryCapacity,
+                            units: batteryUnits,
+                            price: batteryPrice,
+                            totalPrice: batteryTotalPrice
+                        },
+                        accessories: accessories.map(acc => ({
+                            name: acc.name || 'N/A',
+                            quantity: acc.quantity || 0,
+                            unit: acc.unit || 'cái',
+                            price: acc.price || 0,
+                            totalPrice: acc.totalPrice || 0
+                        })),
+                        accessoriesTotal: accessoriesTotal,
+                        totalPrice: totalPrice,
+                        annualSavings: annualSavings,
+                        paybackPeriod: paybackPeriod
                     }
+                };
+                
+                console.log('Sending survey email via PHP backend...');
+                
+                const response = await fetch(`${API_BASE}/send_survey_email.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(emailData)
                 });
                 
-                const responseData = await response.json();
+                const responseText = await response.text();
                 
-                if (responseData && responseData.success) {
-                    console.log('✅ Email đã được gửi thành công qua FormSubmit!');
-                } else {
-                    console.error('❌ Lỗi khi gửi email qua FormSubmit:', responseData?.message || 'Unknown error');
+                if (!response.ok) {
+                    console.error('❌ HTTP Error:', response.status);
+                    console.error('❌ Response:', responseText);
+                    return;
+                }
+                
+                try {
+                    const responseData = JSON.parse(responseText);
+                    if (responseData && responseData.success) {
+                        console.log('✅ Email đã được gửi thành công!');
+                    } else {
+                        console.error('❌ Lỗi khi gửi email:', responseData?.message || 'Unknown error');
+                    }
+                } catch (e) {
+                    console.error('❌ JSON Parse Error:', e);
+                    console.error('❌ Response text:', responseText.substring(0, 500));
                 }
             } catch (error) {
                 console.error('❌ Lỗi khi gửi email:', error);
