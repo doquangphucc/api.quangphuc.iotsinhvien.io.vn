@@ -205,6 +205,45 @@
             background: transparent !important;
         }
         
+        /* Admin overrides */
+        body.admin-page {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        body.admin-page main#admin-content-wrapper {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 32px;
+            padding: 2.5rem 2rem;
+            margin: 2rem auto 3rem;
+            max-width: 1400px;
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(15, 23, 42, 0.05);
+        }
+        body.admin-page section,
+        body.admin-page .tab-content,
+        body.admin-page .bg-white,
+        body.admin-page .bg-white.dark\:bg-gray-800 {
+            background: #ffffff !important;
+            border: 1px solid rgba(226, 232, 240, 0.9) !important;
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08) !important;
+            backdrop-filter: none !important;
+        }
+        body.admin-page section {
+            border-radius: 20px !important;
+        }
+        body.admin-page .modal .bg-white {
+            background: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2) !important;
+        }
+        body.admin-page #admin-content-wrapper .tab-content > .bg-white {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        body.admin-page #admin-content-wrapper table {
+            background: #ffffff;
+        }
+
         /* Header giữ nguyên trong suốt */
         header {
             background: rgba(255, 255, 255, 0.90) !important;
@@ -270,7 +309,7 @@
 
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 admin-page">
 
     <!-- Header -->
     <header class="bg-white shadow-md">
@@ -331,6 +370,9 @@
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="home" onclick="showTab('home')">
                     🏠 Trang chủ
                 </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="promotions" onclick="showTab('promotions')">
+                    📣 Khuyến mãi
+                </button>
                 <button class="tab-button px-6 py-3 rounded-lg font-semibold whitespace-nowrap" data-module="contacts" onclick="showTab('contacts')">
                     📞 Liên hệ
                 </button>
@@ -342,7 +384,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8">
+    <main id="admin-content-wrapper" class="container mx-auto px-4 py-8">
         
         <!-- Categories Tab -->
         <div id="tab-categories" class="tab-content">
@@ -858,6 +900,51 @@
             </div>
         </div>
 
+        <!-- Promotions Tab -->
+        <div id="tab-promotions" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Quản lý khuyến mãi</h2>
+                        <p class="text-sm text-gray-600 mt-1">Tạo banner nổi hiển thị ở giữa các trang được chọn, người dùng có thể tắt bằng nút ×</p>
+                    </div>
+                    <button onclick="openPromotionModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        + Thêm khuyến mãi
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left w-20">ID</th>
+                                <th class="px-4 py-3 text-left">Ảnh</th>
+                                <th class="px-4 py-3 text-left">Tiêu đề</th>
+                                <th class="px-4 py-3 text-left">Trang hiển thị</th>
+                                <th class="px-4 py-3 text-left">Trang đích</th>
+                                <th class="px-4 py-3 text-center">Trạng thái</th>
+                                <th class="px-4 py-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="promotions-tbody">
+                            <tr>
+                                <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19V6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                                        <p>Đang tải dữ liệu khuyến mãi...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                    <p class="text-sm text-yellow-800">
+                        💡 Gợi ý: Banner nên có nền trong suốt hoặc nhẹ (PNG, WEBP) để tạo cảm giác nổi bật. Người dùng có thể tắt banner nên hãy giữ nội dung ngắn gọn, thu hút.
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- Contacts Tab -->
         <div id="tab-contacts" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow-md p-6">
@@ -920,7 +1007,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Category Modal -->
     <div id="categoryModal" class="modal">
@@ -1488,6 +1575,70 @@
                         💾 Lưu dịch vụ
                     </button>
                     <button type="button" onclick="closeDichVuModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+                        ❌ Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Promotion Modal -->
+    <div id="promotionModal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4" id="promotionModalTitle">Thêm khuyến mãi</h3>
+            <form id="promotionForm" onsubmit="savePromotion(event)">
+                <input type="hidden" id="promotion_id">
+                <input type="hidden" id="promotion_image_url">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tiêu đề *</label>
+                        <input type="text" id="promotion_title" required class="w-full px-4 py-2 border rounded-lg" placeholder="VD: Ưu đãi lắp đặt tháng 11">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Ảnh banner</label>
+                        <div class="space-y-2">
+                            <input type="file" id="promotion_image" accept="image/*" class="w-full px-4 py-2 border rounded-lg" onchange="uploadPromotionImage(this)">
+                            <p class="text-xs text-gray-500">
+                                Khuyến nghị: 800x600px, nền trong suốt (PNG/WebP), tối đa 5MB. Có thể bỏ trống và thêm sau.
+                            </p>
+                            <div id="promotion_image_preview" class="hidden mt-2">
+                                <img src="" alt="Preview" class="w-full max-h-72 object-contain rounded border">
+                            </div>
+                            <div id="promotion_image_status" class="text-sm text-gray-500"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Chọn trang hiển thị *</label>
+                        <div id="promotion_pages_container" class="grid sm:grid-cols-2 gap-2 border rounded-lg p-3 max-h-60 overflow-y-auto bg-gray-50">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Trang đích khi click *</label>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex gap-2">
+                                <select id="promotion_target_link" class="flex-1 px-4 py-2 border rounded-lg">
+                                    <!-- Filled by JS -->
+                                </select>
+                                <button type="button" onclick="togglePromotionCustomLink()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm whitespace-nowrap">
+                                    🔗 Tùy chỉnh
+                                </button>
+                            </div>
+                            <input type="text" id="promotion_target_link_custom" class="hidden w-full px-4 py-2 border rounded-lg" placeholder="Nhập URL tùy chỉnh (VD: https://example.com)">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="promotion_is_active" checked>
+                            <span class="font-semibold">Kích hoạt (hiển thị trên các trang đã chọn)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        💾 Lưu khuyến mãi
+                    </button>
+                    <button type="button" onclick="closePromotionModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
                         ❌ Hủy
                     </button>
                 </div>
@@ -2107,6 +2258,29 @@
                                     </label>
                                 </div>
                             </div>
+
+                            <!-- Khuyến mãi -->
+                            <div class="border rounded-lg p-4 bg-gray-50">
+                                <h5 class="font-bold mb-2">📣 Khuyến mãi</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="promotions" data-action="view">
+                                        <span class="text-sm">👁️ Xem</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="promotions" data-action="create">
+                                        <span class="text-sm">➕ Tạo mới</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="promotions" data-action="edit">
+                                        <span class="text-sm">✏️ Sửa</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="permission-checkbox" data-module="promotions" data-action="delete">
+                                        <span class="text-sm">🗑️ Xóa</span>
+                                    </label>
+                                </div>
+                            </div>
                             
                             <!-- Liên hệ -->
                             <div class="border rounded-lg p-4 bg-gray-50">
@@ -2548,6 +2722,7 @@
                 case 'projects': loadProjects(); break;
                 case 'dich-vu': loadDichVu(); break;
                 case 'home': loadHomePosts(); break;
+                case 'promotions': loadPromotions(); break;
                 case 'contacts': loadContacts(); break;
                 case 'users': loadUsersManagement(); break;
             }
@@ -4572,14 +4747,29 @@
         // DICH VU MANAGEMENT
         // =====================================================
         
-        const availablePages = [
-            { name: 'Sản phẩm', value: 'pricing.html' },
-            { name: 'Liên hệ', value: 'lien-he.html' },
-            { name: 'Giới thiệu', value: 'gioi-thieu.html' },
-            { name: 'Dự án', value: 'du-an.html' },
-            { name: 'Tin tức', value: 'tin-tuc.html' },
-            { name: 'Dịch vụ', value: 'dich-vu.html' },
-            { name: 'Khảo sát', value: 'khao-sat-dien-mat-troi.html' }
+        const SITE_PAGES = [
+            { name: 'Trang chủ', value: 'index.html', path: 'index.html' },
+            { name: 'Giới thiệu', value: 'gioi-thieu.html', path: 'html/gioi-thieu.html' },
+            { name: 'Sản phẩm / Bảng giá', value: 'pricing.html', path: 'html/pricing.html' },
+            { name: 'Dự án', value: 'du-an.html', path: 'html/du-an.html' },
+            { name: 'Tin tức', value: 'tin-tuc.html', path: 'html/tin-tuc.html' },
+            { name: 'Dịch vụ', value: 'dich-vu.html', path: 'html/dich-vu.html' },
+            { name: 'Liên hệ', value: 'lien-he.html', path: 'html/lien-he.html' },
+            { name: 'Đặt hàng', value: 'dat-hang.html', path: 'html/dat-hang.html' },
+            { name: 'Giỏ hàng', value: 'gio-hang.html', path: 'html/gio-hang.html' },
+            { name: 'Đăng nhập', value: 'login.html', path: 'html/login.html' },
+            { name: 'Đăng ký', value: 'register.html', path: 'html/register.html' },
+            { name: 'Khảo sát điện mặt trời', value: 'khao-sat-dien-mat-troi.html', path: 'html/khao-sat-dien-mat-troi.html' },
+            { name: 'Lịch sử khảo sát', value: 'survey_history.html', path: 'html/survey_history.html' },
+            { name: 'Chi tiết khảo sát', value: 'survey_detail.html', path: 'html/survey_detail.html' },
+            { name: 'Vòng quay may mắn', value: 'vong-quay-may-man.html', path: 'html/vong-quay-may-man.html' },
+            { name: 'Tầm nhìn & Sứ mệnh', value: 'tam-nhin-su-menh.html', path: 'html/tam-nhin-su-menh.html' },
+            { name: 'Điều khoản & Điều kiện', value: 'dieu-khoan-dieu-kien.html', path: 'html/dieu-khoan-dieu-kien.html' },
+            { name: 'Chính sách đổi trả', value: 'chinh-sach-doi-tra.html', path: 'html/chinh-sach-doi-tra.html' },
+            { name: 'Chính sách bảo mật thông tin cá nhân', value: 'chinh-sach-bao-mat-thong-tin-ca-nhan.html', path: 'html/chinh-sach-bao-mat-thong-tin-ca-nhan.html' },
+            { name: 'Chính sách bảo mật thanh toán', value: 'chinh-sach-bao-mat-thong-tin-thanh-toan.html', path: 'html/chinh-sach-bao-mat-thong-tin-thanh-toan.html' },
+            { name: 'Chính sách bảo hành', value: 'chinh-sach-bao-hanh.html', path: 'html/chinh-sach-bao-hanh.html' },
+            { name: 'Trở thành nhà phân phối', value: 'tro-thanh-nha-phan-phoi.html', path: 'html/tro-thanh-nha-phan-phoi.html' }
         ];
 
         async function loadDichVu() {
@@ -4595,7 +4785,7 @@
                     // Populate page select
                     const select = document.getElementById('dich_vu_link_page');
                     select.innerHTML = '<option value="">-- Chọn trang --</option>';
-                    availablePages.forEach(page => {
+                    SITE_PAGES.forEach(page => {
                         const option = document.createElement('option');
                         option.value = page.value;
                         option.textContent = page.name;
@@ -4855,6 +5045,319 @@
         }
 
         // =====================================================
+        // PROMOTIONS MANAGEMENT
+        // =====================================================
+        let promotionsData = [];
+
+        const sitePageMapByPath = {};
+        SITE_PAGES.forEach(page => {
+            const canonical = normalizePagePath(page.path || page.value);
+            sitePageMapByPath[canonical] = page.name;
+        });
+
+        function normalizePagePath(raw) {
+            if (!raw) return '';
+            let value = raw.toString().trim();
+            if (value === '') return '';
+            value = value.replace(/^\/+/, '');
+            if (value === '' || value === 'index.html') return 'index.html';
+            if (value.startsWith('html/')) return value;
+            return `html/${value}`;
+        }
+
+        async function loadPromotions() {
+            const tbody = document.getElementById('promotions-tbody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                            <div class="flex flex-col items-center gap-2">
+                                <svg class="w-12 h-12 text-gray-300 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"></circle><path d="M12 3a9 9 0 019 9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                <p>Đang tải khuyến mãi...</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            try {
+                const response = await fetch(`${API_BASE}/admin/get_promotions.php?t=${Date.now()}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    promotionsData = data.promotions || [];
+                    renderPromotionsTable(promotionsData);
+                } else {
+                    showToast(data.message || 'Không thể tải khuyến mãi', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading promotions:', error);
+                showToast('Lỗi khi tải khuyến mãi', 'error');
+            }
+        }
+
+        function renderPromotionsTable(promotions) {
+            const tbody = document.getElementById('promotions-tbody');
+            if (!tbody) return;
+
+            if (!promotions.length) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                            Chưa có khuyến mãi nào. Nhấn "Thêm khuyến mãi" để tạo banner đầu tiên.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = promotions.map(promo => {
+                const pages = Array.isArray(promo.target_pages) ? promo.target_pages : [];
+                const pagesHtml = pages.length
+                    ? pages.map(page => {
+                        const canonical = normalizePagePath(page);
+                        const label = sitePageMapByPath[canonical] || canonical;
+                        return `<span class="inline-flex items-center px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-700 mr-1 mb-1">${label}</span>`;
+                    }).join('')
+                    : '<span class="text-xs text-gray-400 italic">Chưa cấu hình</span>';
+
+                const statusBadge = promo.is_active
+                    ? '<span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-semibold">Đang hiển thị</span>'
+                    : '<span class="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-600 font-semibold">Tạm tắt</span>';
+
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-semibold">#${promo.id}</td>
+                        <td class="px-4 py-3">
+                            ${promo.image_url ? `<img src="${promo.image_url}" alt="${promo.title}" class="h-16 rounded-lg object-cover border">` : '<span class="text-gray-400 text-sm">Chưa có ảnh</span>'}
+                        </td>
+                        <td class="px-4 py-3 font-semibold">${promo.title}</td>
+                        <td class="px-4 py-3">${pagesHtml}</td>
+                        <td class="px-4 py-3 text-sm text-blue-600 break-all">${promo.target_link || '-'}</td>
+                        <td class="px-4 py-3 text-center">${statusBadge}</td>
+                        <td class="px-4 py-3 text-center space-x-2">
+                            <button onclick="openPromotionModal(${promo.id})" class="text-blue-600 hover:underline text-sm">✏️ Sửa</button>
+                            <button onclick="deletePromotion(${promo.id})" class="text-red-600 hover:underline text-sm">🗑️ Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populatePromotionPagesCheckboxes(selectedPages = []) {
+            const container = document.getElementById('promotion_pages_container');
+            if (!container) return;
+            const normalized = selectedPages.map(normalizePagePath);
+            container.innerHTML = SITE_PAGES.map(page => {
+                const canonical = normalizePagePath(page.path || page.value);
+                const checked = normalized.includes(canonical) ? 'checked' : '';
+                return `
+                    <label class="flex items-center gap-2 text-sm bg-white border rounded-lg px-3 py-2">
+                        <input type="checkbox" class="promotion-page-checkbox" value="${canonical}" ${checked}>
+                        <span>${page.name}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function populatePromotionTargetLinkSelect(selectedPath = '') {
+            const select = document.getElementById('promotion_target_link');
+            if (!select) return;
+            const normalizedSelected = normalizePagePath(selectedPath);
+            select.innerHTML = '<option value="">-- Chọn trang --</option>';
+            SITE_PAGES.forEach(page => {
+                const canonical = normalizePagePath(page.path || page.value);
+                const option = document.createElement('option');
+                option.value = canonical;
+                option.textContent = page.name;
+                if (normalizedSelected && canonical === normalizedSelected) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        function openPromotionModal(id = 0) {
+            const modal = document.getElementById('promotionModal');
+            const form = document.getElementById('promotionForm');
+            form.reset();
+            document.getElementById('promotion_id').value = id || '';
+            document.getElementById('promotion_image_url').value = '';
+            document.getElementById('promotion_image_preview').classList.add('hidden');
+            document.getElementById('promotion_image_status').textContent = '';
+            populatePromotionPagesCheckboxes([]);
+            populatePromotionTargetLinkSelect('');
+            setPromotionCustomLinkVisibility(false);
+            document.getElementById('promotion_is_active').checked = true;
+            document.getElementById('promotionModalTitle').textContent = id ? 'Sửa khuyến mãi' : 'Thêm khuyến mãi';
+
+            if (id) {
+                const promo = promotionsData.find(p => p.id === id);
+                if (promo) {
+                    document.getElementById('promotion_title').value = promo.title || '';
+                    document.getElementById('promotion_image_url').value = promo.image_url || '';
+                    if (promo.image_url) {
+                        const preview = document.getElementById('promotion_image_preview');
+                        preview.querySelector('img').src = promo.image_url;
+                        preview.classList.remove('hidden');
+                    }
+                    const pages = Array.isArray(promo.target_pages) ? promo.target_pages : [];
+                    populatePromotionPagesCheckboxes(pages);
+
+                    if (promo.target_link && sitePageMapByPath[normalizePagePath(promo.target_link)]) {
+                        populatePromotionTargetLinkSelect(promo.target_link);
+                        setPromotionCustomLinkVisibility(false);
+                    } else if (promo.target_link) {
+                        populatePromotionTargetLinkSelect('');
+                        setPromotionCustomLinkVisibility(true);
+                        document.getElementById('promotion_target_link_custom').value = promo.target_link;
+                    }
+
+                    document.getElementById('promotion_is_active').checked = !!promo.is_active;
+                }
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closePromotionModal() {
+            document.getElementById('promotionModal').classList.remove('show');
+        }
+
+        function getSelectedPromotionPages() {
+            return Array.from(document.querySelectorAll('.promotion-page-checkbox:checked')).map(cb => cb.value);
+        }
+
+        function getPromotionTargetLinkValue() {
+            const customInput = document.getElementById('promotion_target_link_custom');
+            if (!customInput.classList.contains('hidden')) {
+                return customInput.value.trim();
+            }
+            return document.getElementById('promotion_target_link').value.trim();
+        }
+
+        function setPromotionCustomLinkVisibility(showCustom) {
+            const select = document.getElementById('promotion_target_link');
+            const customInput = document.getElementById('promotion_target_link_custom');
+            if (showCustom) {
+                customInput.classList.remove('hidden');
+                select.classList.add('hidden');
+            } else {
+                customInput.classList.add('hidden');
+                select.classList.remove('hidden');
+                customInput.value = '';
+            }
+        }
+
+        function togglePromotionCustomLink() {
+            const customInput = document.getElementById('promotion_target_link_custom');
+            const shouldShow = customInput.classList.contains('hidden');
+            setPromotionCustomLinkVisibility(shouldShow);
+        }
+
+        async function uploadPromotionImage(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('promotion_image_status');
+            statusEl.textContent = 'Đang upload ảnh...';
+            const formData = new FormData();
+            formData.append('image', file);
+            try {
+                const response = await fetch(`${API_BASE}/admin/upload_promotion_image.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('promotion_image_url').value = data.path;
+                    const preview = document.getElementById('promotion_image_preview');
+                    preview.querySelector('img').src = data.path;
+                    preview.classList.remove('hidden');
+                    statusEl.textContent = 'Upload thành công';
+                } else {
+                    statusEl.textContent = data.message || 'Upload thất bại';
+                    input.value = '';
+                }
+            } catch (error) {
+                console.error('Error uploading promotion image:', error);
+                statusEl.textContent = 'Lỗi khi upload ảnh';
+                input.value = '';
+            }
+        }
+
+        async function savePromotion(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('promotion_id').value || '0', 10);
+            const title = document.getElementById('promotion_title').value.trim();
+            const imageUrl = document.getElementById('promotion_image_url').value.trim();
+            const targetLink = getPromotionTargetLinkValue();
+            const targetPages = getSelectedPromotionPages();
+            const isActive = document.getElementById('promotion_is_active').checked;
+
+            if (!targetPages.length) {
+                showToast('Vui lòng chọn ít nhất một trang để hiển thị khuyến mãi', 'warning');
+                return;
+            }
+
+            if (!targetLink) {
+                showToast('Vui lòng chọn hoặc nhập trang đích khi click vào banner', 'warning');
+                return;
+            }
+
+            const payload = {
+                id,
+                title,
+                image_url: imageUrl,
+                target_link: targetLink,
+                target_pages: targetPages,
+                is_active: isActive
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/save_promotion.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closePromotionModal();
+                    loadPromotions();
+                } else {
+                    showToast(data.message || 'Không thể lưu khuyến mãi', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving promotion:', error);
+                showToast('Có lỗi xảy ra khi lưu khuyến mãi', 'error');
+            }
+        }
+
+        async function deletePromotion(id) {
+            if (!await customConfirm('Xóa khuyến mãi này? Banner sẽ không còn hiển thị.')) return;
+            try {
+                const response = await fetch(`${API_BASE}/admin/delete_promotion.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadPromotions();
+                } else {
+                    showToast(data.message || 'Không thể xóa khuyến mãi', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting promotion:', error);
+                showToast('Có lỗi xảy ra khi xóa khuyến mãi', 'error');
+            }
+        }
+
+        // =====================================================
         // USER MANAGEMENT
         // =====================================================
         
@@ -5038,7 +5541,7 @@
             // Collect permissions
             const permissions = {};
             if (!isAdmin) {
-                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'wheel', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home', 'contacts'];
+                const modules = ['categories', 'products', 'survey', 'packages', 'orders', 'tickets', 'wheel', 'rewards', 'intro-posts', 'projects', 'dich-vu', 'home', 'promotions', 'contacts'];
                 modules.forEach(module => {
                     permissions[module] = {
                         can_view: document.querySelector(`.permission-checkbox[data-module="${module}"][data-action="view"]`)?.checked || false,

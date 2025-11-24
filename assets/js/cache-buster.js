@@ -95,6 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (e) {
         console.error('Failed to inject contact FABs:', e);
     }
+
+    try {
+        initPromotionsOverlay();
+    } catch (e) {
+        console.error('Failed to init promotions overlay:', e);
+    }
 });
 
 // Export functions for manual use
@@ -228,5 +234,171 @@ async function injectContactFABs() {
             aria: 'Facebook'
         });
         container.appendChild(facebookFab);
+    }
+}
+
+// ================================
+// Promotions Overlay (Floating Ads)
+// ================================
+const PROMOTION_DISMISS_PREFIX = 'promoDismissed';
+let promotionStylesInjected = false;
+
+function shouldSkipPromotions() {
+    const body = document.body;
+    if (body && body.dataset.disablePromotions === 'true') return true;
+    const pageKey = getCurrentPageKey();
+    return pageKey.includes('admin');
+}
+
+function getCurrentPageKey() {
+    let path = window.location.pathname || '';
+    if (!path || path === '/') return 'index.html';
+    path = path.replace(/^\/+/, '');
+    return path === '' ? 'index.html' : path;
+}
+
+function normalizePromoPath(path) {
+    if (!path) return 'index.html';
+    const cleaned = path.replace(/^\/+/, '');
+    return cleaned === '' ? 'index.html' : cleaned;
+}
+
+function getPromotionDismissKey(pageKey, promoId) {
+    return `${PROMOTION_DISMISS_PREFIX}_${pageKey}_${promoId}`;
+}
+
+function isPromotionDismissed(pageKey, promoId) {
+    try {
+        return localStorage.getItem(getPromotionDismissKey(pageKey, promoId)) === '1';
+    } catch (e) {
+        return false;
+    }
+}
+
+function markPromotionDismissed(pageKey, promoId) {
+    try {
+        localStorage.setItem(getPromotionDismissKey(pageKey, promoId), '1');
+    } catch (e) {
+        // ignore storage errors
+    }
+}
+
+function ensurePromotionStyles() {
+    if (promotionStylesInjected) return;
+    const style = document.createElement('style');
+    style.id = 'promotion-overlay-styles';
+    style.textContent = `
+        #promotion-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #promotion-overlay .promotion-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(2px);
+        }
+        #promotion-overlay .promotion-card {
+            position: relative;
+            max-width: min(90vw, 560px);
+            max-height: min(80vh, 620px);
+            background: rgba(15,23,42,0.9);
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: promo-pop 0.35s ease;
+        }
+        #promotion-overlay .promotion-card img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 16px;
+            object-fit: contain;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+        #promotion-overlay .promotion-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            border: none;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        #promotion-overlay .promotion-close:hover {
+            background: rgba(0,0,0,0.8);
+            transform: scale(1.05);
+        }
+        @keyframes promo-pop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    promotionStylesInjected = true;
+}
+
+function resolvePromotionLink(link) {
+    if (!link) return '#';
+    if (/^(https?:|mailto:|tel:)/i.test(link)) {
+        return link;
+    }
+    const cleaned = link.replace(/^\/+/, '');
+    return '/' + cleaned;
+}
+
+function renderPromotionOverlay(promo, pageKey) {
+    ensurePromotionStyles();
+    const overlay = document.createElement('div');
+    overlay.id = 'promotion-overlay';
+    overlay.innerHTML = `
+        <div class="promotion-backdrop"></div>
+        <div class="promotion-card" role="dialog" aria-label="${promo.title || 'Khuyến mãi'}">
+            <button class="promotion-close" aria-label="Đóng khuyến mãi">&times;</button>
+            <img src="${promo.image_url}" alt="${promo.title || 'Khuyến mãi'}" class="promotion-image"/>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const dismiss = () => {
+        markPromotionDismissed(pageKey, promo.id);
+        overlay.remove();
+    };
+
+    overlay.querySelector('.promotion-backdrop').addEventListener('click', dismiss);
+    overlay.querySelector('.promotion-close').addEventListener('click', dismiss);
+    overlay.querySelector('.promotion-image').addEventListener('click', () => {
+        markPromotionDismissed(pageKey, promo.id);
+        window.location.href = resolvePromotionLink(promo.target_link || '#');
+    });
+}
+
+async function initPromotionsOverlay() {
+    if (shouldSkipPromotions()) return;
+    const pageKey = normalizePromoPath(getCurrentPageKey());
+    try {
+        const response = await fetch(`../api/get_promotions.php?page=${encodeURIComponent(pageKey)}&t=${Date.now()}`);
+        const data = await response.json();
+        if (!data.success || !Array.isArray(data.promotions) || !data.promotions.length) return;
+        const promo = data.promotions.find(item => !isPromotionDismissed(pageKey, item.id));
+        if (!promo || !promo.image_url) return;
+        renderPromotionOverlay(promo, pageKey);
+    } catch (error) {
+        console.error('Failed to fetch promotions:', error);
     }
 }

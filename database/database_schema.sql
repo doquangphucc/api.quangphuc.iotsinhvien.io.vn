@@ -581,9 +581,6 @@ CREATE INDEX idx_contact_channels_active ON contact_channels(is_active);
 CREATE INDEX idx_contact_channels_display_order ON contact_channels(display_order);
 CREATE INDEX idx_contact_channels_category ON contact_channels(category);
 
--- =====================================================
--- 24. BẢNG ELECTRICITY_PRICES (Bảng giá điện EVN)
--- =====================================================
 CREATE TABLE IF NOT EXISTS electricity_prices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tier INT NOT NULL COMMENT 'Bậc thang (1-6)',
@@ -604,7 +601,23 @@ CREATE INDEX idx_electricity_prices_active ON electricity_prices(is_active);
 CREATE INDEX idx_electricity_prices_effective_date ON electricity_prices(effective_date);
 
 -- =====================================================
--- 25. BẢNG SURVEY_REGIONS (Khu vực khảo sát)
+-- 25. BẢNG PROMOTIONS (Banner khuyến mãi nổi)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS promotions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL COMMENT 'Tiêu đề khuyến mãi hiển thị trong trang quản trị',
+    image_url VARCHAR(500) DEFAULT NULL COMMENT 'Ảnh banner khuyến mãi (có thể cập nhật sau)',
+    target_link VARCHAR(500) DEFAULT NULL COMMENT 'Trang đích khi người dùng click vào banner',
+    target_pages TEXT NOT NULL COMMENT 'JSON array các trang sẽ hiển thị banner (VD: ["index.html","html/pricing.html"])',
+    is_active BOOLEAN DEFAULT TRUE COMMENT '1 = hiển thị, 0 = ẩn',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT='Quản lý các banner khuyến mãi hiển thị ở giữa trang, có thể bật/tắt và chọn nhiều trang hiển thị';
+
+CREATE INDEX idx_promotions_active ON promotions(is_active);
+
+-- =====================================================
+-- 26. BẢNG SURVEY_REGIONS (Khu vực khảo sát)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS survey_regions (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -627,6 +640,6 @@ CREATE INDEX idx_survey_regions_order ON survey_regions(display_order);
 -- HOÀN THÀNH TẠO BẢNG
 -- =====================================================
 SELECT 'Database schema created successfully!' as message;
-SELECT 'Total tables created: 25' as info;
+SELECT 'Total tables created: 26' as info;
 SELECT 'Next: Import database_data.sql to insert sample data' as next_step;
 

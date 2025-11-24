@@ -761,6 +761,12 @@ INSERT INTO dich_vu (id, name, logo_url, description, highlight_color, link_name
 (4, 'C Home Build', '../assets/img/ecosystem/c-home-logo.jpg', 'Dịch vụ xây dựng và thiết kế nhà ở hiện đại, bền vững với tiêu chuẩn cao. Tích hợp công nghệ xanh, tiết kiệm năng lượng trong từng công trình.', '#10B981', 'Xem website', 'custom', 'https://c-homebuild.com/', 1, 4, NOW(), NOW());
 
 -- =====================================================
+-- DỮ LIỆU MẪU - PROMOTIONS
+-- =====================================================
+INSERT INTO promotions (id, title, image_url, target_link, target_pages, is_active, created_at, updated_at) VALUES
+(1, 'Ưu đãi Năng Lượng Sạch', NULL, 'html/pricing.html', '["index.html","html/pricing.html"]', 1, NOW(), NOW());
+
+-- =====================================================
 -- HOÀN THÀNH IMPORT DỮ LIỆU
 -- =====================================================
 SELECT 'Sample data imported successfully!' as message;
