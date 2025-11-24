@@ -242,6 +242,8 @@ async function injectContactFABs() {
 // ================================
 const PROMOTION_DISMISS_PREFIX = 'promoDismissed';
 let promotionStylesInjected = false;
+let cachedPromotionsList = null; // Lưu danh sách khuyến mãi để dùng lại
+let currentPageKey = null; // Lưu page key hiện tại
 
 function shouldSkipPromotions() {
     const body = document.body;
@@ -366,8 +368,15 @@ function resolvePromotionLink(link) {
     return '/' + cleaned;
 }
 
-function renderPromotionOverlay(promo, pageKey) {
+function renderPromotionOverlay(promo, pageKey, onDismissCallback = null) {
     ensurePromotionStyles();
+    
+    // Xóa overlay cũ nếu có
+    const existingOverlay = document.getElementById('promotion-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
     const overlay = document.createElement('div');
     overlay.id = 'promotion-overlay';
     overlay.innerHTML = `
@@ -382,6 +391,10 @@ function renderPromotionOverlay(promo, pageKey) {
     const dismiss = () => {
         markPromotionDismissed(pageKey, promo.id);
         overlay.remove();
+        // Gọi callback để hiển thị khuyến mãi tiếp theo
+        if (onDismissCallback && typeof onDismissCallback === 'function') {
+            setTimeout(() => onDismissCallback(), 300); // Delay 300ms để animation mượt hơn
+        }
     };
 
     overlay.querySelector('.promotion-backdrop').addEventListener('click', dismiss);
@@ -392,16 +405,33 @@ function renderPromotionOverlay(promo, pageKey) {
     });
 }
 
+function showNextPromotion() {
+    if (!cachedPromotionsList || !currentPageKey) return;
+    
+    // Tìm khuyến mãi tiếp theo chưa bị dismiss
+    const promo = cachedPromotionsList.find(item => !isPromotionDismissed(currentPageKey, item.id));
+    
+    if (promo && promo.image_url) {
+        // Hiển thị khuyến mãi tiếp theo, với callback để hiển thị tiếp nữa nếu có
+        renderPromotionOverlay(promo, currentPageKey, showNextPromotion);
+    }
+}
+
 async function initPromotionsOverlay() {
     if (shouldSkipPromotions()) return;
     const pageKey = normalizePromoPath(getCurrentPageKey());
+    currentPageKey = pageKey; // Lưu page key để dùng sau
+    
     try {
         const response = await fetch(`../api/get_promotions.php?page=${encodeURIComponent(pageKey)}&t=${Date.now()}`);
         const data = await response.json();
         if (!data.success || !Array.isArray(data.promotions) || !data.promotions.length) return;
-        const promo = data.promotions.find(item => !isPromotionDismissed(pageKey, item.id));
-        if (!promo || !promo.image_url) return;
-        renderPromotionOverlay(promo, pageKey);
+        
+        // Lưu danh sách khuyến mãi để dùng lại khi dismiss
+        cachedPromotionsList = data.promotions;
+        
+        // Tìm và hiển thị khuyến mãi đầu tiên chưa bị dismiss
+        showNextPromotion();
     } catch (error) {
         console.error('Failed to fetch promotions:', error);
     }
