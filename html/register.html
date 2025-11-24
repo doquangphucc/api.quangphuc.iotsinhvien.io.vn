@@ -196,41 +196,11 @@
 
                     <div>
                         <label for="register-phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Số điện thoại</label>
-                        <div class="flex gap-2">
-                            <input type="tel" id="register-phone" name="phone" required autocomplete="tel" pattern="^0[0-9]{9}$" maxlength="10"
-                                   class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
-                                   placeholder="0988919868" 
-                                   title="Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0" />
-                            <button type="button" id="send-otp-btn" 
-                                    class="px-4 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap">
-                                Gửi OTP
-                            </button>
-                        </div>
+                        <input type="tel" id="register-phone" name="phone" required autocomplete="tel" pattern="^0[0-9]{9}$" maxlength="10"
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
+                               placeholder="0988919868" 
+                               title="Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0" />
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">📱 Nhập đúng 10 số, bắt đầu bằng 0</p>
-                    </div>
-
-                    <!-- OTP Verification Section -->
-                    <div id="otp-section" class="hidden">
-                        <label for="register-otp" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Mã xác thực OTP</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="register-otp" name="otp_code" maxlength="6" pattern="[0-9]{6}"
-                                   class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none text-center text-2xl tracking-widest font-mono" 
-                                   placeholder="000000" />
-                            <button type="button" id="verify-otp-btn" 
-                                    class="px-4 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap">
-                                Xác thực
-                            </button>
-                        </div>
-                        <div class="mt-2 flex items-center justify-between">
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                <span id="otp-status-text">Nhập mã OTP đã được gửi đến số điện thoại của bạn</span>
-                            </p>
-                            <button type="button" id="resend-otp-btn" 
-                                    class="text-xs text-green-600 dark:text-green-400 hover:underline disabled:text-gray-400 disabled:cursor-not-allowed hidden">
-                                Gửi lại mã
-                            </button>
-                        </div>
-                        <div id="otp-timer" class="text-xs text-gray-500 dark:text-gray-400 mt-1 hidden"></div>
                     </div>
 
                     <div>
@@ -249,13 +219,9 @@
 
                     <div id="register-message" class="hidden rounded-xl p-4 text-sm"></div>
 
-                    <button type="submit" id="register-submit-btn" disabled
-                            class="w-full bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all duration-200 disabled:cursor-not-allowed">
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
                         Đăng ký ngay
                     </button>
-                    <p id="otp-required-hint" class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
-                        ⚠️ Vui lòng xác thực số điện thoại trước khi đăng ký
-                    </p>
                 </form>
 
                 <!-- Divider -->
@@ -385,206 +351,28 @@
             const form = document.getElementById('register-form');
             const messageBox = document.getElementById('register-message');
             const phoneInput = document.getElementById('register-phone');
-            const otpInput = document.getElementById('register-otp');
-            const sendOtpBtn = document.getElementById('send-otp-btn');
-            const verifyOtpBtn = document.getElementById('verify-otp-btn');
-            const resendOtpBtn = document.getElementById('resend-otp-btn');
-            const otpSection = document.getElementById('otp-section');
-            const otpStatusText = document.getElementById('otp-status-text');
-            const otpTimer = document.getElementById('otp-timer');
-            const otpRequiredHint = document.getElementById('otp-required-hint');
-            const registerSubmitBtn = document.getElementById('register-submit-btn');
-            
-            let otpVerified = false;
-            let resendCooldown = 0;
-            let resendTimer = null;
 
             // Only allow numbers in phone input
             phoneInput.addEventListener('input', function(e) {
+                // Remove any non-digit characters
                 this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limit to 10 digits
                 if (this.value.length > 10) {
                     this.value = this.value.slice(0, 10);
                 }
-                // Reset OTP verification when phone changes
-                if (otpVerified) {
-                    otpVerified = false;
-                    otpSection.classList.add('hidden');
-                    otpInput.value = '';
-                    updateSubmitButton();
-                }
             });
 
-            // Only allow numbers in OTP input
-            otpInput.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^0-9]/g, '');
-                if (this.value.length > 6) {
-                    this.value = this.value.slice(0, 6);
-                }
+            // Prevent paste of non-numeric characters
+            phoneInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const numbersOnly = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+                this.value = numbersOnly;
             });
 
-            // Send OTP button
-            sendOtpBtn.addEventListener('click', async function() {
-                const phone = phoneInput.value.trim();
-                const phoneRegex = /^0[0-9]{9}$/;
-                
-                if (!phoneRegex.test(phone)) {
-                    showMessage('Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 số bắt đầu bằng 0.', 'error');
-                    return;
-                }
-
-                sendOtpBtn.disabled = true;
-                sendOtpBtn.textContent = 'Đang gửi...';
-
-                try {
-                    const response = await fetch('../api/send_otp.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ phone: phone, purpose: 'register' })
-                    });
-
-                    const data = await response.json();
-                    
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.message || 'Không thể gửi mã OTP');
-                    }
-
-                    // Show OTP section
-                    otpSection.classList.remove('hidden');
-                    otpInput.focus();
-                    otpStatusText.textContent = 'Mã OTP đã được gửi đến số điện thoại của bạn';
-                    otpStatusText.className = 'text-xs text-green-600 dark:text-green-400';
-                    
-                    // Start cooldown timer
-                    startResendCooldown(data.data?.resend_after || 60);
-                    
-                    showMessage('Mã OTP đã được gửi đến số điện thoại của bạn', 'success');
-                } catch (error) {
-                    console.error(error);
-                    showMessage(error.message || 'Không thể gửi mã OTP. Vui lòng thử lại sau.', 'error');
-                } finally {
-                    sendOtpBtn.disabled = false;
-                    sendOtpBtn.textContent = 'Gửi OTP';
-                }
-            });
-
-            // Verify OTP button
-            verifyOtpBtn.addEventListener('click', async function() {
-                const phone = phoneInput.value.trim();
-                const otpCode = otpInput.value.trim();
-
-                if (otpCode.length !== 6) {
-                    showMessage('Vui lòng nhập đầy đủ 6 chữ số mã OTP', 'error');
-                    return;
-                }
-
-                verifyOtpBtn.disabled = true;
-                verifyOtpBtn.textContent = 'Đang xác thực...';
-
-                try {
-                    const response = await fetch('../api/verify_otp.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            phone: phone, 
-                            otp_code: otpCode,
-                            purpose: 'register'
-                        })
-                    });
-
-                    const data = await response.json();
-                    
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.message || 'Mã OTP không đúng');
-                    }
-
-                    // OTP verified successfully
-                    otpVerified = true;
-                    otpStatusText.textContent = '✓ Số điện thoại đã được xác thực thành công';
-                    otpStatusText.className = 'text-xs text-green-600 dark:text-green-400 font-semibold';
-                    otpInput.disabled = true;
-                    verifyOtpBtn.disabled = true;
-                    verifyOtpBtn.textContent = 'Đã xác thực';
-                    otpTimer.classList.add('hidden');
-                    resendOtpBtn.classList.add('hidden');
-                    otpRequiredHint.classList.add('hidden');
-                    
-                    updateSubmitButton();
-                    showMessage('Xác thực số điện thoại thành công!', 'success');
-                } catch (error) {
-                    console.error(error);
-                    showMessage(error.message || 'Mã OTP không đúng. Vui lòng thử lại.', 'error');
-                } finally {
-                    verifyOtpBtn.disabled = false;
-                    if (!otpVerified) {
-                        verifyOtpBtn.textContent = 'Xác thực';
-                    }
-                }
-            });
-
-            // Resend OTP button
-            resendOtpBtn.addEventListener('click', function() {
-                if (resendCooldown > 0) return;
-                sendOtpBtn.click();
-            });
-
-            // Start resend cooldown timer
-            function startResendCooldown(seconds) {
-                resendCooldown = seconds;
-                resendOtpBtn.classList.remove('hidden');
-                resendOtpBtn.disabled = true;
-                
-                if (resendTimer) clearInterval(resendTimer);
-                
-                resendTimer = setInterval(() => {
-                    resendCooldown--;
-                    if (resendCooldown <= 0) {
-                        resendOtpBtn.disabled = false;
-                        resendOtpBtn.textContent = 'Gửi lại mã';
-                        clearInterval(resendTimer);
-                    } else {
-                        resendOtpBtn.textContent = `Gửi lại sau ${resendCooldown}s`;
-                    }
-                }, 1000);
-            }
-
-            // Update submit button state
-            function updateSubmitButton() {
-                if (otpVerified) {
-                    registerSubmitBtn.disabled = false;
-                    registerSubmitBtn.className = 'w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200';
-                } else {
-                    registerSubmitBtn.disabled = true;
-                    registerSubmitBtn.className = 'w-full bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all duration-200 disabled:cursor-not-allowed';
-                }
-            }
-
-            // Show message helper
-            function showMessage(message, type) {
-                messageBox.textContent = message;
-                messageBox.classList.remove('hidden');
-                messageBox.classList.remove('bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'border-2', 'border-red-300', 'border-green-300');
-                
-                if (type === 'error') {
-                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
-                } else {
-                    messageBox.classList.add('bg-green-100', 'text-green-700', 'border-2', 'border-green-300');
-                }
-                
-                // Auto hide after 5 seconds
-                setTimeout(() => {
-                    messageBox.classList.add('hidden');
-                }, 5000);
-            }
-
-            // Form submit
             form.addEventListener('submit', async function(event) {
                 event.preventDefault();
-                
-                if (!otpVerified) {
-                    showMessage('Vui lòng xác thực số điện thoại trước khi đăng ký', 'error');
-                    return;
-                }
-
                 messageBox.classList.add('hidden');
                 messageBox.classList.remove('bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
 
@@ -593,28 +381,31 @@
                     username: form.username.value.trim(),
                     phone: form.phone.value.trim(),
                     password: form.password.value,
-                    confirm_password: form.confirm_password.value,
-                    otp_verified: true
+                    confirm_password: form.confirm_password.value
                 };
 
                 if (!formData.full_name || !formData.username || !formData.phone || !formData.password || !formData.confirm_password) {
-                    showMessage('Vui lòng nhập đầy đủ thông tin.', 'error');
+                    messageBox.textContent = 'Vui lòng nhập đầy đủ thông tin.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
                     return;
                 }
 
+                // Validate phone number (10 digits, starts with 0)
                 const phoneRegex = /^0[0-9]{9}$/;
                 if (!phoneRegex.test(formData.phone)) {
-                    showMessage('Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0.', 'error');
+                    messageBox.textContent = 'Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
                     return;
                 }
 
                 if (formData.password !== formData.confirm_password) {
-                    showMessage('Mật khẩu nhập lại không khớp.', 'error');
+                    messageBox.textContent = 'Mật khẩu nhập lại không khớp.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
                     return;
                 }
-
-                registerSubmitBtn.disabled = true;
-                registerSubmitBtn.textContent = 'Đang đăng ký...';
 
                 try {
                     const response = await fetch('../api/register.php', {
@@ -628,20 +419,19 @@
                         throw new Error(data.message || 'Đăng ký thất bại, vui lòng thử lại.');
                     }
 
-                    showMessage('Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...', 'success');
+                    messageBox.textContent = 'Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-green-100', 'text-green-700', 'border-2', 'border-green-300');
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 1200);
                 } catch (error) {
                     console.error(error);
-                    showMessage(error.message || 'Không thể đăng ký. Vui lòng thử lại sau.', 'error');
-                    registerSubmitBtn.disabled = false;
-                    registerSubmitBtn.textContent = 'Đăng ký ngay';
+                    messageBox.textContent = error.message || 'Không thể đăng ký. Vui lòng thử lại sau.';
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('bg-red-100', 'text-red-700', 'border-2', 'border-red-300');
                 }
             });
-
-            // Initialize submit button state
-            updateSubmitButton();
         });
     </script>
 

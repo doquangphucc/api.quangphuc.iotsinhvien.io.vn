@@ -14,7 +14,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 // Validate required fields
-$requiredFields = ['full_name', 'username', 'phone', 'password', 'confirm_password', 'otp_verified'];
+$requiredFields = ['full_name', 'username', 'phone', 'password', 'confirm_password'];
 $missingFields = validateRequired($input, $requiredFields);
 
 if (!empty($missingFields)) {
@@ -66,30 +66,6 @@ try {
     $existingPhone = $db->selectOne('users', ['phone' => $phone]);
     if ($existingPhone) {
         sendError('Số điện thoại đã được sử dụng');
-    }
-    
-    // Kiểm tra OTP đã được xác thực chưa
-    $otpVerified = isset($input['otp_verified']) && $input['otp_verified'] === true;
-    if (!$otpVerified) {
-        sendError('Vui lòng xác thực số điện thoại bằng mã OTP trước khi đăng ký');
-    }
-    
-    // Xác minh OTP đã được verify trong database
-    $pdo = $db->getConnection();
-    $stmt = $pdo->prepare("
-        SELECT id FROM phone_otp_codes 
-        WHERE phone = ? 
-        AND purpose = 'register' 
-        AND is_verified = 1 
-        AND verified_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)
-        ORDER BY verified_at DESC 
-        LIMIT 1
-    ");
-    $stmt->execute([$phone]);
-    $verifiedOTP = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$verifiedOTP) {
-        sendError('Số điện thoại chưa được xác thực. Vui lòng xác thực OTP trước.');
     }
     
     // Hash password
