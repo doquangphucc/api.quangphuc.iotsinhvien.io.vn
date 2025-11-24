@@ -269,7 +269,9 @@ function getPromotionDismissKey(pageKey, promoId) {
 
 function isPromotionDismissed(pageKey, promoId) {
     try {
-        return localStorage.getItem(getPromotionDismissKey(pageKey, promoId)) === '1';
+        // Dùng sessionStorage thay vì localStorage để mỗi tab có storage riêng
+        // Tab mới = banner hiện lại, cùng tab đã click X thì không hiện lại dù refresh
+        return sessionStorage.getItem(getPromotionDismissKey(pageKey, promoId)) === '1';
     } catch (e) {
         return false;
     }
@@ -277,7 +279,9 @@ function isPromotionDismissed(pageKey, promoId) {
 
 function markPromotionDismissed(pageKey, promoId) {
     try {
-        localStorage.setItem(getPromotionDismissKey(pageKey, promoId), '1');
+        // Dùng sessionStorage thay vì localStorage để mỗi tab có storage riêng
+        // Tab mới = banner hiện lại, cùng tab đã click X thì không hiện lại dù refresh
+        sessionStorage.setItem(getPromotionDismissKey(pageKey, promoId), '1');
     } catch (e) {
         // ignore storage errors
     }
