@@ -146,10 +146,10 @@
             background-color: rgba(17, 24, 39, 0.95) !important;
         }
 
-        /* Hero sections with glass effect */
+        /* Hero sections - trong suốt */
         #hero-section {
-            background: linear-gradient(135deg, rgba(30, 86, 49, 0.92), rgba(63, 163, 77, 0.88)) !important;
-            backdrop-filter: blur(10px);
+            background: transparent !important;
+            backdrop-filter: none !important;
         }
 
         /* Sections with glassmorphism */
@@ -158,12 +158,13 @@
         }
 
         section:not(#hero-section) {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
+            background: transparent !important;
+            backdrop-filter: none !important;
         }
 
         body[data-theme="dark"] section:not(#hero-section) {
-            background: rgba(15, 23, 42, 0.78);
+            background: transparent !important;
+            backdrop-filter: none !important;
         }
 
         /* Improve text readability on slideshow */
@@ -189,56 +190,36 @@
             z-index: 1;
         }
         
-        /* Sections trong suốt hoàn toàn - chỉ có viền bao quanh */
+        /* Sections hoàn toàn trong suốt - không có viền, không có nền */
         section {
             position: relative;
-            background: rgba(255, 255, 255, 0.08) !important;
-            backdrop-filter: blur(2px) !important;
-            -webkit-backdrop-filter: blur(2px) !important;
-            border: 2px solid rgba(34, 197, 94, 0.30) !important;
-            border-radius: 16px;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            border-radius: 0 !important;
             margin: 2rem auto;
             max-width: 100%;
             width: min(1200px, calc(100% - 2.5rem));
-            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.10);
+            box-shadow: none !important;
         }
         
-        body[data-theme="dark"] section {
-            background: rgba(15, 23, 42, 0.55) !important;
-            border-color: rgba(74, 222, 128, 0.40) !important;
-            box-shadow: 0 4px 6px rgba(74, 222, 128, 0.15);
-        }
-        
-        /* Hero section - trong suốt với viền */
-        section.bg-gradient-to-br {
-            background: rgba(22, 163, 74, 0.15) !important;
-            backdrop-filter: blur(3px) !important;
-            border: 2px solid rgba(34, 197, 94, 0.50) !important;
-            border-radius: 20px;
-        }
-        
-        /* Các section có bg-white/bg-gray - trong suốt với viền */
+        /* Tất cả các section đều trong suốt - override mọi class */
+        section[class*="bg-"],
+        section.bg-gradient-to-br,
         section.bg-white,
         section.bg-gray-50,
         section.bg-gray-100,
         section.bg-gray-900,
+        section.bg-gray-800,
         section[class*="bg-white"],
         section[class*="bg-gray"] {
-            background: rgba(255, 255, 255, 0.06) !important;
-            backdrop-filter: blur(2px) !important;
-            -webkit-backdrop-filter: blur(2px) !important;
-            border: 2px solid rgba(34, 197, 94, 0.30) !important;
-            border-radius: 16px;
-        }
-        
-        body[data-theme="dark"] section.bg-white,
-        body[data-theme="dark"] section.bg-gray-50,
-        body[data-theme="dark"] section.bg-gray-100,
-        body[data-theme="dark"] section.bg-gray-900,
-        body[data-theme="dark"] section[class*="bg-white"],
-        body[data-theme="dark"] section[class*="bg-gray"] {
-            background: rgba(15, 23, 42, 0.45) !important;
-            border-color: rgba(74, 222, 128, 0.40) !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
         }
         
         /* Override tất cả các div có bg-white/bg-gray - trong suốt */
@@ -288,21 +269,42 @@
             box-shadow: 0 4px 8px rgba(74, 222, 128, 0.20);
         }
 
-        /* Shared content cards */
+        /* Shared content cards - viền và nền chỉ ở phần text */
         .section-text-card {
             background: rgba(255, 255, 255, 0.9);
-            border: 2px solid rgba(34, 197, 94, 0.35);
+            border: 3px solid #22c55e; /* Green-500 - màu xanh lá rõ ràng */
             border-radius: 28px;
             padding: 2rem;
             box-shadow: 0 20px 50px rgba(15, 118, 110, 0.12);
             backdrop-filter: blur(10px);
         }
+        
+        /* Bỏ viền cho phần text card có class no-border - đặt ngay sau để override */
+        .section-text-card.no-border {
+            border: none !important;
+            border-width: 0 !important;
+            border-style: none !important;
+            border-color: transparent !important;
+        }
+        
+        body[data-theme="dark"] .section-text-card {
+            background: rgba(17, 24, 39, 0.85);
+            border-color: #4ade80; /* Green-400 cho dark mode - màu sáng hơn */
+        }
+        
+        body[data-theme="dark"] .section-text-card.no-border {
+            border: none !important;
+            border-width: 0 !important;
+            border-color: transparent !important;
+        }
+        
+        /* Phần ảnh - trong suốt, không có nền và không có viền */
         .section-image-card {
-            border: 2px solid rgba(34, 197, 94, 0.35);
+            border: none !important;
             border-radius: 32px;
             overflow: hidden;
             box-shadow: 0 25px 50px rgba(15, 118, 110, 0.18);
-            background: rgba(255, 255, 255, 0.7);
+            background: transparent !important;
         }
         .section-image-card img {
             display: block;
@@ -319,7 +321,8 @@
         /* Testimonials */
         .testimonials-section {
             border: none !important;
-            background: linear-gradient(135deg, rgba(190, 242, 100, 0.18), rgba(59, 130, 246, 0.08));
+            background: transparent !important;
+            backdrop-filter: none !important;
         }
         .testimonial-text-card {
             background: linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(34, 197, 94, 0.85));
@@ -357,6 +360,23 @@
         /* Container và các div wrapper cũng trong suốt */
         .container {
             background: transparent !important;
+        }
+        
+        /* Đảm bảo tất cả container và grid bên trong section đều trong suốt */
+        section .container,
+        section .container > div,
+        section .grid,
+        section .grid > div {
+            background: transparent !important;
+        }
+        
+        /* Trừ phần text card - giữ nền */
+        section .section-text-card {
+            background: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        body[data-theme="dark"] section .section-text-card {
+            background: rgba(17, 24, 39, 0.85) !important;
         }
         
         /* Main content trong suốt */
@@ -581,15 +601,15 @@
         <section class="relative py-24 sm:py-32 overflow-hidden">
             <!-- Video Background -->
             <div class="absolute inset-0 z-0">
-                <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-20 dark:opacity-10">
+                <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-0">
                     <source src="Video/8853531-hd_1920_1080_24fps.mp4" type="video/mp4">
                 </video>
-                <div class="absolute inset-0 bg-gradient-to-br from-green-50/90 to-blue-50/90 dark:from-gray-900/95 dark:to-gray-800/95"></div>
+                <div class="absolute inset-0 bg-transparent"></div>
             </div>
             
             <div class="container mx-auto px-4 relative z-10">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <div class="text-center lg:text-left">
+                    <div class="text-center lg:text-left section-text-card">
                         <span class="text-green-600 font-semibold uppercase tracking-wider">Hệ sinh thái toàn diện • Uy tín 15 năm</span>
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800 dark:text-white mt-4 mb-6 leading-tight">
                             Năng lượng sạch cho tương lai bền vững
@@ -628,7 +648,7 @@
                     <div class="section-image-card order-1">
                         <img src="Photo/about-us.png" alt="Về chúng tôi" class="w-full h-full object-cover">
                     </div>
-                    <div class="section-text-card order-2">
+                    <div class="section-text-card order-2 no-border">
                         <span class="text-green-600 font-semibold uppercase tracking-wider">Về chúng tôi</span>
                         <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
                             Hệ Sinh Thái Toàn Diện Cho Cuộc Sống Hiện Đại
