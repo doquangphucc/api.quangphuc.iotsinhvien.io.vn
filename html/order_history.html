@@ -527,37 +527,8 @@
         }
     </script>
 
-    <!-- Ecosystem Logos Carousel -->
-    <script>
-        (function() {
-            const logos = [
-                { src: '../assets/img/ecosystem/baoduy-solar-logo.jpg', alt: 'Bảo Duy Solar' },
-                { src: '../assets/img/ecosystem/hc-travel-logo.jpg', alt: 'HC Travel' },
-                { src: '../assets/img/ecosystem/hc-cafe-logo.jpg', alt: 'HC Coffee & Restaurant' },
-                { src: '../assets/img/ecosystem/c-home-logo.jpg', alt: 'C Home Build' }
-            ];
-            const container = document.getElementById('ecosystem-logos-container');
-            if (!container) return;
-            let currentIndex = 0;
-            function createLogos() {
-                container.innerHTML = '';
-                for (let i = 0; i < 3; i++) {
-                    const logoIndex = (currentIndex + i) % logos.length;
-                    const img = document.createElement('img');
-                    img.src = logos[logoIndex].src;
-                    img.alt = logos[logoIndex].alt;
-                    img.className = 'h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-all duration-500';
-                    container.appendChild(img);
-                }
-            }
-            function slideNext() {
-                currentIndex = (currentIndex + 1) % logos.length;
-                createLogos();
-            }
-            createLogos();
-            setInterval(slideNext, 2000);
-        })();
-    </script>
+    <!-- Ecosystem Logos Carousel - Load from Product Categories API -->
+    <script src="../assets/js/ecosystem-logos.js"></script>
 </body>
 </html>
 
