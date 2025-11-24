@@ -395,6 +395,208 @@
                 font-size: 1.3rem;
             }
         }
+    
+        /* Canvas container cho neural network */
+        #neural-network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Đảm bảo content nằm trên background */
+        main, header, footer {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Sections trong suốt hoàn toàn - chỉ có viền bao quanh */
+        section {
+            position: relative;
+            background: rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.30) !important;
+            border-radius: 16px;
+            margin: 2rem auto;
+            max-width: 100%;
+            width: min(1200px, calc(100% - 2.5rem));
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.10);
+        }
+        
+        body[data-theme="dark"] section {
+            background: rgba(15, 23, 42, 0.55) !important;
+            border-color: rgba(74, 222, 128, 0.40) !important;
+            box-shadow: 0 4px 6px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Hero section - trong suốt với viền */
+        section.bg-gradient-to-br {
+            background: rgba(22, 163, 74, 0.15) !important;
+            backdrop-filter: blur(3px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.50) !important;
+            border-radius: 20px;
+        }
+        
+        /* Các section có bg-white/bg-gray - trong suốt với viền */
+        section.bg-white,
+        section.bg-gray-50,
+        section.bg-gray-100,
+        section.bg-gray-900,
+        section[class*="bg-white"],
+        section[class*="bg-gray"] {
+            background: rgba(255, 255, 255, 0.06) !important;
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.30) !important;
+            border-radius: 16px;
+        }
+        
+        body[data-theme="dark"] section.bg-white,
+        body[data-theme="dark"] section.bg-gray-50,
+        body[data-theme="dark"] section.bg-gray-100,
+        body[data-theme="dark"] section.bg-gray-900,
+        body[data-theme="dark"] section[class*="bg-white"],
+        body[data-theme="dark"] section[class*="bg-gray"] {
+            background: rgba(15, 23, 42, 0.45) !important;
+            border-color: rgba(74, 222, 128, 0.40) !important;
+        }
+        
+        /* Override tất cả các div có bg-white/bg-gray - trong suốt */
+        main section > div[class*="bg-white"],
+        main section > div[class*="bg-gray"],
+        section div[class*="bg-white"],
+        section div[class*="bg-gray"] {
+            background: transparent !important;
+        }
+        
+        /* Các card bên trong - trong suốt với viền */
+        div.bg-white,
+        div[class*="bg-white"],
+        .bg-white.dark\:bg-gray-800,
+        .dark\:bg-gray-800 {
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(2px) !important;
+            border: 1.5px solid rgba(34, 197, 94, 0.40) !important;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.10);
+        }
+        
+        body[data-theme="dark"] div.bg-white,
+        body[data-theme="dark"] div[class*="bg-white"],
+        body[data-theme="dark"] .bg-white.dark\:bg-gray-800,
+        body[data-theme="dark"] .dark\:bg-gray-800 {
+            background: rgba(17, 24, 39, 0.25) !important;
+            backdrop-filter: blur(2px) !important;
+            border-color: rgba(74, 222, 128, 0.50) !important;
+            box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Article cards - trong suốt với viền */
+        article[class*="bg-"],
+        article.bg-gradient-to-br {
+            background: rgba(240, 253, 244, 0.20) !important;
+            backdrop-filter: blur(3px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.40) !important;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(34, 197, 94, 0.15);
+        }
+        
+        body[data-theme="dark"] article[class*="bg-"],
+        body[data-theme="dark"] article.bg-gradient-to-br {
+            background: rgba(31, 41, 55, 0.30) !important;
+            border-color: rgba(74, 222, 128, 0.50) !important;
+            box-shadow: 0 4px 8px rgba(74, 222, 128, 0.20);
+        }
+        
+        /* Container và các div wrapper cũng trong suốt */
+        .container {
+            background: transparent !important;
+        }
+        
+        /* Main content trong suốt */
+        main {
+            background: transparent !important;
+        }
+        
+        /* Đảm bảo các phần trống hiển thị nền động */
+        body > *:not(header):not(footer):not(.copyright-bar) {
+            background: transparent !important;
+        }
+
+        .copyright-bar {
+            position: relative;
+            z-index: 1;
+            background: #030712 !important;
+            border-top: 1px solid rgba(34, 197, 94, 0.35);
+        }
+        
+        /* Header giữ nguyên trong suốt */
+        header {
+            background: rgba(255, 255, 255, 0.90) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        /* Footer giữ nguyên nền đen */
+        footer {
+            background: #000000 !important;
+        }
+        
+        /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
+        h1, h2, h3 {
+            -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.2);
+            text-stroke: 0.5px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Ngoại lệ: Giữ chữ trắng cho các trường hợp sau */
+        /* 1. Footer - nền đen */
+        footer .text-white {
+            color: #f3f4f6 !important;
+        }
+        
+        /* 2. Button/Badge với nền màu đậm */
+        .bg-green-600 .text-white,
+        .bg-orange-500 .text-white,
+        .bg-blue-500 .text-white,
+        .bg-purple-600 .text-white,
+        .bg-teal-600 .text-white,
+        .bg-red-500 .text-white,
+        button.text-white[class*="bg-"],
+        a.text-white[class*="bg-"] {
+            color: #ffffff !important;
+        }
+        
+        /* 3. Overlay trên hình ảnh (có gradient đen) */
+        [class*="from-black"] .text-white,
+        [class*="bg-gradient-to-t"][class*="from-black"] .text-white,
+        [class*="bg-black"] .text-white {
+            color: #ffffff !important;
+        }
+        
+        body[data-theme="dark"] section h1, 
+        body[data-theme="dark"] section h2, 
+        body[data-theme="dark"] section h3, 
+        body[data-theme="dark"] section h4, 
+        body[data-theme="dark"] section h5, 
+        body[data-theme="dark"] section h6 {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        body[data-theme="dark"] {
+            background: #1a202c;
+            color: var(--color-text-light);
+        }
+        
+        body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
+        body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
+        body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
+        body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+
     </style>
  </head>
  <body class="bg-gray-50 dark:bg-gray-900">
@@ -457,8 +659,8 @@
     </header>
 
     <!-- Floating Cart Button -->
-    <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+    <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-50 transition-all duration-300 border-2 border-green-600">
+        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
     </a>
 
@@ -612,13 +814,14 @@
     </footer>
     
     <!-- Copyright Bar -->
-    <div class="bg-gray-900 dark:bg-black border-t border-gray-700">
-        <div class="container mx-auto px-4 py-3">
-            <p class="text-center text-sm text-gray-400">
-                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-gray-300 hover:text-white underline">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-gray-400 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+    <div class="bg-black border-t border-green-500/30 shadow-inner copyright-bar">
+        <div class="container mx-auto px-4 py-4">
+            <p class="text-center text-sm text-gray-200 tracking-wide">
+                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
             </p>
         </div>
     </div>
+
     
     <!-- Scripts (IDs preserved) -->
     <script src="../assets/js/shopping-cart.js"></script>
@@ -685,12 +888,120 @@
 
     <!-- Ecosystem Logos Carousel - Load from Product Categories API -->
     <script src="../assets/js/ecosystem-logos.js"></script>
+
+    <!-- Neural Network Canvas -->
+    <canvas id="neural-network-canvas"></canvas>
+    
+    <script>
+        // Neural Network Animation
+        (function() {
+            const canvas = document.getElementById('neural-network-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Node class
+            class Node {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = Math.random() * 3 + 2;
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    // Bounce off edges
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                    
+                    // Keep in bounds
+                    this.x = Math.max(0, Math.min(canvas.width, this.x));
+                    this.y = Math.max(0, Math.min(canvas.height, this.y));
+                }
+                
+                draw() {
+                    // Draw node glow
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+                    gradient.addColorStop(0, 'rgba(134, 239, 172, 0.8)');
+                    gradient.addColorStop(0.5, 'rgba(74, 222, 128, 0.4)');
+                    gradient.addColorStop(1, 'rgba(134, 239, 172, 0)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw node core
+                    ctx.fillStyle = 'rgba(74, 222, 128, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Create nodes - tăng số lượng nơ-ron nhiều hơn
+            const nodeCount = 120;
+            const nodes = [];
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push(new Node(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+            
+            // Connection distance threshold - tăng khoảng cách kết nối
+            const connectionDistance = 180;
+            
+            // Animation loop
+            function animate() {
+                // Clear canvas with slight fade for trail effect
+                ctx.fillStyle = 'rgba(249, 250, 251, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Update and draw connections
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < connectionDistance) {
+                            const opacity = (1 - distance / connectionDistance) * 0.3;
+                            ctx.strokeStyle = `rgba(74, 222, 128, ${opacity})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                // Update and draw nodes
+                nodes.forEach(node => {
+                    node.update();
+                    node.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // Start animation
+            animate();
+        })();
+    </script>
+
 </body>
 </html>
-
-
-
-
-
 
 

@@ -35,9 +35,11 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--color-bg-light);
+            background: #f9fafb;
             color: var(--color-text-dark);
             transition: background-color 0.3s, color 0.3s;
+            position: relative;
+            min-height: 100vh;
         }
         /* Dark Mode styles */
         body[data-theme="dark"] {
@@ -169,6 +171,272 @@
             position: relative;
             z-index: 1;
         }
+        
+        /* Canvas container cho neural network */
+        #neural-network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Đảm bảo content nằm trên background */
+        main, header, footer {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Sections trong suốt hoàn toàn - chỉ có viền bao quanh */
+        section {
+            position: relative;
+            background: rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.30) !important;
+            border-radius: 16px;
+            margin: 2rem auto;
+            max-width: 100%;
+            width: min(1200px, calc(100% - 2.5rem));
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.10);
+        }
+        
+        body[data-theme="dark"] section {
+            background: rgba(15, 23, 42, 0.55) !important;
+            border-color: rgba(74, 222, 128, 0.40) !important;
+            box-shadow: 0 4px 6px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Hero section - trong suốt với viền */
+        section.bg-gradient-to-br {
+            background: rgba(22, 163, 74, 0.15) !important;
+            backdrop-filter: blur(3px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.50) !important;
+            border-radius: 20px;
+        }
+        
+        /* Các section có bg-white/bg-gray - trong suốt với viền */
+        section.bg-white,
+        section.bg-gray-50,
+        section.bg-gray-100,
+        section.bg-gray-900,
+        section[class*="bg-white"],
+        section[class*="bg-gray"] {
+            background: rgba(255, 255, 255, 0.06) !important;
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.30) !important;
+            border-radius: 16px;
+        }
+        
+        body[data-theme="dark"] section.bg-white,
+        body[data-theme="dark"] section.bg-gray-50,
+        body[data-theme="dark"] section.bg-gray-100,
+        body[data-theme="dark"] section.bg-gray-900,
+        body[data-theme="dark"] section[class*="bg-white"],
+        body[data-theme="dark"] section[class*="bg-gray"] {
+            background: rgba(15, 23, 42, 0.45) !important;
+            border-color: rgba(74, 222, 128, 0.40) !important;
+        }
+        
+        /* Override tất cả các div có bg-white/bg-gray - trong suốt */
+        main section > div[class*="bg-white"],
+        main section > div[class*="bg-gray"],
+        section div[class*="bg-white"],
+        section div[class*="bg-gray"] {
+            background: transparent !important;
+        }
+        
+        /* Các card bên trong - trong suốt với viền */
+        div.bg-white,
+        div[class*="bg-white"],
+        .bg-white.dark\:bg-gray-800,
+        .dark\:bg-gray-800 {
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(2px) !important;
+            border: 1.5px solid rgba(34, 197, 94, 0.40) !important;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.10);
+        }
+        
+        body[data-theme="dark"] div.bg-white,
+        body[data-theme="dark"] div[class*="bg-white"],
+        body[data-theme="dark"] .bg-white.dark\:bg-gray-800,
+        body[data-theme="dark"] .dark\:bg-gray-800 {
+            background: rgba(17, 24, 39, 0.25) !important;
+            backdrop-filter: blur(2px) !important;
+            border-color: rgba(74, 222, 128, 0.50) !important;
+            box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Article cards - trong suốt với viền */
+        article[class*="bg-"],
+        article.bg-gradient-to-br {
+            background: rgba(240, 253, 244, 0.20) !important;
+            backdrop-filter: blur(3px) !important;
+            border: 2px solid rgba(34, 197, 94, 0.40) !important;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(34, 197, 94, 0.15);
+        }
+        
+        body[data-theme="dark"] article[class*="bg-"],
+        body[data-theme="dark"] article.bg-gradient-to-br {
+            background: rgba(31, 41, 55, 0.30) !important;
+            border-color: rgba(74, 222, 128, 0.50) !important;
+            box-shadow: 0 4px 8px rgba(74, 222, 128, 0.20);
+        }
+
+        /* Shared content cards */
+        .section-text-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(34, 197, 94, 0.35);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(15, 118, 110, 0.12);
+            backdrop-filter: blur(10px);
+        }
+        .section-image-card {
+            border: 2px solid rgba(34, 197, 94, 0.35);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(15, 118, 110, 0.18);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .section-image-card img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .section-title--light {
+            color: #ffffff !important;
+            -webkit-text-stroke: 1px rgba(34, 197, 94, 0.45);
+            text-shadow: 0 0 18px rgba(15, 118, 110, 0.35);
+        }
+        
+        /* Testimonials */
+        .testimonials-section {
+            border: none !important;
+            background: linear-gradient(135deg, rgba(190, 242, 100, 0.18), rgba(59, 130, 246, 0.08));
+        }
+        .testimonial-text-card {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(34, 197, 94, 0.85));
+            border: 2px solid rgba(34, 197, 94, 0.45);
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 70px rgba(15, 118, 110, 0.25);
+            backdrop-filter: blur(14px);
+            color: #ecfdf5;
+        }
+        .testimonial-title {
+            color: #ffffff;
+            -webkit-text-stroke: 1px rgba(34, 197, 94, 0.45);
+            text-shadow: 0 0 18px rgba(15, 118, 110, 0.35);
+        }
+        .testimonial-quote-card {
+            background: #ecfdf5;
+            border: 1.5px solid rgba(16, 185, 129, 0.35);
+            border-radius: 18px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.15);
+            color: #134e4a;
+        }
+        .testimonial-image-card {
+            border: 2px solid rgba(34, 197, 94, 0.35);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(15, 118, 110, 0.25);
+            background: rgba(255, 255, 255, 0.65);
+        }
+        .testimonial-image-card img {
+            display: block;
+        }
+        
+        /* Container và các div wrapper cũng trong suốt */
+        .container {
+            background: transparent !important;
+        }
+        
+        /* Main content trong suốt */
+        main {
+            background: transparent !important;
+        }
+        
+        /* Đảm bảo các phần trống hiển thị nền động */
+        body > *:not(header):not(footer):not(.copyright-bar) {
+            background: transparent !important;
+        }
+        .copyright-bar {
+            position: relative;
+            z-index: 1;
+            background: #030712 !important;
+            border-top: 1px solid rgba(34, 197, 94, 0.35);
+        }
+        
+        /* Header giữ nguyên trong suốt */
+        header {
+            background: rgba(255, 255, 255, 0.90) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        /* Footer giữ nguyên nền đen */
+        footer {
+            background: #1f2937 !important; /* bg-gray-800 */
+        }
+        
+        /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
+        h1, h2, h3 {
+            -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.2);
+            text-stroke: 0.5px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Ngoại lệ: Giữ chữ trắng cho các trường hợp sau */
+        /* 1. Footer - nền đen */
+        footer .text-white {
+            color: #f3f4f6 !important;
+        }
+        
+        /* 2. Button/Badge với nền màu đậm */
+        .bg-green-600 .text-white,
+        .bg-orange-500 .text-white,
+        .bg-blue-500 .text-white,
+        .bg-purple-600 .text-white,
+        .bg-teal-600 .text-white,
+        .bg-red-500 .text-white,
+        button.text-white[class*="bg-"],
+        a.text-white[class*="bg-"] {
+            color: #ffffff !important;
+        }
+        
+        /* 3. Overlay trên hình ảnh (có gradient đen) */
+        [class*="from-black"] .text-white,
+        [class*="bg-gradient-to-t"][class*="from-black"] .text-white,
+        [class*="bg-black"] .text-white {
+            color: #ffffff !important;
+        }
+        
+        body[data-theme="dark"] section h1, 
+        body[data-theme="dark"] section h2, 
+        body[data-theme="dark"] section h3, 
+        body[data-theme="dark"] section h4, 
+        body[data-theme="dark"] section h5, 
+        body[data-theme="dark"] section h6 {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        body[data-theme="dark"] {
+            background: #1a202c;
+            color: var(--color-text-light);
+        }
+        
+        body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
+        body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
+        body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
+        body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
         /* Gradient title fallback for dynamic home posts */
         .home-post-title {
@@ -302,8 +570,8 @@
     </header>
 
     <!-- Floating Cart Button -->
-    <a href="html/gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-green-600 text-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-700 transition-all duration-300">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+    <a href="html/gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-50 transition-all duration-300 border-2 border-green-600">
+        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
     </a>
 
@@ -357,10 +625,10 @@
         <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <div class="order-2 lg:order-1">
-                        <img src="Photo/about-us.png" alt="Về chúng tôi" class="rounded-3xl shadow-2xl w-full">
+                    <div class="section-image-card order-1">
+                        <img src="Photo/about-us.png" alt="Về chúng tôi" class="w-full h-full object-cover">
                     </div>
-                    <div class="order-1 lg:order-2">
+                    <div class="section-text-card order-2">
                         <span class="text-green-600 font-semibold uppercase tracking-wider">Về chúng tôi</span>
                         <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
                             Hệ Sinh Thái Toàn Diện Cho Cuộc Sống Hiện Đại
@@ -402,7 +670,7 @@
                 <!-- Residential Solution -->
                 <div class="mb-16">
                     <div class="grid lg:grid-cols-2 gap-12 items-center">
-                        <div>
+                        <div class="section-text-card">
                             <span class="text-green-600 font-semibold uppercase tracking-wider">Giải pháp gia đình</span>
                             <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-6">Gói Gia Đình (3-5 kWp)</h3>
                             <p class="text-gray-600 dark:text-gray-300 mb-6">Thiết kế gọn cho mái tôn, thi công trong 48 giờ, tích hợp bộ lưu trữ và ứng dụng giám sát. Phù hợp cho hộ gia đình muốn giảm thiểu hóa đơn điện và tự chủ năng lượng.</p>
@@ -413,8 +681,8 @@
                             </ul>
                             <a href="html/pricing.html" class="inline-block bg-green-600 text-white font-semibold px-8 py-3 rounded-full hover:bg-green-700 transition-all duration-300">Xem bảng giá</a>
                         </div>
-                        <div>
-                            <img src="Photo/residential.png" alt="Giải pháp gia đình" class="rounded-3xl shadow-2xl w-full">
+                        <div class="section-image-card">
+                            <img src="Photo/residential.png" alt="Giải pháp gia đình" class="w-full">
                         </div>
                     </div>
                 </div>
@@ -422,10 +690,10 @@
                 <!-- Industrial Solution -->
                 <div>
                     <div class="grid lg:grid-cols-2 gap-12 items-center">
-                        <div class="order-2 lg:order-1">
-                            <img src="Photo/industrial.png" alt="Giải pháp công nghiệp" class="rounded-3xl shadow-2xl w-full">
+                        <div class="order-2 lg:order-1 section-image-card">
+                            <img src="Photo/industrial.png" alt="Giải pháp công nghiệp" class="w-full">
                         </div>
-                        <div class="order-1 lg:order-2">
+                        <div class="order-1 lg:order-2 section-text-card">
                             <span class="text-green-600 font-semibold uppercase tracking-wider">Giải pháp doanh nghiệp</span>
                             <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-6">Gói Doanh Nghiệp (20-200 kWp)</h3>
                             <p class="text-gray-600 dark:text-gray-300 mb-6">Tối ưu tiêu thụ cho nhà xưởng, logistics với báo cáo ROI chi tiết và chương trình vận hành 5 năm. Giảm thiểu chi phí vận hành và tăng lợi nhuận bền vững.</p>
@@ -447,7 +715,7 @@
         <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <div>
+                    <div class="section-text-card">
                         <span class="text-green-600 font-semibold uppercase tracking-wider">Lợi ích đầu tư</span>
                         <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
                             Hoàn vốn nhanh chóng, lợi nhuận bền vững
@@ -474,8 +742,8 @@
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <img src="Photo/benefits-roi.png" alt="Lợi ích ROI" class="rounded-3xl shadow-2xl w-full">
+                    <div class="section-image-card">
+                        <img src="Photo/benefits-roi.png" alt="Lợi ích ROI" class="w-full">
                     </div>
                 </div>
             </div>
@@ -535,10 +803,10 @@
         <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <img src="Photo/portfolio.png" alt="Danh mục dự án" class="rounded-3xl shadow-2xl w-full">
+                    <div class="section-image-card">
+                        <img src="Photo/portfolio.png" alt="Danh mục dự án" class="w-full">
                     </div>
-                    <div>
+                    <div class="section-text-card">
                         <span class="text-green-600 font-semibold uppercase tracking-wider">Dự án đã thực hiện</span>
                         <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
                             Hơn 250+ dự án thành công trên toàn quốc
@@ -567,27 +835,44 @@
         </section>
 
         <!-- Testimonials Section -->
-        <section class="py-16 sm:py-24 bg-gradient-to-br from-green-600 to-green-700 text-white">
+        <section class="py-16 sm:py-24 testimonials-section">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div class="order-2 lg:order-1">
-                        <span class="text-yellow-300 font-semibold uppercase tracking-wider" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Khách hàng nói gì</span>
-                        <h2 class="text-3xl sm:text-4xl font-bold mt-4 mb-6 text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
-                            Trải nghiệm thực tế từ khách hàng
-                        </h2>
-                        <div class="space-y-6">
-                            <div class="bg-green-50 p-6 rounded-2xl shadow-xl border-2 border-green-300">
-                                <p class="text-green-900 mb-4 font-medium" style="text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);">"Hệ thống hoạt động rất ổn định, hóa đơn điện giảm gần 70%. Đội ngũ kỹ thuật chuyên nghiệp, hỗ trợ nhiệt tình!"</p>
-                                <div class="font-semibold text-green-800" style="text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);">Anh Nguyễn Văn A - Đà Nẵng</div>
-                            </div>
-                            <div class="bg-green-50 p-6 rounded-2xl shadow-xl border-2 border-green-300">
-                                <p class="text-green-900 mb-4 font-medium" style="text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);">"Đầu tư xưởng sản xuất 100kWp, sau 1 năm đã thấy hiệu quả rõ rệt. Dự kiến 5 năm hoàn vốn."</p>
-                                <div class="font-semibold text-green-800" style="text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);">Chị Trần Thị B - TP.HCM</div>
+                        <div class="testimonial-text-card">
+                            <span class="text-green-300 font-semibold uppercase tracking-wider">Khách hàng nói gì</span>
+                            <h2 class="testimonial-title text-3xl sm:text-4xl font-bold mt-4 mb-6">
+                                Trải nghiệm thực tế từ khách hàng
+                            </h2>
+                            <p class="text-sm sm:text-base text-white/90 mb-8 leading-relaxed">
+                                Những câu chuyện dưới đây đến từ các hộ gia đình và doanh nghiệp đã triển khai hệ thống của HC ECO SYSTEM.
+                            </p>
+                            <div class="space-y-6">
+                                <div class="testimonial-quote-card">
+                                    <div class="flex gap-3">
+                                        <span class="text-3xl text-green-500 leading-none">“</span>
+                                        <p class="text-gray-900 flex-1">
+                                            Hệ thống hoạt động rất ổn định, hóa đơn điện giảm gần 70%. Đội ngũ kỹ thuật chuyên nghiệp, hỗ trợ nhiệt tình!
+                                        </p>
+                                    </div>
+                                    <div class="font-semibold text-green-700 mt-4">Anh Nguyễn Văn A - Đà Nẵng</div>
+                                </div>
+                                <div class="testimonial-quote-card">
+                                    <div class="flex gap-3">
+                                        <span class="text-3xl text-green-500 leading-none">“</span>
+                                        <p class="text-gray-900 flex-1">
+                                            Đầu tư xưởng sản xuất 100kWp, sau 1 năm đã thấy hiệu quả rõ rệt. Dự kiến 5 năm hoàn vốn, phần mềm giám sát rất trực quan.
+                                        </p>
+                                    </div>
+                                    <div class="font-semibold text-green-700 mt-4">Chị Trần Thị B - TP.HCM</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="order-1 lg:order-2">
-                        <img src="Photo/testimonial.png" alt="Đánh giá khách hàng" class="rounded-3xl shadow-2xl w-full">
+                        <div class="testimonial-image-card">
+                            <img src="Photo/testimonial.png" alt="Gia đình sử dụng hệ thống điện mặt trời" class="w-full h-full object-cover">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -612,10 +897,10 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/90"></div>
             </div>
             <div class="container mx-auto px-4 relative z-10 text-center text-white">
-                <h2 class="text-3xl sm:text-5xl font-extrabold mb-6">
+                <h2 class="section-title--light text-3xl sm:text-5xl font-extrabold mb-6">
                     Sẵn sàng bắt đầu hành trình với năng lượng sạch?
                 </h2>
-                <p class="text-xl mb-8 max-w-2xl mx-auto text-white/90">
+                <p class="text-xl mb-8 max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
                     Giải pháp năng lượng mặt trời toàn diện cho gia đình và doanh nghiệp với chi phí tối ưu và hiệu quả cao nhất
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -684,10 +969,10 @@
     </footer>
     
     <!-- Copyright Bar -->
-    <div class="bg-gray-900 dark:bg-black border-t border-gray-700">
-        <div class="container mx-auto px-4 py-3">
-            <p class="text-center text-sm text-gray-400">
-                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-gray-300 hover:text-white underline">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-gray-400 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+    <div class="bg-black border-t border-green-500/30 shadow-inner copyright-bar">
+        <div class="container mx-auto px-4 py-4">
+            <p class="text-center text-sm text-gray-200 tracking-wide">
+                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
             </p>
         </div>
     </div>
@@ -770,6 +1055,118 @@
 
     <!-- Load Home Posts Dynamically -->
     <script src="assets/js/home-posts.js"></script>
+    
+    <!-- Neural Network Canvas -->
+    <canvas id="neural-network-canvas"></canvas>
+    
+    <script>
+        // Neural Network Animation
+        (function() {
+            const canvas = document.getElementById('neural-network-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Node class
+            class Node {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = Math.random() * 3 + 2;
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    // Bounce off edges
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                    
+                    // Keep in bounds
+                    this.x = Math.max(0, Math.min(canvas.width, this.x));
+                    this.y = Math.max(0, Math.min(canvas.height, this.y));
+                }
+                
+                draw() {
+                    // Draw node glow
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+                    gradient.addColorStop(0, 'rgba(134, 239, 172, 0.8)');
+                    gradient.addColorStop(0.5, 'rgba(74, 222, 128, 0.4)');
+                    gradient.addColorStop(1, 'rgba(134, 239, 172, 0)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw node core
+                    ctx.fillStyle = 'rgba(74, 222, 128, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Create nodes - tăng số lượng nơ-ron nhiều hơn
+            const nodeCount = 120;
+            const nodes = [];
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push(new Node(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+            
+            // Connection distance threshold - tăng khoảng cách kết nối
+            const connectionDistance = 180;
+            
+            // Animation loop
+            function animate() {
+                // Clear canvas with slight fade for trail effect
+                ctx.fillStyle = 'rgba(249, 250, 251, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Update and draw connections
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < connectionDistance) {
+                            const opacity = (1 - distance / connectionDistance) * 0.3;
+                            ctx.strokeStyle = `rgba(74, 222, 128, ${opacity})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                // Update and draw nodes
+                nodes.forEach(node => {
+                    node.update();
+                    node.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // Start animation
+            animate();
+        })();
+    </script>
 </body>
 </html>
 
