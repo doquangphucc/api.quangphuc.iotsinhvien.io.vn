@@ -213,7 +213,12 @@
         section.bg-gray-900,
         section.bg-gray-800,
         section[class*="bg-white"],
-        section[class*="bg-gray"] {
+        section[class*="bg-gray"],
+        section.about-us-section,
+        section.about-us-section.bg-white,
+        section.benefits-roi-section,
+        section.portfolio-section,
+        section.home-dynamic-section {
             background: transparent !important;
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
@@ -230,11 +235,11 @@
             background: transparent !important;
         }
         
-        /* Các card bên trong - trong suốt với viền */
-        div.bg-white,
-        div[class*="bg-white"],
-        .bg-white.dark\:bg-gray-800,
-        .dark\:bg-gray-800 {
+        /* Các card bên trong - trong suốt với viền (trừ About Us section) */
+        div.bg-white:not(.about-us-section div),
+        div[class*="bg-white"]:not(.about-us-section div),
+        .bg-white.dark\:bg-gray-800:not(.about-us-section .bg-white),
+        .dark\:bg-gray-800:not(.about-us-section .dark\:bg-gray-800) {
             background: rgba(255, 255, 255, 0.15) !important;
             backdrop-filter: blur(2px) !important;
             border: 1.5px solid rgba(34, 197, 94, 0.40) !important;
@@ -242,14 +247,22 @@
             box-shadow: 0 2px 4px rgba(34, 197, 94, 0.10);
         }
         
-        body[data-theme="dark"] div.bg-white,
-        body[data-theme="dark"] div[class*="bg-white"],
-        body[data-theme="dark"] .bg-white.dark\:bg-gray-800,
-        body[data-theme="dark"] .dark\:bg-gray-800 {
+        body[data-theme="dark"] div.bg-white:not(.about-us-section div),
+        body[data-theme="dark"] div[class*="bg-white"]:not(.about-us-section div),
+        body[data-theme="dark"] .bg-white.dark\:bg-gray-800:not(.about-us-section .bg-white),
+        body[data-theme="dark"] .dark\:bg-gray-800:not(.about-us-section .dark\:bg-gray-800) {
             background: rgba(17, 24, 39, 0.25) !important;
             backdrop-filter: blur(2px) !important;
             border-color: rgba(74, 222, 128, 0.50) !important;
             box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Bỏ viền và nền cho các div trong About Us section */
+        .about-us-section div.bg-white,
+        .about-us-section div[class*="bg-white"] {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
         }
         
         /* Article cards - trong suốt với viền */
@@ -277,6 +290,17 @@
             padding: 2rem;
             box-shadow: 0 20px 50px rgba(15, 118, 110, 0.12);
             backdrop-filter: blur(10px);
+        }
+        
+        /* Giữ nền và thêm viền cho text card trong About Us section */
+        .about-us-section .section-text-card {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 3px solid #22c55e !important;
+        }
+        
+        body[data-theme="dark"] .about-us-section .section-text-card {
+            background: rgba(17, 24, 39, 0.85) !important;
+            border-color: #4ade80 !important;
         }
         
         /* Bỏ viền cho phần text card có class no-border - đặt ngay sau để override */
@@ -370,13 +394,43 @@
             background: transparent !important;
         }
         
-        /* Trừ phần text card - giữ nền */
-        section .section-text-card {
+        /* Đảm bảo Benefits/ROI section hoàn toàn trong suốt */
+        section.benefits-roi-section .container,
+        section.benefits-roi-section .grid {
+            background: transparent !important;
+            border: none !important;
+        }
+        
+        /* Đảm bảo Portfolio section hoàn toàn trong suốt */
+        section.portfolio-section .container,
+        section.portfolio-section .grid {
+            background: transparent !important;
+            border: none !important;
+        }
+        
+        /* Đảm bảo Home Dynamic section hoàn toàn trong suốt */
+        section.home-dynamic-section .container,
+        section.home-dynamic-section .grid {
+            background: transparent !important;
+            border: none !important;
+        }
+        
+        /* Trừ phần text card - giữ nền (trừ About Us section) */
+        section:not(.about-us-section) .section-text-card {
             background: rgba(255, 255, 255, 0.9) !important;
         }
         
-        body[data-theme="dark"] section .section-text-card {
+        /* Bỏ nền cho text card trong About Us section để không tạo viền chữ nhật */
+        section.about-us-section .section-text-card {
+            background: transparent !important;
+        }
+        
+        body[data-theme="dark"] section:not(.about-us-section) .section-text-card {
             background: rgba(17, 24, 39, 0.85) !important;
+        }
+        
+        body[data-theme="dark"] section.about-us-section .section-text-card {
+            background: transparent !important;
         }
         
         /* Main content trong suốt */
@@ -530,6 +584,35 @@
         body[data-theme="dark"] .home-posts-container div[class*="bg-slate-900"] {
             background-color: rgba(15, 23, 42, 0.35) !important;
         }
+        
+        /* Style cho các phần nội dung text trong Process Section - có viền và nền mờ */
+        .process-step-content {
+            background: rgba(255, 255, 255, 0.75);
+            border: 2px solid rgba(34, 197, 94, 0.40);
+            border-radius: 16px;
+            padding: 1.25rem 1rem;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.10);
+        }
+        
+        body[data-theme="dark"] .process-step-content {
+            background: rgba(17, 24, 39, 0.60);
+            border-color: rgba(74, 222, 128, 0.50);
+            box-shadow: 0 4px 6px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Bỏ viền/nền bao quanh cho About Us section */
+        section.about-us-section {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        section.about-us-section .container,
+        section.about-us-section .grid {
+            background: transparent !important;
+            border: none !important;
+        }
 
         @supports (-webkit-background-clip: text) {
             .home-post-title {
@@ -664,13 +747,13 @@
         </section>
 
         <!-- About Us Section -->
-        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+        <section class="py-16 sm:py-24 about-us-section">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div class="section-image-card order-1">
                         <img src="Photo/about-us.png" alt="Về chúng tôi" class="w-full h-full object-cover">
                     </div>
-                    <div class="section-text-card order-2 no-border">
+                    <div class="section-text-card order-2">
                         <span class="text-green-600 font-semibold uppercase tracking-wider">Về chúng tôi</span>
                         <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mt-4 mb-6">
                             Hệ Sinh Thái Toàn Diện Cho Cuộc Sống Hiện Đại
@@ -754,7 +837,7 @@
         </section>
 
         <!-- Benefits/ROI Section -->
-        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+        <section class="py-16 sm:py-24 benefits-roi-section">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div class="section-text-card">
@@ -805,36 +888,46 @@
                             <div class="relative mb-4">
                                 <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">1</div>
                             </div>
-                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Khảo sát</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Đo đạc mái, đánh giá bức xạ và hạ tầng điện.</p>
+                            <div class="process-step-content">
+                                <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Khảo sát</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Đo đạc mái, đánh giá bức xạ và hạ tầng điện.</p>
+                            </div>
                         </div>
                         <div class="text-center">
                             <div class="relative mb-4">
                                 <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">2</div>
                             </div>
-                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Thiết kế</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Mô phỏng 3D, dự báo sản lượng và thời gian hoàn vốn.</p>
+                            <div class="process-step-content">
+                                <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Thiết kế</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Mô phỏng 3D, dự báo sản lượng và thời gian hoàn vốn.</p>
+                            </div>
                         </div>
                         <div class="text-center">
                              <div class="relative mb-4">
                                 <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">3</div>
                             </div>
-                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Thi công</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Lắp đặt an toàn, chuyên nghiệp trong 3-7 ngày.</p>
+                            <div class="process-step-content">
+                                <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Thi công</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Lắp đặt an toàn, chuyên nghiệp trong 3-7 ngày.</p>
+                            </div>
                         </div>
                         <div class="text-center">
                              <div class="relative mb-4">
                                 <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">4</div>
                             </div>
-                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Nghiệm thu</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Kết nối lưới điện, bàn giao và hướng dẫn vận hành.</p>
+                            <div class="process-step-content">
+                                <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Nghiệm thu</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Kết nối lưới điện, bàn giao và hướng dẫn vận hành.</p>
+                            </div>
                         </div>
                         <div class="text-center">
                              <div class="relative mb-4">
                                 <div class="w-10 h-10 mx-auto bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">5</div>
                             </div>
-                            <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Bảo trì</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Giám sát từ xa, vệ sinh định kỳ, hỗ trợ 24/7.</p>
+                            <div class="process-step-content">
+                                <h3 class="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Bảo trì</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Giám sát từ xa, vệ sinh định kỳ, hỗ trợ 24/7.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -842,7 +935,7 @@
         </section>
 
         <!-- Portfolio/Projects Section -->
-        <section class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+        <section class="py-16 sm:py-24 portfolio-section">
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div class="section-image-card">
@@ -921,7 +1014,7 @@
         </section>
 
         <!-- Dynamic Ecosystem Stories Section -->
-        <section id="home-dynamic-section" class="py-16 sm:py-24 bg-white dark:bg-gray-800">
+        <section id="home-dynamic-section" class="py-16 sm:py-24 home-dynamic-section">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
                     <span class="text-green-600 font-semibold uppercase tracking-wider">Hệ sinh thái thực tiễn</span>
@@ -934,24 +1027,26 @@
 
         <!-- CTA Section -->
         <section class="relative py-20 sm:py-32 overflow-hidden">
-            <div class="absolute inset-0">
-                <img src="Photo/cta-footer.png" alt="CTA Background" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/90"></div>
+            <div class="absolute inset-4 sm:inset-8">
+                <img src="Photo/cta-footer.png" alt="CTA Background" class="w-full h-full object-cover rounded-3xl">
+                <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/90 rounded-3xl"></div>
             </div>
             <div class="container mx-auto px-4 relative z-10 text-center text-white">
-                <h2 class="section-title--light text-3xl sm:text-5xl font-extrabold mb-6">
-                    Sẵn sàng bắt đầu hành trình với năng lượng sạch?
-                </h2>
-                <p class="text-xl mb-8 max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-                    Giải pháp năng lượng mặt trời toàn diện cho gia đình và doanh nghiệp với chi phí tối ưu và hiệu quả cao nhất
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="html/khao-sat-dien-mat-troi.html" class="bg-white text-green-700 font-bold px-10 py-4 rounded-full hover:bg-green-50 transition-all duration-300 shadow-xl">
-                        Tư vấn năng lượng sạch
-                    </a>
-                    <a href="html/pricing.html" class="bg-transparent border-2 border-white text-white font-bold px-10 py-4 rounded-full hover:bg-white/10 transition-all duration-300">
-                        Xem bảng giá
-                    </a>
+                <div class="bg-gradient-to-r from-green-900/80 to-green-700/80 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-5xl mx-auto">
+                    <h2 class="section-title--light text-3xl sm:text-5xl font-extrabold mb-6">
+                        Sẵn sàng bắt đầu hành trình với năng lượng sạch?
+                    </h2>
+                    <p class="text-xl mb-8 max-w-2xl mx-auto text-white">
+                        Giải pháp năng lượng mặt trời toàn diện cho gia đình và doanh nghiệp với chi phí tối ưu và hiệu quả cao nhất
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="html/khao-sat-dien-mat-troi.html" class="bg-white text-green-700 font-bold px-10 py-4 rounded-full hover:bg-green-50 transition-all duration-300 shadow-xl">
+                            Tư vấn năng lượng sạch
+                        </a>
+                        <a href="html/pricing.html" class="bg-transparent border-2 border-white text-white font-bold px-10 py-4 rounded-full hover:bg-white/10 transition-all duration-300">
+                            Xem bảng giá
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
