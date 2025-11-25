@@ -1,8 +1,8 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
-ini_set('upload_max_filesize', '5M');
-ini_set('post_max_size', '6M');
+ini_set('upload_max_filesize', '10M');
+ini_set('post_max_size', '12M');
 ini_set('max_execution_time', 180);
 
 require_once __DIR__ . '/../session.php';
@@ -37,7 +37,7 @@ if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
 
 $file = $_FILES['image'];
 $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
-$max_size = 5 * 1024 * 1024;
+$max_size = 10 * 1024 * 1024;
 
 if (!in_array($file['type'], $allowed_types)) {
     echo json_encode(['success' => false, 'message' => 'Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WEBP)']);
@@ -45,7 +45,7 @@ if (!in_array($file['type'], $allowed_types)) {
 }
 
 if ($file['size'] > $max_size) {
-    echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 5MB']);
+    echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 10MB']);
     exit;
 }
 
