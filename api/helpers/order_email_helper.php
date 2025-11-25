@@ -1,5 +1,22 @@
 <?php
 
+if (!function_exists('orderEmailLog')) {
+    function orderEmailLog(string $message): void
+    {
+        try {
+            $logDir = dirname(__DIR__) . '/logs';
+            if (!is_dir($logDir)) {
+                @mkdir($logDir, 0777, true);
+            }
+            $logFile = $logDir . '/order_email.log';
+            $entry = sprintf("[%s] %s%s", date('Y-m-d H:i:s'), $message, PHP_EOL);
+            @file_put_contents($logFile, $entry, FILE_APPEND);
+        } catch (Throwable $e) {
+            // swallow logging errors
+        }
+    }
+}
+
 if (!function_exists('sendOrderNotificationEmail')) {
     /**
      * Send order notification via FormSubmit (same approach as survey page).
@@ -20,6 +37,8 @@ if (!function_exists('sendOrderNotificationEmail')) {
         $items     = $payload['items'] ?? [];
         $financial = $payload['financials'] ?? [];
         $source    = strtoupper($payload['source'] ?? 'WEB');
+
+        orderEmailLog("Preparing order email for order_id={$orderId}, source={$source}");
 
         $customerName = trim($customer['fullname'] ?? 'Khách hàng');
         $subject = sprintf('[HC ECO] Đơn hàng mới #%s - %s', $orderId, $customerName);
@@ -108,7 +127,7 @@ if (!function_exists('sendOrderNotificationEmail')) {
             return false;
         }
 
-        error_log(sprintf('Order email FormSubmit response (%s): %s', $httpCode, $response));
+        orderEmailLog(sprintf('FormSubmit response (%s): %s', $httpCode, $response));
         curl_close($ch);
 
         if ($httpCode === 200) {
@@ -116,19 +135,19 @@ if (!function_exists('sendOrderNotificationEmail')) {
             if (is_array($decoded) && isset($decoded['success'])) {
                 $successFlag = $decoded['success'];
                 if ($successFlag === true || $successFlag === 'true' || $successFlag === 1 || $successFlag === '1') {
-                    error_log('Order notification sent via FormSubmit successfully');
+                    orderEmailLog('Order notification sent via FormSubmit successfully');
                     return true;
                 }
             }
 
             if (is_array($decoded) && isset($decoded['message'])) {
-                error_log('Order notification FormSubmit returned non-success payload: ' . $decoded['message']);
+                orderEmailLog('FormSubmit returned non-success payload: ' . $decoded['message']);
             } else {
-                error_log('Order notification sent via FormSubmit successfully');
+                orderEmailLog('Order notification sent via FormSubmit successfully');
                 return true;
             }
         } else {
-            error_log('Order notification FormSubmit failed. HTTP status: ' . $httpCode);
+            orderEmailLog('FormSubmit failed. HTTP status: ' . $httpCode);
         }
 
         return false;

@@ -160,6 +160,7 @@ try {
     
     // Handle vouchers if provided
     $voucherCodes = $data['voucher_codes'] ?? [];
+    $appliedVoucherCodes = [];
     $totalDiscount = 0;
     
     if (!empty($voucherCodes) && is_array($voucherCodes)) {
@@ -200,24 +201,26 @@ try {
             }
             
             if ($voucherData) {
-                // Insert into order_vouchers
-                $insertVoucherStmt = $pdo->prepare("INSERT INTO order_vouchers (order_id, voucher_id, voucher_code, discount_amount) VALUES (?, ?, ?, ?)");
-                $insertVoucherStmt->execute([
-                    $orderId,
-                    $voucherData['id'],
-                    $voucherData['code'],
-                    $voucherData['discount']
-                ]);
-                
-                // Mark voucher/reward as used
-                if ($voucherData['source'] === 'reward') {
-                    $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
-                    $updateRewardStmt = $pdo->prepare($updateRewardSql);
-                    $updateRewardStmt->execute([$voucherData['id']]);
-                } else {
+                $appliedVoucherCodes[] = $voucherData['code'];
+
+                if ($voucherData['source'] === 'voucher') {
+                    // Insert into order_vouchers only for legacy vouchers
+                    $insertVoucherStmt = $pdo->prepare("INSERT INTO order_vouchers (order_id, voucher_id, voucher_code, discount_amount) VALUES (?, ?, ?, ?)");
+                    $insertVoucherStmt->execute([
+                        $orderId,
+                        $voucherData['id'],
+                        $voucherData['code'],
+                        $voucherData['discount']
+                    ]);
+
                     $updateVoucherSql = "UPDATE vouchers SET is_used = 1, used_by_user_id = ?, used_at = NOW() WHERE id = ?";
                     $updateVoucherStmt = $pdo->prepare($updateVoucherSql);
                     $updateVoucherStmt->execute([(int)$userId, $voucherData['id']]);
+                } else {
+                    // Reward-based voucher: mark lottery reward as used
+                    $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
+                    $updateRewardStmt = $pdo->prepare($updateRewardSql);
+                    $updateRewardStmt->execute([$voucherData['id']]);
                 }
                 
                 $totalDiscount += $voucherData['discount'];
@@ -234,6 +237,16 @@ try {
     }
 
     $finalTotal = max(0, $total - $totalDiscount);
+    $voucherCodesUsed = array_map(static function ($code) {
+        return is_scalar($code) ? trim((string)$code) : '';
+    }, $appliedVoucherCodes);
+    $voucherCodeString = implode(', ', array_filter($voucherCodesUsed));
+
+    if ($voucherCodeString !== '') {
+        $updateVoucherCodeSql = "UPDATE orders SET voucher_code = ? WHERE id = ?";
+        $updateVoucherCodeStmt = $pdo->prepare($updateVoucherCodeSql);
+        $updateVoucherCodeStmt->execute([$voucherCodeString, $orderId]);
+    }
     
     // Commit transaction
     $pdo->commit();
@@ -241,10 +254,6 @@ try {
     // Log order creation
     error_log("Survey order created - Order ID: {$orderId}, User ID: {$userId}, Total: {$total}");
     
-    $voucherCodesUsed = array_map(static function ($code) {
-        return is_scalar($code) ? (string)$code : '';
-    }, $voucherCodes);
-
     $responseData = [
         'order_id' => $orderId,
         'total_amount' => $finalTotal,

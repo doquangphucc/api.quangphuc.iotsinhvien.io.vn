@@ -589,6 +589,36 @@
             const statusText = getStatusText(order.order_status);
             const statusColor = getStatusColor(order.order_status);
             
+            const hasVoucherEntries = Array.isArray(order.vouchers) && order.vouchers.length > 0;
+            const fallbackVoucherCodes = (!hasVoucherEntries && order.voucher_code)
+                ? order.voucher_code.split(',').map(code => code.trim()).filter(Boolean)
+                : [];
+            const showVoucherSection = hasVoucherEntries || fallbackVoucherCodes.length > 0;
+            const voucherBadgesHtml = hasVoucherEntries
+                ? order.vouchers.map(v => `
+                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold">
+                        ${v.voucher_code} (-${Math.round(v.discount_amount).toLocaleString('vi-VN')}đ)
+                    </span>
+                `).join('')
+                : fallbackVoucherCodes.map(code => `
+                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold">
+                        ${code}
+                    </span>
+                `).join('');
+            const discountAmountDisplay = order.discount_amount ? Math.round(order.discount_amount).toLocaleString('vi-VN') : '0';
+            const voucherSectionHtml = showVoucherSection ? `
+                        <div class="mb-2">
+                            <span class="text-gray-600 dark:text-gray-400 block mb-2">Vouchers (${hasVoucherEntries ? order.vouchers.length : fallbackVoucherCodes.length}):</span>
+                            <div class="flex flex-wrap gap-2">
+                                ${voucherBadgesHtml}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-600 dark:text-gray-400">Tổng giảm giá:</span>
+                            <span class="font-semibold text-green-600 dark:text-green-400">-${discountAmountDisplay}đ</span>
+                        </div>
+            ` : '';
+
             const itemsList = order.items && order.items.length > 0 
                 ? order.items.map(item => `
                     <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
@@ -628,22 +658,7 @@
                             <span class="text-gray-600 dark:text-gray-400">Trạng thái:</span>
                             <span class="px-3 py-1 rounded-full text-sm font-semibold ${statusColor}">${statusText}</span>
                         </div>
-                        ${order.vouchers && order.vouchers.length > 0 ? `
-                        <div class="mb-2">
-                            <span class="text-gray-600 dark:text-gray-400 block mb-2">Vouchers (${order.vouchers.length}):</span>
-                            <div class="flex flex-wrap gap-2">
-                                ${order.vouchers.map(v => `
-                                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold">
-                                        ${v.voucher_code} (-${Math.round(v.discount_amount).toLocaleString('vi-VN')}đ)
-                                    </span>
-                                `).join('')}
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-gray-600 dark:text-gray-400">Tổng giảm giá:</span>
-                            <span class="font-semibold text-green-600 dark:text-green-400">-${order.discount_amount ? Math.round(order.discount_amount).toLocaleString('vi-VN') : '0'}đ</span>
-                        </div>
-                        ` : ''}
+                        ${voucherSectionHtml}
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600 dark:text-gray-400">Email:</span>
                             <span class="font-semibold text-gray-800 dark:text-white">${order.email || '-'}</span>

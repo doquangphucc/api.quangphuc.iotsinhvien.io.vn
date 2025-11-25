@@ -193,6 +193,10 @@ try {
     }
     
     $finalTotal = max(0, $calculatedTotal - $totalDiscount);
+    $voucherCodesUsed = array_map(static function ($voucher) {
+        return $voucher['code'] ?? '';
+    }, $validatedVouchers);
+    $voucherCodeString = implode(', ', array_filter($voucherCodesUsed));
 
     // --- Transactional Database Operations ---
     $pdo->beginTransaction();
@@ -209,7 +213,7 @@ try {
         'address'         => sanitizeInput($customer['address']),
         'notes'           => sanitizeInput($customer['notes'] ?? ''),
         'subtotal'        => $calculatedTotal,
-        'voucher_code'    => null,  // Keep null for backward compatibility
+        'voucher_code'    => $voucherCodeString ?: null,  // Store comma separated codes for history display
         'discount_amount' => $totalDiscount,
         'total_amount'    => $finalTotal,
         'order_status'    => 'pending' // Chờ admin duyệt
@@ -294,10 +298,6 @@ try {
             'subtotal' => $price * $quantity
         ];
     }, $verifiedItems);
-
-    $voucherCodesUsed = array_map(static function ($voucher) {
-        return $voucher['code'] ?? '';
-    }, $validatedVouchers);
 
     $customerPayload = [
         'fullname' => $orderData['full_name'],
