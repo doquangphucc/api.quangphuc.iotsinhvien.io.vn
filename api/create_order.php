@@ -218,27 +218,31 @@ try {
     
     // Insert validated vouchers into order_vouchers table and mark as used
     if (!empty($validatedVouchers)) {
+        // Only insert vouchers from vouchers table (not lottery_rewards)
         $insertVoucherSql = "INSERT INTO order_vouchers (order_id, voucher_id, voucher_code, discount_amount) VALUES (?, ?, ?, ?)";
         $insertVoucherStmt = $pdo->prepare($insertVoucherSql);
         
         foreach ($validatedVouchers as $voucher) {
-            // Insert into order_vouchers
-            $insertVoucherStmt->execute([
-                $orderId,
-                $voucher['id'],
-                $voucher['code'],
-                $voucher['discount']
-            ]);
-            
-            // Mark voucher/reward as used
-            if ($voucher['source'] === 'reward') {
-                $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
-                $updateRewardStmt = $pdo->prepare($updateRewardSql);
-                $updateRewardStmt->execute([$voucher['id']]);
-            } else {
+            // Only insert into order_vouchers if source is 'voucher' (from vouchers table)
+            // Reward-based vouchers (from lottery_rewards) are tracked separately and don't need to be in order_vouchers
+            if ($voucher['source'] === 'voucher') {
+                $insertVoucherStmt->execute([
+                    $orderId,
+                    $voucher['id'],
+                    $voucher['code'],
+                    $voucher['discount']
+                ]);
+                
+                // Mark voucher as used
                 $updateVoucherSql = "UPDATE vouchers SET is_used = 1, used_by_user_id = ?, used_at = NOW() WHERE id = ?";
                 $updateVoucherStmt = $pdo->prepare($updateVoucherSql);
                 $updateVoucherStmt->execute([(int)$userId, $voucher['id']]);
+            } else {
+                // For reward-based vouchers, just mark the reward as used
+                // They don't need to be in order_vouchers since they're tracked in lottery_rewards
+                $updateRewardSql = "UPDATE lottery_rewards SET status = 'used', used_at = NOW() WHERE id = ?";
+                $updateRewardStmt = $pdo->prepare($updateRewardSql);
+                $updateRewardStmt->execute([$voucher['id']]);
             }
         }
     }
