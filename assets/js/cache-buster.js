@@ -308,6 +308,14 @@ function ensurePromotionStyles() {
             background: rgba(0,0,0,0.45);
             backdrop-filter: blur(2px);
         }
+        #promotion-overlay .promotion-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
         #promotion-overlay .promotion-card {
             position: relative;
             max-width: min(90vw, 560px);
@@ -332,9 +340,7 @@ function ensurePromotionStyles() {
             border: none;
         }
         #promotion-overlay .promotion-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
+            position: relative;
             width: 36px;
             height: 36px;
             border-radius: 999px;
@@ -395,9 +401,11 @@ function renderPromotionOverlay(promo, pageKey, onDismissCallback = null) {
     overlay.id = 'promotion-overlay';
     overlay.innerHTML = `
         <div class="promotion-backdrop"></div>
-        <div class="promotion-card" role="dialog" aria-label="${promo.title || 'Khuyến mãi'}">
+        <div class="promotion-wrapper">
+            <div class="promotion-card" role="dialog" aria-label="${promo.title || 'Khuyến mãi'}">
+                <img src="${promo.image_url}" alt="${promo.title || 'Khuyến mãi'}" class="promotion-image"/>
+            </div>
             <button class="promotion-close" aria-label="Đóng khuyến mãi">&times;</button>
-            <img src="${promo.image_url}" alt="${promo.title || 'Khuyến mãi'}" class="promotion-image"/>
         </div>
     `;
     document.body.appendChild(overlay);
