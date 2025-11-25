@@ -113,11 +113,11 @@
             background: transparent !important;
         }
         
-        /* Các card bên trong - trong suốt với viền */
-        div.bg-white,
-        div[class*="bg-white"],
-        .bg-white.dark\:bg-gray-800,
-        .dark\:bg-gray-800 {
+        /* Các card bên trong - trong suốt với viền (trừ các card trong gallery từ database) */
+        div.bg-white:not(#gallery > div),
+        div[class*="bg-white"]:not(#gallery > div),
+        .bg-white.dark\:bg-gray-800:not(#gallery > div),
+        .dark\:bg-gray-800:not(#gallery > div) {
             background: rgba(255, 255, 255, 0.15) !important;
             backdrop-filter: blur(2px) !important;
             border: 1.5px solid rgba(34, 197, 94, 0.40) !important;
@@ -125,14 +125,31 @@
             box-shadow: 0 2px 4px rgba(34, 197, 94, 0.10);
         }
         
-        body[data-theme="dark"] div.bg-white,
-        body[data-theme="dark"] div[class*="bg-white"],
-        body[data-theme="dark"] .bg-white.dark\:bg-gray-800,
-        body[data-theme="dark"] .dark\:bg-gray-800 {
+        body[data-theme="dark"] div.bg-white:not(#gallery > div),
+        body[data-theme="dark"] div[class*="bg-white"]:not(#gallery > div),
+        body[data-theme="dark"] .bg-white.dark\:bg-gray-800:not(#gallery > div),
+        body[data-theme="dark"] .dark\:bg-gray-800:not(#gallery > div) {
             background: rgba(17, 24, 39, 0.25) !important;
             backdrop-filter: blur(2px) !important;
             border-color: rgba(74, 222, 128, 0.50) !important;
             box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Card từ database trong gallery - nền đậm để rõ ràng */
+        #gallery > div.bg-white,
+        #gallery > div[class*="bg-white"],
+        #gallery .bg-white.dark\:bg-gray-800,
+        #gallery .dark\:bg-gray-800 {
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+        }
+        
+        body[data-theme="dark"] #gallery > div.bg-white,
+        body[data-theme="dark"] #gallery > div[class*="bg-white"],
+        body[data-theme="dark"] #gallery .bg-white.dark\:bg-gray-800,
+        body[data-theme="dark"] #gallery .dark\:bg-gray-800 {
+            background: #1f2937 !important;
+            backdrop-filter: none !important;
         }
         
         /* Article cards - trong suốt với viền */
@@ -570,62 +587,62 @@
                     </h3>
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Image 1 -->
-                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800">
                             <img src="../Photo/solar-installation-vn-rooftop.png" alt="Lắp đặt pin mặt trời" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                                <span class="bg-green-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit">HỘ GIA ĐÌNH</span>
-                                <h4 class="text-white font-bold text-lg mb-1">Nhà Phố Quận 7</h4>
-                                <p class="text-green-50 dark:text-green-200 text-sm">10 kW • Tiết kiệm 6.5 triệu/tháng</p>
+                            <div class="absolute bottom-2 left-2 z-10">
+                                <span class="bg-green-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit shadow-lg">HỘ GIA ĐÌNH</span>
+                                <h4 class="text-white font-bold text-lg mb-1 drop-shadow-lg">Nhà Phố Quận 7</h4>
+                                <p class="text-white text-sm drop-shadow-lg">10 kW • Tiết kiệm 6.5 triệu/tháng</p>
                             </div>
         </div>
 
                         <!-- Image 2 -->
-                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800">
                             <img src="../Photo/residential-solar-home.png" alt="Biệt thự năng lượng xanh" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                                <span class="bg-purple-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit">CAO CẤP</span>
-                                <h4 class="text-white font-bold text-lg mb-1">Biệt Thự Thủ Đức</h4>
-                                <p class="text-green-50 dark:text-green-200 text-sm">25 kW • ROI 4.2 năm</p>
+                            <div class="absolute bottom-2 left-2 z-10">
+                                <span class="bg-purple-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit shadow-lg">CAO CẤP</span>
+                                <h4 class="text-white font-bold text-lg mb-1 drop-shadow-lg">Biệt Thự Thủ Đức</h4>
+                                <p class="text-white text-sm drop-shadow-lg">25 kW • ROI 4.2 năm</p>
                             </div>
         </div>
 
                         <!-- Image 3 -->
-                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800">
                             <img src="../Photo/technician-commercial-building.png" alt="Công trình thương mại" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                                <span class="bg-blue-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit">THƯƠNG MẠI</span>
-                                <h4 class="text-white font-bold text-lg mb-1">Tòa Nhà Văn Phòng</h4>
-                                <p class="text-green-50 dark:text-green-200 text-sm">150 kW • Tiết kiệm 180M/năm</p>
+                            <div class="absolute bottom-2 left-2 z-10">
+                                <span class="bg-blue-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit shadow-lg">THƯƠNG MẠI</span>
+                                <h4 class="text-white font-bold text-lg mb-1 drop-shadow-lg">Tòa Nhà Văn Phòng</h4>
+                                <p class="text-white text-sm drop-shadow-lg">150 kW • Tiết kiệm 180M/năm</p>
                             </div>
         </div>
 
                         <!-- Image 4 -->
-                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800">
                             <img src="../Photo/asian-house-solar.png" alt="Nhà ở châu Á" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                                <span class="bg-green-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit">GIA ĐÌNH</span>
-                                <h4 class="text-white font-bold text-lg mb-1">Nhà Vườn Đồng Nai</h4>
-                                <p class="text-green-50 dark:text-green-200 text-sm">8 kW • Độc lập lưới điện</p>
+                            <div class="absolute bottom-2 left-2 z-10">
+                                <span class="bg-green-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit shadow-lg">GIA ĐÌNH</span>
+                                <h4 class="text-white font-bold text-lg mb-1 drop-shadow-lg">Nhà Vườn Đồng Nai</h4>
+                                <p class="text-white text-sm drop-shadow-lg">8 kW • Độc lập lưới điện</p>
                             </div>
         </div>
 
                         <!-- Image 5 -->
-                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800">
                             <img src="../Photo/vn-roof-wide-view.png" alt="Khu dân cư xanh" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                                <span class="bg-green-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit">KHU DÂN CƯ</span>
-                                <h4 class="text-white font-bold text-lg mb-1">Eco Village Bình Dương</h4>
-                                <p class="text-green-50 dark:text-green-200 text-sm">12 kW • Cộng đồng xanh</p>
+                            <div class="absolute bottom-2 left-2 z-10">
+                                <span class="bg-green-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit shadow-lg">KHU DÂN CƯ</span>
+                                <h4 class="text-white font-bold text-lg mb-1 drop-shadow-lg">Eco Village Bình Dương</h4>
+                                <p class="text-white text-sm drop-shadow-lg">12 kW • Cộng đồng xanh</p>
                             </div>
         </div>
 
                         <!-- Image 6 -->
-                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="group relative h-72 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800">
                             <img src="../Photo/solar-farm-field.jpg" alt="Hệ thống năng lượng xanh" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                                <span class="bg-teal-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit">ĐÔ THỊ XANH</span>
-                                <h4 class="text-white font-bold text-lg mb-1">Dự Án Đô Thị Thông Minh</h4>
-                                <p class="text-green-50 dark:text-green-200 text-sm">300 kW • Nhiều hộ gia đình</p>
+                            <div class="absolute bottom-2 left-2 z-10">
+                                <span class="bg-teal-600 px-3 py-1 rounded-full text-white text-xs font-bold mb-2 w-fit shadow-lg">ĐÔ THỊ XANH</span>
+                                <h4 class="text-white font-bold text-lg mb-1 drop-shadow-lg">Dự Án Đô Thị Thông Minh</h4>
+                                <p class="text-white text-sm drop-shadow-lg">300 kW • Nhiều hộ gia đình</p>
                             </div>
         </div>
                     </div>
@@ -766,32 +783,55 @@
         })();
 
         // Filter projects
-        // Lightbox functions
+        // Lightbox functions (for featured videos - simplified version)
         function openLightbox(videoSrc) {
-            const lightbox = document.getElementById('lightbox');
-            const video = document.getElementById('lightbox-video');
-            const source = document.getElementById('lightbox-source');
-            
-            source.src = videoSrc;
-            video.load();
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Use media lightbox for consistency
+            openMediaLightbox(videoSrc, 'video');
         }
 
         function closeLightbox() {
-            const lightbox = document.getElementById('lightbox');
-            const video = document.getElementById('lightbox-video');
-            
-            video.pause();
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            closeMediaLightbox();
         }
         
-        // Lightbox for media gallery (supports both image and video)
+        // Global variables for media gallery navigation
+        let currentMediaGallery = [];
+        let currentMediaIndex = 0;
+        
+        // Lightbox for media gallery with navigation support
+        function openMediaLightboxWithGallery(url, type, index, galleryJson) {
+            try {
+                currentMediaGallery = JSON.parse(galleryJson.replace(/&quot;/g, '"'));
+                currentMediaIndex = index;
+                openMediaLightboxItem(url, type);
+            } catch (e) {
+                // Fallback nếu không có gallery
+                currentMediaGallery = [{url: url, type: type}];
+                currentMediaIndex = 0;
+                openMediaLightboxItem(url, type);
+            }
+        }
+        
         function openMediaLightbox(url, type) {
+            currentMediaGallery = [{url: url, type: type}];
+            currentMediaIndex = 0;
+            openMediaLightboxItem(url, type);
+        }
+        
+        function openMediaLightboxItem(url, type) {
             const lightbox = document.getElementById('media-gallery-lightbox');
             const lightboxImage = document.getElementById('media-lightbox-image');
             const lightboxVideo = document.getElementById('media-lightbox-video');
+            const prevBtn = document.getElementById('media-lightbox-prev');
+            const nextBtn = document.getElementById('media-lightbox-next');
+            
+            // Show/hide navigation buttons based on gallery size
+            if (currentMediaGallery.length > 1) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
             
             if (type === 'image') {
                 lightboxImage.src = url;
@@ -809,6 +849,19 @@
             document.body.style.overflow = 'hidden';
         }
         
+        function navigateMediaLightbox(direction) {
+            if (currentMediaGallery.length <= 1) return;
+            
+            if (direction === 'next') {
+                currentMediaIndex = (currentMediaIndex + 1) % currentMediaGallery.length;
+            } else {
+                currentMediaIndex = (currentMediaIndex - 1 + currentMediaGallery.length) % currentMediaGallery.length;
+            }
+            
+            const media = currentMediaGallery[currentMediaIndex];
+            openMediaLightboxItem(media.url, media.type);
+        }
+        
         function closeMediaLightbox() {
             const lightbox = document.getElementById('media-gallery-lightbox');
             const lightboxVideo = document.getElementById('media-lightbox-video');
@@ -816,6 +869,40 @@
             lightboxVideo.pause();
             lightbox.classList.remove('active');
             document.body.style.overflow = 'auto';
+            currentMediaGallery = [];
+            currentMediaIndex = 0;
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('media-gallery-lightbox');
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                navigateMediaLightbox('prev');
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                navigateMediaLightbox('next');
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeMediaLightbox();
+            }
+        });
+        
+        // Helper function for opening image lightbox from main image
+        function openImageLightbox(url, galleryJson) {
+            try {
+                const gallery = JSON.parse(galleryJson);
+                if (Array.isArray(gallery) && gallery.length > 0) {
+                    const index = gallery.findIndex(m => m.url === url);
+                    openMediaLightboxWithGallery(url, 'image', index >= 0 ? index : 0, JSON.stringify(gallery));
+                } else {
+                    openMediaLightbox(url, 'image');
+                }
+            } catch (e) {
+                openMediaLightbox(url, 'image');
+            }
         }
 
         // Load and display projects from API
@@ -862,52 +949,79 @@
 
         function createProjectCard(project) {
             const card = document.createElement('div');
-            card.className = 'video-card bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden';
+            // Card không có overlay - nền đậm để rõ ràng
+            card.className = 'bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden';
+            card.style.background = '#ffffff';
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                card.style.background = '#1f2937';
+            }
             card.setAttribute('data-category', 'all'); // Default category
             
             const hasVideo = project.video_url && project.video_url.trim() !== '';
             const hasImage = project.image_url && project.image_url.trim() !== '';
             
+            // Build complete media gallery (main image/video + media_gallery)
+            const allMediaItems = [];
+            if (hasImage) {
+                allMediaItems.push({url: project.image_url, type: 'image'});
+            }
+            if (hasVideo) {
+                allMediaItems.push({url: project.video_url, type: 'video'});
+            }
+            if (project.media_gallery && project.media_gallery.length > 0) {
+                project.media_gallery.forEach(m => {
+                    if (!allMediaItems.find(item => item.url === m.url && item.type === m.type)) {
+                        allMediaItems.push({url: m.url, type: m.type});
+                    }
+                });
+            }
+            const allMediaJson = allMediaItems.length > 0 ? JSON.stringify(allMediaItems).replace(/"/g, '&quot;') : '[]';
+            
             let mediaContent = '';
             if (hasVideo && hasImage) {
-                // Có cả video và ảnh: hiển thị ảnh làm thumbnail, click để xem video
+                // Có cả video và ảnh: hiển thị ảnh làm thumbnail, click để xem với navigation
+                const startIndex = 0; // Start with image
                 mediaContent = `
-                    <div class="relative cursor-pointer group" onclick="openLightbox('${project.video_url}')">
+                    <div class="relative cursor-pointer group" onclick="openMediaLightboxWithGallery('${project.image_url}', 'image', ${startIndex}, '${allMediaJson}')">
                         <img src="${project.image_url}" alt="${project.title}" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-105">
                         <div class="absolute inset-0 flex items-center justify-center">
+                            ${hasVideo ? `
                             <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                                 <svg class="w-8 h-8 text-green-600 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </div>
-        </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
-                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">XEM VIDEO</span>
+                            ` : ''}
+                        </div>
+                        <div class="absolute bottom-2 left-2 z-10">
+                            <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">${allMediaItems.length > 1 ? 'XEM GALLERY' : 'HÌNH ẢNH DỰ ÁN'}</span>
                         </div>
         </div>
                 `;
             } else if (hasVideo) {
-                // Chỉ có video: hiển thị video preview
+                // Chỉ có video: hiển thị video preview với navigation
+                const videoIndex = allMediaItems.findIndex(m => m.url === project.video_url && m.type === 'video');
                 mediaContent = `
-                    <div class="relative cursor-pointer" onclick="openLightbox('${project.video_url}')">
+                    <div class="relative cursor-pointer" onclick="openMediaLightboxWithGallery('${project.video_url}', 'video', ${videoIndex >= 0 ? videoIndex : 0}, '${allMediaJson}')">
                         <video class="w-full h-80 object-cover" muted>
                             <source src="${project.video_url}" type="video/mp4">
                         </video>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
                                 <svg class="w-8 h-8 text-green-600 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </div>
         </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
-                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">XEM VIDEO</span>
+                        <div class="absolute bottom-2 left-2 z-10">
+                            <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">${allMediaItems.length > 1 ? 'XEM GALLERY' : 'XEM VIDEO'}</span>
                         </div>
         </div>
                 `;
             } else if (hasImage) {
-                // Chỉ có ảnh
+                // Chỉ có ảnh - không có overlay gradient, có navigation
+                const imageIndex = allMediaItems.findIndex(m => m.url === project.image_url && m.type === 'image');
                 mediaContent = `
                     <div class="relative h-80 overflow-hidden">
-                        <img src="${project.image_url}" alt="${project.title}" class="w-full h-full object-cover">
-                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
-                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-semibold">HÌNH ẢNH DỰ ÁN</span>
+                        <img src="${project.image_url}" alt="${project.title}" class="w-full h-full object-cover cursor-pointer" onclick="openMediaLightboxWithGallery('${project.image_url}', 'image', ${imageIndex >= 0 ? imageIndex : 0}, '${allMediaJson}')">
+                        <div class="absolute bottom-2 left-2 z-10">
+                            <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">${allMediaItems.length > 1 ? 'XEM GALLERY' : 'HÌNH ẢNH DỰ ÁN'}</span>
                         </div>
         </div>
                 `;
@@ -936,21 +1050,24 @@
                         <div class="grid grid-cols-3 gap-2">
                 `;
                 
+                // Lưu media gallery để dùng cho navigation
+                const mediaGalleryJson = JSON.stringify(project.media_gallery.map(m => ({url: m.url, type: m.type}))).replace(/"/g, '&quot;');
+                
                 project.media_gallery.forEach((media, idx) => {
                     if (media.type === 'image') {
                         mediaGalleryHtml += `
-                            <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow cursor-pointer" onclick="openMediaLightbox('${media.url}', 'image')">
+                            <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow cursor-pointer" onclick="openMediaLightboxWithGallery('${media.url}', 'image', ${idx}, '${mediaGalleryJson}')">
                                 <img src="${media.url}" alt="Media ${idx + 1}" class="w-full h-24 object-cover" onerror="this.parentElement.style.display='none'">
                             </div>
                         `;
                     } else if (media.type === 'video') {
                         mediaGalleryHtml += `
-                            <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow relative cursor-pointer" onclick="openMediaLightbox('${media.url}', 'video')">
+                            <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow relative cursor-pointer" onclick="openMediaLightboxWithGallery('${media.url}', 'video', ${idx}, '${mediaGalleryJson}')">
                                 <video class="w-full h-24 object-cover">
                                     <source src="${media.url}" type="video/mp4">
                                 </video>
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black bg-opacity-20">
-                                    <span class="text-white text-2xl">▶️</span>
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black bg-opacity-30">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 </div>
                             </div>
                         `;
@@ -997,10 +1114,25 @@
 
     <!-- Media Gallery Lightbox (for image and video thumbnails) -->
     <div id="media-gallery-lightbox" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300" onclick="closeMediaLightbox()">
-        <button onclick="closeMediaLightbox()" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
+        <button onclick="closeMediaLightbox()" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10 transition-all hover:scale-110">&times;</button>
+        
+        <!-- Navigation Arrow Left -->
+        <button id="media-lightbox-prev" onclick="event.stopPropagation(); navigateMediaLightbox('prev')" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-14 h-14 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-all hover:scale-110 backdrop-blur-sm border border-white/30">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        
+        <!-- Navigation Arrow Right -->
+        <button id="media-lightbox-next" onclick="event.stopPropagation(); navigateMediaLightbox('next')" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-14 h-14 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-all hover:scale-110 backdrop-blur-sm border border-white/30">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+        
         <div class="max-w-6xl w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
-            <img id="media-lightbox-image" class="hidden max-w-full max-h-full rounded-lg" alt="Media preview">
-            <video id="media-lightbox-video" controls class="hidden max-w-full max-h-full rounded-lg">
+            <img id="media-lightbox-image" class="hidden max-w-full max-h-full rounded-lg shadow-2xl" alt="Media preview">
+            <video id="media-lightbox-video" controls class="hidden max-w-full max-h-full rounded-lg shadow-2xl">
                 <source src="" type="video/mp4">
                 Trình duyệt của bạn không hỗ trợ video.
             </video>
@@ -1011,6 +1143,16 @@
         #media-gallery-lightbox.active {
             opacity: 1;
             visibility: visible;
+        }
+        
+        #media-lightbox-prev,
+        #media-lightbox-next {
+            display: flex;
+        }
+        
+        #media-lightbox-prev.hidden,
+        #media-lightbox-next.hidden {
+            display: none;
         }
     </style>
     
