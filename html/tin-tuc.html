@@ -653,7 +653,7 @@
         
         /* Footer giữ nguyên nền đen */
         footer {
-            background: #000000 !important;
+            background: #1f2937 !important; /* bg-gray-800 - giống index.html */
         }
         
         /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
@@ -707,6 +707,21 @@
         body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
         body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+        
+        /* Quick Summary box - nền đậm để dễ thấy */
+        aside.bg-white,
+        aside[class*="bg-white"],
+        aside.dark\:bg-gray-800 {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        body[data-theme="dark"] aside.bg-white,
+        body[data-theme="dark"] aside[class*="bg-white"],
+        body[data-theme="dark"] aside.dark\:bg-gray-800 {
+            background: rgba(31, 41, 55, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+        }
 
     </style>
 </head>
@@ -787,17 +802,20 @@
             <div class="container mx-auto px-4">
                 <div class="grid lg:grid-cols-2 gap-12">
                     <div class="text-white">
-                        <span class="inline-block px-4 py-2 bg-white/20 text-white text-sm font-semibold rounded-full mb-4">Báo cáo phân tích chuyên sâu</span>
-                        <h1 class="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight">Điều hướng chuyển đổi năng lượng Việt Nam: Lộ trình tăng giá của EVN và tính cấp thiết của điện mặt trời áp mái</h1>
-                        <p class="text-xl mb-8 text-gray-700 dark:text-gray-300">Giao điểm giữa áp lực kinh tế và cơ hội công nghệ đang tạo ra thời khắc mang tính chiến lược cho cả hộ gia đình lẫn doanh nghiệp.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Giá điện EVN</span>
-                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Điện mặt trời</span>
-                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Thị trường</span>
-                            <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">Khuyến nghị</span>
-                    </div>
+                        <!-- Nền mờ cho phần text để dễ đọc -->
+                        <div class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl p-6 sm:p-8">
+                            <span class="inline-block px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-full mb-4">Báo cáo phân tích chuyên sâu</span>
+                            <h1 class="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-gray-800 dark:text-white">Điều hướng chuyển đổi năng lượng Việt Nam: Lộ trình tăng giá của EVN và tính cấp thiết của điện mặt trời áp mái</h1>
+                            <p class="text-xl mb-8 text-gray-700 dark:text-gray-300">Giao điểm giữa áp lực kinh tế và cơ hội công nghệ đang tạo ra thời khắc mang tính chiến lược cho cả hộ gia đình lẫn doanh nghiệp.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-full">Giá điện EVN</span>
+                                <span class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-full">Điện mặt trời</span>
+                                <span class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-full">Thị trường</span>
+                                <span class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-full">Khuyến nghị</span>
+                            </div>
+                        </div>
         </div>
-                    <aside class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl">
+                    <aside class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl" style="background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(10px) !important;">
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Tóm tắt nhanh</h2>
                         <ul class="space-y-4 text-gray-600 dark:text-gray-300">
                             <li class="flex gap-3">
