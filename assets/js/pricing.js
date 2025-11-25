@@ -180,7 +180,7 @@ function renderProducts() {
                 ` : ''}
                 
                 <!-- Product Image -->
-                <div class="relative h-32 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                <a href="product-detail.html?id=${product.id}" class="block relative h-32 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 cursor-pointer">
                     ${product.image_url ? `
                         <img src="../${product.image_url}" 
                              alt="${product.title}" 
@@ -196,13 +196,15 @@ function renderProducts() {
                             Tạm hết hàng
                         </div>
                     ` : ''}
-                </div>
+                </a>
                 
                 <div class="p-3">
                     <!-- Product Title -->
-                    <h3 class="text-base font-extrabold bg-gradient-to-r from-green-700 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 line-clamp-2 min-h-[40px] leading-tight">
-                        ${product.title}
-                    </h3>
+                    <a href="product-detail.html?id=${product.id}" class="block">
+                        <h3 class="text-base font-extrabold bg-gradient-to-r from-green-700 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 line-clamp-2 min-h-[40px] leading-tight hover:underline cursor-pointer">
+                            ${product.title}
+                        </h3>
+                    </a>
                     
                     <!-- Technical Description -->
                     ${product.technical_description ? `

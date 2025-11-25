@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Chi tiết sản phẩm" />
+    <title>Chi Tiết Sản Phẩm - HC Eco System</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter with Vietnamese subset -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+
+    <!-- Slideshow CSS -->
+    <link rel="stylesheet" href="../assets/css/slideshow.css" />
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            position: relative;
+            font-family: 'Inter', sans-serif;
+            background: #f9fafb;
+            color: var(--color-text-dark);
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+        }
+        
+        /* Dark Mode styles */
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        
+        body[data-theme="dark"] .dark\:bg-gray-900 { background-color: #1a202c; }
+        body[data-theme="dark"] .dark\:bg-gray-800 { background-color: #2d3748; }
+        body[data-theme="dark"] .dark\:text-gray-100 { color: #f7fafc; }
+        body[data-theme="dark"] .dark\:text-gray-300 { color: #d1d5db; }
+        body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
+
+        .theme-toggle__icon { display: none; }
+        body:not([data-theme="dark"]) .theme-toggle__icon--sun { display: block; }
+        body[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+
+        /* Auth buttons styling */
+        .auth-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+            line-height: 1.25rem;
+            text-decoration: none;
+        }
+        .auth-btn--login {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .auth-btn--login:hover {
+            background-color: #e5e7eb;
+        }
+        .auth-btn--register {
+            background-color: #16a34a;
+            color: white;
+        }
+        .auth-btn--register:hover {
+             background-color: #15803d;
+        }
+        .auth-user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            white-space: nowrap;
+            text-decoration: none;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+        .auth-user-name + .auth-btn--register { 
+             background-color: #fee2e2;
+             color: #b91c1c;
+             font-size: 0.75rem;
+             padding: 0.5rem 0.75rem;
+             min-width: auto;
+        }
+        .auth-user-name + .auth-btn--register:hover {
+             background-color: #fecaca;
+        }
+
+        body[data-theme="dark"] .auth-btn--login {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+        body[data-theme="dark"] .auth-btn--login:hover {
+            background-color: #4b5563;
+        }
+        body[data-theme="dark"] .auth-user-name {
+            color: #d1d5db;
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register {
+             background-color: #450a0a;
+             color: #fca5a5;
+        }
+        body[data-theme="dark"] .auth-user-name + .auth-btn--register:hover {
+             background-color: #7f1d1d;
+        }
+
+        /* Slideshow enhancements */
+        body {
+            background-color: transparent !important;
+            background: transparent !important;
+            min-height: 100vh;
+        }
+
+        /* Ensure slideshow covers full viewport */
+        #slideshow-background {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: -1 !important;
+        }
+
+        /* Main content */
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Canvas container cho neural network */
+        #neural-network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Đảm bảo content nằm trên background */
+        main, header, footer {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Product detail section - nền đậm để dễ đọc */
+        .product-detail-section {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: none !important;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        body[data-theme="dark"] .product-detail-section {
+            background: rgba(17, 24, 39, 0.95) !important;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.90) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1f2937 !important;
+        }
+        
+        .copyright-bar {
+            position: relative;
+            z-index: 1;
+            background: #030712 !important;
+            border-top: 1px solid rgba(34, 197, 94, 0.35);
+        }
+    </style>
+</head>
+<body data-page="product-detail">
+
+    <!-- Background Slideshow -->
+    <div id="slideshow-background" class="slideshow-background"></div>
+
+    <!-- Header -->
+    <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <!-- Branding -->
+                <a href="../index.html" class="flex items-center gap-3">
+                    <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                    <div>
+                        <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Hệ sinh thái cho tương lai</p>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
+                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
+                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Sản phẩm</a>
+                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
+                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
+                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Hệ sinh thái</a>
+                    <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+                    
+                    <!-- Auth buttons -->
+                    <div id="auth-buttons" class="hidden sm:flex items-center gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
+            <nav class="flex flex-col gap-2">
+                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
+                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Sản phẩm</a>
+                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
+                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
+                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Hệ sinh thái</a>
+                <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+                
+                <!-- Mobile Auth Buttons -->
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                    <div id="mobile-auth-buttons" class="flex flex-col gap-2">
+                        <!-- Dynamically populated by auth.js -->
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Floating Cart Button -->
+    <a href="gio-hang.html" id="cart-fab" class="fixed bottom-6 right-6 z-50 h-14 w-14 bg-white rounded-2xl flex items-center justify-center shadow-lg hover:bg-green-50 transition-all duration-300 border-2 border-green-600">
+        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800" style="display: none;">0</span>
+    </a>
+
+    <!-- Main Content -->
+    <main class="py-12">
+        <!-- Product Detail Section -->
+        <section class="product-detail-section py-16">
+            <div class="container mx-auto px-4">
+                <!-- Back Button -->
+                <a href="pricing.html" class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 mb-6 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="font-semibold">Quay về trang Sản phẩm</span>
+                </a>
+                
+                <!-- Loading State -->
+                <div id="product-loading" class="text-center py-20">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">Đang tải thông tin sản phẩm...</p>
+                </div>
+                
+                <!-- Error State -->
+                <div id="product-error" class="hidden text-center py-20">
+                    <div class="text-red-500 text-xl mb-4">❌</div>
+                    <p class="text-gray-700 dark:text-gray-300 mb-6">Không tìm thấy sản phẩm hoặc có lỗi xảy ra.</p>
+                    <a href="pricing.html" class="inline-block bg-green-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-green-700 transition-all">
+                        Quay về trang Sản phẩm
+                    </a>
+                </div>
+                
+                <!-- Product Detail Content -->
+                <div id="product-detail-content" class="hidden">
+                    <!-- Content will be rendered here by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer id="site-footer" class="bg-gray-800 dark:bg-black text-gray-300">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+                <!-- Branding & Copyright -->
+                <div class="space-y-4">
+                     <a href="../index.html" class="flex items-center gap-3">
+                        <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
+                        <div>
+                            <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
+                        </div>
+                    </a>
+                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>
+                    
+                    <!-- Ecosystem Logos Animation -->
+                    <div class="mt-6 relative overflow-hidden" style="height: 80px;">
+                        <div id="ecosystem-logos-container" class="flex gap-6">
+                            <!-- Logos will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li><strong>Hotline:</strong> 0969 397 434 (Chính)</li>
+                        <li><strong>Hotline phụ:</strong> 0988 919 868</li>
+                        <li><strong>Zalo:</strong> 0969 397 434</li>
+                        <li><strong>Email:</strong> hcecosystem@gmail.com</li>
+                        <li><strong>Website:</strong> hceco.io.vn</li>
+                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                    </ul>
+                </div>
+
+                <!-- Policies -->
+                <div class="space-y-2">
+                     <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
+                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
+                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
+                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
+                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Copyright Bar -->
+    <div class="bg-black border-t border-green-500/30 shadow-inner copyright-bar">
+        <div class="container mx-auto px-4 py-4">
+            <p class="text-center text-sm text-gray-200 tracking-wide">
+                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="../assets/js/shopping-cart.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuJustOpened = false;
+
+        mobileMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuJustOpened = true;
+            mobileMenu.classList.toggle('hidden');
+            setTimeout(() => {
+                menuJustOpened = false;
+            }, 300);
+        });
+        
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        let lastScrollTop = 0;
+        window.addEventListener("scroll", function(){ 
+           var st = window.pageYOffset || document.documentElement.scrollTop; 
+           if (st > lastScrollTop && !menuJustOpened){
+              mobileMenu.classList.add('hidden');
+           }
+           lastScrollTop = st <= 0 ? 0 : st;
+        }, false);
+
+        // Highlight active navigation item
+        (function() {
+            const currentPath = window.location.pathname;
+            const currentPage = currentPath.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('nav a[href*=".html"]');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                const linkPage = href.split('/').pop();
+                const isActive = linkPage === currentPage;
+                
+                if (isActive) {
+                    link.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-white', 'dark:hover:bg-gray-700', 'hover:bg-gray-100');
+                    link.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+                }
+            });
+        })();
+    </script>
+
+    <!-- Slideshow Scripts -->
+    <script>
+        window.SLIDESHOW_PATH_PREFIX = '../';
+    </script>
+    <script src="../assets/js/slideshow-config.js"></script>
+    <script src="../assets/js/slideshow.js"></script>
+    <script src="../assets/js/cache-buster.js"></script>
+    
+    <!-- Product Detail Script -->
+    <script src="../assets/js/product-detail.js"></script>
+
+    <!-- Ecosystem Logos Carousel -->
+    <script src="../assets/js/ecosystem-logos.js"></script>
+    
+    <!-- Neural Network Canvas -->
+    <canvas id="neural-network-canvas"></canvas>
+    
+    <script>
+        // Neural Network Animation
+        (function() {
+            const canvas = document.getElementById('neural-network-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            class Node {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = Math.random() * 3 + 2;
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                    
+                    this.x = Math.max(0, Math.min(canvas.width, this.x));
+                    this.y = Math.max(0, Math.min(canvas.height, this.y));
+                }
+                
+                draw() {
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+                    gradient.addColorStop(0, 'rgba(134, 239, 172, 0.8)');
+                    gradient.addColorStop(0.5, 'rgba(74, 222, 128, 0.4)');
+                    gradient.addColorStop(1, 'rgba(134, 239, 172, 0)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'rgba(74, 222, 128, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            const nodeCount = 120;
+            const nodes = [];
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push(new Node(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+            
+            const connectionDistance = 180;
+            
+            function animate() {
+                ctx.fillStyle = 'rgba(249, 250, 251, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < connectionDistance) {
+                            const opacity = (1 - distance / connectionDistance) * 0.3;
+                            ctx.strokeStyle = `rgba(74, 222, 128, ${opacity})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                nodes.forEach(node => {
+                    node.update();
+                    node.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        })();
+    </script>
+</body>
+</html>
+
