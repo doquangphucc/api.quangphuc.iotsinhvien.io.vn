@@ -5,6 +5,7 @@
  */
 
 require_once 'connect.php';
+require_once __DIR__ . '/helpers/order_email_helper.php';
 
 header('Content-Type: application/json');
 
@@ -231,6 +232,8 @@ try {
             $updateOrderStmt->execute([$totalDiscount, $finalTotal, $orderId]);
         }
     }
+
+    $finalTotal = max(0, $total - $totalDiscount);
     
     // Commit transaction
     $pdo->commit();
@@ -238,8 +241,58 @@ try {
     // Log order creation
     error_log("Survey order created - Order ID: {$orderId}, User ID: {$userId}, Total: {$total}");
     
+    $voucherCodesUsed = array_map(static function ($code) {
+        return is_scalar($code) ? (string)$code : '';
+    }, $voucherCodes);
+
+    // Send notification email
+    try {
+        $emailItems = array_map(static function ($item) {
+            $quantity = (int)($item['quantity'] ?? 1);
+            if ($quantity <= 0) {
+                $quantity = 1;
+            }
+            $price = (float)($item['price'] ?? 0);
+            return [
+                'name'     => $item['title'] ?? $item['name'] ?? 'Sản phẩm',
+                'quantity' => $quantity,
+                'price'    => $price,
+                'subtotal' => $price * $quantity
+            ];
+        }, $items);
+
+        $customerPayload = [
+            'fullname' => sanitizeInput($customer['fullname']),
+            'phone'    => sanitizeInput($customer['phone']),
+            'email'    => sanitizeInput($customer['email'] ?? ''),
+            'city'     => sanitizeInput($customer['city_name'] ?? ''),
+            'district' => sanitizeInput($customer['district_name'] ?? ''),
+            'ward'     => sanitizeInput($customer['ward_name'] ?? ''),
+            'address'  => sanitizeInput($customer['address']),
+            'notes'    => sanitizeInput($customer['notes'] ?? '')
+        ];
+
+        sendOrderNotificationEmail([
+            'order_id'   => $orderId,
+            'customer'   => $customerPayload,
+            'items'      => $emailItems,
+            'financials' => [
+                'subtotal'      => $total,
+                'discount'      => $totalDiscount,
+                'total'         => $finalTotal,
+                'voucher_codes' => array_filter($voucherCodesUsed)
+            ],
+            'source' => 'survey'
+        ]);
+    } catch (Throwable $emailException) {
+        error_log('Failed to send survey order notification email: ' . $emailException->getMessage());
+    }
+    
     sendSuccess([
         'order_id' => $orderId,
+        'total_amount' => $finalTotal,
+        'discount_amount' => $totalDiscount,
+        'voucher_codes' => array_filter($voucherCodesUsed),
         'message' => 'Đặt hàng thành công! Vé quay may mắn sẽ được tặng khi đơn hàng được duyệt.'
     ], 'Đặt hàng thành công từ gói khảo sát!');
     

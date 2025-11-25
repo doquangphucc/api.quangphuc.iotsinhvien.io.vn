@@ -1,5 +1,6 @@
 <?php
 require_once 'connect.php';
+require_once __DIR__ . '/helpers/order_email_helper.php';
 // Session is already started in connect.php via session.php
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -271,6 +272,53 @@ try {
 
     // Commit all DB changes
     $pdo->commit();
+
+    // Prepare and send notification email (non-blocking)
+    try {
+        $emailItems = array_map(static function ($item) {
+            $quantity = (int)($item['quantity'] ?? 1);
+            if ($quantity <= 0) {
+                $quantity = 1;
+            }
+            $price = (float)($item['price'] ?? 0);
+            return [
+                'name'     => $item['name'] ?? 'Sản phẩm',
+                'quantity' => $quantity,
+                'price'    => $price,
+                'subtotal' => $price * $quantity
+            ];
+        }, $verifiedItems);
+
+        $voucherCodesUsed = array_map(static function ($voucher) {
+            return $voucher['code'] ?? '';
+        }, $validatedVouchers);
+
+        $customerPayload = [
+            'fullname' => $orderData['full_name'],
+            'phone'    => $orderData['phone'],
+            'email'    => $orderData['email'],
+            'city'     => $orderData['city'],
+            'district' => $orderData['district'],
+            'ward'     => $orderData['ward'],
+            'address'  => $orderData['address'],
+            'notes'    => $orderData['notes']
+        ];
+
+        sendOrderNotificationEmail([
+            'order_id'   => $orderId,
+            'customer'   => $customerPayload,
+            'items'      => $emailItems,
+            'financials' => [
+                'subtotal'      => $calculatedTotal,
+                'discount'      => $totalDiscount,
+                'total'         => $finalTotal,
+                'voucher_codes' => array_filter($voucherCodesUsed)
+            ],
+            'source' => 'cart'
+        ]);
+    } catch (Throwable $emailException) {
+        error_log('Failed to send order notification email: ' . $emailException->getMessage());
+    }
 
     // Respond to client
     sendSuccess([
