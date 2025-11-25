@@ -1,9 +1,9 @@
 <?php
 // Add or update package category with image upload
 
-// Increase upload limits for file uploads (2MB)
-ini_set('upload_max_filesize', '2M');
-ini_set('post_max_size', '10M');
+// Increase upload limits for file uploads (10MB)
+ini_set('upload_max_filesize', '10M');
+ini_set('post_max_size', '12M');
 ini_set('max_execution_time', 300);
 
 try {
@@ -72,7 +72,7 @@ $check_stmt->close();
 if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
     $file = $_FILES['logo'];
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-    $max_size = 2 * 1024 * 1024; // 2MB
+    $max_size = 10 * 1024 * 1024; // 10MB
 
     // Validate file type
     if (!in_array($file['type'], $allowed_types)) {
@@ -82,7 +82,7 @@ if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
 
     // Validate file size
     if ($file['size'] > $max_size) {
-        echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 2MB']);
+        echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 10MB']);
         exit;
     }
 

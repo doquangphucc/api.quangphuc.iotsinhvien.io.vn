@@ -5,9 +5,9 @@
 ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
-// Increase upload limits for file uploads (up to 5MB)
-ini_set('upload_max_filesize', '5M');
-ini_set('post_max_size', '10M');
+// Increase upload limits for file uploads (up to 10MB)
+ini_set('upload_max_filesize', '10M');
+ini_set('post_max_size', '12M');
 ini_set('max_execution_time', 300);
 ini_set('max_input_time', 300);
 
@@ -104,7 +104,7 @@ if (isset($_FILES['logo'])) {
     }
     
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-    $max_size = 3 * 1024 * 1024; // 3MB - increased
+    $max_size = 10 * 1024 * 1024; // 10MB
 
     // Validate file type
     if (!in_array($file['type'], $allowed_types)) {
@@ -114,7 +114,7 @@ if (isset($_FILES['logo'])) {
 
     // Validate file size
     if ($file['size'] > $max_size) {
-        echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 3MB']);
+        echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 10MB']);
         exit;
     }
 
