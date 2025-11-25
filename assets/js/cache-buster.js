@@ -312,14 +312,15 @@ function ensurePromotionStyles() {
             position: relative;
             max-width: min(90vw, 560px);
             max-height: min(80vh, 620px);
-            background: rgba(15,23,42,0.9);
+            background: transparent;
+            border: none;
             border-radius: 24px;
-            padding: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            padding: 0;
+            box-shadow: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: promo-pop 0.35s ease;
+            animation: promo-pop-opacity 0.35s ease, promo-shake-pulse 2s ease-in-out 0.4s infinite;
         }
         #promotion-overlay .promotion-card img {
             max-width: 100%;
@@ -328,6 +329,7 @@ function ensurePromotionStyles() {
             object-fit: contain;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            border: none;
         }
         #promotion-overlay .promotion-close {
             position: absolute;
@@ -345,14 +347,26 @@ function ensurePromotionStyles() {
             align-items: center;
             justify-content: center;
             transition: background 0.2s ease, transform 0.2s ease;
+            z-index: 10;
         }
         #promotion-overlay .promotion-close:hover {
             background: rgba(0,0,0,0.8);
             transform: scale(1.05);
         }
-        @keyframes promo-pop {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes promo-pop-opacity {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes promo-shake-pulse {
+            0%, 100% {
+                transform: translateX(0) scale(1);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-10px) scale(1.08);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(10px) scale(1.08);
+            }
         }
     `;
     document.head.appendChild(style);
