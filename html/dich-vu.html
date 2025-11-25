@@ -227,11 +227,11 @@
             background: transparent !important;
         }
         
-        /* Các card bên trong - trong suốt với viền */
-        div.bg-white,
-        div[class*="bg-white"],
-        .bg-white.dark\:bg-gray-800,
-        .dark\:bg-gray-800 {
+        /* Các card bên trong - trong suốt với viền (trừ các card trong services-grid) */
+        div.bg-white:not(#services-grid > div),
+        div[class*="bg-white"]:not(#services-grid > div),
+        .bg-white.dark\:bg-gray-800:not(#services-grid > div),
+        .dark\:bg-gray-800:not(#services-grid > div) {
             background: rgba(255, 255, 255, 0.15) !important;
             backdrop-filter: blur(2px) !important;
             border: 1.5px solid rgba(34, 197, 94, 0.40) !important;
@@ -239,14 +239,35 @@
             box-shadow: 0 2px 4px rgba(34, 197, 94, 0.10);
         }
         
-        body[data-theme="dark"] div.bg-white,
-        body[data-theme="dark"] div[class*="bg-white"],
-        body[data-theme="dark"] .bg-white.dark\:bg-gray-800,
-        body[data-theme="dark"] .dark\:bg-gray-800 {
+        body[data-theme="dark"] div.bg-white:not(#services-grid > div),
+        body[data-theme="dark"] div[class*="bg-white"]:not(#services-grid > div),
+        body[data-theme="dark"] .bg-white.dark\:bg-gray-800:not(#services-grid > div),
+        body[data-theme="dark"] .dark\:bg-gray-800:not(#services-grid > div) {
             background: rgba(17, 24, 39, 0.25) !important;
             backdrop-filter: blur(2px) !important;
             border-color: rgba(74, 222, 128, 0.50) !important;
             box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
+        }
+        
+        /* Service cards từ database - nền mờ đậm hơn để dễ thấy nội dung */
+        #services-grid > div.bg-white,
+        #services-grid > div[class*="bg-white"],
+        #services-grid .bg-white.dark\:bg-gray-800,
+        #services-grid .dark\:bg-gray-800 {
+            background: rgba(255, 255, 255, 0.75) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1.5px solid rgba(34, 197, 94, 0.40) !important;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+        }
+        
+        body[data-theme="dark"] #services-grid > div.bg-white,
+        body[data-theme="dark"] #services-grid > div[class*="bg-white"],
+        body[data-theme="dark"] #services-grid .bg-white.dark\:bg-gray-800,
+        body[data-theme="dark"] #services-grid .dark\:bg-gray-800 {
+            background: rgba(31, 41, 55, 0.75) !important;
+            backdrop-filter: blur(10px) !important;
+            border-color: rgba(74, 222, 128, 0.50) !important;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.20);
         }
         
         /* Article cards - trong suốt với viền */
