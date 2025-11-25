@@ -82,12 +82,14 @@ if (!function_exists('sendOrderNotificationEmail')) {
             $formData['Sản phẩm'] = 'Không có dữ liệu sản phẩm';
         }
 
+        $jsonPayload = json_encode($formData, JSON_UNESCAPED_UNICODE);
+
         $ch = curl_init(ORDER_NOTIFICATION_FORM_SUBMIT);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/x-www-form-urlencoded',
+            'Content-Type: application/json',
             'Accept: application/json'
         ]);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
@@ -97,15 +99,24 @@ if (!function_exists('sendOrderNotificationEmail')) {
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($response === false) {
             error_log('Order email FormSubmit error: ' . curl_error($ch));
+            curl_close($ch);
+            return false;
         }
+
+        error_log(sprintf('Order email FormSubmit response (%s): %s', $httpCode, $response));
         curl_close($ch);
 
         if ($httpCode === 200) {
-            error_log('Order notification sent via FormSubmit successfully');
-            return true;
+            $decoded = json_decode($response, true);
+            if (is_array($decoded) && isset($decoded['success']) && $decoded['success'] === true) {
+                error_log('Order notification sent via FormSubmit successfully');
+                return true;
+            }
+            error_log('Order notification FormSubmit returned non-success payload');
+        } else {
+            error_log('Order notification FormSubmit failed. HTTP status: ' . $httpCode);
         }
 
-        error_log('Order notification FormSubmit failed. HTTP status: ' . $httpCode);
         return false;
     }
 }
