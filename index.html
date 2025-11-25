@@ -587,6 +587,15 @@
             backdrop-filter: blur(10px) !important;
         }
         
+        /* Đảm bảo ảnh trong home-posts-container luôn sắc nét, không bị blur hoặc opacity */
+        .home-posts-container img {
+            filter: none !important;
+            opacity: 1 !important;
+            -webkit-filter: none !important;
+            image-rendering: -webkit-optimize-contrast !important;
+            image-rendering: crisp-edges !important;
+        }
+        
         /* Style cho các phần nội dung text trong Process Section - có viền và nền mờ */
         .process-step-content {
             background: rgba(255, 255, 255, 0.75);

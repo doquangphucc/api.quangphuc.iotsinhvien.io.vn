@@ -109,7 +109,6 @@ function createPostElement(post, index) {
     const imageHTML = `
         <div class="${isImageLeft ? 'order-2 lg:order-1' : 'order-2'} flex items-center justify-center">
             <div class="relative w-full max-w-md lg:max-w-lg">
-                <div class="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent rounded-[32px] blur-2xl"></div>
                 <img src="${escapeHtml(post.image_url)}" alt="${escapeHtml(post.title)}" class="rounded-[32px] shadow-2xl w-full object-cover border border-white/60 dark:border-white/5">
             </div>
         </div>
