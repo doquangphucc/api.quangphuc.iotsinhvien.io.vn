@@ -263,6 +263,42 @@
             box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
         }
         
+        /* Package cards - nền đậm để badge hiển thị rõ */
+        #packages-container > div.bg-white,
+        #packages-container > div[class*="bg-white"],
+        #packages-container div.bg-white,
+        #packages-container div[class*="bg-white"] {
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        body[data-theme="dark"] #packages-container > div.bg-white,
+        body[data-theme="dark"] #packages-container > div[class*="bg-white"],
+        body[data-theme="dark"] #packages-container div.bg-white,
+        body[data-theme="dark"] #packages-container div[class*="bg-white"] {
+            background: #1f2937 !important;
+            backdrop-filter: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* Product cards - nền đậm để hiển thị rõ */
+        #products-container > div.bg-white,
+        #products-container > div[class*="bg-white"],
+        #products-container div.bg-white,
+        #products-container div[class*="bg-white"] {
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+        }
+        
+        body[data-theme="dark"] #products-container > div.bg-white,
+        body[data-theme="dark"] #products-container > div[class*="bg-white"],
+        body[data-theme="dark"] #products-container div.bg-white,
+        body[data-theme="dark"] #products-container div[class*="bg-white"] {
+            background: #1f2937 !important;
+            backdrop-filter: none !important;
+        }
+        
         /* Article cards - trong suốt với viền */
         article[class*="bg-"],
         article.bg-gradient-to-br {
@@ -310,7 +346,7 @@
         
         /* Footer giữ nguyên nền đen */
         footer {
-            background: #000000 !important;
+            background: #1f2937 !important; /* bg-gray-800 */
         }
         
         /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
