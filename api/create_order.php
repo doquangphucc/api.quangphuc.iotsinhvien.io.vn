@@ -273,60 +273,88 @@ try {
     // Commit all DB changes
     $pdo->commit();
 
-    // Prepare and send notification email (non-blocking)
-    try {
-        $emailItems = array_map(static function ($item) {
-            $quantity = (int)($item['quantity'] ?? 1);
-            if ($quantity <= 0) {
-                $quantity = 1;
-            }
-            $price = (float)($item['price'] ?? 0);
-            return [
-                'name'     => $item['name'] ?? 'Sản phẩm',
-                'quantity' => $quantity,
-                'price'    => $price,
-                'subtotal' => $price * $quantity
-            ];
-        }, $verifiedItems);
-
-        $voucherCodesUsed = array_map(static function ($voucher) {
-            return $voucher['code'] ?? '';
-        }, $validatedVouchers);
-
-        $customerPayload = [
-            'fullname' => $orderData['full_name'],
-            'phone'    => $orderData['phone'],
-            'email'    => $orderData['email'],
-            'city'     => $orderData['city'],
-            'district' => $orderData['district'],
-            'ward'     => $orderData['ward'],
-            'address'  => $orderData['address'],
-            'notes'    => $orderData['notes']
-        ];
-
-        sendOrderNotificationEmail([
-            'order_id'   => $orderId,
-            'customer'   => $customerPayload,
-            'items'      => $emailItems,
-            'financials' => [
-                'subtotal'      => $calculatedTotal,
-                'discount'      => $totalDiscount,
-                'total'         => $finalTotal,
-                'voucher_codes' => array_filter($voucherCodesUsed)
-            ],
-            'source' => 'cart'
-        ]);
-    } catch (Throwable $emailException) {
-        error_log('Failed to send order notification email: ' . $emailException->getMessage());
-    }
-
-    // Respond to client
-    sendSuccess([
+    $responseData = [
         'order_id' => $orderId,
         'total_amount' => $finalTotal,
         'discount_amount' => $totalDiscount,
         'vouchers_used' => count($validatedVouchers)
-    ], 'Đặt hàng thành công! Đơn hàng của bạn đang chờ xác nhận.');
+    ];
+    $responseMessage = 'Đặt hàng thành công! Đơn hàng của bạn đang chờ xác nhận.';
+
+    $emailItems = array_map(static function ($item) {
+        $quantity = (int)($item['quantity'] ?? 1);
+        if ($quantity <= 0) {
+            $quantity = 1;
+        }
+        $price = (float)($item['price'] ?? 0);
+        return [
+            'name'     => $item['name'] ?? 'Sản phẩm',
+            'quantity' => $quantity,
+            'price'    => $price,
+            'subtotal' => $price * $quantity
+        ];
+    }, $verifiedItems);
+
+    $voucherCodesUsed = array_map(static function ($voucher) {
+        return $voucher['code'] ?? '';
+    }, $validatedVouchers);
+
+    $customerPayload = [
+        'fullname' => $orderData['full_name'],
+        'phone'    => $orderData['phone'],
+        'email'    => $orderData['email'],
+        'city'     => $orderData['city'],
+        'district' => $orderData['district'],
+        'ward'     => $orderData['ward'],
+        'address'  => $orderData['address'],
+        'notes'    => $orderData['notes']
+    ];
+
+    $sendNotification = function () use (
+        $orderId,
+        $customerPayload,
+        $emailItems,
+        $calculatedTotal,
+        $totalDiscount,
+        $finalTotal,
+        $voucherCodesUsed
+    ) {
+        try {
+            sendOrderNotificationEmail([
+                'order_id'   => $orderId,
+                'customer'   => $customerPayload,
+                'items'      => $emailItems,
+                'financials' => [
+                    'subtotal'      => $calculatedTotal,
+                    'discount'      => $totalDiscount,
+                    'total'         => $finalTotal,
+                    'voucher_codes' => array_filter($voucherCodesUsed)
+                ],
+                'source' => 'cart'
+            ]);
+        } catch (Throwable $emailException) {
+            error_log('Failed to send order notification email: ' . $emailException->getMessage());
+        }
+    };
+
+    if (function_exists('fastcgi_finish_request')) {
+        $payload = [
+            'success' => true,
+            'message' => $responseMessage,
+            'data'    => $responseData
+        ];
+        http_response_code(200);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+        flush();
+        fastcgi_finish_request();
+        $sendNotification();
+        exit;
+    }
+
+    ignore_user_abort(true);
+    $sendNotification();
+    sendSuccess($responseData, $responseMessage);
 
 } catch (Exception $e) {
     // If anything fails, roll back the transaction
