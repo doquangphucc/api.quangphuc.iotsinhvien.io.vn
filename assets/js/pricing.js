@@ -287,12 +287,13 @@ function renderPackages() {
     let html = '<div class="flex flex-nowrap gap-6">';
     
     filteredPackages.forEach(pkg => {
-        const badgeColor = pkg.badge_color || 'blue';
+        const badgeStyle = getBadgeStyle(pkg.badge_color || 'blue');
+        const categoryBadgeStyle = getBadgeStyle(pkg.category_badge_color);
         
         html += `
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[320px] flex-shrink-0">
                 ${pkg.badge_text ? `
-                    <div class="bg-gradient-to-r from-${badgeColor}-600 to-${badgeColor}-700 text-white text-center py-1 font-bold text-[10px] uppercase tracking-wider">
+                    <div class="text-white text-center py-1 font-bold text-[10px] uppercase tracking-wider" style="${badgeStyle.style}">
                         ${pkg.badge_text}
                     </div>
                 ` : ''}
@@ -307,7 +308,7 @@ function renderPackages() {
                             ${pkg.category_name}
                         </span>
                         ${pkg.category_badge_text ? `
-                            <span class="px-1 py-0.5 rounded text-[9px] font-bold ${getCategoryBadgeColorClass(pkg.category_badge_color)}">
+                            <span class="px-1 py-0.5 rounded text-[9px] font-bold ${categoryBadgeStyle.style ? '' : getCategoryBadgeColorClass(pkg.category_badge_color)}" style="${categoryBadgeStyle.style || ''}">
                                 ${pkg.category_badge_text}
                             </span>
                         ` : ''}
@@ -428,8 +429,55 @@ function formatPrice(price) {
     return roundedPrice.toLocaleString('vi-VN') + '₫';
 }
 
-// Helper function to get category badge color classes
+// Helper function to get badge style (supports hex colors and color names)
+function getBadgeStyle(color) {
+    if (!color) return { class: 'bg-gray-600', style: '' };
+    
+    // Check if it's a hex color
+    if (color.startsWith('#')) {
+        // Darken color for gradient end
+        const hex = color.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const darkerR = Math.max(0, Math.floor(r * 0.8));
+        const darkerG = Math.max(0, Math.floor(g * 0.8));
+        const darkerB = Math.max(0, Math.floor(b * 0.8));
+        const darkerHex = `#${darkerR.toString(16).padStart(2, '0')}${darkerG.toString(16).padStart(2, '0')}${darkerB.toString(16).padStart(2, '0')}`;
+        
+        return {
+            class: '',
+            style: `background: linear-gradient(to right, ${color}, ${darkerHex}); color: white;`
+        };
+    }
+    
+    // Handle named colors
+    const colorMap = {
+        'blue': { from: '#2563eb', to: '#1d4ed8' },
+        'green': { from: '#16a34a', to: '#15803d' },
+        'red': { from: '#dc2626', to: '#b91c1c' },
+        'yellow': { from: '#ca8a04', to: '#a16207' },
+        'purple': { from: '#9333ea', to: '#7e22ce' },
+        'orange': { from: '#ea580c', to: '#c2410c' }
+    };
+    
+    const mapped = colorMap[color.toLowerCase()] || colorMap['blue'];
+    return {
+        class: '',
+        style: `background: linear-gradient(to right, ${mapped.from}, ${mapped.to}); color: white;`
+    };
+}
+
+// Helper function to get category badge color classes (for small badges)
 function getCategoryBadgeColorClass(color) {
+    if (!color) return 'bg-gray-600 text-white';
+    
+    // Check if it's a hex color
+    if (color.startsWith('#')) {
+        return 'text-white';
+    }
+    
+    // Handle named colors
     const colors = {
         'blue': 'bg-blue-600 text-white',
         'green': 'bg-green-600 text-white',
@@ -438,7 +486,7 @@ function getCategoryBadgeColorClass(color) {
         'purple': 'bg-purple-600 text-white',
         'orange': 'bg-orange-600 text-white'
     };
-    return colors[color] || 'bg-gray-600 text-white';
+    return colors[color.toLowerCase()] || 'bg-gray-600 text-white';
 }
 
 // Add to cart
