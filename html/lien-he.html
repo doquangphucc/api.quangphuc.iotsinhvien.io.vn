@@ -299,7 +299,7 @@
         
         /* Footer giữ nguyên nền đen */
         footer {
-            background: #000000 !important;
+            background: #1f2937 !important; /* bg-gray-800 - giống index.html */
         }
         
         /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
@@ -426,12 +426,15 @@
                 <img src="../Photo/hero-banner.png" alt="Contact Us" class="w-full h-full object-cover" />
             </div>
             <div class="container mx-auto px-4 relative z-10 text-center">
-                <h1 class="text-5xl sm:text-6xl font-extrabold mb-6">
-                    Liên Hệ Với Chúng Tôi
-                </h1>
-                <p class="text-xl sm:text-2xl max-w-3xl mx-auto text-gray-700 dark:text-gray-300">
-                    Sẵn sàng hỗ trợ bạn 24/7 - Hãy để HC ECO SYSTEM đồng hành cùng bạn
-                </p>
+                <!-- Nền mờ cho phần text để dễ đọc -->
+                <div class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto">
+                    <h1 class="text-5xl sm:text-6xl font-extrabold mb-6 text-gray-800 dark:text-white">
+                        Liên Hệ Với Chúng Tôi
+                    </h1>
+                    <p class="text-xl sm:text-2xl max-w-3xl mx-auto text-gray-700 dark:text-gray-300">
+                        Sẵn sàng hỗ trợ bạn 24/7 - Hãy để HC ECO SYSTEM đồng hành cùng bạn
+                    </p>
+                </div>
             </div>
         </section>
 
