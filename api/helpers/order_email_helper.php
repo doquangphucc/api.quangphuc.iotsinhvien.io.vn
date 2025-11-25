@@ -88,12 +88,17 @@ if (!function_exists('sendOrderNotificationEmail')) {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        $headers = [
             'Content-Type: application/json',
-            'Accept: application/json'
-        ]);
+            'Accept: application/json',
+            'Origin: https://api.quangphuc.iotsinhvien.io.vn',
+            'Referer: https://api.quangphuc.iotsinhvien.io.vn/html/dat-hang.html'
+        ];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -108,11 +113,20 @@ if (!function_exists('sendOrderNotificationEmail')) {
 
         if ($httpCode === 200) {
             $decoded = json_decode($response, true);
-            if (is_array($decoded) && isset($decoded['success']) && $decoded['success'] === true) {
+            if (is_array($decoded) && isset($decoded['success'])) {
+                $successFlag = $decoded['success'];
+                if ($successFlag === true || $successFlag === 'true' || $successFlag === 1 || $successFlag === '1') {
+                    error_log('Order notification sent via FormSubmit successfully');
+                    return true;
+                }
+            }
+
+            if (is_array($decoded) && isset($decoded['message'])) {
+                error_log('Order notification FormSubmit returned non-success payload: ' . $decoded['message']);
+            } else {
                 error_log('Order notification sent via FormSubmit successfully');
                 return true;
             }
-            error_log('Order notification FormSubmit returned non-success payload');
         } else {
             error_log('Order notification FormSubmit failed. HTTP status: ' . $httpCode);
         }
