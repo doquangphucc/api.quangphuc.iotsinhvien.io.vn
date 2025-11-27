@@ -118,7 +118,7 @@ try {
             
             // Fix image URL path
             $imageUrl = $row['image_url'] ?? '';
-            if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
+            if ($imageUrl && strpos($imageUrl, 'http') !== 0) {
                 $imageUrl = '../' . $imageUrl;
             }
             
@@ -190,7 +190,7 @@ try {
 
             // Fix image URL path
             $imageUrl = $row['image_url'] ?? '';
-            if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
+            if ($imageUrl && strpos($imageUrl, 'http') !== 0) {
                 $imageUrl = '../' . $imageUrl;
             }
             
