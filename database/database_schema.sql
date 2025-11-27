@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS orders (
     address VARCHAR(500) NOT NULL COMMENT 'Địa chỉ chi tiết',
     notes TEXT,
     subtotal DECIMAL(15, 2) NOT NULL COMMENT 'Tổng tiền trước giảm giá',
-    voucher_code VARCHAR(50) DEFAULT NULL,
+    voucher_code VARCHAR(500) DEFAULT NULL COMMENT 'Danh sách mã voucher (có thể nhiều mã, cách nhau bởi dấu phẩy)',
     discount_amount DECIMAL(15, 2) DEFAULT 0,
     total_amount DECIMAL(15, 2) NOT NULL COMMENT 'Tổng tiền sau giảm giá',
     order_status ENUM('pending', 'approved', 'processing', 'shipping', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
