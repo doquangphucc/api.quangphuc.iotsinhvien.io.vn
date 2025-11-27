@@ -335,7 +335,7 @@ window.addToCart = async function(productId) {
 }
 
 // Order now function (global scope for onclick handlers)
-window.orderNow = function(productId) {
+window.orderNow = async function(productId) {
     const user = window.authUtils?.getUser();
     if (!user || !user.id) {
         showToast('⚠️ Vui lòng đăng nhập để đặt hàng', 'warning');
@@ -345,8 +345,75 @@ window.orderNow = function(productId) {
         return;
     }
     
-    // Redirect to cart with this product
-    window.location.href = `gio-hang.html?add=${productId}`;
+    // Get product info from currentProduct
+    const product = window.currentProduct;
+    if (!product) {
+        showToast('❌ Không tìm thấy thông tin sản phẩm', 'error');
+        return;
+    }
+    
+    try {
+        // First, add to cart to get a cart_item_id
+        const addResult = await fetch('../api/add_to_cart.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        });
+
+        const addData = await addResult.json();
+        
+        if (!addResult.ok || !addData.success) {
+            throw new Error(addData.message || 'Không thể thêm vào giỏ hàng.');
+        }
+
+        // Get updated cart to fetch the newly added item with cart_item_id
+        const cartResult = await fetch('../api/get_cart.php', {
+            credentials: 'include'
+        });
+
+        const cartData = await cartResult.json();
+        
+        if (!cartResult.ok || !cartData.success || !cartData.data.cart) {
+            throw new Error('Không thể tải giỏ hàng.');
+        }
+
+        // Find the item we just added
+        const cartItem = cartData.data.cart.find(item => String(item.product_id) === String(productId));
+        
+        if (!cartItem) {
+            throw new Error('Không tìm thấy sản phẩm trong giỏ hàng.');
+        }
+
+        // Create checkout item with cart_item_id
+        const checkoutItem = {
+            id: cartItem.id, // This is the cart_item_id
+            cart_item_id: cartItem.id,
+            product_id: cartItem.product_id,
+            name: cartItem.name,
+            price: Number(cartItem.price),
+            quantity: Number(cartItem.quantity),
+            image_url: cartItem.image_url || '',
+            specifications: cartItem.specifications || ''
+        };
+
+        // Save to localStorage for checkout page
+        localStorage.setItem('checkoutItems', JSON.stringify([checkoutItem]));
+
+        // Show notification and redirect
+        showToast(`✅ Đang chuyển đến trang đặt hàng: "${product.title}"`, 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'dat-hang.html';
+        }, 500);
+
+    } catch (error) {
+        console.error('Order now error:', error);
+        showToast('❌ ' + (error.message || 'Không thể đặt hàng'), 'error');
+    }
 }
 
 // Simple toast notification
