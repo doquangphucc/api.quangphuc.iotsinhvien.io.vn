@@ -200,8 +200,8 @@ function renderProducts() {
                 
                 <div class="p-3">
                     <!-- Product Title -->
-                    <a href="product-detail.html?id=${product.id}" class="block">
-                        <h3 class="text-base font-extrabold bg-gradient-to-r from-green-700 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 line-clamp-2 min-h-[40px] leading-tight hover:underline cursor-pointer">
+                    <a href="product-detail.html?id=${product.id}" class="block text-center">
+                        <h3 class="text-base font-extrabold bg-gradient-to-r from-green-700 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 line-clamp-2 min-h-[40px] leading-tight hover:underline cursor-pointer text-center">
                             ${product.title}
                         </h3>
                     </a>
