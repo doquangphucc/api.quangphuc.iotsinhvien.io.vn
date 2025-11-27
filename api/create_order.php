@@ -82,54 +82,73 @@ try {
 
     // If we have direct order items, process them first
     if (!empty($productIds)) {
-        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
-        $productIdList = array_column($productIds, 'product_id');
-        
-        $sql = "SELECT p.id AS product_id, p.title as name, 
-                       COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
-                       p.image_url
-                FROM products p
-                WHERE p.id IN ($placeholders) AND p.is_active = 1";
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($productIdList);
-        $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        $productRowsById = [];
-        foreach ($productRows as $row) {
-            $productRowsById[(int)$row['product_id']] = $row;
-        }
-        
-        foreach ($productIds as $item) {
-            $prodId = $item['product_id'];
-            if (!isset($productRowsById[$prodId])) {
-                sendError('Sản phẩm không tồn tại hoặc đã bị xóa: ID ' . $prodId, 400);
+        try {
+            $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+            $productIdList = array_column($productIds, 'product_id');
+            
+            error_log("Processing direct order items - Product IDs: " . print_r($productIdList, true));
+            
+            $sql = "SELECT p.id AS product_id, p.title as name, 
+                           COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
+                           p.image_url
+                    FROM products p
+                    WHERE p.id IN ($placeholders) AND p.is_active = 1";
+            
+            error_log("Direct order SQL: " . $sql);
+            error_log("Direct order params: " . print_r($productIdList, true));
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($productIdList);
+            $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("Direct order products found: " . count($productRows));
+            
+            $productRowsById = [];
+            foreach ($productRows as $row) {
+                $productRowsById[(int)$row['product_id']] = $row;
             }
             
-            $row = $productRowsById[$prodId];
-            $quantity = $item['quantity'] ?? 1;
-            if ($quantity <= 0) {
-                sendError('Số lượng sản phẩm không hợp lệ.', 400);
+            foreach ($productIds as $item) {
+                $prodId = $item['product_id'];
+                if (!isset($productRowsById[$prodId])) {
+                    error_log("Product not found or inactive: ID " . $prodId);
+                    sendError('Sản phẩm không tồn tại hoặc đã bị xóa: ID ' . $prodId, 400);
+                }
+                
+                $row = $productRowsById[$prodId];
+                $quantity = $item['quantity'] ?? 1;
+                if ($quantity <= 0) {
+                    sendError('Số lượng sản phẩm không hợp lệ.', 400);
+                }
+                
+                // Use price from request if provided, otherwise from database
+                $price = $item['price'] !== null ? (float)$item['price'] : (float)$row['price'];
+                if ($price <= 0) {
+                    error_log("Invalid price for product ID $prodId: " . $price);
+                    sendError('Giá sản phẩm không hợp lệ: ID ' . $prodId, 400);
+                }
+                
+                $calculatedTotal += $price * $quantity;
+                
+                // Fix image URL path
+                $imageUrl = isset($row['image_url']) ? $row['image_url'] : '';
+                if ($imageUrl && strpos($imageUrl, 'http') !== 0) {
+                    $imageUrl = '../' . $imageUrl;
+                }
+                
+                $verifiedItems[] = [
+                    'id'            => (int)$prodId,
+                    'name'          => $row['name'],
+                    'quantity'      => $quantity,
+                    'price'         => $price,
+                    'image_url'     => $imageUrl,
+                    'cart_item_id'  => null // Direct order, no cart_item_id
+                ];
             }
-            
-            // Use price from request if provided, otherwise from database
-            $price = $item['price'] !== null ? (float)$item['price'] : (float)$row['price'];
-            $calculatedTotal += $price * $quantity;
-            
-            // Fix image URL path
-            $imageUrl = $row['image_url'] ?? '';
-            if ($imageUrl && strpos($imageUrl, 'http') !== 0) {
-                $imageUrl = '../' . $imageUrl;
-            }
-            
-            $verifiedItems[] = [
-                'id'            => (int)$prodId,
-                'name'          => $row['name'],
-                'quantity'      => $quantity,
-                'price'         => $price,
-                'image_url'     => $imageUrl,
-                'cart_item_id'  => null // Direct order, no cart_item_id
-            ];
+        } catch (PDOException $e) {
+            error_log("Error processing direct order items: " . $e->getMessage());
+            error_log("SQL State: " . $e->getCode());
+            throw $e; // Re-throw to be caught by outer catch
         }
     }
     
@@ -286,7 +305,15 @@ try {
         'order_status'    => 'pending' // Chờ admin duyệt
     ];
 
-    $orderId = $db->insert('orders', $orderData);
+    error_log("Inserting order with data: " . print_r($orderData, true));
+    try {
+        $orderId = $db->insert('orders', $orderData);
+        error_log("Order inserted successfully with ID: " . $orderId);
+    } catch (Exception $e) {
+        error_log("Error inserting order: " . $e->getMessage());
+        error_log("Order data was: " . print_r($orderData, true));
+        throw $e;
+    }
     
     // Insert validated vouchers into order_vouchers table and mark as used
     if (!empty($validatedVouchers)) {
@@ -323,15 +350,23 @@ try {
     $itemInsertSql = "INSERT INTO order_items (order_id, product_id, product_name, quantity, price, image_url) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $pdo->prepare($itemInsertSql);
 
+    error_log("Inserting " . count($verifiedItems) . " order items");
     foreach ($verifiedItems as $item) {
-        $stmt->execute([
-            $orderId,
-            $item['id'],
-            $item['name'],
-            $item['quantity'],
-            $item['price'],
-            $item['image_url']
-        ]);
+        error_log("Inserting order item: " . print_r($item, true));
+        try {
+            $stmt->execute([
+                $orderId,
+                $item['id'],
+                $item['name'],
+                $item['quantity'],
+                $item['price'],
+                $item['image_url']
+            ]);
+        } catch (PDOException $e) {
+            error_log("Error inserting order item: " . $e->getMessage());
+            error_log("Item data: " . print_r($item, true));
+            throw $e;
+        }
     }
 
     // Remove ordered items from cart (only if items were from cart, not direct orders)
@@ -425,12 +460,24 @@ try {
     $sendNotification();
     sendSuccess($responseData, $responseMessage);
 
+} catch (PDOException $e) {
+    // If anything fails, roll back the transaction
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log("Create Order PDO error: " . $e->getMessage());
+    error_log("SQL State: " . $e->getCode());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    sendError('Lỗi database: ' . $e->getMessage(), 500);
 } catch (Exception $e) {
     // If anything fails, roll back the transaction
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
     error_log("Create Order error: " . $e->getMessage());
-    sendError('Không thể tạo đơn hàng, vui lòng thử lại sau.', 500);
+    error_log("Error type: " . get_class($e));
+    error_log("Stack trace: " . $e->getTraceAsString());
+    error_log("File: " . $e->getFile() . " Line: " . $e->getLine());
+    sendError('Không thể tạo đơn hàng: ' . $e->getMessage(), 500);
 }
 ?>
