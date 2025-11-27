@@ -463,6 +463,7 @@
                                 <th class="px-4 py-3 text-left">Danh mục</th>
                                 <th class="px-4 py-3 text-right">Giá thị trường</th>
                                 <th class="px-4 py-3 text-right" id="category-price-header">Giá danh mục</th>
+                                <th class="px-4 py-3 text-center">Thứ tự</th>
                                 <th class="px-4 py-3 text-center">Trạng thái</th>
                                 <th class="px-4 py-3 text-center">Thao tác</th>
                             </tr>
@@ -1151,6 +1152,14 @@
                         <textarea id="product_technical_description" rows="6" class="w-full px-4 py-2 border rounded-lg"
                             placeholder="Mô tả sản phẩm và thông số kỹ thuật:&#10;&#10;Công suất: 590W&#10;Công nghệ: N-Type Tiger Neo&#10;Hiệu suất: 22.3%&#10;Kích thước: 2278×1134×30mm&#10;Bảo hành: 15 năm..."></textarea>
                         <p class="text-xs text-gray-500 mt-1">Gộp cả mô tả ngắn và thông số kỹ thuật vào đây</p>
+                    </div>
+
+                    <!-- Thứ tự hiển thị -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Thứ tự ưu tiên *</label>
+                        <input type="number" id="product_display_order" min="1" required 
+                            class="w-full px-4 py-2 border rounded-lg" placeholder="1">
+                        <p class="text-xs text-gray-500 mt-1">Số thứ tự hiển thị trên website. Nếu đặt thứ tự X, các sản phẩm có thứ tự >= X sẽ tự động tăng lên +1</p>
                     </div>
 
                     <!-- Trạng thái -->

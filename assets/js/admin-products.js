@@ -27,7 +27,7 @@ function renderProducts(products) {
     if (products.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                <td colspan="9" class="px-4 py-8 text-center text-gray-500">
                     Chưa có sản phẩm nào. Click "Thêm sản phẩm" để tạo mới.
                 </td>
             </tr>
@@ -45,6 +45,7 @@ function renderProducts(products) {
             <td class="px-4 py-3">${p.category_name || '—'}</td>
             <td class="px-4 py-3 text-right">${formatCurrency(p.market_price)}</td>
             <td class="px-4 py-3 text-right">${p.category_price ? formatCurrency(p.category_price) : '—'}</td>
+            <td class="px-4 py-3 text-center font-semibold">${p.display_order || 0}</td>
             <td class="px-4 py-3 text-center">
                 <span class="px-3 py-1 rounded-full text-sm font-medium ${p.is_active == 1 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
                     ${p.is_active == 1 ? 'Hoạt động' : 'Tạm dừng'}
@@ -80,6 +81,7 @@ async function openProductModal(id = null) {
             document.getElementById('product_category_price').value = product.category_price || '';
             document.getElementById('product_image_url').value = product.image_url || '';
             document.getElementById('product_technical_description').value = product.technical_description || '';
+            document.getElementById('product_display_order').value = product.display_order || 1;
             document.getElementById('product_is_active').checked = product.is_active == 1;
             document.getElementById('productModalTitle').textContent = 'Sửa sản phẩm';
             
@@ -89,9 +91,33 @@ async function openProductModal(id = null) {
         }
     } else {
         document.getElementById('productModalTitle').textContent = 'Thêm sản phẩm';
+        // Tính display_order mặc định = max + 1 của danh mục hiện tại
+        await updateDefaultDisplayOrder();
     }
     
     modal.classList.add('show');
+}
+
+// Update default display order when category changes (for new products)
+async function updateDefaultDisplayOrder() {
+    const categoryId = parseInt(document.getElementById('product_category_id').value);
+    const productId = parseInt(document.getElementById('product_id').value);
+    
+    // Chỉ tính display_order mặc định khi thêm mới (productId = 0)
+    if (!categoryId || productId > 0) return;
+    
+    try {
+        // Lấy max display_order của các sản phẩm trong danh mục
+        const productsInCategory = productsData.filter(p => p.category_id == categoryId);
+        const maxOrder = productsInCategory.length > 0 
+            ? Math.max(...productsInCategory.map(p => p.display_order || 0)) 
+            : 0;
+        
+        document.getElementById('product_display_order').value = maxOrder + 1;
+    } catch (error) {
+        console.error('Error calculating default display order:', error);
+        document.getElementById('product_display_order').value = 1;
+    }
 }
 
 function closeProductModal() {
@@ -148,6 +174,9 @@ function updateCategoryPriceLabel() {
     } else {
         label.textContent = 'Giá danh mục (VNĐ)';
     }
+    
+    // Update default display order when category changes (for new products)
+    updateDefaultDisplayOrder();
 }
 
 // Upload product image
@@ -222,6 +251,8 @@ async function saveProduct(event) {
         return;
     }
     
+    const displayOrder = parseInt(document.getElementById('product_display_order').value) || 1;
+    
     const formData = {
         id: document.getElementById('product_id').value || 0,
         category_id: categoryId,
@@ -230,6 +261,7 @@ async function saveProduct(event) {
         category_price: categoryPriceVal ? parseFloat(categoryPriceVal) : null,
         image_url: document.getElementById('product_image_url').value || '',
         technical_description: document.getElementById('product_technical_description').value.trim(),
+        display_order: displayOrder,
         is_active: document.getElementById('product_is_active').checked
     };
 

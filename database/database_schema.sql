@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS products (
     battery_capacity_kwh DECIMAL(10,2) DEFAULT NULL COMMENT 'Dung lượng 1 bộ pin lưu trữ (kWh)',
     cabinet_power_kw DECIMAL(10,2) DEFAULT NULL COMMENT 'Công suất tủ điện (kW)',
     is_active BOOLEAN DEFAULT TRUE COMMENT 'Trạng thái hiển thị',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị sản phẩm',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES product_categories(id) ON DELETE CASCADE
@@ -425,6 +426,7 @@ CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_phone ON users(phone);
 CREATE INDEX idx_products_category_id ON products(category_id);
 CREATE INDEX idx_products_is_active ON products(is_active);
+CREATE INDEX idx_products_display_order ON products(display_order);
 CREATE INDEX idx_surveys_user_id ON solar_surveys(user_id);
 CREATE INDEX idx_surveys_created_at ON solar_surveys(created_at);
 CREATE INDEX idx_survey_results_survey_id ON survey_results(survey_id);

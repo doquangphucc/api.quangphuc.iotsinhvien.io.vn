@@ -31,6 +31,7 @@ $category_price = !empty($data['category_price']) ? floatval($data['category_pri
 $technical_description = $data['technical_description'] ?? '';
 $image_url = $data['image_url'] ?? '';
 $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
+$display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
 
 // Validation
 if (empty($title)) {
@@ -48,28 +49,89 @@ if ($market_price <= 0) {
     exit;
 }
 
-if ($id > 0) {
-    // Update existing product
-    $stmt = $conn->prepare("UPDATE products SET category_id = ?, title = ?, market_price = ?, category_price = ?, technical_description = ?, image_url = ?, is_active = ? WHERE id = ?");
-    $stmt->bind_param("isddssii", $category_id, $title, $market_price, $category_price, $technical_description, $image_url, $is_active, $id);
-} else {
-    // Insert new product
-    $stmt = $conn->prepare("INSERT INTO products (category_id, title, market_price, category_price, technical_description, image_url, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("issdssi", $category_id, $title, $market_price, $category_price, $technical_description, $image_url, $is_active);
+// Validate display_order
+if ($display_order < 1) {
+    // Nếu không có display_order, lấy số thứ tự tiếp theo
+    $maxOrderStmt = $conn->prepare("SELECT COALESCE(MAX(display_order), 0) + 1 as next_order FROM products WHERE category_id = ?");
+    $maxOrderStmt->bind_param("i", $category_id);
+    $maxOrderStmt->execute();
+    $maxOrderResult = $maxOrderStmt->get_result();
+    $maxOrderRow = $maxOrderResult->fetch_assoc();
+    $display_order = intval($maxOrderRow['next_order']);
+    $maxOrderStmt->close();
 }
 
-if ($stmt->execute()) {
+// Bắt đầu transaction
+$conn->begin_transaction();
+
+try {
+    $old_display_order = null;
+    
+    if ($id > 0) {
+        // Lấy display_order cũ của sản phẩm đang sửa
+        $oldOrderStmt = $conn->prepare("SELECT display_order FROM products WHERE id = ?");
+        $oldOrderStmt->bind_param("i", $id);
+        $oldOrderStmt->execute();
+        $oldOrderResult = $oldOrderStmt->get_result();
+        if ($oldOrderRow = $oldOrderResult->fetch_assoc()) {
+            $old_display_order = intval($oldOrderRow['display_order']);
+        }
+        $oldOrderStmt->close();
+        
+        // Xử lý logic tự động tăng/giảm thứ tự
+        if ($old_display_order !== null) {
+            if ($display_order < $old_display_order) {
+                // Di chuyển lên trên: tăng display_order của các sản phẩm từ display_order đến old_display_order-1
+                $shiftStmt = $conn->prepare("UPDATE products SET display_order = display_order + 1 WHERE category_id = ? AND display_order >= ? AND display_order < ? AND id != ?");
+                $shiftStmt->bind_param("iiii", $category_id, $display_order, $old_display_order, $id);
+                $shiftStmt->execute();
+                $shiftStmt->close();
+            } elseif ($display_order > $old_display_order) {
+                // Di chuyển xuống dưới: giảm display_order của các sản phẩm từ old_display_order+1 đến display_order
+                $shiftStmt = $conn->prepare("UPDATE products SET display_order = display_order - 1 WHERE category_id = ? AND display_order > ? AND display_order <= ? AND id != ?");
+                $shiftStmt->bind_param("iiii", $category_id, $old_display_order, $display_order, $id);
+                $shiftStmt->execute();
+                $shiftStmt->close();
+            }
+        }
+        
+        // Update existing product
+        $stmt = $conn->prepare("UPDATE products SET category_id = ?, title = ?, market_price = ?, category_price = ?, technical_description = ?, image_url = ?, is_active = ?, display_order = ? WHERE id = ?");
+        $stmt->bind_param("isddssiii", $category_id, $title, $market_price, $category_price, $technical_description, $image_url, $is_active, $display_order, $id);
+    } else {
+        // Thêm mới: tăng display_order của tất cả sản phẩm có display_order >= display_order
+        $shiftStmt = $conn->prepare("UPDATE products SET display_order = display_order + 1 WHERE category_id = ? AND display_order >= ?");
+        $shiftStmt->bind_param("ii", $category_id, $display_order);
+        $shiftStmt->execute();
+        $shiftStmt->close();
+        
+        // Insert new product
+        $stmt = $conn->prepare("INSERT INTO products (category_id, title, market_price, category_price, technical_description, image_url, is_active, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issdssii", $category_id, $title, $market_price, $category_price, $technical_description, $image_url, $is_active, $display_order);
+    }
+
+    if (!$stmt->execute()) {
+        throw new Exception('Lỗi khi lưu sản phẩm: ' . $conn->error);
+    }
+    
     $product_id = $id > 0 ? $id : $conn->insert_id;
+    $stmt->close();
+    
+    // Commit transaction
+    $conn->commit();
+    
     echo json_encode([
         'success' => true,
         'message' => 'Lưu sản phẩm thành công',
         'product_id' => $product_id
     ]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $conn->error]);
+    
+} catch (Exception $e) {
+    // Rollback transaction nếu có lỗi
+    $conn->rollback();
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 
-$stmt->close();
 $conn->close();
 ?>
 

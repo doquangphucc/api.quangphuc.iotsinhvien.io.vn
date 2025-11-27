@@ -25,7 +25,7 @@ if ($category_id > 0) {
     $sql .= " WHERE p.category_id = " . $category_id;
 }
 
-$sql .= " ORDER BY p.category_id ASC, p.id ASC";
+$sql .= " ORDER BY p.category_id ASC, p.display_order ASC, p.id ASC";
 
 $result = $conn->query($sql);
 

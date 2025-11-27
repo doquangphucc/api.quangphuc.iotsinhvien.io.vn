@@ -26,7 +26,7 @@ try {
         $sql .= " AND p.category_id = ?";
     }
     
-    $sql .= " ORDER BY pc.display_order, p.id";
+    $sql .= " ORDER BY pc.display_order, p.display_order ASC, p.id ASC";
     
     $stmt = $conn->prepare($sql);
     
