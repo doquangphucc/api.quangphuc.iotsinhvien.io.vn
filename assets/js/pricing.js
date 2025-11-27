@@ -238,6 +238,40 @@ function renderProducts() {
                         ` : ''}
                     </div>
                     
+                    <!-- Quantity Selector for Direct Order -->
+                    <div class="mb-1">
+                        <label class="block text-[9px] font-semibold text-gray-600 dark:text-gray-400 mb-0.5">
+                            Số lượng (đặt hàng ngay):
+                        </label>
+                        <div class="flex items-center gap-1">
+                            <button 
+                                onclick="updateOrderQuantityInput('order-quantity-${product.id}', -1)"
+                                class="w-6 h-6 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors text-[10px] font-bold"
+                            >
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                </svg>
+                            </button>
+                            
+                            <input 
+                                type="number" 
+                                id="order-quantity-${product.id}" 
+                                value="1" 
+                                min="1" 
+                                class="w-12 text-center border border-gray-300 dark:border-gray-600 rounded py-0.5 px-1 font-bold text-[10px] focus:outline-none focus:border-green-500 dark:bg-gray-800 dark:text-white"
+                            />
+                            
+                            <button 
+                                onclick="updateOrderQuantityInput('order-quantity-${product.id}', 1)"
+                                class="w-6 h-6 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors text-[10px] font-bold"
+                            >
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
                     <!-- Action Buttons -->
                     <div class="flex gap-1">
                         <!-- Add to Cart Button -->
@@ -540,6 +574,21 @@ async function addToCart(productId) {
 }
 
 // Order now - Go directly to order page with this product
+// Update quantity input helper function
+window.updateOrderQuantityInput = function(inputId, change) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    let currentValue = parseInt(input.value) || 1;
+    currentValue += change;
+    
+    if (currentValue < 1) {
+        currentValue = 1;
+    }
+    
+    input.value = currentValue;
+}
+
 async function orderNow(productId) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) {
@@ -557,35 +606,30 @@ async function orderNow(productId) {
         return;
     }
     
-    // First, add product to cart to get cart_id
-    try {
-        const response = await fetch('../api/add_to_cart.php', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                product_id: productId,
-                quantity: 1
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.data && data.data.cart_id) {
-            // Store cart_id in sessionStorage instead of product data
-            sessionStorage.setItem('checkoutCartIds', JSON.stringify([data.data.cart_id]));
-            
-            // Redirect to order page
-            window.location.href = 'dat-hang.html';
-        } else {
-            showToast('❌ ' + (data.message || 'Không thể thêm vào giỏ hàng'), 'error');
-        }
-    } catch (error) {
-        console.error('Error adding to cart:', error);
-        showToast('❌ Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
-    }
+    // Get quantity from input if exists, otherwise default to 1
+    const quantityInput = document.getElementById(`order-quantity-${productId}`);
+    const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+    
+    // Prepare direct order item (not from cart)
+    const directOrderItem = {
+        product_id: productId,
+        id: productId, // For compatibility
+        title: product.title,
+        name: product.title,
+        price: product.category_price || product.market_price,
+        image_url: product.image_url || '../assets/img/logo.jpg',
+        quantity: quantity,
+        isDirectOrder: true // Flag to distinguish from cart items
+    };
+    
+    // Save to sessionStorage - separate from cart
+    sessionStorage.setItem('directOrderItems', JSON.stringify([directOrderItem]));
+    
+    // Clear any cart checkout IDs to ensure we use direct order
+    sessionStorage.removeItem('checkoutCartIds');
+    
+    // Redirect to order page
+    window.location.href = 'dat-hang.html';
 }
 
 // Contact for package

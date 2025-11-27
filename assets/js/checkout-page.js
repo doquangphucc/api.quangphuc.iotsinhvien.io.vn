@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     loadCities();
 });
 
-// Load order items (from cart or survey package)
+// Load order items (from direct order, cart, or survey package)
 async function loadOrderItems() {
-    // Check if coming from survey page first
+    // Priority 1: Check if coming from survey page first
     const surveyPackage = localStorage.getItem('surveyPackage');
     if (surveyPackage) {
         try {
@@ -26,7 +26,20 @@ async function loadOrderItems() {
         }
     }
     
-    // Load from cart (database)
+    // Priority 2: Load direct order items (from "Đặt hàng ngay" button - not from cart)
+    const directOrderItems = sessionStorage.getItem('directOrderItems');
+    if (directOrderItems) {
+        try {
+            const items = JSON.parse(directOrderItems);
+            loadDirectOrderItems(items);
+            sessionStorage.removeItem('directOrderItems'); // Clean up
+            return;
+        } catch (e) {
+            console.error('Error loading direct order items:', e);
+        }
+    }
+    
+    // Priority 3: Load from cart (database) - when user clicks checkout from cart page
     const checkoutCartIds = sessionStorage.getItem('checkoutCartIds');
     if (checkoutCartIds) {
         try {
@@ -42,6 +55,44 @@ async function loadOrderItems() {
     // If no items, show empty state
     if (orderItems.length === 0) {
         window.orderItems = orderItems; // Update global reference
+        showEmptyOrder();
+    }
+}
+
+// Load direct order items (not from cart)
+function loadDirectOrderItems(items) {
+    try {
+        console.log('Loading direct order items:', items);
+        
+        orderItems = items.map(item => {
+            // Process image_url
+            let imageUrl = item.image_url;
+            if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined') {
+                imageUrl = '../assets/img/logo.jpg';
+            }
+            
+            return {
+                id: item.product_id || item.id,
+                product_id: item.product_id || item.id,
+                title: item.title || item.name,
+                name: item.title || item.name,
+                price: parseFloat(item.price),
+                image_url: imageUrl,
+                quantity: parseInt(item.quantity) || 1,
+                isDirectOrder: true, // Flag to indicate this is not from cart
+                cart_id: null // No cart_id for direct orders
+            };
+        });
+        
+        console.log('Processed direct orderItems:', orderItems);
+        
+        window.orderItems = orderItems;
+        renderOrderItems();
+        
+    } catch (error) {
+        console.error('Error loading direct order items:', error);
+        orderItems = [];
+        window.orderItems = orderItems;
         showEmptyOrder();
     }
 }
@@ -201,6 +252,40 @@ function renderOrderItems() {
             ? `<span class="text-orange-600 dark:text-orange-400 text-xs italic">Tính theo khoảng cách</span>`
             : `<span class="font-bold text-green-600">${formatPrice(item.price * item.quantity)}</span>`;
         
+        // Check if this is a direct order (can change quantity) or from cart
+        const canChangeQuantity = item.isDirectOrder === true;
+        
+        const quantityControls = canChangeQuantity ? `
+            <div class="flex items-center gap-2 mt-2">
+                <button 
+                    onclick="updateOrderQuantity(${item.product_id || item.id}, ${(item.quantity || 1) - 1})"
+                    class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors"
+                    ${item.quantity <= 1 ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                    </svg>
+                </button>
+                
+                <span class="w-10 text-center font-bold text-gray-800 dark:text-white">
+                    ${item.quantity || 1}
+                </span>
+                
+                <button 
+                    onclick="updateOrderQuantity(${item.product_id || item.id}, ${(item.quantity || 1) + 1})"
+                    class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </button>
+            </div>
+        ` : `
+            <span class="text-gray-600 dark:text-gray-400 text-sm mt-2 block">
+                SL: ${item.quantity || 1}
+            </span>
+        `;
+        
         return `
             <div class="flex gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                 <div class="w-16 h-16 flex-shrink-0">
@@ -210,11 +295,13 @@ function renderOrderItems() {
                     <h4 class="font-semibold text-gray-800 dark:text-white text-sm mb-1">
                         ${item.title}
                     </h4>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600 dark:text-gray-400 text-sm">
-                            SL: ${item.quantity}
-                        </span>
-                        ${priceHtml}
+                    <div class="flex justify-between items-start">
+                        <div>
+                            ${quantityControls}
+                        </div>
+                        <div class="text-right">
+                            ${priceHtml}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -222,6 +309,20 @@ function renderOrderItems() {
     }).join('');
     
     updateOrderSummary();
+}
+
+// Update quantity for direct order items
+window.updateOrderQuantity = function(productId, newQuantity) {
+    if (newQuantity < 1) {
+        return; // Don't allow quantity less than 1
+    }
+    
+    const item = orderItems.find(i => (i.product_id || i.id) === productId);
+    if (item && item.isDirectOrder) {
+        item.quantity = newQuantity;
+        window.orderItems = orderItems; // Update global reference
+        renderOrderItems();
+    }
 }
 
 // Update order summary (subtotal, total)

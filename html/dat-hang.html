@@ -930,8 +930,9 @@
                     notes: document.getElementById('notes').value
                 };
 
-                // Check if this is a survey package order (contains virtual items)
-                const hasVirtualItems = cart.some(item => item.isVirtual || !item.cart_id);
+                // Check order type: survey package, direct order, or cart order
+                const hasVirtualItems = cart.some(item => item.isVirtual || (!item.cart_id && !item.isDirectOrder));
+                const hasDirectOrderItems = cart.some(item => item.isDirectOrder === true);
                 
                 let orderData, apiEndpoint;
                 
@@ -948,11 +949,6 @@
                         isVirtual: item.isVirtual || false
                     }));
                     
-                    // Debug: Log items
-                    console.log('Cart items:', cart);
-                    console.log('Mapped items:', items);
-                    console.log('First item structure:', items[0]);
-                    
                     orderData = {
                         customer: customerData,
                         items: items,
@@ -960,6 +956,24 @@
                     };
                     
                     apiEndpoint = '../api/create_order_from_survey.php';
+                    
+                } else if (hasDirectOrderItems) {
+                    // Direct order (from "Đặt hàng ngay" button) - send items with product_id only
+                    console.log('Detected direct order (not from cart)');
+                    
+                    const items = cart.map(item => ({
+                        product_id: item.product_id || item.id,
+                        quantity: item.quantity,
+                        price: item.price
+                    }));
+                    
+                    orderData = {
+                        customer: customerData,
+                        items: items,
+                        voucher_codes: selectedVouchers.map(v => v.code)
+                    };
+                    
+                    apiEndpoint = '../api/create_order.php';
                     
                 } else {
                     // Regular cart order - use cart_item_id
@@ -996,9 +1010,13 @@
                     console.log('API Response:', result);
 
                     if (result.success) {
-                        // Clear cart
-                        if (window.ShoppingCart) {
-                            window.ShoppingCart.clearCart();
+                        // Only clear cart if order was from cart (not direct order)
+                        // Cart items will be deleted by the API when order is from cart
+                        if (hasDirectOrderItems === false && hasVirtualItems === false) {
+                            // Regular cart order - refresh cart count
+                            if (window.fetchCartCount) {
+                                window.fetchCartCount();
+                            }
                         }
                         // Show success modal
                         document.getElementById('success-modal').classList.remove('hidden');

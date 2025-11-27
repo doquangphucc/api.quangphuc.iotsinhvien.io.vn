@@ -47,99 +47,166 @@ try {
     $db  = Database::getInstance();
     $pdo = $db->getConnection();
 
-    // --- Verify cart items against database ---
+    // --- Verify items against database ---
     $verifiedItems = [];
     $calculatedTotal = 0;
     $cartItemIds = [];
+    $productIds = []; // For direct orders (not from cart)
 
     foreach ($itemsRaw as $cartItem) {
         // Support multiple field names: cart_item_id, cart_id, or id
         $cartId = $cartItem['cart_item_id'] ?? ($cartItem['cart_id'] ?? ($cartItem['id'] ?? null));
         $cartId = filter_var($cartId, FILTER_VALIDATE_INT);
+        
+        // Check if this is a direct order (has product_id but no cart_item_id)
+        $productId = $cartItem['product_id'] ?? null;
+        $productId = filter_var($productId, FILTER_VALIDATE_INT);
+        
         if ($cartId && $cartId > 0) {
+            // Item from cart
             $cartItemIds[] = (int)$cartId;
+        } elseif ($productId && $productId > 0) {
+            // Direct order item (not from cart)
+            $productIds[] = [
+                'product_id' => (int)$productId,
+                'quantity' => isset($cartItem['quantity']) ? (int)$cartItem['quantity'] : 1,
+                'price' => isset($cartItem['price']) ? (float)$cartItem['price'] : null
+            ];
         }
     }
     
     error_log("Extracted cart item IDs: " . print_r($cartItemIds, true));
+    error_log("Extracted product IDs (direct order): " . print_r($productIds, true));
 
     $cartItemIds = array_values(array_unique($cartItemIds));
 
-    if (empty($cartItemIds)) {
-        sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
-    }
-
-    $placeholders = implode(',', array_fill(0, count($cartItemIds), '?'));
-    $sql = "SELECT c.id AS cart_item_id, c.user_id, c.product_id, c.quantity, p.title as name, 
-                   COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
-                   p.image_url
-            FROM cart_items c
-            JOIN products p ON c.product_id = p.id
-            WHERE c.user_id = ? AND c.id IN ($placeholders)";
-    error_log("SQL: " . $sql);
-    error_log("Params: userId=" . (int)$userId . ", cartItemIds=" . print_r($cartItemIds, true));
-    $stmt = $pdo->prepare($sql);
-    $params = array_merge([(int)$userId], $cartItemIds);
-    $stmt->execute($params);
-
-    $cartRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    error_log("Found cart rows: " . count($cartRows));
-    
-    // Debug: Log all cart items in database for this user
-    $debugSql = "SELECT id, user_id, product_id, quantity FROM cart_items WHERE user_id = ?";
-    $debugStmt = $pdo->prepare($debugSql);
-    $debugStmt->execute([(int)$userId]);
-    $allCartItems = $debugStmt->fetchAll(PDO::FETCH_ASSOC);
-    error_log("All cart items for user " . (int)$userId . ": " . print_r($allCartItems, true));
-    
-    // Debug: Log all cart items in database (all users) to check if cart_item_id exists
-    $debugSql2 = "SELECT id, user_id, product_id, quantity FROM cart_items ORDER BY id DESC LIMIT 10";
-    $debugStmt2 = $pdo->prepare($debugSql2);
-    $debugStmt2->execute();
-    $allCartItemsAll = $debugStmt2->fetchAll(PDO::FETCH_ASSOC);
-    error_log("Last 10 cart items (all users): " . print_r($allCartItemsAll, true));
-
-    if (empty($cartRows)) {
-        sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
-    }
-
-    $cartRowsById = [];
-    foreach ($cartRows as $row) {
-        $cartRowsById[(int)$row['cart_item_id']] = $row;
-    }
-
-    foreach ($cartItemIds as $cartId) {
-        if (!isset($cartRowsById[$cartId])) {
-            sendError('Một số sản phẩm không còn trong giỏ hàng. Vui lòng tải lại giỏ hàng.', 400);
-        }
-
-        $row = $cartRowsById[$cartId];
-        $quantity = (int)$row['quantity'];
-        if ($quantity <= 0) {
-            sendError('Số lượng sản phẩm không hợp lệ, vui lòng kiểm tra lại giỏ hàng.', 400);
-        }
-
-        $price = (float)$row['price'];
-        $calculatedTotal += $price * $quantity;
-
-        // Fix image URL path
-        $imageUrl = $row['image_url'] ?? '';
-        if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
-            $imageUrl = '../' . $imageUrl;
+    // If we have direct order items, process them first
+    if (!empty($productIds)) {
+        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+        $productIdList = array_column($productIds, 'product_id');
+        
+        $sql = "SELECT p.id AS product_id, p.title as name, 
+                       COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
+                       p.image_url
+                FROM products p
+                WHERE p.id IN ($placeholders) AND p.is_active = 1";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($productIdList);
+        $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $productRowsById = [];
+        foreach ($productRows as $row) {
+            $productRowsById[(int)$row['product_id']] = $row;
         }
         
-        $verifiedItems[] = [
-            'id'            => (int)$row['product_id'],
-            'name'          => $row['name'],
-            'quantity'      => $quantity,
-            'price'         => $price,
-            'image_url'     => $imageUrl,
-            'cart_item_id'  => $cartId
-        ];
+        foreach ($productIds as $item) {
+            $prodId = $item['product_id'];
+            if (!isset($productRowsById[$prodId])) {
+                sendError('Sản phẩm không tồn tại hoặc đã bị xóa: ID ' . $prodId, 400);
+            }
+            
+            $row = $productRowsById[$prodId];
+            $quantity = $item['quantity'] ?? 1;
+            if ($quantity <= 0) {
+                sendError('Số lượng sản phẩm không hợp lệ.', 400);
+            }
+            
+            // Use price from request if provided, otherwise from database
+            $price = $item['price'] !== null ? (float)$item['price'] : (float)$row['price'];
+            $calculatedTotal += $price * $quantity;
+            
+            // Fix image URL path
+            $imageUrl = $row['image_url'] ?? '';
+            if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
+                $imageUrl = '../' . $imageUrl;
+            }
+            
+            $verifiedItems[] = [
+                'id'            => (int)$prodId,
+                'name'          => $row['name'],
+                'quantity'      => $quantity,
+                'price'         => $price,
+                'image_url'     => $imageUrl,
+                'cart_item_id'  => null // Direct order, no cart_item_id
+            ];
+        }
+    }
+    
+    // Process cart items if any
+    if (!empty($cartItemIds)) {
+        $placeholders = implode(',', array_fill(0, count($cartItemIds), '?'));
+        $sql = "SELECT c.id AS cart_item_id, c.user_id, c.product_id, c.quantity, p.title as name, 
+                       COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
+                       p.image_url
+                FROM cart_items c
+                JOIN products p ON c.product_id = p.id
+                WHERE c.user_id = ? AND c.id IN ($placeholders)";
+        error_log("SQL: " . $sql);
+        error_log("Params: userId=" . (int)$userId . ", cartItemIds=" . print_r($cartItemIds, true));
+        $stmt = $pdo->prepare($sql);
+        $params = array_merge([(int)$userId], $cartItemIds);
+        $stmt->execute($params);
+
+        $cartRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        error_log("Found cart rows: " . count($cartRows));
+        
+        // Debug: Log all cart items in database for this user
+        $debugSql = "SELECT id, user_id, product_id, quantity FROM cart_items WHERE user_id = ?";
+        $debugStmt = $pdo->prepare($debugSql);
+        $debugStmt->execute([(int)$userId]);
+        $allCartItems = $debugStmt->fetchAll(PDO::FETCH_ASSOC);
+        error_log("All cart items for user " . (int)$userId . ": " . print_r($allCartItems, true));
+        
+        // Debug: Log all cart items in database (all users) to check if cart_item_id exists
+        $debugSql2 = "SELECT id, user_id, product_id, quantity FROM cart_items ORDER BY id DESC LIMIT 10";
+        $debugStmt2 = $pdo->prepare($debugSql2);
+        $debugStmt2->execute();
+        $allCartItemsAll = $debugStmt2->fetchAll(PDO::FETCH_ASSOC);
+        error_log("Last 10 cart items (all users): " . print_r($allCartItemsAll, true));
+
+        if (empty($cartRows)) {
+            sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
+        }
+
+        $cartRowsById = [];
+        foreach ($cartRows as $row) {
+            $cartRowsById[(int)$row['cart_item_id']] = $row;
+        }
+
+        foreach ($cartItemIds as $cartId) {
+            if (!isset($cartRowsById[$cartId])) {
+                sendError('Một số sản phẩm không còn trong giỏ hàng. Vui lòng tải lại giỏ hàng.', 400);
+            }
+
+            $row = $cartRowsById[$cartId];
+            $quantity = (int)$row['quantity'];
+            if ($quantity <= 0) {
+                sendError('Số lượng sản phẩm không hợp lệ, vui lòng kiểm tra lại giỏ hàng.', 400);
+            }
+
+            $price = (float)$row['price'];
+            $calculatedTotal += $price * $quantity;
+
+            // Fix image URL path
+            $imageUrl = $row['image_url'] ?? '';
+            if ($imageUrl && !str_starts_with($imageUrl, 'http')) {
+                $imageUrl = '../' . $imageUrl;
+            }
+            
+            $verifiedItems[] = [
+                'id'            => (int)$row['product_id'],
+                'name'          => $row['name'],
+                'quantity'      => $quantity,
+                'price'         => $price,
+                'image_url'     => $imageUrl,
+                'cart_item_id'  => $cartId
+            ];
+        }
     }
 
     if (empty($verifiedItems)) {
-        sendError('Giỏ hàng không hợp lệ.');
+        sendError('Không có sản phẩm hợp lệ để đặt hàng.');
     }
 
     // --- Check and apply multiple vouchers if provided ---
@@ -267,12 +334,14 @@ try {
         ]);
     }
 
-    // Remove ordered items from cart
-    $deletePlaceholders = implode(',', array_fill(0, count($cartItemIds), '?'));
-    $deleteSql = "DELETE FROM cart_items WHERE user_id = ? AND id IN ($deletePlaceholders)";
-    $deleteStmt = $pdo->prepare($deleteSql);
-    $deleteParams = array_merge([(int)$userId], $cartItemIds);
-    $deleteStmt->execute($deleteParams);
+    // Remove ordered items from cart (only if items were from cart, not direct orders)
+    if (!empty($cartItemIds)) {
+        $deletePlaceholders = implode(',', array_fill(0, count($cartItemIds), '?'));
+        $deleteSql = "DELETE FROM cart_items WHERE user_id = ? AND id IN ($deletePlaceholders)";
+        $deleteStmt = $pdo->prepare($deleteSql);
+        $deleteParams = array_merge([(int)$userId], $cartItemIds);
+        $deleteStmt->execute($deleteParams);
+    }
 
     // Commit all DB changes
     $pdo->commit();
