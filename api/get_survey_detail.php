@@ -77,6 +77,7 @@ try {
                 r.dc_cable_cost,
                 r.accessories_cost,
                 r.labor_cost,
+                r.transport_cost,
                 r.total_cost_without_battery,
                 r.total_cost,
                 p_panel.image_url as panel_image_url,
@@ -285,6 +286,7 @@ try {
             'dcCableCost' => isset($survey['dc_cable_cost']) && $survey['dc_cable_cost'] !== null ? (int)$survey['dc_cable_cost'] : null,
             'accessoriesCost' => isset($survey['accessories_cost']) && $survey['accessories_cost'] !== null ? (int)$survey['accessories_cost'] : null,
             'laborCost' => isset($survey['labor_cost']) && $survey['labor_cost'] !== null ? (int)$survey['labor_cost'] : null,
+            'transportCost' => isset($survey['transport_cost']) && $survey['transport_cost'] !== null ? (int)$survey['transport_cost'] : 0,
             'totalCostWithoutBattery' => isset($survey['total_cost_without_battery']) && $survey['total_cost_without_battery'] !== null ? (int)$survey['total_cost_without_battery'] : null,
             'totalCost' => isset($survey['total_cost']) && $survey['total_cost'] !== null ? (int)$survey['total_cost'] : null,
             'billBreakdown' => []

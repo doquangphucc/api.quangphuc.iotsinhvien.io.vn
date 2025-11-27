@@ -1257,9 +1257,9 @@
                     unit: 'Chuyến',
                     qty: 1,
                     image: null,
-                    unitPrice: 0,
-                    totalPrice: 0,
-                    note: 'Tùy điều kiện'
+                    unitPrice: Number(r?.transportCost ?? 0),
+                    totalPrice: Number(r?.transportCost ?? 0),
+                    note: (r?.transportCost && r.transportCost > 0) ? null : 'Tùy điều kiện'
                 }
             ];
             
