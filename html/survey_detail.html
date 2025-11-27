@@ -1360,6 +1360,28 @@
                     
                     unitPriceDisplay = `<input type="number" id="edit_${itemKey}_unitPrice" value="${item.unitPrice}" class="w-24 px-2 py-1 border rounded text-right text-sm" onchange="updateRowTotal('${itemKey}')">`;
                     totalPriceDisplay = `<span id="edit_${itemKey}_totalPrice" class="font-semibold">${item.totalPrice > 0 ? item.totalPrice.toLocaleString('vi-VN') : '-'}</span>`;
+                } else if (isEditMode && item.name === 'Chi phí vận chuyển thiết bị') {
+                    // Edit mode: Chi phí vận chuyển - chỉ sửa đơn giá
+                    nameDisplay = item.name;
+                    brandDisplay = item.brand;
+                    warrantyDisplay = item.warranty;
+                    qtyDisplay = item.qty;
+                    
+                    // Image
+                    const isEmoji = item.image && item.image.length <= 3 && !item.image.includes('/');
+                    if (isEmoji && item.image) {
+                        imageHtml = `<div class="w-10 h-10 mx-auto flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-2xl">${item.image}</div>`;
+                    } else if (item.image) {
+                        const imgSrc = item.image.startsWith('/') ? '..' + item.image : (item.image.startsWith('../') ? item.image : '../' + item.image);
+                        imageHtml = `<img src="${imgSrc}" alt="${item.name}" class="w-10 h-10 object-contain mx-auto rounded" onerror="this.src='../assets/img/logo.jpg'">`;
+                    } else {
+                        imageHtml = '<div class="w-10 h-10 mx-auto flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-[10px] text-gray-400">No Image</div>';
+                    }
+                    
+                    // Cho phép sửa đơn giá
+                    const transportUnitPrice = item.unitPrice || 0;
+                    unitPriceDisplay = `<input type="number" id="edit_${itemKey}_unitPrice" value="${transportUnitPrice}" min="0" class="w-24 px-2 py-1 border rounded text-right text-sm" onchange="updateRowTotal('${itemKey}')">`;
+                    totalPriceDisplay = `<span id="edit_${itemKey}_totalPrice" class="font-semibold">${item.totalPrice > 0 ? item.totalPrice.toLocaleString('vi-VN') : '-'}</span>`;
                 } else if (isEditMode && !isMainProduct && item.name !== 'Chi phí vận chuyển thiết bị') {
                     // Edit mode: accessory items - chỉ sửa warranty, qty, unitPrice, brand
                     nameDisplay = item.name;
@@ -2228,6 +2250,12 @@
                 const laborInput = document.getElementById('edit_chi_phí_công_thợ_lắp_đặt_trọn_gói_unitPrice');
                 if (laborInput) {
                     updateData.results.laborCost = parseFloat(laborInput.value) || 0;
+                }
+                
+                // Get transport cost
+                const transportInput = document.getElementById('edit_chi_phí_vận_chuyển_thiết_bị_unitPrice');
+                if (transportInput) {
+                    updateData.results.transportCost = parseFloat(transportInput.value) || 0;
                 }
                 
                 // Calculate total cost from table (get from totalAmount element)
