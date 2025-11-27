@@ -377,8 +377,32 @@
         }
         
         /* Đảm bảo các phần trống hiển thị nền động */
-        body > *:not(header):not(footer):not(.copyright-bar) {
+        body > *:not(header):not(footer):not(.copyright-bar):not(.notification-toast) {
             background: transparent !important;
+        }
+        
+        /* Notification toast - đảm bảo có nền đậm, không bị trong suốt */
+        .notification-toast,
+        div[class*="bg-green-500"],
+        div[class*="bg-red-500"],
+        div[class*="bg-blue-500"] {
+            background: #3b82f6 !important; /* bg-blue-500 */
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            opacity: 1 !important;
+        }
+        
+        div.fixed.top-4.right-4.z-50.bg-green-500 {
+            background: #22c55e !important; /* green-500 */
+        }
+        
+        div.fixed.top-4.right-4.z-50.bg-red-500 {
+            background: #ef4444 !important; /* red-500 */
+        }
+        
+        div.fixed.top-4.right-4.z-50.bg-blue-500 {
+            background: #3b82f6 !important; /* blue-500 */
         }
 
         .copyright-bar {
@@ -1577,11 +1601,19 @@
         function showNotification(message, type = 'info') {
             // Create notification element
             const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+            notification.className = `notification-toast fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
                 type === 'success' ? 'bg-green-500 text-white' :
                 type === 'error' ? 'bg-red-500 text-white' :
                 'bg-blue-500 text-white'
             }`;
+            notification.style.cssText = `
+                background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'} !important;
+                color: white !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                opacity: 1 !important;
+                border: none !important;
+            `;
             notification.textContent = message;
 
             // Add to page
