@@ -2325,9 +2325,54 @@
                 if (isDynamic) {
                     const depTarget = (acc.depTarget || 'project');
                     
-                    // PHỤ KIỆN: Tất cả phụ kiện active từ Admin đều được hiển thị
-                    // Không cần kiểm tra dependent_product_ids để filter - chỉ dùng để tính số lượng (nếu có)
-                    // API đã filter theo is_active = 1 rồi
+                    // KIỂM TRA DEPENDENCIES: Nếu có dependent_product_ids, chỉ hiển thị khi sản phẩm được chọn nằm trong danh sách
+                    // dependent_product_ids chứa product_id (từ bảng products), không phải config_id
+                    if (acc.dependentProductIds && Array.isArray(acc.dependentProductIds) && acc.dependentProductIds.length > 0) {
+                        let shouldInclude = false;
+                        
+                        // Helper function: Chuyển đổi về số để so sánh chính xác
+                        const normalizeId = (id) => {
+                            if (id === null || id === undefined) return null;
+                            return parseInt(id);
+                        };
+                        
+                        // Chuyển đổi tất cả dependentProductIds về số để so sánh
+                        const normalizedDependentIds = acc.dependentProductIds.map(id => normalizeId(id));
+                        
+                        if (depTarget === 'inverter') {
+                            // Kiểm tra inverter được chọn - selectedInverter.id là product_id
+                            const inverterProductId = normalizeId(selectedInverter?.id || selectedInverter?.product_id);
+                            shouldInclude = inverterProductId !== null && normalizedDependentIds.includes(inverterProductId);
+                        } else if (depTarget === 'panel') {
+                            // Kiểm tra tấm pin được chọn - solarPanelProductId là product_id
+                            const panelProductId = normalizeId(solarPanelProductId);
+                            shouldInclude = panelProductId !== null && normalizedDependentIds.includes(panelProductId);
+                        } else if (depTarget === 'battery') {
+                            // Kiểm tra pin lưu trữ được chọn - batteryProductId là product_id
+                            const batProductId = normalizeId(batteryProductId);
+                            shouldInclude = batProductId !== null && normalizedDependentIds.includes(batProductId);
+                        } else if (depTarget === 'cabinet') {
+                            // Kiểm tra tủ điện được chọn - selectedCabinet.id có thể là product_id hoặc config_id
+                            const cabinetProductId = normalizeId(selectedCabinet?.product_id || selectedCabinet?.id);
+                            shouldInclude = cabinetProductId !== null && normalizedDependentIds.includes(cabinetProductId);
+                        } else {
+                            // depTarget không khớp - kiểm tra tất cả các sản phẩm có thể
+                            const inverterProductId = normalizeId(selectedInverter?.id || selectedInverter?.product_id);
+                            const panelProductId = normalizeId(solarPanelProductId);
+                            const batProductId = normalizeId(batteryProductId);
+                            const cabinetProductId = normalizeId(selectedCabinet?.product_id || selectedCabinet?.id);
+                            
+                            shouldInclude = (inverterProductId !== null && normalizedDependentIds.includes(inverterProductId)) ||
+                                          (panelProductId !== null && normalizedDependentIds.includes(panelProductId)) ||
+                                          (batProductId !== null && normalizedDependentIds.includes(batProductId)) ||
+                                          (cabinetProductId !== null && normalizedDependentIds.includes(cabinetProductId));
+                        }
+                        
+                        // Nếu không khớp, bỏ qua phụ kiện này (sẽ return null và filter sau)
+                        if (!shouldInclude) {
+                            return null;
+                        }
+                    }
                     
                     // TÍNH SỐ LƯỢNG với logic hệ số phụ thuộc
                     let targetCount = 1;
@@ -2394,7 +2439,7 @@
                     quantity: quantity,
                     totalPrice: quantity * acc.price
                 };
-            }); // Không filter - tất cả phụ kiện active đều hiển thị
+            }).filter(acc => acc !== null); // Lọc bỏ các phụ kiện không khớp với dependencies
 
             // Đảm bảo luôn có Công thợ và Vận chuyển nếu chưa có trong danh sách dynamic
             const names = calculatedAccessories.map(a => a.name);
