@@ -1624,6 +1624,17 @@
                                 <option value="night">Ban đêm nhiều (pin = 3/5 điện tạo ra)</option>
                             </select>
                         </div>
+                        
+                        <!-- Chọn Biến Tần -->
+                        <div class="form-group">
+                            <label>Chọn Biến Tần *</label>
+                            <select name="inverter" id="inverterSelect" required>
+                                <option value="">-- Vui lòng chọn Loại Điện trước --</option>
+                            </select>
+                            <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+                                💡 Vui lòng chọn Loại Điện (1 Pha hoặc 3 Pha) trước để hiển thị danh sách biến tần phù hợp
+                            </small>
+                        </div>
         </div>
                 </div>
                 
@@ -2119,49 +2130,77 @@
             // Tính diện tích mái cần thiết (mỗi tấm pin ~2.8m²)
             const roofArea = (panelCount * 2.8).toFixed(1);
             
-            // Chọn inverter phù hợp theo pha đã chọn
-            // Logic: Nếu chọn 1 pha → lấy inverter 1 pha HOẶC both, nếu chọn 3 pha → lấy inverter 3 pha HOẶC both
+            // Chọn inverter - ưu tiên inverter user chọn, nếu không có thì tự động chọn
             let selectedInverter;
-            let availableInverters = [];
+            let userSelectedInverter = false; // Flag to track if user manually selected
             
-            if (formData.phase === '1') {
-                // Lấy cả inverter 1 pha và both
-                availableInverters = [
-                    ...(invertersByPhase['1'] || []),
-                    ...(invertersByPhase['both'] || [])
-                ];
-            } else if (formData.phase === '3') {
-                // Lấy cả inverter 3 pha và both
-                availableInverters = [
-                    ...(invertersByPhase['3'] || []),
-                    ...(invertersByPhase['both'] || [])
-                ];
-            }
+            // Kiểm tra xem user có chọn inverter không
+            const inverterSelect = document.getElementById('inverterSelect');
+            const selectedInverterOption = inverterSelect?.options[inverterSelect.selectedIndex];
+            const userSelectedInverterId = selectedInverterOption?.value;
             
-            if (availableInverters.length > 0) {
-                // Chuẩn hóa công suất và sắp xếp tăng dần để luôn chọn inverter NHỎ NHẤT thỏa điều kiện
-                availableInverters = availableInverters.map(inv => {
-                    let p = Number(inv.power || 0);
-                    if (!p) {
-                        const m = (inv.name || '').match(/(\d+)\s*K/i);
-                        if (m) p = parseInt(m[1], 10) * 1000;
-                    }
-                    return { ...inv, power: p };
-                }).sort((a, b) => (a.power || 0) - (b.power || 0));
-                // Tìm inverter phù hợp theo quy tắc 1.5x: inverter có thể kéo tối đa ~1.5 × công suất DC
-                // Điều kiện chọn: inv.power * 1.5 >= systemSizeWatt
-                selectedInverter = availableInverters.find(inv => (inv.power * 1.5) >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
-                // Nếu không parse được công suất (0W), cố gắng suy ra từ tên; nếu vẫn 0 thì gán = systemSizeWatt
-                if (!selectedInverter.power || selectedInverter.power === 0) {
-                    const pMatch = (selectedInverter.name || '').match(/(\d+)\s*K/i);
-                    if (pMatch) selectedInverter.power = parseInt(pMatch[1], 10) * 1000;
-                    if (!selectedInverter.power || selectedInverter.power === 0) selectedInverter.power = systemSizeWatt;
-                }
-                // Debug: Log inverter ID
-                console.log('Selected Inverter:', selectedInverter.name, 'ID:', selectedInverter.id);
+            if (userSelectedInverterId && selectedInverterOption && selectedInverterOption.value !== '') {
+                // User đã chọn inverter - sử dụng inverter đó
+                const inverterId = parseInt(selectedInverterOption.getAttribute('data-inverter-id')) || 0;
+                const inverterName = selectedInverterOption.getAttribute('data-inverter-name') || '';
+                const inverterPower = parseInt(selectedInverterOption.getAttribute('data-inverter-power')) || 0;
+                const inverterPrice = parseFloat(selectedInverterOption.getAttribute('data-inverter-price')) || 0;
+                const inverterImage = selectedInverterOption.getAttribute('data-inverter-image') || '';
+                const inverterPhase = selectedInverterOption.getAttribute('data-inverter-phase') || formData.phase;
+                const inverterWarranty = selectedInverterOption.getAttribute('data-inverter-warranty') || '12 tháng';
+                
+                selectedInverter = {
+                    id: inverterId,
+                    name: inverterName,
+                    power: inverterPower,
+                    price: inverterPrice,
+                    warranty: inverterWarranty,
+                    image: inverterImage,
+                    phase: inverterPhase
+                };
+                
+                userSelectedInverter = true; // Mark as user selected
+                console.log('✅ Sử dụng biến tần user chọn:', selectedInverter.name, 'ID:', selectedInverter.id);
             } else {
-                // Fallback nếu không có inverter phù hợp
-                selectedInverter = { id: 0, name: "Không có biến tần phù hợp", power: 0, price: 0, warranty: "N/A", image: "", phase: formData.phase };
+                // User chưa chọn - tự động chọn theo logic cũ
+                let availableInverters = [];
+                
+                if (formData.phase === '1') {
+                    availableInverters = [
+                        ...(invertersByPhase['1'] || []),
+                        ...(invertersByPhase['both'] || [])
+                    ];
+                } else if (formData.phase === '3') {
+                    availableInverters = [
+                        ...(invertersByPhase['3'] || []),
+                        ...(invertersByPhase['both'] || [])
+                    ];
+                }
+                
+                if (availableInverters.length > 0) {
+                    // Chuẩn hóa công suất và sắp xếp tăng dần để luôn chọn inverter NHỎ NHẤT thỏa điều kiện
+                    availableInverters = availableInverters.map(inv => {
+                        let p = Number(inv.power || 0);
+                        if (!p) {
+                            const m = (inv.name || '').match(/(\d+)\s*K/i);
+                            if (m) p = parseInt(m[1], 10) * 1000;
+                        }
+                        return { ...inv, power: p };
+                    }).sort((a, b) => (a.power || 0) - (b.power || 0));
+                    // Tìm inverter phù hợp theo quy tắc 1.5x: inverter có thể kéo tối đa ~1.5 × công suất DC
+                    // Điều kiện chọn: inv.power * 1.5 >= systemSizeWatt
+                    selectedInverter = availableInverters.find(inv => (inv.power * 1.5) >= systemSizeWatt) || availableInverters[availableInverters.length - 1];
+                    // Nếu không parse được công suất (0W), cố gắng suy ra từ tên; nếu vẫn 0 thì gán = systemSizeWatt
+                    if (!selectedInverter.power || selectedInverter.power === 0) {
+                        const pMatch = (selectedInverter.name || '').match(/(\d+)\s*K/i);
+                        if (pMatch) selectedInverter.power = parseInt(pMatch[1], 10) * 1000;
+                        if (!selectedInverter.power || selectedInverter.power === 0) selectedInverter.power = systemSizeWatt;
+                    }
+                    console.log('✅ Tự động chọn biến tần:', selectedInverter.name, 'ID:', selectedInverter.id);
+                } else {
+                    // Fallback nếu không có inverter phù hợp
+                    selectedInverter = { id: 0, name: "Không có biến tần phù hợp", power: 0, price: 0, warranty: "N/A", image: "", phase: formData.phase };
+                }
             }
             
             // Tính sản lượng điện thực tế
@@ -2422,7 +2461,8 @@
                 solarPanelName: selectedOption.textContent.split(' - ')[0],
                 region: formData.region,
                 phase: formData.phase,
-                usageTime: formData.usageTime
+                usageTime: formData.usageTime,
+                userSelectedInverter: userSelectedInverter // Flag indicating if inverter was manually selected
             };
         }
 
@@ -2437,6 +2477,18 @@
             if (!data.fullname || !data.phone || !data.email || !data.region || !data.phase || 
                 !data.solarPanel || !data.monthlyBill || !data.usageTime) {
                 alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+            
+            // Validate inverter selection
+            const inverterSelect = document.getElementById('inverterSelect');
+            const selectedInverter = inverterSelect?.value;
+            if (!selectedInverter || selectedInverter === '') {
+                alert('Vui lòng chọn biến tần!');
+                if (inverterSelect) {
+                    inverterSelect.focus();
+                    inverterSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 return;
             }
             
@@ -2739,9 +2791,9 @@
                                             </div>
                                             
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(33,150,243,0.1); border-radius: 6px; border-left: 3px solid #2196f3;">
-                                                <small style="color: #4a5568; font-weight: 600;">🎯 Tại sao chọn biến tần này:</small><br>
+                                                <small style="color: #4a5568; font-weight: 600;">${result.userSelectedInverter ? '✅ Biến tần bạn đã chọn:' : '🎯 Biến tần được chọn tự động:'}</small><br>
                                                 <small style="color: #718096;">• Hệ thống cần: ${result.systemSizeKw}kWp</small><br>
-                                                <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (kéo tối đa ≈ ${(result.selectedInverter.power*1.5/1000).toFixed(1)}kWp ≥ ${result.systemSizeKw}kWp)</small><br>
+                                                <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (kéo tối đa ≈ ${(result.selectedInverter.power*1.5/1000).toFixed(1)}kWp ${result.selectedInverter.power*1.5/1000 >= result.systemSizeKw ? '≥' : '<'} ${result.systemSizeKw}kWp)</small><br>
                                                 <small style="color: #718096;">• Phù hợp với loại điện ${result.selectedInverter.phase === '1' ? '1 pha' : result.selectedInverter.phase === '3' ? '3 pha' : 'cả 2 pha'} đã chọn</small>
                                             </div>
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
@@ -3089,13 +3141,88 @@
             }
         }
 
+        // Load inverters when phase is selected
+        function loadInvertersByPhase(phase) {
+            const inverterSelect = document.getElementById('inverterSelect');
+            if (!inverterSelect) return;
+            
+            // Clear existing options
+            inverterSelect.innerHTML = '<option value="">-- Đang tải dữ liệu... --</option>';
+            
+            // Check if invertersByPhase has been populated yet
+            if (!invertersByPhase || (!invertersByPhase['1'] && !invertersByPhase['3'] && !invertersByPhase['both'])) {
+                inverterSelect.innerHTML = '<option value="">-- Vui lòng đợi dữ liệu tải xong --</option>';
+                // Retry after a short delay
+                setTimeout(() => loadInvertersByPhase(phase), 500);
+                return;
+            }
+            
+            // Get available inverters based on phase
+            let availableInverters = [];
+            if (phase === '1') {
+                availableInverters = [
+                    ...(invertersByPhase['1'] || []),
+                    ...(invertersByPhase['both'] || [])
+                ];
+            } else if (phase === '3') {
+                availableInverters = [
+                    ...(invertersByPhase['3'] || []),
+                    ...(invertersByPhase['both'] || [])
+                ];
+            }
+            
+            // Populate dropdown
+            if (availableInverters.length > 0) {
+                inverterSelect.innerHTML = '<option value="">-- Chọn biến tần --</option>';
+                availableInverters.forEach(inv => {
+                    const option = document.createElement('option');
+                    option.value = inv.id || inv.name; // Use ID if available, otherwise name
+                    // Format display text with power and price
+                    const powerText = inv.power ? `${(inv.power / 1000).toFixed(1)}kW` : '';
+                    option.textContent = `${inv.name}${powerText ? ` (${powerText})` : ''} - ${(inv.price || 0).toLocaleString()}đ`;
+                    option.setAttribute('data-inverter-id', inv.id || 0);
+                    option.setAttribute('data-inverter-name', inv.name || '');
+                    option.setAttribute('data-inverter-power', inv.power || 0);
+                    option.setAttribute('data-inverter-price', inv.price || 0);
+                    option.setAttribute('data-inverter-image', inv.image || '');
+                    option.setAttribute('data-inverter-phase', inv.phase || phase);
+                    option.setAttribute('data-inverter-warranty', inv.warranty || '12 tháng');
+                    inverterSelect.appendChild(option);
+                });
+                console.log('✅ Đã load', availableInverters.length, 'biến tần cho pha', phase);
+            } else {
+                inverterSelect.innerHTML = '<option value="">-- Không có biến tần phù hợp --</option>';
+            }
+        }
+        
+        // Add event listeners for phase radio buttons
+        function setupPhaseChangeListener() {
+            const phaseRadios = document.querySelectorAll('input[name="phase"]');
+            phaseRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const selectedPhase = this.value;
+                    console.log('Phase changed to:', selectedPhase);
+                    loadInvertersByPhase(selectedPhase);
+                });
+            });
+        }
+        
         // Enhanced page animations and effects
         document.addEventListener('DOMContentLoaded', function() {
             // Load electricity prices from API
             loadElectricityPricesData();
             
             // Load survey products from API
-            loadSurveyProducts();
+            loadSurveyProducts().then(() => {
+                // After products are loaded, setup phase change listener
+                setupPhaseChangeListener();
+                
+                // If a phase is already selected (e.g., from auto-fill), load inverters for it
+                const selectedPhase = document.querySelector('input[name="phase"]:checked')?.value;
+                if (selectedPhase) {
+                    loadInvertersByPhase(selectedPhase);
+                }
+            });
             // Load sun hours from Admin
             loadSurveyRegionsPublic();
             
@@ -3214,13 +3341,16 @@
                 
                 if (data.success && data.products) {
                     populateSurveyForm(data.products);
+                    return Promise.resolve();
                 } else {
                     console.error('Failed to load survey products:', data.message);
                     // Keep using hardcoded data as fallback
+                    return Promise.resolve();
                 }
             } catch (error) {
                 console.error('Error loading survey products:', error);
                 // Keep using hardcoded data as fallback
+                return Promise.resolve();
             }
         }
 
