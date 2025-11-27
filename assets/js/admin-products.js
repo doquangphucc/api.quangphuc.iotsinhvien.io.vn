@@ -81,7 +81,7 @@ async function openProductModal(id = null) {
             document.getElementById('product_category_price').value = product.category_price || '';
             document.getElementById('product_image_url').value = product.image_url || '';
             document.getElementById('product_technical_description').value = product.technical_description || '';
-            document.getElementById('product_display_order').value = product.display_order || 1;
+            document.getElementById('product_display_order').value = product.display_order !== undefined && product.display_order !== null ? product.display_order : 1;
             document.getElementById('product_is_active').checked = product.is_active == 1;
             document.getElementById('productModalTitle').textContent = 'Sửa sản phẩm';
             
@@ -251,7 +251,21 @@ async function saveProduct(event) {
         return;
     }
     
-    const displayOrder = parseInt(document.getElementById('product_display_order').value) || 1;
+    const productId = parseInt(document.getElementById('product_id').value) || 0;
+    const displayOrderInput = document.getElementById('product_display_order').value.trim();
+    let displayOrder = 0;
+    
+    if (displayOrderInput) {
+        displayOrder = parseInt(displayOrderInput);
+        if (isNaN(displayOrder) || displayOrder < 1) {
+            displayOrder = 0; // Giá trị không hợp lệ
+        }
+    }
+    
+    // Nếu là thêm mới và không có giá trị, tính mặc định
+    if (productId === 0 && displayOrder === 0) {
+        displayOrder = 1;
+    }
     
     const formData = {
         id: document.getElementById('product_id').value || 0,

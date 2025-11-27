@@ -31,7 +31,8 @@ $category_price = !empty($data['category_price']) ? floatval($data['category_pri
 $technical_description = $data['technical_description'] ?? '';
 $image_url = $data['image_url'] ?? '';
 $is_active = isset($data['is_active']) ? ($data['is_active'] ? 1 : 0) : 1;
-$display_order = isset($data['display_order']) ? intval($data['display_order']) : 0;
+// Lấy display_order từ request - nếu không có hoặc = 0, sẽ được xử lý sau
+$display_order_input = isset($data['display_order']) ? intval($data['display_order']) : 0;
 
 // Validation
 if (empty($title)) {
@@ -49,16 +50,39 @@ if ($market_price <= 0) {
     exit;
 }
 
-// Validate display_order
-if ($display_order < 1) {
-    // Nếu không có display_order, lấy số thứ tự tiếp theo
-    $maxOrderStmt = $conn->prepare("SELECT COALESCE(MAX(display_order), 0) + 1 as next_order FROM products WHERE category_id = ?");
-    $maxOrderStmt->bind_param("i", $category_id);
-    $maxOrderStmt->execute();
-    $maxOrderResult = $maxOrderStmt->get_result();
-    $maxOrderRow = $maxOrderResult->fetch_assoc();
-    $display_order = intval($maxOrderRow['next_order']);
-    $maxOrderStmt->close();
+// Xử lý display_order
+$display_order = 0;
+if ($display_order_input > 0) {
+    // Người dùng đã nhập giá trị hợp lệ, dùng giá trị đó
+    $display_order = $display_order_input;
+} else {
+    // Không có giá trị hợp lệ từ người dùng
+    if ($id > 0) {
+        // Khi sửa: giữ nguyên giá trị cũ nếu có
+        $oldOrderStmt = $conn->prepare("SELECT display_order FROM products WHERE id = ?");
+        $oldOrderStmt->bind_param("i", $id);
+        $oldOrderStmt->execute();
+        $oldOrderResult = $oldOrderStmt->get_result();
+        if ($oldOrderRow = $oldOrderResult->fetch_assoc()) {
+            $oldOrderValue = intval($oldOrderRow['display_order'] ?? 0);
+            $display_order = $oldOrderValue > 0 ? $oldOrderValue : 0;
+        }
+        $oldOrderStmt->close();
+    }
+    
+    // Nếu vẫn không có giá trị hợp lệ (thêm mới hoặc giá trị cũ = 0), tính mới
+    if ($display_order < 1) {
+        $maxOrderStmt = $conn->prepare("SELECT COALESCE(MAX(display_order), 0) + 1 as next_order FROM products WHERE category_id = ?");
+        $maxOrderStmt->bind_param("i", $category_id);
+        $maxOrderStmt->execute();
+        $maxOrderResult = $maxOrderStmt->get_result();
+        if ($maxOrderRow = $maxOrderResult->fetch_assoc()) {
+            $display_order = intval($maxOrderRow['next_order']);
+        } else {
+            $display_order = 1;
+        }
+        $maxOrderStmt->close();
+    }
 }
 
 // Bắt đầu transaction
