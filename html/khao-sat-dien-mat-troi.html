@@ -2325,64 +2325,9 @@
                 if (isDynamic) {
                     const depTarget = (acc.depTarget || 'project');
                     
-                    // KIỂM TRA DEPENDENCIES: Nếu có dependent_product_ids, chỉ thêm khi sản phẩm được chọn nằm trong danh sách
-                    // dependent_product_ids chứa product_id (từ bảng products), không phải config_id
-                    if (acc.dependentProductIds && Array.isArray(acc.dependentProductIds) && acc.dependentProductIds.length > 0) {
-                        let shouldInclude = false;
-                        
-                        // Helper function: Chuyển đổi về số để so sánh chính xác
-                        const normalizeId = (id) => {
-                            if (id === null || id === undefined) return null;
-                            return parseInt(id);
-                        };
-                        
-                        // Chuyển đổi tất cả dependentProductIds về số để so sánh
-                        const normalizedDependentIds = acc.dependentProductIds.map(id => normalizeId(id));
-                        
-                        if (depTarget === 'inverter') {
-                            // Kiểm tra inverter được chọn - selectedInverter.id là product_id
-                            const inverterProductId = normalizeId(selectedInverter?.id || selectedInverter?.product_id);
-                            shouldInclude = inverterProductId !== null && normalizedDependentIds.includes(inverterProductId);
-                            console.log(`[Accessory "${acc.name}"] Checking inverter dependency: inverterId=${inverterProductId}, dependentIds=${normalizedDependentIds.join(',')}, shouldInclude=${shouldInclude}`);
-                        } else if (depTarget === 'panel') {
-                            // Kiểm tra tấm pin được chọn - solarPanelProductId là product_id
-                            const panelProductId = normalizeId(solarPanelProductId);
-                            shouldInclude = panelProductId !== null && normalizedDependentIds.includes(panelProductId);
-                            console.log(`[Accessory "${acc.name}"] Checking panel dependency: panelId=${panelProductId}, dependentIds=${normalizedDependentIds.join(',')}, shouldInclude=${shouldInclude}`);
-                        } else if (depTarget === 'battery') {
-                            // Kiểm tra pin lưu trữ được chọn - batteryProductId là product_id
-                            const batProductId = normalizeId(batteryProductId);
-                            shouldInclude = batProductId !== null && normalizedDependentIds.includes(batProductId);
-                            console.log(`[Accessory "${acc.name}"] Checking battery dependency: batteryId=${batProductId}, dependentIds=${normalizedDependentIds.join(',')}, shouldInclude=${shouldInclude}`);
-                        } else if (depTarget === 'cabinet') {
-                            // Kiểm tra tủ điện được chọn - selectedCabinet.id có thể là product_id hoặc config_id
-                            // Cần kiểm tra cả 2 trường hợp
-                            const cabinetProductId = normalizeId(selectedCabinet?.product_id || selectedCabinet?.id);
-                            shouldInclude = cabinetProductId !== null && normalizedDependentIds.includes(cabinetProductId);
-                            console.log(`[Accessory "${acc.name}"] Checking cabinet dependency: cabinetId=${cabinetProductId}, dependentIds=${normalizedDependentIds.join(',')}, shouldInclude=${shouldInclude}`);
-                        } else {
-                            // depTarget không khớp hoặc không xác định - kiểm tra tất cả các sản phẩm có thể
-                            // Nếu có dependentProductIds nhưng depTarget không khớp, kiểm tra xem có bất kỳ sản phẩm nào khớp không
-                            const inverterProductId = normalizeId(selectedInverter?.id || selectedInverter?.product_id);
-                            const panelProductId = normalizeId(solarPanelProductId);
-                            const batProductId = normalizeId(batteryProductId);
-                            const cabinetProductId = normalizeId(selectedCabinet?.product_id || selectedCabinet?.id);
-                            
-                            // Kiểm tra tất cả các sản phẩm có thể
-                            shouldInclude = (inverterProductId !== null && normalizedDependentIds.includes(inverterProductId)) ||
-                                          (panelProductId !== null && normalizedDependentIds.includes(panelProductId)) ||
-                                          (batProductId !== null && normalizedDependentIds.includes(batProductId)) ||
-                                          (cabinetProductId !== null && normalizedDependentIds.includes(cabinetProductId));
-                            console.log(`[Accessory "${acc.name}"] Checking all dependencies (depTarget="${depTarget}"): inverterId=${inverterProductId}, panelId=${panelProductId}, batteryId=${batProductId}, cabinetId=${cabinetProductId}, dependentIds=${normalizedDependentIds.join(',')}, shouldInclude=${shouldInclude}`);
-                        }
-                        
-                        // Nếu không khớp, bỏ qua phụ kiện này (sẽ return null và filter sau)
-                        if (!shouldInclude) {
-                            console.log(`[Accessory "${acc.name}"] Excluded due to dependency mismatch`);
-                            return null;
-                        }
-                        console.log(`[Accessory "${acc.name}"] Included - dependency matched`);
-                    }
+                    // PHỤ KIỆN: Tất cả phụ kiện active từ Admin đều được hiển thị
+                    // Không cần kiểm tra dependent_product_ids để filter - chỉ dùng để tính số lượng (nếu có)
+                    // API đã filter theo is_active = 1 rồi
                     
                     // TÍNH SỐ LƯỢNG với logic hệ số phụ thuộc
                     let targetCount = 1;
@@ -2449,7 +2394,7 @@
                     quantity: quantity,
                     totalPrice: quantity * acc.price
                 };
-            }).filter(acc => acc !== null); // Lọc bỏ các phụ kiện không khớp với dependencies
+            }); // Không filter - tất cả phụ kiện active đều hiển thị
 
             // Đảm bảo luôn có Công thợ và Vận chuyển nếu chưa có trong danh sách dynamic
             const names = calculatedAccessories.map(a => a.name);
