@@ -135,7 +135,9 @@ try {
     }
 
     if (!$stmt->execute()) {
-        throw new Exception('Lỗi khi lưu sản phẩm: ' . $conn->error);
+        $error_msg = 'Lỗi khi lưu sản phẩm: ' . $conn->error;
+        error_log("Save product error: " . $error_msg);
+        throw new Exception($error_msg);
     }
     
     $product_id = $id > 0 ? $id : $conn->insert_id;
@@ -144,16 +146,23 @@ try {
     // Commit transaction
     $conn->commit();
     
+    error_log("Product saved successfully: ID={$product_id}, display_order={$display_order}");
+    
     echo json_encode([
         'success' => true,
         'message' => 'Lưu sản phẩm thành công',
-        'product_id' => $product_id
-    ]);
+        'product_id' => $product_id,
+        'display_order' => $display_order // Trả về để frontend biết giá trị đã lưu
+    ], JSON_UNESCAPED_UNICODE);
     
 } catch (Exception $e) {
     // Rollback transaction nếu có lỗi
     $conn->rollback();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    error_log("Save product transaction failed: " . $e->getMessage());
+    echo json_encode([
+        'success' => false, 
+        'message' => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
 }
 
 $conn->close();
