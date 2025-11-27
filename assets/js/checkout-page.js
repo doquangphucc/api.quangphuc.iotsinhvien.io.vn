@@ -124,7 +124,7 @@ function loadSurveyPackage(packageData) {
                 title: item.title,
                 price: parseFloat(item.price),
                 image_url: imageUrl,
-                quantity: item.quantity,
+                quantity: parseInt(item.quantity) || 1, // Ensure quantity is a number
                 isVirtual: item.isVirtual || false
             };
         });

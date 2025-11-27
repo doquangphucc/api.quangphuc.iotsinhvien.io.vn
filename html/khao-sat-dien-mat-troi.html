@@ -4377,10 +4377,10 @@
                         },
                         // Inverter
                         {
-                            id: 'inverter_' + Date.now(),
+                            id: result.selectedInverter?.id || ('inverter_' + Date.now()),
                             title: result.selectedInverter.name,
                             price: result.selectedInverter.price,
-                            quantity: 1,
+                            quantity: result.inverterQuantity || 1,
                             image_url: result.selectedInverter.image,
                             isVirtual: true
                         },
@@ -4398,7 +4398,7 @@
                             id: result.batteryProductId,
                             title: result.selectedBattery.name,
                             price: result.selectedBattery.price,
-                            quantity: 1,
+                            quantity: result.selectedBattery.units || 1,
                             image_url: result.selectedBattery.image
                         }
                     ],
@@ -4429,6 +4429,9 @@
                 // Save to localStorage
                 localStorage.setItem('surveyPackage', JSON.stringify(surveyPackage));
                 console.log('Survey package saved to localStorage:', surveyPackage);
+                console.log('Inverter quantity:', result.inverterQuantity, 'Price:', result.selectedInverter.price, 'Total:', result.inverterTotalPrice);
+                console.log('Battery units:', result.selectedBattery.units, 'Price:', result.selectedBattery.price, 'Total:', result.selectedBattery.totalPrice);
+                console.log('Panel count:', result.panelCount);
 
                 showNotification('✅ Đã chuẩn bị gói khảo sát!', 'success');
                 
