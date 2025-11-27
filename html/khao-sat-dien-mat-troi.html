@@ -2203,6 +2203,24 @@
                 }
             }
             
+            // Tính số lượng biến tần cần thiết dựa trên công suất hệ thống
+            // Mỗi biến tần có thể kéo tối đa ~1.5 × công suất DC của nó
+            let inverterQuantity = 1;
+            let inverterTotalPrice = selectedInverter.price;
+            
+            if (selectedInverter.power && selectedInverter.power > 0) {
+                // Công suất tối đa mà 1 biến tần có thể kéo: power * 1.5
+                const maxPowerPerInverter = selectedInverter.power * 1.5;
+                // Số lượng biến tần cần thiết = làm tròn lên (công suất hệ thống / công suất tối đa mỗi biến tần)
+                inverterQuantity = Math.ceil(systemSizeWatt / maxPowerPerInverter);
+                // Đảm bảo ít nhất 1 bộ
+                if (inverterQuantity < 1) inverterQuantity = 1;
+                // Tính tổng giá biến tần = số lượng × đơn giá
+                inverterTotalPrice = inverterQuantity * selectedInverter.price;
+                
+                console.log(`Tính số lượng biến tần: Hệ thống ${systemSizeKw}kWp (${systemSizeWatt}W), Biến tần ${selectedInverter.power}W (kéo tối đa ${maxPowerPerInverter}W), Cần ${inverterQuantity} bộ`);
+            }
+            
             // Tính sản lượng điện thực tế
             const actualDailyKwh = (panelCount * solarPanelWatt * peakSunHours) / 1000;
             const actualMonthlyKwh = actualDailyKwh * 30;
@@ -2418,7 +2436,8 @@
             
             // Tổng cộng (đã bao gồm tất cả 12 thành phần)
             // Tổng giá = Thiết bị (tấm pin + inverter + tủ điện + pin lưu trữ) + Phụ kiện
-            const deviceTotal = panelTotalPrice + selectedInverter.price + (selectedCabinet?.price || 0) + selectedBattery.totalPrice;
+            // inverterQuantity và inverterTotalPrice đã được tính ở trên
+            const deviceTotal = panelTotalPrice + inverterTotalPrice + (selectedCabinet?.price || 0) + selectedBattery.totalPrice;
             const totalPrice = deviceTotal + accessoriesTotal;
             
             // Tính tiết kiệm hàng năm (tiết kiệm 80% tiền điện)
@@ -2442,6 +2461,8 @@
                 panelTotalPrice,
                 roofArea,
                 selectedInverter,
+                inverterQuantity, // Số lượng biến tần cần thiết
+                inverterTotalPrice, // Tổng giá biến tần (số lượng × đơn giá)
                 selectedCabinet,
                 cabinetAlternatives,
                 selectedBattery,
@@ -2792,16 +2813,17 @@
                                             
                                             <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(33,150,243,0.1); border-radius: 6px; border-left: 3px solid #2196f3;">
                                                 <small style="color: #4a5568; font-weight: 600;">${result.userSelectedInverter ? '✅ Biến tần bạn đã chọn:' : '🎯 Biến tần được chọn tự động:'}</small><br>
-                                                <small style="color: #718096;">• Hệ thống cần: ${result.systemSizeKw}kWp</small><br>
-                                                <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (kéo tối đa ≈ ${(result.selectedInverter.power*1.5/1000).toFixed(1)}kWp ${result.selectedInverter.power*1.5/1000 >= result.systemSizeKw ? '≥' : '<'} ${result.systemSizeKw}kWp)</small><br>
+                                                <small style="color: #718096;">• Hệ thống cần: ${result.systemSizeKw}kWp (${result.systemSizeWatt.toLocaleString()}W)</small><br>
+                                                <small style="color: #718096;">• Biến tần: ${result.selectedInverter.power}W (kéo tối đa ≈ ${(result.selectedInverter.power*1.5/1000).toFixed(1)}kWp = ${(result.selectedInverter.power*1.5).toLocaleString()}W)</small><br>
+                                                <small style="color: #718096;">• Số lượng cần: ${result.systemSizeKw}kWp ÷ ${(result.selectedInverter.power*1.5/1000).toFixed(1)}kWp/bộ = <strong>${result.inverterQuantity} bộ</strong></small><br>
                                                 <small style="color: #718096;">• Phù hợp với loại điện ${result.selectedInverter.phase === '1' ? '1 pha' : result.selectedInverter.phase === '3' ? '3 pha' : 'cả 2 pha'} đã chọn</small>
                                             </div>
                                             <small style="color: #3FA34D; font-weight: 600;">💰 Giá lắp đặt trọn gói</small>
                                         </div>
                                     </td>
-                                    <td class="center" style="width: 12%">1 bộ</td>
+                                    <td class="center" style="width: 12%">${result.inverterQuantity} bộ</td>
                                     <td class="price-col" style="width: 17%">${result.selectedInverter.price.toLocaleString()}đ</td>
-                                    <td class="price-col" style="width: 17%"><strong>${result.selectedInverter.price.toLocaleString()}đ</strong></td>
+                                    <td class="price-col" style="width: 17%"><strong>${result.inverterTotalPrice.toLocaleString()}đ</strong></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2963,7 +2985,7 @@
                             <div class="card-icon">🔌</div>
                             <div class="card-content">
                                 <div class="card-label">Inverter</div>
-                                <div class="card-value">LUXPOWER 6K</div>
+                                <div class="card-value">${result.inverterQuantity} bộ × ${(result.selectedInverter.power/1000).toFixed(1)}kW</div>
                             </div>
         </div>
                         
@@ -3869,7 +3891,9 @@
                         id: (result.selectedInverter && result.selectedInverter.id) ? result.selectedInverter.id : 0,
                         name: result.selectedInverter.name,
                         capacity: result.selectedInverter.power / 1000,
-                        price: result.selectedInverter.price
+                        price: result.selectedInverter.price,
+                        quantity: result.inverterQuantity || 1,
+                        totalPrice: result.inverterTotalPrice || result.selectedInverter.price
                     },
                     cabinet: {
                         id: (result.selectedCabinet && result.selectedCabinet.id) ? result.selectedCabinet.id : 0,
@@ -4124,10 +4148,12 @@
                                 const itemUnits = value.units || 1;
                                 
                                 if (key === 'selectedInverter') {
+                                    const invQuantity = result.inverterQuantity || 1;
+                                    const invTotalPrice = result.inverterTotalPrice || itemPrice;
                                     formDataToSend.append('Biến Tần - Tên', itemName + (itemPower ? ` (${toNumber(itemPower)}W)` : ''));
-                                    formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
+                                    formDataToSend.append('Biến Tần - Số lượng', invQuantity + ' bộ');
                                     formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(itemPrice) + ' đ');
-                                    formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(itemPrice) + ' đ');
+                                    formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(invTotalPrice) + ' đ');
                                 } else if (key === 'selectedCabinet') {
                                     formDataToSend.append('Tủ Điện - Tên', itemName);
                                     formDataToSend.append('Tủ Điện - Số lượng', '1 cái');
@@ -4243,10 +4269,12 @@
                 console.log('Email - Inverter data:', { name: inverterName, power: inverterPower, price: inverterPrice });
                 
                 formDataToSend.append('🔌 Biến Tần (Inverter)', '');
+                const inverterQuantity = result.inverterQuantity || 1;
+                const inverterTotalPrice = result.inverterTotalPrice || inverterPrice;
                 formDataToSend.append('Biến Tần - Tên thiết bị', inverterName + (inverterPower ? ` (${toNumber(inverterPower)}W)` : ''));
-                formDataToSend.append('Biến Tần - Số lượng', '1 bộ');
+                formDataToSend.append('Biến Tần - Số lượng', inverterQuantity + ' bộ');
                 formDataToSend.append('Biến Tần - Đơn giá', formatCurrency(inverterPrice) + ' đ');
-                formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(inverterPrice) + ' đ');
+                formDataToSend.append('Biến Tần - Thành tiền', formatCurrency(inverterTotalPrice) + ' đ');
                 
                 // Tủ Điện
                 const selectedCabinet = result.selectedCabinet || {};
