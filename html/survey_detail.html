@@ -1160,8 +1160,58 @@
                     image: a.image || null
                 }));
             } else if (surveyProducts && surveyProducts.accessory && Array.isArray(surveyProducts.accessory)) {
+                // Get product IDs from survey result
+                const panelProductId = r?.panelId || null;
+                const inverterProductId = r?.inverterId || null;
+                const batteryProductId = r?.batteryId || null;
+                const cabinetProductId = r?.cabinetId || null;
+                
+                // Helper function: Normalize ID to number for accurate comparison
+                const normalizeId = (id) => {
+                    if (id === null || id === undefined) return null;
+                    return parseInt(id);
+                };
+                
                 computedAccessories = surveyProducts.accessory.map(acc => {
                     const depTarget = acc.accessory_dependent_target || 'project';
+                    
+                    // KIỂM TRA DEPENDENCIES: Nếu có dependent_product_ids, chỉ thêm khi sản phẩm được chọn nằm trong danh sách
+                    const dependentProductIds = acc.dependent_product_ids || null;
+                    if (dependentProductIds && Array.isArray(dependentProductIds) && dependentProductIds.length > 0) {
+                        let shouldInclude = false;
+                        const normalizedDependentIds = dependentProductIds.map(id => normalizeId(id));
+                        
+                        if (depTarget === 'inverter') {
+                            const invId = normalizeId(inverterProductId);
+                            shouldInclude = invId !== null && normalizedDependentIds.includes(invId);
+                        } else if (depTarget === 'panel') {
+                            const pnlId = normalizeId(panelProductId);
+                            shouldInclude = pnlId !== null && normalizedDependentIds.includes(pnlId);
+                        } else if (depTarget === 'battery') {
+                            const batId = normalizeId(batteryProductId);
+                            shouldInclude = batId !== null && normalizedDependentIds.includes(batId);
+                        } else if (depTarget === 'cabinet') {
+                            const cabId = normalizeId(cabinetProductId);
+                            shouldInclude = cabId !== null && normalizedDependentIds.includes(cabId);
+                        } else {
+                            // depTarget không khớp - kiểm tra tất cả các sản phẩm có thể
+                            const invId = normalizeId(inverterProductId);
+                            const pnlId = normalizeId(panelProductId);
+                            const batId = normalizeId(batteryProductId);
+                            const cabId = normalizeId(cabinetProductId);
+                            
+                            shouldInclude = (invId !== null && normalizedDependentIds.includes(invId)) ||
+                                          (pnlId !== null && normalizedDependentIds.includes(pnlId)) ||
+                                          (batId !== null && normalizedDependentIds.includes(batId)) ||
+                                          (cabId !== null && normalizedDependentIds.includes(cabId));
+                        }
+                        
+                        // Nếu không khớp, bỏ qua phụ kiện này
+                        if (!shouldInclude) {
+                            return null;
+                        }
+                    }
+                    
                     const baseQty = typeof acc.accessory_base_qty === 'number' ? acc.accessory_base_qty : 0;
                     const depQty = typeof acc.accessory_dependent_qty === 'number' && acc.accessory_dependent_qty !== null ? acc.accessory_dependent_qty : 1;
                     let targetCount = 1;
@@ -1191,7 +1241,7 @@
                         totalPrice: qty * unitPrice,
                         image: acc.image_url ? fixImageUrlForDetailPage(acc.image_url) : null
                     };
-                });
+                }).filter(acc => acc !== null); // Lọc bỏ các phụ kiện không khớp với dependencies
             }
 
             const chosenCabinet = (cabinetAlternatives && cabinetAlternatives.length>0) ? cabinetAlternatives[selectedCabinetIdx] : null;
