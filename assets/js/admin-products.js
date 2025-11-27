@@ -3,6 +3,7 @@
 // Note: productsData is already declared in admin.js, so we don't re-declare it here
 
 let productImagesData = [];
+let currentProductGalleryImages = []; // Lưu danh sách ảnh gallery của sản phẩm đang chỉnh sửa
 
 // Load products list
 async function loadProducts() {
@@ -88,11 +89,17 @@ async function openProductModal(id = null) {
             // Update category price label and preview image
             updateCategoryPriceLabel();
             previewProductImage();
+            
+            // Load gallery images for this product
+            await loadProductGalleryImages(product.id);
         }
     } else {
         document.getElementById('productModalTitle').textContent = 'Thêm sản phẩm';
         // Tính display_order mặc định = max + 1 của danh mục hiện tại
         await updateDefaultDisplayOrder();
+        // Reset gallery
+        currentProductGalleryImages = [];
+        renderProductGallery();
     }
     
     modal.classList.add('show');
@@ -122,6 +129,142 @@ async function updateDefaultDisplayOrder() {
 
 function closeProductModal() {
     document.getElementById('productModal').classList.remove('show');
+    // Reset gallery
+    currentProductGalleryImages = [];
+    renderProductGallery();
+}
+
+// Load gallery images for a product
+async function loadProductGalleryImages(productId) {
+    if (!productId) {
+        currentProductGalleryImages = [];
+        renderProductGallery();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/get_product_images.php?product_id=${productId}&t=${Date.now()}`);
+        const data = await response.json();
+        if (data.success) {
+            currentProductGalleryImages = data.images || [];
+            renderProductGallery();
+        } else {
+            currentProductGalleryImages = [];
+            renderProductGallery();
+        }
+    } catch (error) {
+        console.error('Error loading gallery images:', error);
+        currentProductGalleryImages = [];
+        renderProductGallery();
+    }
+}
+
+// Render gallery images
+function renderProductGallery() {
+    const galleryContainer = document.getElementById('product_gallery_images');
+    if (!galleryContainer) return;
+    
+    if (currentProductGalleryImages.length === 0) {
+        galleryContainer.innerHTML = '<p class="col-span-4 text-center text-gray-400 text-sm py-4">Chưa có ảnh nào. Hãy thêm ảnh vào gallery.</p>';
+        return;
+    }
+    
+    galleryContainer.innerHTML = currentProductGalleryImages.map((img, index) => `
+        <div class="relative group">
+            <img src="${img.image_url}" alt="Gallery ${index + 1}" 
+                 class="w-full h-24 object-cover rounded-lg border-2 border-gray-300 hover:border-green-500 transition-all cursor-pointer">
+            <button onclick="removeProductGalleryImage(${img.id})" 
+                    class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hover:bg-red-600">
+                ×
+            </button>
+            <div class="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                #${index + 1}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Upload multiple images to gallery
+async function uploadProductGalleryImages(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    const productId = parseInt(document.getElementById('product_id').value) || 0;
+    
+    if (productId === 0) {
+        showToast('⚠️ Vui lòng lưu sản phẩm trước khi thêm ảnh vào gallery', 'warning');
+        event.target.value = '';
+        return;
+    }
+    
+    // Limit to 10 files at a time
+    const filesToUpload = Array.from(files).slice(0, 10);
+    
+    for (const file of filesToUpload) {
+        // Upload each file
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        try {
+            const uploadResponse = await fetch(`${API_BASE}/admin/upload_product_image.php`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+            const uploadData = await uploadResponse.json();
+            
+            if (uploadData.success) {
+                // Add image to gallery
+                const addResponse = await fetch(`${API_BASE}/admin/add_product_image.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        image_url: uploadData.path
+                    })
+                });
+                const addData = await addResponse.json();
+                
+                if (addData.success) {
+                    // Reload gallery
+                    await loadProductGalleryImages(productId);
+                }
+            }
+        } catch (error) {
+            console.error('Error uploading gallery image:', error);
+        }
+    }
+    
+    // Reset file input
+    event.target.value = '';
+    showToast(`✅ Đã thêm ${filesToUpload.length} ảnh vào gallery`, 'success');
+}
+
+// Remove image from gallery
+async function removeProductGalleryImage(imageId) {
+    if (!confirm('Bạn có chắc muốn xóa ảnh này khỏi gallery?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}/admin/delete_product_image.php`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_id: imageId })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('✅ Đã xóa ảnh khỏi gallery', 'success');
+            const productId = parseInt(document.getElementById('product_id').value) || 0;
+            await loadProductGalleryImages(productId);
+        } else {
+            showToast(data.message || 'Lỗi khi xóa ảnh', 'error');
+        }
+    } catch (error) {
+        console.error('Error removing gallery image:', error);
+        showToast('Có lỗi xảy ra', 'error');
+    }
 }
 
 // Load categories for product dropdown

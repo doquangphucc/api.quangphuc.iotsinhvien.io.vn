@@ -57,6 +57,20 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 -- =====================================================
+-- 3.0. BẢNG PRODUCT_IMAGES (Ảnh sản phẩm)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS product_images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL COMMENT 'ID sản phẩm',
+    image_url VARCHAR(500) NOT NULL COMMENT 'Đường dẫn ảnh',
+    display_order INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    INDEX idx_product_images_product_id (product_id),
+    INDEX idx_product_images_display_order (display_order)
+) COMMENT='Lưu nhiều ảnh cho mỗi sản phẩm';
+
+-- =====================================================
 -- 3.1. BẢNG SURVEY_PRODUCT_CONFIGS (Cấu hình sản phẩm cho khảo sát)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS survey_product_configs (

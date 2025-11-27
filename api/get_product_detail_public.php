@@ -60,6 +60,27 @@ try {
         $categoryLogo = '../' . $categoryLogo;
     }
     
+    // Get all images for this product
+    $imagesSql = "SELECT id, image_url, display_order FROM product_images WHERE product_id = ? ORDER BY display_order ASC, id ASC";
+    $imagesStmt = $conn->prepare($imagesSql);
+    $imagesStmt->bind_param("i", $product_id);
+    $imagesStmt->execute();
+    $imagesResult = $imagesStmt->get_result();
+    
+    $images = [];
+    while ($imageRow = $imagesResult->fetch_assoc()) {
+        $imgUrl = $imageRow['image_url'];
+        if ($imgUrl && !str_starts_with($imgUrl, 'http')) {
+            $imgUrl = '../' . $imgUrl;
+        }
+        $images[] = [
+            'id' => (int)$imageRow['id'],
+            'image_url' => $imgUrl,
+            'display_order' => (int)$imageRow['display_order']
+        ];
+    }
+    $imagesStmt->close();
+    
     $product = [
         'id' => (int)$row['id'],
         'category_id' => (int)$row['category_id'],
@@ -70,6 +91,7 @@ try {
         'category_price' => $row['category_price'] ? floatval($row['category_price']) : null,
         'technical_description' => $row['technical_description'],
         'image_url' => $imageUrl,
+        'images' => $images,
         'panel_power_watt' => $row['panel_power_watt'] ? (int)$row['panel_power_watt'] : null,
         'inverter_power_watt' => $row['inverter_power_watt'] ? (int)$row['inverter_power_watt'] : null,
         'battery_capacity_kwh' => $row['battery_capacity_kwh'] ? floatval($row['battery_capacity_kwh']) : null,

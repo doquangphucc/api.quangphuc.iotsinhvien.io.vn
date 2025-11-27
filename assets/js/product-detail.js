@@ -118,16 +118,49 @@ function renderProductDetail(product) {
         `;
     }
     
+    // Prepare images array (main image + gallery images)
+    // Main image comes first, then gallery images
+    const allImages = [];
+    const mainImageUrl = product.image_url || '';
+    
+    // Add main image first if exists
+    if (mainImageUrl) {
+        allImages.push({
+            id: 'main',
+            image_url: mainImageUrl
+        });
+    }
+    
+    // Add gallery images (excluding main image if duplicated)
+    if (product.images && product.images.length > 0) {
+        product.images.forEach(img => {
+            // Normalize URLs for comparison (remove ../ prefix if present)
+            const mainUrlClean = mainImageUrl.replace(/^\.\.\//, '');
+            const imgUrlClean = img.image_url.replace(/^\.\.\//, '');
+            
+            // Don't duplicate main image
+            if (imgUrlClean !== mainUrlClean) {
+                allImages.push(img);
+            }
+        });
+    }
+    
+    // Gallery thumbnails show all images except we highlight the main one
+    const galleryImages = allImages.length > 1 ? allImages : (allImages.length === 1 ? [] : []);
+    
     const html = `
         <div class="grid lg:grid-cols-2 gap-8">
             <!-- Product Image -->
-            <div class="flex items-start justify-center">
+            <div class="flex flex-col items-center space-y-4">
                 <div class="relative w-full max-w-lg">
-                    ${product.image_url ? `
-                        <img src="${escapeHtml(product.image_url)}" 
-                             alt="${escapeHtml(product.title)}" 
-                             class="w-full rounded-2xl shadow-2xl object-contain bg-white dark:bg-gray-800 p-4"
-                             onerror="this.src='../assets/img/logo.jpg'">
+                    ${mainImageUrl ? `
+                        <div id="main-image-container" class="relative overflow-hidden rounded-2xl shadow-2xl bg-white dark:bg-gray-800 p-4 cursor-zoom-in">
+                            <img id="main-product-image" 
+                                 src="${escapeHtml(mainImageUrl)}" 
+                                 alt="${escapeHtml(product.title)}" 
+                                 class="w-full h-auto object-contain transition-transform duration-300"
+                                 onerror="this.src='../assets/img/logo.jpg'">
+                        </div>
                     ` : `
                         <div class="w-full h-96 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center text-6xl">
                             📦
@@ -139,6 +172,26 @@ function renderProductDetail(product) {
                         </div>
                     ` : ''}
                 </div>
+                
+                <!-- Gallery Images -->
+                ${galleryImages.length > 0 ? `
+                    <div class="w-full max-w-lg">
+                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Thêm ảnh sản phẩm:</h3>
+                        <div class="flex gap-2 overflow-x-auto pb-2" style="scrollbar-width: thin;">
+                            ${galleryImages.map((img, index) => `
+                                <div class="gallery-thumbnail flex-shrink-0 relative group cursor-pointer ${img.image_url === mainImageUrl ? 'active' : ''}" 
+                                     data-image-url="${escapeHtml(img.image_url)}"
+                                     onclick="changeMainImage('${escapeHtml(img.image_url)}')">
+                                    <img src="${escapeHtml(img.image_url)}" 
+                                         alt="Gallery ${index + 1}" 
+                                         class="w-20 h-20 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600 group-hover:border-green-500 transition-all"
+                                         onerror="this.src='../assets/img/logo.jpg'">
+                                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
             </div>
             
             <!-- Product Info -->
@@ -234,6 +287,9 @@ function renderProductDetail(product) {
     
     // Update page title
     document.title = `${escapeHtml(product.title)} - Chi Tiết Sản Phẩm - HC Eco System`;
+    
+    // Initialize image zoom effect
+    initImageZoom();
 }
 
 // Add to cart function (global scope for onclick handlers)
@@ -304,6 +360,77 @@ function showToast(message, type = 'info') {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+// Change main image when clicking on gallery thumbnail
+window.changeMainImage = function(imageUrl) {
+    const mainImg = document.getElementById('main-product-image');
+    if (mainImg) {
+        mainImg.src = imageUrl;
+        // Update active state in gallery
+        const thumbnails = document.querySelectorAll('.gallery-thumbnail');
+        thumbnails.forEach(thumb => {
+            const dataUrl = thumb.getAttribute('data-image-url');
+            if (dataUrl === imageUrl) {
+                thumb.classList.add('active');
+            } else {
+                thumb.classList.remove('active');
+            }
+        });
+        // Reinitialize zoom after image change
+        setTimeout(() => {
+            initImageZoom();
+        }, 100);
+    }
+}
+
+// Initialize image zoom effect
+function initImageZoom() {
+    const container = document.getElementById('main-image-container');
+    const img = document.getElementById('main-product-image');
+    
+    if (!container || !img) return;
+    
+    // Wait for image to load
+    img.onload = function() {
+        setupZoomEffect(container, img);
+    };
+    
+    // If image already loaded
+    if (img.complete) {
+        setupZoomEffect(container, img);
+    }
+}
+
+// Setup zoom effect on hover
+function setupZoomEffect(container, img) {
+    let isZoomed = false;
+    
+    container.addEventListener('mouseenter', () => {
+        isZoomed = true;
+    });
+    
+    container.addEventListener('mouseleave', () => {
+        isZoomed = false;
+        img.style.transform = 'scale(1)';
+        img.style.transformOrigin = 'center center';
+    });
+    
+    container.addEventListener('mousemove', (e) => {
+        if (!isZoomed) return;
+        
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+        
+        // Zoom 2x and move origin to cursor position
+        img.style.transform = 'scale(2)';
+        img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        img.style.transition = 'transform 0.1s ease-out';
+    });
 }
 
 // Load product detail when page loads

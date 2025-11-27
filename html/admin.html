@@ -1121,9 +1121,9 @@
                         <p class="text-xs text-gray-500 mt-1">Để trống nếu không có giá riêng cho danh mục này</p>
                     </div>
 
-                    <!-- Hình ảnh -->
+                    <!-- Hình ảnh đại diện -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Hình ảnh sản phẩm</label>
+                        <label class="block text-sm font-semibold mb-2">Hình ảnh đại diện</label>
                         <div class="space-y-2">
                             <!-- Upload ảnh mới -->
                             <div class="flex gap-2">
@@ -1142,6 +1142,28 @@
                             <div id="product_image_preview" class="hidden mt-2">
                                 <img id="product_image_preview_img" src="" alt="Preview" 
                                     class="h-32 w-32 object-cover rounded-lg border-2 border-gray-300">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery ảnh sản phẩm -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Gallery ảnh sản phẩm (nhiều ảnh)</label>
+                        <div class="space-y-3">
+                            <!-- Upload ảnh cho gallery -->
+                            <div class="flex gap-2">
+                                <input type="file" id="product_gallery_image_file" accept="image/*" multiple
+                                    class="flex-1 px-4 py-2 border rounded-lg" onchange="uploadProductGalleryImages(event)">
+                                <button type="button" onclick="document.getElementById('product_gallery_image_file').click()" 
+                                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                    📷 Thêm ảnh
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500">Có thể chọn nhiều ảnh cùng lúc (tối đa 10MB/ảnh)</p>
+                            
+                            <!-- Danh sách ảnh gallery -->
+                            <div id="product_gallery_images" class="grid grid-cols-4 gap-3 mt-3 p-3 bg-gray-50 rounded-lg min-h-[100px]">
+                                <!-- Ảnh sẽ được thêm vào đây bởi JavaScript -->
                             </div>
                         </div>
                     </div>

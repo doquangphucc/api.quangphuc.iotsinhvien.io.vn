@@ -191,6 +191,29 @@
             background: #030712 !important;
             border-top: 1px solid rgba(34, 197, 94, 0.35);
         }
+        
+        /* Product Image Zoom Effect */
+        #main-image-container {
+            overflow: hidden;
+        }
+        
+        #main-product-image {
+            cursor: zoom-in;
+            user-select: none;
+        }
+        
+        .gallery-thumbnail {
+            transition: all 0.2s ease;
+        }
+        
+        .gallery-thumbnail:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-thumbnail.active {
+            border-color: #10b981 !important;
+            border-width: 3px !important;
+        }
     </style>
 </head>
 <body data-page="product-detail">
