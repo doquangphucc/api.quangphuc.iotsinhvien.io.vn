@@ -407,6 +407,7 @@ CREATE TABLE IF NOT EXISTS survey_results (
     
     accessories_cost DECIMAL(15, 2) NOT NULL COMMENT 'Tổng phụ kiện (Bach Z + Clip + Jack + DC)',
     labor_cost DECIMAL(15, 2) NOT NULL COMMENT 'Công thợ lắp đặt',
+    transport_cost DECIMAL(15, 2) DEFAULT 0 COMMENT 'Chi phí vận chuyển thiết bị',
     
     -- Tổng kết
     total_cost_without_battery DECIMAL(15, 2) NOT NULL COMMENT 'Tổng không tính pin',

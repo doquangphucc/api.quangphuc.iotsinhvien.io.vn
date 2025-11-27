@@ -81,6 +81,7 @@ try {
         'cabinetName' => 'cabinet_name',
         'cabinetPrice' => 'cabinet_price',
         'laborCost' => 'labor_cost',
+        'transportCost' => 'transport_cost',
         'totalCost' => 'total_cost',
         'accessories' => 'accessories' // JSON field
     ];
@@ -99,7 +100,7 @@ try {
                 // Integer fields
                 $updateFields[] = "`$dbKey` = ?";
                 $updateParams[] = intval($results[$inputKey]);
-            } else if (in_array($inputKey, ['panelPrice', 'panelCost', 'inverterPrice', 'batteryUnitPrice', 'batteryCost', 'cabinetPrice', 'laborCost', 'totalCost'])) {
+            } else if (in_array($inputKey, ['panelPrice', 'panelCost', 'inverterPrice', 'batteryUnitPrice', 'batteryCost', 'cabinetPrice', 'laborCost', 'transportCost', 'totalCost'])) {
                 // Numeric fields
                 $updateFields[] = "`$dbKey` = ?";
                 $updateParams[] = floatval($results[$inputKey]);
