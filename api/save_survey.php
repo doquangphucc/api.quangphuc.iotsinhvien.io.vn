@@ -168,6 +168,8 @@ try {
             'inverter_name' => $results['inverter']['name'],
             'inverter_capacity' => (float)$results['inverter']['capacity'],
             'inverter_price' => (float)$results['inverter']['price'],
+            'inverter_quantity' => (int)($results['inverter']['quantity'] ?? 1),
+            'inverter_total_price' => (float)($results['inverter']['totalPrice'] ?? $results['inverter']['price']),
             'cabinet_id' => (int)($results['cabinet']['id'] ?? 0),
             'cabinet_name' => $results['cabinet']['name'],
             'cabinet_capacity' => (float)$results['cabinet']['capacity'],

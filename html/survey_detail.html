@@ -1222,10 +1222,10 @@
                     brand: deriveBrandFromName(getProductName(r?.inverterName, 'Inverter')),
                     warranty: '5 năm',
                     unit: 'Bộ',
-                    qty: 1,
+                    qty: Number(r?.inverterQuantity ?? 1),
                     image: getImageUrlForDisplay(r?.inverterImage, getProductName(r?.inverterName, 'Inverter'), 'inverter', survey.phase),
                     unitPrice: Number(r?.inverterPrice ?? 0),
-                    totalPrice: Number(r?.inverterPrice ?? 0),
+                    totalPrice: Number(r?.inverterTotalPrice ?? r?.inverterPrice ?? 0),
                     category: 'inverter',
                     currentProductId: r?.inverterId || null
                 },
@@ -1813,7 +1813,7 @@
                             id: r?.inverterId || null,
                             title: r?.inverterName || 'Inverter',
                             price: Number(r?.inverterPrice || 0),
-                            quantity: 1,
+                            quantity: Number(r?.inverterQuantity || 1),
                             image_url: getImageUrl(r?.inverterImage, r?.inverterName, 'inverter', survey.phase),
                             isVirtual: true
                         },

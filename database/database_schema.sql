@@ -384,7 +384,9 @@ CREATE TABLE IF NOT EXISTS survey_results (
     inverter_id INT NOT NULL COMMENT 'ID biến tần được chọn',
     inverter_name VARCHAR(255) NOT NULL,
     inverter_capacity DECIMAL(10, 2) NOT NULL COMMENT 'Công suất biến tần (kW)',
-    inverter_price DECIMAL(15, 2) NOT NULL,
+    inverter_price DECIMAL(15, 2) NOT NULL COMMENT 'Đơn giá 1 bộ biến tần',
+    inverter_quantity INT NOT NULL DEFAULT 1 COMMENT 'Số lượng biến tần cần thiết',
+    inverter_total_price DECIMAL(15, 2) NOT NULL COMMENT 'Tổng giá biến tần (số lượng × đơn giá)',
     
     -- Thông tin tủ điện
     cabinet_id INT NOT NULL COMMENT 'ID tủ điện được chọn',
