@@ -60,26 +60,34 @@ try {
         $categoryLogo = '../' . $categoryLogo;
     }
     
-    // Get all images for this product
-    $imagesSql = "SELECT id, image_url, display_order FROM product_images WHERE product_id = ? ORDER BY display_order ASC, id ASC";
-    $imagesStmt = $conn->prepare($imagesSql);
-    $imagesStmt->bind_param("i", $product_id);
-    $imagesStmt->execute();
-    $imagesResult = $imagesStmt->get_result();
-    
+    // Get all images for this product (with error handling in case table doesn't exist yet)
     $images = [];
-    while ($imageRow = $imagesResult->fetch_assoc()) {
-        $imgUrl = $imageRow['image_url'];
-        if ($imgUrl && !str_starts_with($imgUrl, 'http')) {
-            $imgUrl = '../' . $imgUrl;
+    try {
+        $imagesSql = "SELECT id, image_url, display_order FROM product_images WHERE product_id = ? ORDER BY display_order ASC, id ASC";
+        $imagesStmt = $conn->prepare($imagesSql);
+        if ($imagesStmt) {
+            $imagesStmt->bind_param("i", $product_id);
+            $imagesStmt->execute();
+            $imagesResult = $imagesStmt->get_result();
+            
+            while ($imageRow = $imagesResult->fetch_assoc()) {
+                $imgUrl = $imageRow['image_url'];
+                if ($imgUrl && !str_starts_with($imgUrl, 'http')) {
+                    $imgUrl = '../' . $imgUrl;
+                }
+                $images[] = [
+                    'id' => (int)$imageRow['id'],
+                    'image_url' => $imgUrl,
+                    'display_order' => (int)$imageRow['display_order']
+                ];
+            }
+            $imagesStmt->close();
         }
-        $images[] = [
-            'id' => (int)$imageRow['id'],
-            'image_url' => $imgUrl,
-            'display_order' => (int)$imageRow['display_order']
-        ];
+    } catch (Exception $e) {
+        // Table might not exist yet, just return empty array
+        error_log("Error loading product images (table may not exist): " . $e->getMessage());
+        $images = [];
     }
-    $imagesStmt->close();
     
     $product = [
         'id' => (int)$row['id'],
