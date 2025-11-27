@@ -539,14 +539,9 @@
 
                 <!-- Actions -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl">
-                    <div class="flex gap-4">
-                        <button onclick="window.location.href='order_history.html'" class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transition-all duration-200">
-                            Quay lại lịch sử
-                        </button>
-                        <button onclick="printOrder()" class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
-                            In đơn hàng
-                        </button>
-                    </div>
+                    <button onclick="window.location.href='order_history.html'" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transition-all duration-200">
+                        Quay lại lịch sử
+                    </button>
         </div>
             </div>
         </div>
@@ -898,15 +893,6 @@
             errorMessage.textContent = message;
         }
 
-        function printOrder() {
-            if (!orderData) {
-                alert('Không có dữ liệu để in');
-                return;
-            }
-            
-            // TODO: Implement print functionality
-            alert('Chức năng in đơn hàng đang được phát triển');
-        }
     </script>
 
     <!-- Ecosystem Logos Carousel - Load from Product Categories API -->
