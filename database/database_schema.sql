@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS orders (
     approved_by INT DEFAULT NULL COMMENT 'Admin ID duyệt đơn',
     approved_at TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
