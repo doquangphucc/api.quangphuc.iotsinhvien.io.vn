@@ -2,6 +2,7 @@
 
 let packageCategoriesData = [];
 let packagesData = [];
+let allProductsData = []; // Store all products for package items selection
 
 // ===============================================
 // PACKAGE CATEGORIES
@@ -307,6 +308,9 @@ async function openPackageModal(id = null) {
     // Load categories for dropdown FIRST
     await loadPackageCategoriesForSelect();
     
+    // Load all products for selection
+    await loadAllProducts();
+    
     // Clear items container
     document.getElementById('package-items-container').innerHTML = '';
     
@@ -354,7 +358,13 @@ async function openPackageModal(id = null) {
             // Load items
             if (pkg.items && pkg.items.length > 0) {
                 pkg.items.forEach(item => {
-                    addPackageItem(item.item_name, item.item_description);
+                    addPackageItem(
+                        item.product_id || null,
+                        item.item_name || '',
+                        item.item_description || '',
+                        item.quantity || 1,
+                        item.price_type || 'market_price'
+                    );
                 });
             }
             
@@ -389,29 +399,149 @@ function closePackageModal() {
 let packageItemCounter = 0;
 let packageHighlightCounter = 0;
 
-function addPackageItem(itemName = '', itemDescription = '') {
+// Load all products for package items selection
+async function loadAllProducts() {
+    try {
+        const response = await fetch(`${API_BASE}/admin/get_products.php?t=${Date.now()}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+            allProductsData = data.products;
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+    }
+}
+
+function addPackageItem(productId = null, itemName = '', itemDescription = '', quantity = 1, priceType = 'market_price') {
     packageItemCounter++;
     const container = document.getElementById('package-items-container');
     const itemId = `package-item-${packageItemCounter}`;
     
+    // Build product options
+    let productOptions = '<option value="">-- Chọn sản phẩm (hoặc nhập tên thủ công) --</option>';
+    allProductsData.forEach(product => {
+        const selected = productId && product.id == productId ? 'selected' : '';
+        productOptions += `<option value="${product.id}" ${selected} data-market-price="${product.market_price || 0}" data-category-price="${product.category_price || 0}">${product.title} (${product.category_name || 'N/A'})</option>`;
+    });
+    
     const itemHtml = `
-        <div id="${itemId}" class="flex gap-2 items-start p-3 bg-gray-50 rounded-lg">
-            <div class="flex-1">
-                <input type="text" class="package-item-name w-full px-3 py-2 border rounded mb-2" placeholder="Tên item (VD: 12 Tấm pin Jinko Solar 590W)" value="${itemName}">
-                <input type="text" class="package-item-description w-full px-3 py-2 border rounded text-sm" placeholder="Mô tả (tùy chọn)" value="${itemDescription}">
+        <div id="${itemId}" class="border border-gray-300 rounded-lg p-4 bg-gray-50 mb-3">
+            <div class="flex justify-between items-center mb-3">
+                <label class="block text-sm font-semibold">Sản phẩm trong gói</label>
+                <button type="button" onclick="removePackageItem('${itemId}')" class="text-red-600 hover:text-red-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <button type="button" onclick="removePackageItem('${itemId}')" class="text-red-600 hover:text-red-800 mt-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Chọn sản phẩm</label>
+                    <select class="package-item-product-id w-full px-3 py-2 border rounded" onchange="updatePackageItemPrice('${itemId}', this.value)">
+                        ${productOptions}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Tên item (nếu không chọn sản phẩm)</label>
+                    <input type="text" class="package-item-name w-full px-3 py-2 border rounded" placeholder="VD: 12 Tấm pin Jinko Solar 590W" value="${itemName}">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Mô tả (tùy chọn)</label>
+                    <input type="text" class="package-item-description w-full px-3 py-2 border rounded text-sm" placeholder="Mô tả chi tiết" value="${itemDescription}">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Số lượng</label>
+                        <input type="number" class="package-item-quantity w-full px-3 py-2 border rounded" min="1" value="${quantity}" onchange="calculatePackageTotalPrice()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Loại giá</label>
+                        <select class="package-item-price-type w-full px-3 py-2 border rounded" onchange="updatePackageItemPrice('${itemId}', document.querySelector('#${itemId} .package-item-product-id').value)">
+                            <option value="market_price" ${priceType === 'market_price' ? 'selected' : ''}>Giá thị trường</option>
+                            <option value="category_price" ${priceType === 'category_price' ? 'selected' : ''}>Giá danh mục</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded p-2">
+                    <div class="text-xs font-semibold text-blue-700">Đơn giá: <span class="package-item-unit-price">0</span> VNĐ</div>
+                    <div class="text-xs font-semibold text-green-700">Thành tiền: <span class="package-item-total-price">0</span> VNĐ</div>
+                </div>
+            </div>
         </div>
     `;
     
     container.insertAdjacentHTML('beforeend', itemHtml);
+    
+    // Update price for this item if product is selected
+    if (productId) {
+        updatePackageItemPrice(itemId, productId);
+    }
+    
+    // Recalculate total
+    calculatePackageTotalPrice();
+}
+
+function updatePackageItemPrice(itemId, productId) {
+    const itemDiv = document.getElementById(itemId);
+    if (!itemDiv) return;
+    
+    const productSelect = itemDiv.querySelector('.package-item-product-id');
+    const priceTypeSelect = itemDiv.querySelector('.package-item-price-type');
+    const quantityInput = itemDiv.querySelector('.package-item-quantity');
+    const unitPriceSpan = itemDiv.querySelector('.package-item-unit-price');
+    const totalPriceSpan = itemDiv.querySelector('.package-item-total-price');
+    
+    if (!productId || productId === '') {
+        unitPriceSpan.textContent = '0';
+        totalPriceSpan.textContent = '0';
+        calculatePackageTotalPrice();
+        return;
+    }
+    
+    const selectedOption = productSelect.options[productSelect.selectedIndex];
+    const marketPrice = parseFloat(selectedOption.getAttribute('data-market-price')) || 0;
+    const categoryPrice = parseFloat(selectedOption.getAttribute('data-category-price')) || 0;
+    
+    const priceType = priceTypeSelect.value;
+    const unitPrice = priceType === 'category_price' && categoryPrice > 0 ? categoryPrice : marketPrice;
+    const quantity = parseInt(quantityInput.value) || 1;
+    const totalPrice = unitPrice * quantity;
+    
+    unitPriceSpan.textContent = formatNumber(unitPrice);
+    totalPriceSpan.textContent = formatNumber(totalPrice);
+    
+    calculatePackageTotalPrice();
+}
+
+function calculatePackageTotalPrice() {
+    const items = document.querySelectorAll('#package-items-container > div');
+    let total = 0;
+    
+    items.forEach(itemDiv => {
+        const totalPriceSpan = itemDiv.querySelector('.package-item-total-price');
+        if (totalPriceSpan) {
+            const priceText = totalPriceSpan.textContent.replace(/\./g, '').replace(' VNĐ', '');
+            total += parseFloat(priceText) || 0;
+        }
+    });
+    
+    // Update package price field
+    const priceInput = document.getElementById('package_price');
+    if (priceInput) {
+        priceInput.value = Math.round(total);
+    }
+}
+
+function formatNumber(num) {
+    return Math.round(num).toLocaleString('vi-VN');
 }
 
 function removePackageItem(itemId) {
     const item = document.getElementById(itemId);
-    if (item) item.remove();
+    if (item) {
+        item.remove();
+        calculatePackageTotalPrice();
+    }
 }
 
 function addPackageHighlight(title = '', content = '') {
@@ -460,16 +590,30 @@ async function savePackage(event) {
     }
     
     // Collect package items
-    const itemNames = document.querySelectorAll('.package-item-name');
-    const itemDescriptions = document.querySelectorAll('.package-item-description');
+    const itemContainers = document.querySelectorAll('#package-items-container > div');
     const items = [];
     
-    itemNames.forEach((input, index) => {
-        const itemName = input.value.trim();
-        if (itemName) {
+    itemContainers.forEach(itemDiv => {
+        const productIdSelect = itemDiv.querySelector('.package-item-product-id');
+        const itemNameInput = itemDiv.querySelector('.package-item-name');
+        const itemDescriptionInput = itemDiv.querySelector('.package-item-description');
+        const quantityInput = itemDiv.querySelector('.package-item-quantity');
+        const priceTypeSelect = itemDiv.querySelector('.package-item-price-type');
+        
+        const productId = productIdSelect?.value ? parseInt(productIdSelect.value) : null;
+        const itemName = itemNameInput?.value.trim() || '';
+        const itemDescription = itemDescriptionInput?.value.trim() || '';
+        const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+        const priceType = priceTypeSelect?.value || 'market_price';
+        
+        // Must have either product_id or item_name
+        if (productId || itemName) {
             items.push({
+                product_id: productId,
                 item_name: itemName,
-                item_description: itemDescriptions[index]?.value.trim() || ''
+                item_description: itemDescription,
+                quantity: quantity,
+                price_type: priceType
             });
         }
     });

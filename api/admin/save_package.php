@@ -55,10 +55,11 @@ if ($category_id <= 0) {
     exit;
 }
 
-if ($price <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Giá gói phải lớn hơn 0']);
-    exit;
-}
+// Price can be 0 if auto-calculated from items, but we'll allow manual override
+// if ($price <= 0) {
+//     echo json_encode(['success' => false, 'message' => 'Giá gói phải lớn hơn 0']);
+//     exit;
+// }
 
 // Check for duplicate display_order (except current package)
 $check_stmt = $conn->prepare("SELECT id, name FROM packages WHERE display_order = ? AND id != ?");
@@ -101,13 +102,16 @@ try {
     
     // Insert package items
     if (!empty($items) && is_array($items)) {
-        $item_stmt = $conn->prepare("INSERT INTO package_items (package_id, item_name, item_description, display_order) VALUES (?, ?, ?, ?)");
+        $item_stmt = $conn->prepare("INSERT INTO package_items (package_id, product_id, item_name, item_description, quantity, price_type, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $item_order = 0;
         foreach ($items as $item) {
-            $item_name = $item['item_name'] ?? $item;
+            $product_id = isset($item['product_id']) && $item['product_id'] > 0 ? intval($item['product_id']) : null;
+            $item_name = $item['item_name'] ?? '';
             $item_description = $item['item_description'] ?? '';
+            $quantity = isset($item['quantity']) ? intval($item['quantity']) : 1;
+            $price_type = $item['price_type'] ?? 'market_price';
             $item_order++;
-            $item_stmt->bind_param("issi", $package_id, $item_name, $item_description, $item_order);
+            $item_stmt->bind_param("iissisi", $package_id, $product_id, $item_name, $item_description, $quantity, $price_type, $item_order);
             $item_stmt->execute();
         }
         $item_stmt->close();

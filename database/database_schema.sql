@@ -152,10 +152,15 @@ CREATE TABLE IF NOT EXISTS packages (
 CREATE TABLE IF NOT EXISTS package_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     package_id INT NOT NULL,
-    item_name VARCHAR(255) NOT NULL,
-    item_description TEXT,
+    product_id INT DEFAULT NULL COMMENT 'ID sản phẩm (nếu chọn từ danh sách sản phẩm)',
+    item_name VARCHAR(255) NOT NULL COMMENT 'Tên item (dùng khi product_id NULL)',
+    item_description TEXT COMMENT 'Mô tả item',
+    quantity INT DEFAULT 1 COMMENT 'Số lượng sản phẩm',
+    price_type ENUM('market_price', 'category_price') DEFAULT 'market_price' COMMENT 'Loại giá sử dụng',
     display_order INT DEFAULT 0,
-    FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
+    FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+    INDEX idx_package_items_product_id (product_id)
 );
 
 -- =====================================================

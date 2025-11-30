@@ -420,10 +420,16 @@ function renderPackages() {
                         </div>
                     ` : ''}
                     
-                    <button onclick="contactForPackage('${pkg.name.replace(/'/g, "\\'")}' )" 
-                            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-1.5 text-xs rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow hover:shadow-md transform hover:scale-105">
-                        📞 Liên hệ tư vấn
-                    </button>
+                    <div class="flex gap-2">
+                        <a href="package-detail.html?id=${pkg.id}" 
+                           class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-1.5 text-xs rounded-lg hover:from-green-700 hover:to-green-800 transition-all shadow hover:shadow-md transform hover:scale-105 text-center">
+                            👁️ Xem chi tiết
+                        </a>
+                        <button onclick="contactForPackage('${pkg.name.replace(/'/g, "\\'")}' )" 
+                                class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-1.5 text-xs rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow hover:shadow-md transform hover:scale-105">
+                            📞 Liên hệ
+                        </button>
+                    </div>
                 </div>
             </div>
         `;

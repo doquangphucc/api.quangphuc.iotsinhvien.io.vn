@@ -27,8 +27,14 @@ try {
     while ($row = $result->fetch_assoc()) {
         $package_id = (int)$row['id'];
         
-        // Get items for this package
-        $itemsSql = "SELECT * FROM package_items WHERE package_id = ? ORDER BY display_order";
+        // Get items for this package with product info
+        $itemsSql = "SELECT pi.*, p.title as product_title, p.image_url as product_image_url, 
+                            p.market_price as product_market_price, p.category_price as product_category_price,
+                            pc.name as product_category_name
+                     FROM package_items pi
+                     LEFT JOIN products p ON pi.product_id = p.id
+                     LEFT JOIN product_categories pc ON p.category_id = pc.id
+                     WHERE pi.package_id = ? ORDER BY pi.display_order";
         $itemsStmt = $conn->prepare($itemsSql);
         $itemsStmt->bind_param("i", $package_id);
         $itemsStmt->execute();
@@ -36,10 +42,35 @@ try {
         
         $items = [];
         while ($item = $itemsResult->fetch_assoc()) {
-            $items[] = [
-                'name' => $item['item_name'],
-                'description' => $item['item_description']
+            $item_data = [
+                'id' => (int)$item['id'],
+                'product_id' => $item['product_id'] ? (int)$item['product_id'] : null,
+                'name' => $item['item_name'] ?: $item['product_title'],
+                'description' => $item['item_description'],
+                'quantity' => (int)($item['quantity'] ?? 1),
+                'price_type' => $item['price_type'] ?? 'market_price'
             ];
+            
+            // Add product info if product_id exists
+            if ($item['product_id']) {
+                $item_data['product'] = [
+                    'id' => (int)$item['product_id'],
+                    'title' => $item['product_title'],
+                    'image_url' => $item['product_image_url'],
+                    'market_price' => floatval($item['product_market_price'] ?? 0),
+                    'category_price' => $item['product_category_price'] ? floatval($item['product_category_price']) : null,
+                    'category_name' => $item['product_category_name']
+                ];
+                
+                // Calculate unit price and total price
+                $unit_price = $item_data['price_type'] === 'category_price' && $item_data['product']['category_price'] 
+                    ? $item_data['product']['category_price'] 
+                    : $item_data['product']['market_price'];
+                $item_data['unit_price'] = $unit_price;
+                $item_data['total_price'] = $unit_price * $item_data['quantity'];
+            }
+            
+            $items[] = $item_data;
         }
         $itemsStmt->close();
         
