@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -476,6 +476,7 @@
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
     </style>
+    <link rel="stylesheet" href="../assets/css/common.css" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 
@@ -933,7 +934,7 @@
                 const productsData = await productsResponse.json();
                 if (productsData.success && productsData.products) {
                     surveyProducts = productsData.products;
-                    console.log('Loaded survey products for image fallback');
+                    
                 }
             } catch (err) {
                 console.error('Error loading survey products:', err);
@@ -944,17 +945,17 @@
         
         async function loadSurveyDetail(id) {
             try {
-                console.log('Loading survey detail for ID:', id);
+                
                 
                 const response = await fetch(`../api/get_survey_detail.php?id=${id}`, {
                     credentials: 'include'
                 });
                 
-                console.log('API response:', response);
+                
                 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('API result:', result);
+                    
                     
                     if (result.success && result.data && result.data.survey) {
                         surveyData = result.data.survey;
@@ -1001,8 +1002,8 @@
         
         function populateSurveyData(survey) {
             // Debug: Log full API response
-            console.log('populateSurveyData - Full survey object:', survey);
-            console.log('populateSurveyData - Results:', survey.results);
+            
+            
             
             // Set quote date and number
             const createdAt = new Date(survey.createdAt);
@@ -1042,10 +1043,10 @@
             }
             
             // Debug: Log image URLs from API
-            console.log('populateSurveyData - panelImage:', r?.panelImage);
-            console.log('populateSurveyData - inverterImage:', r?.inverterImage);
-            console.log('populateSurveyData - batteryImage:', r?.batteryImage);
-            console.log('populateSurveyData - cabinetImage:', r?.cabinetImage);
+            
+            
+            
+            
             
             // Helper function to find image from survey products (fallback)
             function findImageFromProductsForDisplay(productName, category, phaseType = null) {
@@ -1079,7 +1080,7 @@
                 });
                 
                 if (found && found.image_url) {
-                    console.log(`Found image from survey products for display '${productName}':`, found.image_url);
+                    
                     return found.image_url;
                 }
                 
@@ -1677,7 +1678,7 @@
         
         // Function to prepare survey package from detail page and go to checkout
         async function buyPackageFromDetail() {
-            console.log('buyPackageFromDetail function called');
+            
             
             if (!surveyData) {
                 showNotification('⚠️ Không tìm thấy dữ liệu khảo sát', 'error');
@@ -1688,10 +1689,10 @@
             const r = survey.results;
             
             // Debug: Log image URLs from API response
-            console.log('API Response - panelImage:', r?.panelImage);
-            console.log('API Response - inverterImage:', r?.inverterImage);
-            console.log('API Response - batteryImage:', r?.batteryImage);
-            console.log('API Response - cabinetImage:', r?.cabinetImage);
+            
+            
+            
+            
             
             try {
                 showNotification('⏳ Đang chuẩn bị gói khảo sát...', 'info');
@@ -1708,7 +1709,7 @@
                     const productsData = await productsResponse.json();
                     if (productsData.success && productsData.products) {
                         surveyProducts = productsData.products;
-                        console.log('Loaded survey products for fallback:', surveyProducts);
+                        
                     }
                 } catch (err) {
                     console.error('Error loading survey products:', err);
@@ -1746,7 +1747,7 @@
                     });
                     
                     if (found && found.image_url) {
-                        console.log(`Found image from survey products for '${productName}':`, found.image_url);
+                        
                         return found.image_url;
                     }
                     
@@ -1756,16 +1757,16 @@
                 // Helper function to fix image URL path (same as khao-sat-dien-mat-troi.html)
                 function fixImageUrl(imageUrl) {
                     // Debug: log original imageUrl
-                    console.log('fixImageUrl input:', imageUrl);
+                    
                     
                     if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined' || imageUrl.trim() === '') {
-                        console.log('fixImageUrl: returning null for empty imageUrl');
+                        
                         return null;
                     }
                     
                     // If already absolute URL, return as is
                     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-                        console.log('fixImageUrl: absolute URL, returning as is');
+                        
                         return imageUrl;
                     }
                     
@@ -1777,7 +1778,7 @@
                         imageUrl = '/' + imageUrl;
                     }
                     
-                    console.log('fixImageUrl: final result:', imageUrl);
+                    
                     return imageUrl;
                 }
                 
@@ -1979,7 +1980,7 @@
 
                 // Save to localStorage
                 localStorage.setItem('surveyPackage', JSON.stringify(surveyPackage));
-                console.log('Survey package saved to localStorage:', surveyPackage);
+                
 
                 showNotification('✅ Đã chuẩn bị gói khảo sát!', 'success');
                 
@@ -2605,5 +2606,6 @@
         })();
     </script>
 
+    <script src="../assets/js/ui-enhancements.js"></script>
 </body>
 </html>

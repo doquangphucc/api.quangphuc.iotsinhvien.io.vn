@@ -14,9 +14,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Get API endpoint from query string
-$endpoint = isset($_GET['endpoint']) ? $_GET['endpoint'] : 'api/p/';
-$depth = isset($_GET['depth']) ? $_GET['depth'] : '';
+// SECURITY: Whitelist allowed endpoints to prevent SSRF
+$allowedEndpoints = [
+    'api/p/',           // Get all provinces
+    'api/p',            // Get all provinces
+    'api/d/',           // Get all districts
+    'api/d',            // Get all districts
+    'api/w/',           // Get all wards
+    'api/w',            // Get all wards
+];
+
+// Get API endpoint from query string - with validation
+$rawEndpoint = isset($_GET['endpoint']) ? $_GET['endpoint'] : 'api/p/';
+
+// Validate endpoint against whitelist
+$isValidEndpoint = false;
+foreach ($allowedEndpoints as $allowed) {
+    // Allow exact match or endpoint starting with allowed prefix (for IDs like api/p/01)
+    if ($rawEndpoint === $allowed || preg_match('/^' . preg_quote($allowed, '/') . '\d+$/', $rawEndpoint)) {
+        $isValidEndpoint = true;
+        break;
+    }
+}
+
+if (!$isValidEndpoint) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid endpoint'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+$endpoint = $rawEndpoint;
+$depth = isset($_GET['depth']) ? (int)$_GET['depth'] : '';
 
 // Build URL
 $baseUrl = 'https://provinces.open-api.vn/';

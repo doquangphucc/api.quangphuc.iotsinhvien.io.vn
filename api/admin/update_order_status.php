@@ -14,6 +14,7 @@ require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/audit_logger.php';
 
 if (!hasPermission($conn, 'orders', 'edit')) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền cập nhật đơn hàng'], JSON_UNESCAPED_UNICODE);
@@ -38,8 +39,8 @@ if (!in_array($new_status, $valid_statuses)) {
 }
 
 try {
-    // Check if order exists
-    $stmt = $conn->prepare("SELECT id FROM orders WHERE id = ?");
+    // Check if order exists and get current status
+    $stmt = $conn->prepare("SELECT id, order_status FROM orders WHERE id = ?");
     $stmt->bind_param("i", $order_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -48,10 +49,20 @@ try {
         throw new Exception('Không tìm thấy đơn hàng');
     }
     
+    $order = $result->fetch_assoc();
+    $old_status = $order['order_status'];
+    
     // Update order status
     $stmt = $conn->prepare("UPDATE orders SET order_status = ? WHERE id = ?");
     $stmt->bind_param("si", $new_status, $order_id);
     $stmt->execute();
+    
+    // Audit log
+    AuditLogger::logUpdate('order', (string)$order_id, 
+        ['status' => $old_status], 
+        ['status' => $new_status], 
+        "Cập nhật trạng thái đơn hàng #$order_id: $old_status → $new_status"
+    );
     
     // Get status text for Vietnamese
     $status_texts = [

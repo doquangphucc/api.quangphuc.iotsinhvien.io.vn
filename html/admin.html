@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -334,6 +334,7 @@
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
     </style>
+    <link rel="stylesheet" href="../assets/css/common.css" />
 </head>
 <body class="bg-gray-100 admin-page">
 
@@ -2642,6 +2643,7 @@
         </div>
     </div>
 
+    <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/cache-buster.js"></script>
     <script src="../assets/js/admin.js"></script>
     <script src="../assets/js/admin-products.js"></script>
@@ -3356,12 +3358,7 @@
                 fill('survey_cabinet_power_kw', config.cabinet_power_kw);
                 // accessory fields
                 const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val ?? ''); };
-                console.debug('Accessory config for product', productId, {
-                    unit: config.accessory_unit,
-                    base: config.accessory_base_qty,
-                    dep: config.accessory_dependent_qty,
-                    target: config.accessory_dependent_target
-                });
+                
                 setVal('survey_accessory_unit', config.accessory_unit || '');
                 setVal('survey_accessory_base_qty', (config.accessory_base_qty ?? ''));
                 setVal('survey_accessory_dependent_qty', (config.accessory_dependent_qty ?? ''));
@@ -3380,13 +3377,7 @@
                 }
                 
                 // Re-log applied values
-                console.debug('Accessory form values applied', {
-                    unit: document.getElementById('survey_accessory_unit')?.value,
-                    base: document.getElementById('survey_accessory_base_qty')?.value,
-                    dep: document.getElementById('survey_accessory_dependent_qty')?.value,
-                    target: document.getElementById('survey_accessory_dependent_target')?.value,
-                    config_id: config.config_id
-                });
+                
                 // IMPORTANT: re-apply is_active after fields are populated because
                 // earlier validation may temporarily uncheck it
                 document.getElementById('survey_is_active').checked = !!config.is_active;
@@ -3536,7 +3527,7 @@
              } else {
                  selectedDependentProductIds = selectedDependentProductIds.filter(id => id !== productId);
              }
-             console.log('Selected dependent products:', selectedDependentProductIds);
+             
          }
 
          // Hàm load dependencies đã lưu khi edit
@@ -3552,7 +3543,7 @@
 
                  if (data.success && Array.isArray(data.dependent_product_ids)) {
                      selectedDependentProductIds = data.dependent_product_ids;
-                     console.log('Loaded dependencies:', selectedDependentProductIds);
+                     
                      
                      // Update checkboxes sau khi danh sách sản phẩm được load
                      setTimeout(() => {
@@ -6627,6 +6618,7 @@
         })();
     </script>
 
+    <script src="../assets/js/ui-enhancements.js"></script>
 </body>
 </html>
 

@@ -243,7 +243,13 @@ async function uploadProductGalleryImages(event) {
 
 // Remove image from gallery
 async function removeProductGalleryImage(imageId) {
-    if (!confirm('Bạn có chắc muốn xóa ảnh này khỏi gallery?')) return;
+    const confirmed = await customConfirm('Bạn có chắc muốn xóa ảnh này khỏi gallery?', {
+        title: 'Xóa ảnh',
+        type: 'danger',
+        confirmText: 'Xóa',
+        cancelText: 'Hủy'
+    });
+    if (!confirmed) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/delete_product_image.php`, {
@@ -450,7 +456,13 @@ function editProduct(id) {
 
 // Delete product
 async function deleteProduct(id) {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+    const confirmed = await customConfirm('Bạn có chắc muốn xóa sản phẩm này?', {
+        title: 'Xóa sản phẩm',
+        type: 'danger',
+        confirmText: 'Xóa',
+        cancelText: 'Hủy'
+    });
+    if (!confirmed) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/delete_product.php`, {

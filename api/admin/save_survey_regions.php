@@ -2,6 +2,7 @@
 /**
  * Admin API: Save Survey Regions
  * Lưu/Cập nhật danh sách khu vực khảo sát (cần đăng nhập admin)
+ * SECURITY FIX: Using prepared statements to prevent SQL injection
  */
 
 require_once __DIR__ . '/../session.php';
@@ -27,40 +28,59 @@ try {
     // Start transaction
     mysqli_begin_transaction($conn);
     
+    // Prepare statements for update and insert (prevents SQL injection)
+    $updateStmt = $conn->prepare("UPDATE survey_regions SET 
+        region_code = ?, region_name = ?, display_content = ?, 
+        sun_hours = ?, display_order = ?, is_active = ?, notes = ? 
+        WHERE id = ?");
+    
+    $insertStmt = $conn->prepare("INSERT INTO survey_regions 
+        (region_code, region_name, display_content, sun_hours, display_order, is_active, notes) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)");
+    
+    if (!$updateStmt || !$insertStmt) {
+        throw new Exception('Lỗi chuẩn bị câu lệnh SQL');
+    }
+    
     // Update each region
     foreach ($data['regions'] as $region) {
-        $id = (int)$region['id'];
-        $region_code = mysqli_real_escape_string($conn, $region['region_code']);
-        $region_name = mysqli_real_escape_string($conn, $region['region_name']);
-        $display_content = mysqli_real_escape_string($conn, $region['display_content']);
-        $sun_hours = (float)$region['sun_hours'];
-        $display_order = (int)$region['display_order'];
+        $id = (int)($region['id'] ?? 0);
+        $region_code = $region['region_code'] ?? '';
+        $region_name = $region['region_name'] ?? '';
+        $display_content = $region['display_content'] ?? '';
+        $sun_hours = (float)($region['sun_hours'] ?? 0);
+        $display_order = (int)($region['display_order'] ?? 0);
         $is_active = isset($region['is_active']) ? (int)$region['is_active'] : 1;
-        $notes = isset($region['notes']) ? mysqli_real_escape_string($conn, $region['notes']) : '';
+        $notes = $region['notes'] ?? '';
         
         if ($id > 0) {
-            // Update existing record
-            $query = "UPDATE survey_regions SET 
-                     region_code = '$region_code',
-                     region_name = '$region_name',
-                     display_content = '$display_content',
-                     sun_hours = $sun_hours,
-                     display_order = $display_order,
-                     is_active = $is_active,
-                     notes = '$notes'
-                     WHERE id = $id";
+            // Update existing record using prepared statement
+            $updateStmt->bind_param(
+                "sssdiisi",
+                $region_code, $region_name, $display_content,
+                $sun_hours, $display_order, $is_active, $notes, $id
+            );
+            
+            if (!$updateStmt->execute()) {
+                throw new Exception('Lỗi khi cập nhật khu vực ' . $region_name . ': ' . $updateStmt->error);
+            }
         } else {
-            // Insert new record
-            $query = "INSERT INTO survey_regions 
-                     (region_code, region_name, display_content, sun_hours, display_order, is_active, notes) 
-                     VALUES 
-                     ('$region_code', '$region_name', '$display_content', $sun_hours, $display_order, $is_active, '$notes')";
-        }
-        
-        if (!mysqli_query($conn, $query)) {
-            throw new Exception('Lỗi khi lưu khu vực ' . $region_name . ': ' . mysqli_error($conn));
+            // Insert new record using prepared statement
+            $insertStmt->bind_param(
+                "sssdiis",
+                $region_code, $region_name, $display_content,
+                $sun_hours, $display_order, $is_active, $notes
+            );
+            
+            if (!$insertStmt->execute()) {
+                throw new Exception('Lỗi khi thêm khu vực ' . $region_name . ': ' . $insertStmt->error);
+            }
         }
     }
+    
+    // Close statements
+    $updateStmt->close();
+    $insertStmt->close();
     
     // Commit transaction
     mysqli_commit($conn);

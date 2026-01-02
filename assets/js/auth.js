@@ -64,8 +64,7 @@
                     });
                     
                     if (response.ok) {
-                        const result = await response.json();
-                        console.log('Logout successful:', result.message);
+                        // Logout successful
                     } else {
                         console.warn('Logout API failed, but continuing with local cleanup');
                     }
@@ -114,8 +113,7 @@
                         });
                         
                         if (response.ok) {
-                            const result = await response.json();
-                            console.log('Logout successful:', result.message);
+                            // Logout successful
                         } else {
                             console.warn('Logout API failed, but continuing with local cleanup');
                         }

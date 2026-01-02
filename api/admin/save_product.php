@@ -14,6 +14,7 @@ require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/audit_logger.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -145,6 +146,23 @@ try {
     
     // Commit transaction
     $conn->commit();
+    
+    // Audit logging
+    $productData = [
+        'id' => $product_id,
+        'title' => $title,
+        'category_id' => $category_id,
+        'market_price' => $market_price,
+        'category_price' => $category_price,
+        'is_active' => $is_active,
+        'display_order' => $display_order
+    ];
+    
+    if ($id > 0) {
+        AuditLogger::logUpdate('product', (string)$product_id, null, $productData, "Cập nhật sản phẩm: $title");
+    } else {
+        AuditLogger::logCreate('product', (string)$product_id, $productData, "Tạo sản phẩm mới: $title");
+    }
     
     error_log("Product saved successfully: ID={$product_id}, display_order={$display_order}");
     

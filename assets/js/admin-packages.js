@@ -183,7 +183,13 @@ function editPackageCategory(id) {
 }
 
 async function deletePackageCategory(id) {
-    if (!confirm('Bạn có chắc muốn xóa danh mục gói này?')) {
+    const confirmed = await customConfirm('Bạn có chắc muốn xóa danh mục gói này?', {
+        title: 'Xóa danh mục',
+        type: 'danger',
+        confirmText: 'Xóa',
+        cancelText: 'Hủy'
+    });
+    if (!confirmed) {
         showToast('Đã hủy xóa', 'info');
         return;
     }
@@ -281,10 +287,6 @@ async function loadPackageCategoriesForSelect() {
     // Clear and add default option
     select.innerHTML = '<option value="">-- Chọn danh mục gói --</option>';
     
-    // Debug log
-    console.log('Package categories data:', packageCategoriesData);
-    console.log('Number of categories:', packageCategoriesData.length);
-    
     if (packageCategoriesData.length === 0) {
         select.innerHTML += '<option value="">(Chưa có danh mục gói - Vui lòng tạo danh mục trước)</option>';
         console.warn('No package categories found');
@@ -292,11 +294,8 @@ async function loadPackageCategoriesForSelect() {
     }
     
     packageCategoriesData.forEach(cat => {
-        console.log('Adding category to select:', cat.id, cat.name);
         select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
     });
-    
-    console.log('Select options after loading:', select.innerHTML);
 }
 
 async function openPackageModal(id = null) {
@@ -330,7 +329,6 @@ async function openPackageModal(id = null) {
             const categorySelect = document.getElementById('package_category_id_select');
             if (categorySelect) {
                 categorySelect.value = pkg.category_id;
-                console.log('Set category_id to:', pkg.category_id, 'Current value:', categorySelect.value);
             }
             
             document.getElementById('package_name').value = pkg.name;
@@ -675,7 +673,13 @@ function editPackage(id) {
 }
 
 async function deletePackage(id) {
-    if (!confirm('Bạn có chắc muốn xóa gói sản phẩm này?')) {
+    const confirmed = await customConfirm('Bạn có chắc muốn xóa gói sản phẩm này?', {
+        title: 'Xóa gói',
+        type: 'danger',
+        confirmText: 'Xóa',
+        cancelText: 'Hủy'
+    });
+    if (!confirmed) {
         showToast('Đã hủy xóa', 'info');
         return;
     }

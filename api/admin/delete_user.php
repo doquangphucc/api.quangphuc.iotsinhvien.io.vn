@@ -12,6 +12,7 @@ header('Access-Control-Allow-Credentials: true');
 require_once '../config.php';
 require_once '../db_mysqli.php';
 require_once '../session.php';
+require_once __DIR__ . '/../helpers/audit_logger.php';
 
 try {
     // Kiểm tra admin
@@ -35,6 +36,19 @@ try {
     // Không cho phép xóa chính mình
     if ($user_id == $_SESSION['user_id']) {
         throw new Exception('Không thể xóa chính tài khoản của mình');
+    }
+    
+    // Lấy thông tin user trước khi xóa (cho audit log)
+    $get_user_query = "SELECT id, full_name, username, phone, is_admin FROM users WHERE id = ?";
+    $get_user_stmt = mysqli_prepare($conn, $get_user_query);
+    mysqli_stmt_bind_param($get_user_stmt, 'i', $user_id);
+    mysqli_stmt_execute($get_user_stmt);
+    $user_result = mysqli_stmt_get_result($get_user_stmt);
+    $user_data = mysqli_fetch_assoc($user_result);
+    mysqli_stmt_close($get_user_stmt);
+    
+    if (!$user_data) {
+        throw new Exception('Không tìm thấy user');
     }
     
     // Bắt đầu transaction để đảm bảo tính nhất quán
@@ -81,6 +95,10 @@ try {
         
         // Commit transaction
         mysqli_commit($conn);
+        
+        // Audit log
+        AuditLogger::logDelete('user', (string)$user_id, $user_data, 
+            "Xóa user: " . $user_data['full_name'] . " (" . $user_data['username'] . ")");
         
     } catch (Exception $e) {
         // Rollback nếu có lỗi

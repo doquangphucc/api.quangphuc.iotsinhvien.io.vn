@@ -12,6 +12,7 @@ header('Access-Control-Allow-Credentials: true');
 require_once '../config.php';
 require_once '../db_mysqli.php';
 require_once '../session.php';
+require_once __DIR__ . '/../helpers/audit_logger.php';
 
 try {
     // Kiểm tra admin
@@ -140,6 +141,25 @@ try {
     
     // Commit transaction
     mysqli_commit($conn);
+    
+    // Audit logging
+    $userData = [
+        'user_id' => $user_id,
+        'full_name' => $full_name,
+        'username' => $username,
+        'phone' => $phone,
+        'is_admin' => $is_admin,
+        'permissions_updated' => !empty($permissions)
+    ];
+    
+    if ($message === 'Tạo user thành công') {
+        AuditLogger::logCreate('user', (string)$user_id, $userData, "Tạo user mới: $full_name ($username)");
+    } else {
+        AuditLogger::logUpdate('user', (string)$user_id, null, $userData, "Cập nhật user: $full_name ($username)");
+        if (!empty($permissions)) {
+            AuditLogger::logPermissionChange((string)$user_id, null, $permissions);
+        }
+    }
     
     echo json_encode([
         'success' => true,

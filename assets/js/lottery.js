@@ -195,7 +195,7 @@ async function spinSlot() {
     await loadTickets();
     
     if (availableTickets <= 0) {
-        alert('Bạn không có vé quay! Hãy mua hàng để nhận vé.');
+        showWarning('Bạn không có vé quay! Hãy mua hàng để nhận vé.');
         return;
     }
     
@@ -212,12 +212,12 @@ async function spinSlot() {
         quantity = parseInt(spinQuantityInput?.value || 1);
         
         if (quantity > availableTickets) {
-            alert(`Bạn chỉ có ${availableTickets} vé, không đủ để quay ${quantity} lần!`);
+            showWarning(`Bạn chỉ có ${availableTickets} vé, không đủ để quay ${quantity} lần!`);
             return;
         }
         
         if (quantity < 1) {
-            alert('Số lượng quay phải lớn hơn 0!');
+            showWarning('Số lượng quay phải lớn hơn 0!');
             return;
         }
     } else {
@@ -348,7 +348,7 @@ async function spinSlot() {
         
     } catch (error) {
         console.error('Spin error:', error);
-        alert(error.message || 'Có lỗi xảy ra khi quay thưởng');
+        showError(error.message || 'Có lỗi xảy ra khi quay thưởng');
         
         // Reset button
         spinButton.disabled = false;

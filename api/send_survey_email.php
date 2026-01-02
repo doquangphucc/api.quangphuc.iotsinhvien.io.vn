@@ -1,23 +1,35 @@
 <?php
-// Enable error reporting for debugging
+// Enable error reporting for debugging (log only, no display)
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
+
+// SECURITY: Determine if running in production
+$isProduction = !in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1']);
 
 // Set error handler to capture errors and output JSON
 $errorDetails = [];
 $fatalError = false;
 
 // Register shutdown function to catch fatal errors
-register_shutdown_function(function() use (&$fatalError, &$errorDetails) {
+register_shutdown_function(function() use (&$fatalError, &$errorDetails, $isProduction) {
     $error = error_get_last();
     if ($error !== NULL && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
         $fatalError = true;
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
+        
+        // Log the actual error for debugging
+        error_log('Fatal Error: ' . $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line']);
+        
+        // SECURITY: Don't expose error details in production
+        $message = $isProduction 
+            ? 'Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.' 
+            : 'Fatal Error: ' . $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line'];
+            
         echo json_encode([
             'success' => false,
-            'message' => 'Fatal Error: ' . $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line']
+            'message' => $message
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 });
@@ -30,6 +42,8 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$errorDeta
         'file' => $errfile,
         'line' => $errline
     ];
+    // Log error for debugging
+    error_log("Error [$errno]: $errstr in $errfile on line $errline");
     return false; // Continue with normal error handling
 });
 
@@ -38,9 +52,18 @@ try {
 } catch (Throwable $e) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
+    
+    // Log the actual error
+    error_log('Error loading connect.php: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+    
+    // SECURITY: Don't expose error details in production  
+    $message = $isProduction 
+        ? 'Có lỗi xảy ra. Vui lòng thử lại sau.'
+        : 'Error loading connect.php: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine();
+        
     echo json_encode([
         'success' => false,
-        'message' => 'Error loading connect.php: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine()
+        'message' => $message
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -203,7 +226,7 @@ try {
     // Email headers cho HTML email - QUAN TRỌNG: Content-Type phải là text/html
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: HC Eco System <noreply@hceco.io.vn>\r\n";
+    $headers .= "From: " . SITE_NAME . " <" . SITE_EMAIL . ">\r\n";
     $headers .= "Reply-To: $email\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
     $headers .= "X-Priority: 1\r\n";
@@ -558,9 +581,9 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
         </div>
         
         <div class="footer">
-            <p>© 2025 HC Eco System - Hệ sinh thái cho tương lai</p>
+            <p>© 2025 ' . SITE_NAME . ' - Hệ sinh thái cho tương lai</p>
             <p>Hotline: 0969 397 434 | Email: hcecosystem@gmail.com</p>
-            <p>Website: hceco.io.vn</p>
+            <p>Website: ' . SITE_WEBSITE . '</p>
         </div>
     </div>
 </body>

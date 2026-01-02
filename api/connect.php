@@ -5,9 +5,31 @@ require_once 'config.php';
 // Start session before any output
 require_once 'session.php';
 
+// Include security headers helper
+require_once __DIR__ . '/helpers/security_headers.php';
+
+// Include WAF helper
+require_once __DIR__ . '/helpers/waf_helper.php';
+
 // Enable error reporting for development (remove in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
+
+// Apply WAF protection (before any other processing)
+$wafResult = WAF::protect();
+if ($wafResult['blocked']) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Access denied',
+        'code' => 'WAF_BLOCKED'
+    ]);
+    exit();
+}
+
+// Set security headers
+setSecurityHeaders();
 
 // Set content type and CORS headers
 header('Content-Type: application/json; charset=utf-8');
@@ -15,22 +37,29 @@ header('Content-Type: application/json; charset=utf-8');
 // Get the origin of the request
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
-// List of allowed origins
+// Dynamic CORS: Allow same domain and localhost for development
+// This makes the API work with ANY domain it's deployed on
+$currentHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+$currentScheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$currentDomain = $currentScheme . '://' . $currentHost;
+
+// Build allowed origins dynamically
 $allowedOrigins = [
     'http://localhost',
     'http://127.0.0.1',
-    'https://hceco.io.vn',
-    'http://hceco.io.vn',
-    'https://api.quangphuc.iotsinhvien.io.vn',
-    'http://api.quangphuc.iotsinhvien.io.vn'
+    $currentDomain,  // Current domain (auto-detect)
+    str_replace('http://', 'https://', $currentDomain),  // HTTPS version
+    str_replace('https://', 'http://', $currentDomain),  // HTTP version
 ];
 
-// Check if the origin is allowed or matches the allowed pattern
+// Check if the origin is allowed
 $originAllowed = false;
-foreach ($allowedOrigins as $allowedOrigin) {
-    if (strpos($origin, $allowedOrigin) === 0) {
-        $originAllowed = true;
-        break;
+if (!empty($origin)) {
+    foreach ($allowedOrigins as $allowedOrigin) {
+        if (!empty($allowedOrigin) && strpos($origin, $allowedOrigin) === 0) {
+            $originAllowed = true;
+            break;
+        }
     }
 }
 
@@ -220,6 +249,39 @@ class Database {
     }
 }
 
+// SECURITY: Check if running in production
+function isProduction() {
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    return !in_array($host, ['localhost', '127.0.0.1']) && strpos($host, 'localhost:') !== 0;
+}
+
+// SECURITY: Sanitize error message for production
+function sanitizeErrorMessage($message) {
+    if (isProduction()) {
+        // List of patterns that indicate technical/sensitive information
+        $sensitivePatterns = [
+            '/SQLSTATE\[.*?\]/',
+            '/PDOException:/',
+            '/in \/.*?\.php/',
+            '/on line \d+/',
+            '/Stack trace:/',
+            '/Fatal error:/',
+            '/Parse error:/',
+            '/mysqli_/',
+            '/mysql_/',
+            '/\$_/',
+        ];
+        
+        foreach ($sensitivePatterns as $pattern) {
+            if (preg_match($pattern, $message)) {
+                error_log('Sanitized error message: ' . $message);
+                return 'Có lỗi xảy ra. Vui lòng thử lại sau.';
+            }
+        }
+    }
+    return $message;
+}
+
 // Utility functions
 function sendJsonResponse($data, $statusCode = 200) {
     http_response_code($statusCode);
@@ -228,9 +290,11 @@ function sendJsonResponse($data, $statusCode = 200) {
 }
 
 function sendError($message, $statusCode = 400) {
+    // SECURITY: Sanitize error messages in production
+    $sanitizedMessage = sanitizeErrorMessage($message);
     sendJsonResponse([
         'success' => false,
-        'message' => $message
+        'message' => $sanitizedMessage
     ], $statusCode);
 }
 

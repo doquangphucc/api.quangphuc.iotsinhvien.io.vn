@@ -1,9 +1,17 @@
 <?php
 require_once 'connect.php';
+require_once __DIR__ . '/helpers/rate_limiter.php';
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Phương thức không được hỗ trợ', 405);
+}
+
+// SECURITY: Rate limiting - Max 10 registration attempts per hour per IP
+$db = Database::getInstance();
+$rateLimitResult = checkRateLimit($db->getConnection(), 'register', 10, 3600, 3600);
+if (!$rateLimitResult['allowed']) {
+    sendError('Quá nhiều lần đăng ký. Vui lòng thử lại sau ' . ceil($rateLimitResult['retry_after'] / 60) . ' phút', 429);
 }
 
 // Get JSON input

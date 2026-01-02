@@ -16,20 +16,11 @@ require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/cors_helper.php';
 
-// Handle CORS properly for same-origin with credentials
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin === 'https://hceco.io.vn' || empty($origin)) {
-    header('Access-Control-Allow-Origin: https://hceco.io.vn');
-    header('Access-Control-Allow-Credentials: true');
-}
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// Setup dynamic CORS (works with any domain)
+setupCORS();
+handlePreflight();
 
 header('Content-Type: application/json; charset=utf-8');
 

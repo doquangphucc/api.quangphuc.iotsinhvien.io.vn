@@ -1,9 +1,18 @@
 <?php
 require_once 'connect.php';
+require_once __DIR__ . '/helpers/rate_limiter.php';
+require_once __DIR__ . '/helpers/audit_logger.php';
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Phương thức không được hỗ trợ', 405);
+}
+
+// SECURITY: Rate limiting - Max 5 login attempts per 5 minutes
+$db = Database::getInstance();
+$rateLimitResult = checkRateLimit($db->getConnection(), 'login', 5, 300, 900);
+if (!$rateLimitResult['allowed']) {
+    sendError('Quá nhiều lần đăng nhập thất bại. Vui lòng thử lại sau ' . ceil($rateLimitResult['retry_after'] / 60) . ' phút', 429);
 }
 
 // Get JSON input
@@ -41,18 +50,31 @@ try {
     $user = $db->selectOne('users', ['username' => $username]);
     
     if (!$user) {
+        // Audit log failed login
+        AuditLogger::logLogin(false, $username, 'User not found');
         sendError('Tên đăng nhập hoặc mật khẩu không đúng');
     }
     
     // Verify password
     if (!password_verify($password, $user['password'])) {
+        // Audit log failed login
+        AuditLogger::logLogin(false, $username, 'Invalid password');
         sendError('Tên đăng nhập hoặc mật khẩu không đúng');
     }
+    
+    // SECURITY: Reset rate limit on successful login
+    resetRateLimit($db->getConnection(), 'login');
+    
+    // SECURITY: Regenerate session ID to prevent session fixation attacks
+    session_regenerate_id(true);
     
     // Set session for logged in user
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['username'] = $user['username'];
     $_SESSION['is_admin'] = isset($user['is_admin']) && $user['is_admin'] ? true : false;
+    
+    // Audit log successful login
+    AuditLogger::logLogin(true, $username);
     
     // Remove password from response
     unset($user['password']);

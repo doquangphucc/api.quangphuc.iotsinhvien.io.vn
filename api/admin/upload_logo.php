@@ -12,16 +12,12 @@ ini_set('max_execution_time', 300);
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/../helpers/cors_helper.php';
+require_once __DIR__ . '/../helpers/file_validator.php';
 
-// Handle CORS properly
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// Setup dynamic CORS
+setupCORS();
+handlePreflight();
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -31,24 +27,17 @@ if (!is_admin()) {
 }
 
 // Handle logo upload
-if (!isset($_FILES['logo']) || $_FILES['logo']['error'] !== UPLOAD_ERR_OK) {
+if (!isset($_FILES['logo'])) {
     echo json_encode(['success' => false, 'message' => 'Vui lòng chọn logo để upload']);
     exit;
 }
 
 $file = $_FILES['logo'];
-$allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
-$max_size = 10 * 1024 * 1024; // 10MB
 
-// Validate file type
-if (!in_array($file['type'], $allowed_types)) {
-    echo json_encode(['success' => false, 'message' => 'Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WEBP)']);
-    exit;
-}
-
-// Validate file size
-if ($file['size'] > $max_size) {
-    echo json_encode(['success' => false, 'message' => 'Kích thước logo không được vượt quá 10MB']);
+// SECURITY: Validate image using FileUploadValidator
+$validation = FileUploadValidator::validateImage($file, ['max_size' => 10 * 1024 * 1024]);
+if (!$validation['valid']) {
+    echo json_encode(['success' => false, 'message' => $validation['error']]);
     exit;
 }
 
@@ -85,13 +74,15 @@ if (!is_writable($upload_dir)) {
     exit;
 }
 
-// Generate unique filename
-$extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-$filename = 'logo_' . time() . '_' . uniqid() . '.' . $extension;
+// SECURITY: Generate safe random filename
+$filename = FileUploadValidator::generateSafeFilename($file['name'], 'logo_');
 $filepath = $upload_dir . $filename;
 
 // Move uploaded file
 if (move_uploaded_file($file['tmp_name'], $filepath)) {
+    // SECURITY: Strip EXIF data for privacy
+    FileUploadValidator::stripExifData($filepath, $validation['mime']);
+    
     $logo_url = '../assets/img/logo/' . $filename;
     echo json_encode([
         'success' => true,

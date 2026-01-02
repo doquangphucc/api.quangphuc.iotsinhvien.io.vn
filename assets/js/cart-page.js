@@ -160,19 +160,23 @@ async function updateQuantity(cartId, newQuantity) {
                 window.fetchCartCount();
             }
         } else {
-            alert('Không thể cập nhật số lượng: ' + result.message);
+            showError('Không thể cập nhật số lượng: ' + result.message);
         }
     } catch (error) {
         console.error('Error updating quantity:', error);
-        alert('Có lỗi xảy ra khi cập nhật số lượng');
+        showError('Có lỗi xảy ra khi cập nhật số lượng');
     }
 }
 
 // Remove item from cart
 async function removeItem(cartId) {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-        return;
-    }
+    const confirmed = await customConfirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?', {
+        title: 'Xóa sản phẩm',
+        type: 'danger',
+        confirmText: 'Xóa',
+        cancelText: 'Hủy'
+    });
+    if (!confirmed) return;
     
     try {
         const response = await fetch('../api/remove_from_cart.php', {
@@ -198,12 +202,13 @@ async function removeItem(cartId) {
             if (window.fetchCartCount) {
                 window.fetchCartCount();
             }
+            showSuccess('Đã xóa sản phẩm khỏi giỏ hàng');
         } else {
-            alert('Không thể xóa sản phẩm: ' + result.message);
+            showError('Không thể xóa sản phẩm: ' + result.message);
         }
     } catch (error) {
         console.error('Error removing item:', error);
-        alert('Có lỗi xảy ra khi xóa sản phẩm');
+        showError('Có lỗi xảy ra khi xóa sản phẩm');
     }
 }
 
@@ -241,7 +246,7 @@ function showEmptyCart() {
 // Proceed to checkout
 function proceedToCheckout() {
     if (!cartData || cartData.length === 0) {
-        alert('Giỏ hàng trống');
+        showWarning('Giỏ hàng trống');
         return;
     }
     

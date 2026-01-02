@@ -62,8 +62,6 @@ async function loadOrderItems() {
 // Load direct order items (not from cart)
 function loadDirectOrderItems(items) {
     try {
-        console.log('Loading direct order items:', items);
-        
         orderItems = items.map(item => {
             // Process image_url
             let imageUrl = item.image_url;
@@ -84,8 +82,6 @@ function loadDirectOrderItems(items) {
             };
         });
         
-        console.log('Processed direct orderItems:', orderItems);
-        
         window.orderItems = orderItems;
         renderOrderItems();
         
@@ -100,8 +96,6 @@ function loadDirectOrderItems(items) {
 // Load survey package from localStorage
 function loadSurveyPackage(packageData) {
     try {
-        console.log('Loading survey package:', packageData);
-        
         // Combine main items and accessories
         const allItems = [
             ...packageData.items,
@@ -110,9 +104,6 @@ function loadSurveyPackage(packageData) {
         
         // Convert to orderItems format
         orderItems = allItems.map(item => {
-            // Debug: log image_url for each item
-            console.log(`Item: ${item.title}, image_url:`, item.image_url);
-            
             // Process image_url - if null, empty, or undefined, use fallback
             let imageUrl = item.image_url;
             if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined') {
@@ -128,8 +119,6 @@ function loadSurveyPackage(packageData) {
                 isVirtual: item.isVirtual || false
             };
         });
-        
-        console.log('Processed orderItems:', orderItems);
         
         window.orderItems = orderItems;
         renderOrderItems();

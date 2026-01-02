@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -372,6 +372,7 @@
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
     </style>
+    <link rel="stylesheet" href="../assets/css/common.css" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 
@@ -836,7 +837,7 @@
                     // Filter by current_status, not status
                     return r.current_status === status;
                 });
-                console.log(`Filtering ${status}: Found ${filteredRewards.length} rewards from ${allRewards.length} total`);
+                
             }
             displayRewards(filteredRewards);
         }
@@ -968,6 +969,7 @@
         })();
     </script>
 
+    <script src="../assets/js/ui-enhancements.js"></script>
 </body>
 </html>
 

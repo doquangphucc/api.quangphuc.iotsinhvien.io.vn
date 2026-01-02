@@ -18,6 +18,12 @@ ini_set('memory_limit', '256M');
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/../helpers/cors_helper.php';
+require_once __DIR__ . '/../helpers/file_validator.php';
+
+// Setup dynamic CORS
+setupCORS();
+handlePreflight();
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -32,43 +38,18 @@ if (!isset($_FILES['file'])) {
     exit;
 }
 
-// Check for upload errors
-if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-    $error_messages = [
-        UPLOAD_ERR_INI_SIZE => 'File vượt quá upload_max_filesize trong php.ini',
-        UPLOAD_ERR_FORM_SIZE => 'File vượt quá MAX_FILE_SIZE trong HTML form',
-        UPLOAD_ERR_PARTIAL => 'File chỉ được upload một phần',
-        UPLOAD_ERR_NO_FILE => 'Không có file được upload',
-        UPLOAD_ERR_NO_TMP_DIR => 'Thiếu thư mục tạm',
-        UPLOAD_ERR_CANT_WRITE => 'Không thể ghi file',
-        UPLOAD_ERR_EXTENSION => 'Upload bị chặn bởi extension'
-    ];
-    $error_message = $error_messages[$_FILES['file']['error']] ?? 'Unknown error: ' . $_FILES['file']['error'];
-    echo json_encode(['success' => false, 'message' => 'Lỗi upload: ' . $error_message]);
-    exit;
-}
-
 $file = $_FILES['file'];
 $media_type = $_POST['media_type'] ?? 'image'; // 'image' or 'video'
 
-// Validate file size (50MB max)
-if ($file['size'] > 50 * 1024 * 1024) {
-    echo json_encode(['success' => false, 'message' => 'File quá lớn. Giới hạn 50MB']);
-    exit;
+// SECURITY: Validate file using FileUploadValidator
+if ($media_type === 'video') {
+    $validation = FileUploadValidator::validateVideo($file, ['max_size' => 50 * 1024 * 1024]);
+} else {
+    $validation = FileUploadValidator::validateImage($file, ['max_size' => 50 * 1024 * 1024]);
 }
 
-// Validate file type
-$allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-$allowed_video_extensions = ['mp4', 'webm'];
-$file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-
-if ($media_type === 'image' && !in_array($file_extension, $allowed_image_extensions)) {
-    echo json_encode(['success' => false, 'message' => 'Chỉ chấp nhận file ảnh: JPG, PNG, GIF, WEBP']);
-    exit;
-}
-
-if ($media_type === 'video' && !in_array($file_extension, $allowed_video_extensions)) {
-    echo json_encode(['success' => false, 'message' => 'Chỉ chấp nhận file video: MP4, WEBM']);
+if (!$validation['valid']) {
+    echo json_encode(['success' => false, 'message' => $validation['error']]);
     exit;
 }
 
@@ -80,25 +61,26 @@ $video_dir = $base_dir . '/home_videos';
 // Create directories if they don't exist
 if (!is_dir($base_dir)) {
     if (!mkdir($base_dir, 0755, true)) {
-        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục uploads. Kiểm tra quyền ghi: ' . $base_dir]);
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục uploads']);
         exit;
     }
 }
 if (!is_dir($image_dir)) {
     if (!mkdir($image_dir, 0755, true)) {
-        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục home_images. Kiểm tra quyền ghi: ' . $image_dir]);
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục home_images']);
         exit;
     }
 }
 if (!is_dir($video_dir)) {
     if (!mkdir($video_dir, 0755, true)) {
-        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục home_videos. Kiểm tra quyền ghi: ' . $video_dir]);
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo thư mục home_videos']);
         exit;
     }
 }
 
-// Generate unique filename
-$filename = uniqid('home_', true) . '_' . time() . '.' . $file_extension;
+// SECURITY: Generate safe random filename
+$prefix = 'home_';
+$filename = FileUploadValidator::generateSafeFilename($file['name'], $prefix);
 $upload_dir = $media_type === 'image' ? $image_dir : $video_dir;
 $upload_path = $upload_dir . '/' . $filename;
 
@@ -106,38 +88,27 @@ $upload_path = $upload_dir . '/' . $filename;
 if (!is_writable($upload_dir)) {
     echo json_encode([
         'success' => false, 
-        'message' => 'Thư mục không có quyền ghi. Chạy: chmod 755 ' . basename($upload_dir) . '/',
-        'debug' => [
-            'dir' => $upload_dir,
-            'exists' => is_dir($upload_dir),
-            'writable' => is_writable($upload_dir),
-            'permissions' => substr(sprintf('%o', fileperms($upload_dir)), -4)
-        ]
+        'message' => 'Thư mục không có quyền ghi. Chạy: chmod 755 ' . basename($upload_dir) . '/'
     ]);
     exit;
 }
 
 // Move uploaded file
 if (!move_uploaded_file($file['tmp_name'], $upload_path)) {
-    $error_detail = error_get_last();
     echo json_encode([
         'success' => false, 
-        'message' => 'Lỗi khi lưu file. Kiểm tra permissions thư mục: chmod 755 ' . basename($upload_dir) . '/',
-        'debug' => [
-            'tmp_file' => $file['tmp_name'],
-            'target_path' => $upload_path,
-            'tmp_exists' => file_exists($file['tmp_name']),
-            'dir_writable' => is_writable($upload_dir),
-            'error' => $error_detail
-        ]
+        'message' => 'Lỗi khi lưu file. Kiểm tra permissions thư mục'
     ]);
     exit;
 }
 
+// SECURITY: Strip EXIF data for images
+if ($media_type === 'image') {
+    FileUploadValidator::stripExifData($upload_path, $validation['mime']);
+}
+
 // Generate URL
-// Production: https://your-domain.com/uploads/home_images/filename.jpg
-// Check if behind proxy (nginx, cloudflare) using X-Forwarded-Proto header
-$protocol = 'https'; // Force HTTPS for production
+$protocol = 'https';
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
     $protocol = $_SERVER['HTTP_X_FORWARDED_PROTO'];
 } elseif (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
@@ -149,18 +120,13 @@ $base_url = $protocol . '://' . $_SERVER['HTTP_HOST'];
 $upload_subpath = ($media_type === 'image' ? 'home_images' : 'home_videos');
 $url_path = '/uploads/' . $upload_subpath . '/' . $filename;
 
-// Handle different server configurations (domain root or subdirectory)
-// If running in a subdirectory, we need to prepend it
-$document_root = $_SERVER['DOCUMENT_ROOT'] ?? '';
+// Handle different server configurations
 $current_script = $_SERVER['SCRIPT_NAME'] ?? '';
-
-// Check if we're in a subdirectory
 $script_dir = dirname($current_script);
 if ($script_dir !== '/api/admin' && $script_dir !== '/') {
-    // We're in a subdirectory, extract the base path
     $parts = explode('/', trim($script_dir, '/'));
-    array_pop($parts); // Remove 'api'
-    array_pop($parts); // Remove 'admin'
+    array_pop($parts);
+    array_pop($parts);
     $subdir = !empty($parts) ? '/' . implode('/', $parts) : '';
     $url_path = $subdir . $url_path;
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lịch sử khảo sát - HC Eco System</title>
+    <title>L?ch s? kh?o s�t - HC Eco System</title>
         
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -122,13 +122,13 @@
             pointer-events: none;
         }
         
-        /* Đảm bảo content nằm trên background */
+        /* �?m b?o content n?m tr�n background */
         main, header, footer {
             position: relative;
             z-index: 1;
         }
         
-        /* Sections trong suốt hoàn toàn - chỉ có viền bao quanh */
+        /* Sections trong su?t ho�n to�n - ch? c� vi?n bao quanh */
         section {
             position: relative;
             background: rgba(255, 255, 255, 0.08) !important;
@@ -148,7 +148,7 @@
             box-shadow: 0 4px 6px rgba(74, 222, 128, 0.15);
         }
         
-        /* Hero section - trong suốt với viền */
+        /* Hero section - trong su?t v?i vi?n */
         section.bg-gradient-to-br {
             background: rgba(22, 163, 74, 0.15) !important;
             backdrop-filter: blur(3px) !important;
@@ -156,7 +156,7 @@
             border-radius: 20px;
         }
         
-        /* Các section có bg-white/bg-gray - trong suốt với viền */
+        /* C�c section c� bg-white/bg-gray - trong su?t v?i vi?n */
         section.bg-white,
         section.bg-gray-50,
         section.bg-gray-100,
@@ -180,7 +180,7 @@
             border-color: rgba(74, 222, 128, 0.40) !important;
         }
         
-        /* Override tất cả các div có bg-white/bg-gray - trong suốt */
+        /* Override t?t c? c�c div c� bg-white/bg-gray - trong su?t */
         main section > div[class*="bg-white"],
         main section > div[class*="bg-gray"],
         section div[class*="bg-white"],
@@ -188,7 +188,7 @@
             background: transparent !important;
         }
         
-        /* Các card bên trong - trong suốt với viền */
+        /* C�c card b�n trong - trong su?t v?i vi?n */
         div.bg-white,
         div[class*="bg-white"],
         .bg-white.dark\:bg-gray-800,
@@ -210,7 +210,7 @@
             box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
         }
         
-        /* Article cards - trong suốt với viền */
+        /* Article cards - trong su?t v?i vi?n */
         article[class*="bg-"],
         article.bg-gradient-to-br {
             background: rgba(240, 253, 244, 0.20) !important;
@@ -227,17 +227,17 @@
             box-shadow: 0 4px 8px rgba(74, 222, 128, 0.20);
         }
         
-        /* Container và các div wrapper cũng trong suốt */
+        /* Container v� c�c div wrapper cung trong su?t */
         .container {
             background: transparent !important;
         }
         
-        /* Main content trong suốt */
+        /* Main content trong su?t */
         main {
             background: transparent !important;
         }
         
-        /* Đảm bảo các phần trống hiển thị nền động */
+        /* �?m b?o c�c ph?n tr?ng hi?n th? n?n d?ng */
         body > *:not(header):not(footer):not(.copyright-bar) {
             background: transparent !important;
         }
@@ -249,31 +249,31 @@
             border-top: 1px solid rgba(34, 197, 94, 0.35);
         }
         
-        /* Header giữ nguyên trong suốt */
+        /* Header gi? nguy�n trong su?t */
         header {
             background: rgba(255, 255, 255, 0.90) !important;
             backdrop-filter: blur(10px) !important;
         }
         
-        /* Footer giữ nguyên nền đen */
+        /* Footer gi? nguy�n n?n den */
         footer {
-            background: #1f2937 !important; /* bg-gray-800 - giống index.html */
+            background: #1f2937 !important; /* bg-gray-800 - gi?ng index.html */
         }
         
-        /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
+        /* Quy t?c: Ch? �p d?ng vi?n cho ch? l?n (heading) */
         h1, h2, h3 {
             -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.2);
             text-stroke: 0.5px rgba(0, 0, 0, 0.2);
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
         }
         
-        /* Ngoại lệ: Giữ chữ trắng cho các trường hợp sau */
-        /* 1. Footer - nền đen */
+        /* Ngo?i l?: Gi? ch? tr?ng cho c�c tru?ng h?p sau */
+        /* 1. Footer - n?n den */
         footer .text-white {
             color: #f3f4f6 !important;
         }
         
-        /* 2. Button/Badge với nền màu đậm */
+        /* 2. Button/Badge v?i n?n m�u d?m */
         .bg-green-600 .text-white,
         .bg-orange-500 .text-white,
         .bg-blue-500 .text-white,
@@ -285,7 +285,7 @@
             color: #ffffff !important;
         }
         
-        /* 3. Overlay trên hình ảnh (có gradient đen) */
+        /* 3. Overlay tr�n h�nh ?nh (c� gradient den) */
         [class*="from-black"] .text-white,
         [class*="bg-gradient-to-t"][class*="from-black"] .text-white,
         [class*="bg-black"] .text-white {
@@ -313,6 +313,7 @@
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
     </style>
+    <link rel="stylesheet" href="../assets/css/common.css" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 
@@ -324,21 +325,21 @@
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
                         <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Hệ sinh thái cho tương lai</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">H? sinh th�i cho tuong lai</p>
                     </div>
                 </a>
 
                 <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
-                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
-                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Sản phẩm</a>
-                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
-                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
-                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Hệ sinh thái</a>
-                    <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
+                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Gi?i thi?u</a>
+                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">S?n ph?m</a>
+                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">D? �n</a>
+                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin t?c</a>
+                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">H? sinh th�i</a>
+                    <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Li�n h?</a>
                 </nav>
 
                 <div class="flex items-center gap-2">
-                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nh?n tu v?n</a>
                     
                     <div id="auth-buttons" class="hidden sm:flex items-center gap-2"></div>
 
@@ -350,12 +351,12 @@
         </div>
         <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
             <nav class="flex flex-col gap-2">
-                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
-                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Sản phẩm</a>
-                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
-                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
-                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Hệ sinh thái</a>
-                <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Gi?i thi?u</a>
+                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">S?n ph?m</a>
+                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">D? �n</a>
+                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin t?c</a>
+                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">H? sinh th�i</a>
+                <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Li�n h?</a>
 
                 <!-- Mobile Auth Buttons -->
                 <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
@@ -383,8 +384,8 @@
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Lịch sử khảo sát</h1>
-                        <p class="text-emerald-50 text-lg">Xem lại các báo giá điện mặt trời của bạn</p>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">L?ch s? kh?o s�t</h1>
+                        <p class="text-emerald-50 text-lg">Xem l?i c�c b�o gi� di?n m?t tr?i c?a b?n</p>
                     </div>
         </div>
             </div>
@@ -392,7 +393,7 @@
             <!-- Loading State -->
             <div id="loading" class="text-center py-12">
                 <div class="inline-block w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
-                <p class="mt-4 text-gray-600 dark:text-gray-400">Đang tải dữ liệu...</p>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">�ang t?i d? li?u...</p>
             </div>
 
             <!-- Surveys List -->
@@ -405,10 +406,10 @@
                 <div class="w-32 h-32 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg class="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Chưa có khảo sát nào</h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-8">Bạn chưa thực hiện khảo sát nào. Tính toán báo giá điện mặt trời ngay!</p>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Chua c� kh?o s�t n�o</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">B?n chua th?c hi?n kh?o s�t n�o. T�nh to�n b�o gi� di?n m?t tr?i ngay!</p>
                 <a href="khao-sat-dien-mat-troi.html" class="inline-block bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                    Tạo khảo sát mới
+                    T?o kh?o s�t m?i
                 </a>
             </div>
         </div>
@@ -425,7 +426,7 @@
                             <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
                         </div>
                     </a>
-                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
+                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Gi? v?ng cam k?t nang lu?ng s?ch cho m?i nh�.</p>                    
                     <!-- Ecosystem Logos Animation -->
                     <div class="mt-6 relative overflow-hidden" style="height: 80px;">
                         <div id="ecosystem-logos-container" class="flex gap-6">
@@ -435,27 +436,27 @@
                 </div>
 
                 <div class="space-y-2">
-                    <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
+                    <h4 class="font-semibold text-white">Th�ng tin li�n h?</h4>
                     <ul class="text-sm text-gray-400 space-y-1">
-                        <li><strong>Hotline:</strong> 0969 397 434 (Chính)</li>
-                        <li><strong>Hotline phụ:</strong> 0988 919 868</li>
+                        <li><strong>Hotline:</strong> 0969 397 434 (Ch�nh)</li>
+                        <li><strong>Hotline ph?:</strong> 0988 919 868</li>
                         <li><strong>Zalo:</strong> 0969 397 434</li>
                         <li><strong>Email:</strong> hcecosystem@gmail.com</li>
                         <li><strong>Website:</strong> hceco.io.vn</li>
-                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                        <li><strong>�?a ch? Van ph�ng:</strong><br>790 Ng� Quy?n, Phu?ng An H?i, Th�nh Ph? �� N?ng</li>
                     </ul>
                 </div>
 
                 <div class="space-y-2">
-                     <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
+                     <h4 class="font-semibold text-white">Ch�nh s�ch & D?ch v?</h4>
                     <ul class="text-sm space-y-1">
-                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
-                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
-                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
-                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
-                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
-                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
-                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
+                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">T?m Nh�n & S? M?nh</a></li>
+                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">�i?u Kho?n & �i?u Ki?n</a></li>
+                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Ch�nh S�ch �?i Tr?</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Ch�nh S�ch B?o M?t Th�ng Tin C� Nh�n</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Ch�nh S�ch B?o M?t Th�ng Tin Thanh To�n</a></li>
+                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Ch�nh S�ch B?o H�nh</a></li>
+                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Tr? Th�nh Nh� Ph�n Ph?i</a></li>
                     </ul>
                 </div>
             </div>
@@ -466,7 +467,7 @@
     <div class="bg-black border-t border-green-500/30 shadow-inner copyright-bar">
         <div class="container mx-auto px-4 py-4">
             <p class="text-center text-sm text-gray-200 tracking-wide">
-                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+                � B?n quy?n thu?c v? <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung c?p b?i <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
             </p>
         </div>
     </div>
@@ -487,17 +488,17 @@
         
         async function loadSurveys() {
             try {
-                console.log('Loading survey history...');
+                
                 
                 const response = await fetch('../api/get_survey_history.php', {
                     credentials: 'include'
                 });
                 
-                console.log('API response:', response);
+                
                 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('API result:', result);
+                    
                     
                     if (result.success) {
                         surveys = result.data.surveys || [];
@@ -509,11 +510,11 @@
                     window.location.href = 'login.html';
                 } else {
                     const errorResult = await response.json();
-                    showError(errorResult.message || 'Không thể tải lịch sử khảo sát');
+                    showError(errorResult.message || 'Kh�ng th? t?i l?ch s? kh?o s�t');
                 }
             } catch (error) {
                 console.error('Error loading surveys:', error);
-                showError('Lỗi kết nối server');
+                showError('L?i k?t n?i server');
             }
         }
         
@@ -540,23 +541,23 @@
         
         function createSurveyCard(survey) {
             const createdAt = new Date(survey.createdAt).toLocaleDateString('vi-VN');
-            const regionName = survey.regionName || 'Không xác định';
+            const regionName = survey.regionName || 'Kh�ng x�c d?nh';
             const totalCost = survey.results?.totalCost ? survey.results.totalCost.toLocaleString('vi-VN') : '0';
 
             // Payback calculations
             const rawTotalCost = Number(survey.results?.totalCost || 0);
             const monthlyBill = Number(survey.monthlyBill || 0);
-            // Payback 1: Dùng tiền điện ban đầu (trước khi lắp) để hoàn vốn
+            // Payback 1: D�ng ti?n di?n ban d?u (tru?c khi l?p) d? ho�n v?n
             let paybackSimpleText = '-';
             if (monthlyBill > 0) {
                 const monthsPayback = rawTotalCost / monthlyBill;
                 const yearsPayback = Math.floor(monthsPayback / 12);
                 const remainingMonths = Math.ceil(monthsPayback % 12);
                 paybackSimpleText = yearsPayback > 0 
-                    ? `${yearsPayback} năm ${remainingMonths} tháng`
-                    : `${remainingMonths} tháng`;
+                    ? `${yearsPayback} nam ${remainingMonths} th�ng`
+                    : `${remainingMonths} th�ng`;
             }
-            // Payback 2: Khi vay ngân hàng 10%/năm, tính thời gian hoàn vốn (bao gồm trả lãi)
+            // Payback 2: Khi vay ng�n h�ng 10%/nam, t�nh th?i gian ho�n v?n (bao g?m tr? l�i)
             function calcLoanPayback(principal, monthlyPayment, annualRate) {
                 if (monthlyPayment <= 0 || principal <= 0) return '-';
                 let remainingPrincipal = principal;
@@ -569,10 +570,10 @@
                     remainingPrincipal -= principalPayment;
                     if (remainingPrincipal < 0) remainingPrincipal = 0;
                 }
-                if (months >= 600) return '>50 năm';
+                if (months >= 600) return '>50 nam';
                 const years = Math.floor(months / 12);
                 const remMonths = Math.ceil(months % 12);
-                return years > 0 ? `${years} năm ${remMonths} tháng` : `${remMonths} tháng`;
+                return years > 0 ? `${years} nam ${remMonths} th�ng` : `${remMonths} th�ng`;
             }
             const paybackLoanText = calcLoanPayback(rawTotalCost, monthlyBill, 0.10);
             
@@ -586,50 +587,50 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-bold text-lg text-gray-800 dark:text-white">Khảo sát #${survey.id}</h3>
+                                <h3 class="font-bold text-lg text-gray-800 dark:text-white">Kh?o s�t #${survey.id}</h3>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">${createdAt}</p>
                             </div>
         </div>
                         <div class="text-right">
-                            <div class="text-2xl font-bold text-emerald-600">${totalCost}đ</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">Tổng chi phí</div>
+                            <div class="text-2xl font-bold text-emerald-600">${totalCost}d</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">T?ng chi ph�</div>
                         </div>
         </div>
                     
                     <div class="grid md:grid-cols-2 gap-4 mb-4">
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Khu vực:</span>
+                                <span class="text-gray-600 dark:text-gray-400">Khu v?c:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${regionName}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Loại điện:</span>
+                                <span class="text-gray-600 dark:text-gray-400">Lo?i di?n:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.phase} pha</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Tấm pin:</span>
+                                <span class="text-gray-600 dark:text-gray-400">T?m pin:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.panelName || 'N/A'}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Hoàn vốn dự kiến:</span>
+                                <span class="text-gray-600 dark:text-gray-400">Ho�n v?n d? ki?n:</span>
                                 <span class="font-semibold text-emerald-600">${paybackSimpleText}</span>
                             </div>
         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Số tấm:</span>
+                                <span class="text-gray-600 dark:text-gray-400">S? t?m:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.panelsNeeded || 0}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Công suất:</span>
+                                <span class="text-gray-600 dark:text-gray-400">C�ng su?t:</span>
                                 <span class="font-semibold text-gray-800 dark:text-white">${survey.results?.totalCapacity || 0} kW</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Hóa đơn:</span>
-                                <span class="font-semibold text-gray-800 dark:text-white">${survey.monthlyBill ? survey.monthlyBill.toLocaleString('vi-VN') : '0'}đ</span>
+                                <span class="text-gray-600 dark:text-gray-400">H�a don:</span>
+                                <span class="font-semibold text-gray-800 dark:text-white">${survey.monthlyBill ? survey.monthlyBill.toLocaleString('vi-VN') : '0'}d</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Hoàn vốn khi vay 10%:</span>
+                                <span class="text-gray-600 dark:text-gray-400">Ho�n v?n khi vay 10%:</span>
                                 <span class="font-semibold text-blue-600">${paybackLoanText || '-'}</span>
                             </div>
         </div>
@@ -637,10 +638,10 @@
                     
                     <div class="flex gap-3">
                         <button onclick="viewSurveyDetails(${survey.id})" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-200">
-                            Xem chi tiết
+                            Xem chi ti?t
                         </button>
                         <button onclick="createNewSurvey()" class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
-                            Tạo mới
+                            T?o m?i
                         </button>
                     </div>
         </div>
@@ -671,10 +672,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Lỗi tải dữ liệu</h2>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">L?i t?i d? li?u</h2>
                 <p class="text-gray-600 dark:text-gray-400 mb-8">${message}</p>
                 <button onclick="loadSurveys()" class="inline-block bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                    Thử lại
+                    Th? l?i
                 </button>
             `;
         }
@@ -789,7 +790,7 @@
                 }
             }
             
-            // Create nodes - tăng số lượng nơ-ron nhiều hơn
+            // Create nodes - tang s? lu?ng no-ron nhi?u hon
             const nodeCount = 120;
             const nodes = [];
             for (let i = 0; i < nodeCount; i++) {
@@ -799,7 +800,7 @@
                 ));
             }
             
-            // Connection distance threshold - tăng khoảng cách kết nối
+            // Connection distance threshold - tang kho?ng c�ch k?t n?i
             const connectionDistance = 180;
             
             // Animation loop
@@ -841,6 +842,7 @@
         })();
     </script>
 
+    <script src="../assets/js/ui-enhancements.js"></script>
 </body>
 </html>
 

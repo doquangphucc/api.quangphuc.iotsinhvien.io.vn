@@ -1,10 +1,14 @@
 <?php
 require_once 'connect.php';
+require_once __DIR__ . '/helpers/audit_logger.php';
 
 // Allow both GET and POST requests for logout
 if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Phương thức không được hỗ trợ', 405);
 }
+
+// Audit log before destroying session
+AuditLogger::logLogout();
 
 // Destroy session
 session_unset();

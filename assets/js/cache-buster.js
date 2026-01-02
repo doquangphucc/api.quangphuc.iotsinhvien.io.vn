@@ -10,7 +10,6 @@ const DYNAMIC_PAGES = ['gio-hang.html', 'dat-hang.html', 'user_profile.html', 'o
 // Method 1: Force reload when page is shown from cache (SAFE)
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
-        console.log('Page loaded from cache, forcing reload...');
         // Use setTimeout to prevent navigation conflicts
         setTimeout(() => {
             window.location.reload();
@@ -38,7 +37,6 @@ function refreshDynamicContent() {
 
 // Method 3: Handle browser back/forward navigation (SAFER)
 window.addEventListener('popstate', function(event) {
-    console.log('Browser navigation detected, refreshing dynamic content...');
     // Instead of full reload, just refresh dynamic content
     refreshDynamicContent();
 });
@@ -78,8 +76,6 @@ function preventCaching() {
 
 // Initialize cache busting when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Cache buster initialized (v3.0 - ultra safe version)');
-    
     // Add cache buster to current page (only for dynamic pages)
     addCacheBusterToCurrentPage();
     

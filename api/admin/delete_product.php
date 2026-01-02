@@ -14,6 +14,7 @@ require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/audit_logger.php';
 
 if (!hasPermission($conn, 'products', 'delete')) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa sản phẩm']);
@@ -28,21 +29,29 @@ if ($id <= 0) {
     exit;
 }
 
-// Get product image URL before deleting
-$stmt = $conn->prepare("SELECT image_url FROM products WHERE id = ?");
+// Get product info before deleting (for audit log)
+$stmt = $conn->prepare("SELECT id, title, category_id, image_url, market_price FROM products WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $product = $result->fetch_assoc();
 $stmt->close();
 
+if (!$product) {
+    echo json_encode(['success' => false, 'message' => 'Sản phẩm không tồn tại']);
+    exit;
+}
+
 // Delete the product
 $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
+    // Audit log
+    AuditLogger::logDelete('product', (string)$id, $product, "Xóa sản phẩm: " . $product['title']);
+    
     // Delete image file if exists
-    if ($product && !empty($product['image_url'])) {
+    if (!empty($product['image_url'])) {
         // Handle both absolute and relative paths
         $image_path = $product['image_url'];
         

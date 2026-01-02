@@ -13,20 +13,12 @@ require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/cors_helper.php';
+require_once __DIR__ . '/../helpers/file_validator.php';
 
-// Handle CORS properly for same-origin with credentials
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin === 'https://hceco.io.vn' || empty($origin)) {
-    header('Access-Control-Allow-Origin: https://hceco.io.vn');
-    header('Access-Control-Allow-Credentials: true');
-}
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// Setup dynamic CORS (works with any domain)
+setupCORS();
+handlePreflight();
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -37,24 +29,17 @@ if (!hasPermission($conn, 'home', 'create') && !hasPermission($conn, 'home', 'ed
 }
 
 // Handle image upload
-if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+if (!isset($_FILES['image'])) {
     echo json_encode(['success' => false, 'message' => 'Vui lòng chọn ảnh để upload']);
     exit;
 }
 
 $file = $_FILES['image'];
-$allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
-$max_size = 10 * 1024 * 1024; // 10MB
 
-// Validate file type
-if (!in_array($file['type'], $allowed_types)) {
-    echo json_encode(['success' => false, 'message' => 'Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WEBP)']);
-    exit;
-}
-
-// Validate file size
-if ($file['size'] > $max_size) {
-    echo json_encode(['success' => false, 'message' => 'Kích thước ảnh không được vượt quá 10MB']);
+// SECURITY: Validate image using FileUploadValidator
+$validation = FileUploadValidator::validateImage($file, ['max_size' => 10 * 1024 * 1024]);
+if (!$validation['valid']) {
+    echo json_encode(['success' => false, 'message' => $validation['error']]);
     exit;
 }
 
@@ -79,13 +64,15 @@ if (!is_writable($upload_dir)) {
     exit;
 }
 
-// Generate unique filename
-$extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-$filename = 'home_' . time() . '_' . uniqid() . '.' . $extension;
+// SECURITY: Generate safe random filename
+$filename = FileUploadValidator::generateSafeFilename($file['name'], 'home_');
 $filepath = $upload_dir . $filename;
 
 // Move uploaded file
 if (move_uploaded_file($file['tmp_name'], $filepath)) {
+    // SECURITY: Strip EXIF data for privacy
+    FileUploadValidator::stripExifData($filepath, $validation['mime']);
+    
     $image_path = '/assets/img/home/' . $filename;
     echo json_encode([
         'success' => true,

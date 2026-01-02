@@ -103,6 +103,11 @@ if (!function_exists('sendOrderNotificationEmail')) {
 
         $jsonPayload = json_encode($formData, JSON_UNESCAPED_UNICODE);
 
+        // Get dynamic base URL
+        $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $baseUrl = $scheme . '://' . $host;
+
         $ch = curl_init(ORDER_NOTIFICATION_FORM_SUBMIT);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
@@ -110,8 +115,8 @@ if (!function_exists('sendOrderNotificationEmail')) {
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
-            'Origin: https://api.quangphuc.iotsinhvien.io.vn',
-            'Referer: https://api.quangphuc.iotsinhvien.io.vn/html/dat-hang.html'
+            'Origin: ' . $baseUrl,
+            'Referer: ' . $baseUrl . '/html/dat-hang.html'
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);

@@ -846,9 +846,11 @@ async function saveSetAllRewards(event) {
         return;
     }
     
-    if (!confirm(`Bạn có chắc muốn cấu hình phần thưởng cho ${count} vé quay?`)) {
-        return;
-    }
+    const confirmed = await customConfirm(`Bạn có chắc muốn cấu hình phần thưởng cho ${count} vé quay?`, {
+        title: 'Xác nhận cấu hình',
+        type: 'confirm'
+    });
+    if (!confirmed) return;
     
     try {
         const response = await fetch(`${API_BASE}/admin/set_all_ticket_rewards.php`, {
@@ -1023,8 +1025,6 @@ async function saveReward(event) {
         reward_quantity: document.getElementById('reward_quantity').value || null,
         is_active: document.getElementById('reward_is_active').checked
     };
-
-    console.log('Sending reward data:', formData);
     
     try {
         const response = await fetch(`${API_BASE}/admin/save_reward_template.php`, {credentials: 'include', 
@@ -1033,10 +1033,7 @@ async function saveReward(event) {
             body: JSON.stringify(formData)
         });
         
-        console.log('Response status:', response.status);
-        
         const data = await response.json();
-        console.log('Response data:', data);
         
         if (typeof showToast === 'function') {
             showToast(data.message, data.success ? 'success' : 'error');
@@ -1050,7 +1047,6 @@ async function saveReward(event) {
         }
     } catch (error) {
         console.error('Error saving reward:', error);
-        console.error('Error details:', error.message);
         if (typeof showToast === 'function') {
             showToast('Có lỗi xảy ra: ' + error.message, 'error');
         } else {

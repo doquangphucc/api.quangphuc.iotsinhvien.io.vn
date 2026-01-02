@@ -1,7 +1,19 @@
 <?php
 // Check actual upload limits and file error codes
+// SECURITY: Admin only - exposes server configuration
+
+require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../db_mysqli.php';
+require_once __DIR__ . '/../auth_helpers.php';
 
 header('Content-Type: application/json; charset=utf-8');
+
+// SECURITY: Require admin access
+if (!is_admin()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+    exit;
+}
 
 // Check PHP configuration
 $php_upload_max_filesize = ini_get('upload_max_filesize');

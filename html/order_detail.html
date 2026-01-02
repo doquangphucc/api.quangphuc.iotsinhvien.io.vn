@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -313,6 +313,7 @@
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
     </style>
+    <link rel="stylesheet" href="../assets/css/common.css" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 
@@ -670,17 +671,17 @@
 
         async function loadOrderDetail(orderId) {
             try {
-                console.log('Loading order detail for ID:', orderId);
+                
                 
                 const response = await fetch(`../api/get_order_detail.php?id=${orderId}`, {
                     credentials: 'include'
                 });
                 
-                console.log('Order detail API response:', response);
+                
                 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('Order detail result:', result);
+                    
                     
                     if (result.success && result.data && result.data.order) {
                         orderData = result.data.order;
@@ -1010,5 +1011,6 @@
         })();
     </script>
 
+    <script src="../assets/js/ui-enhancements.js"></script>
 </body>
 </html>

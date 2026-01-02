@@ -12,9 +12,9 @@ requireAuth();
 $userId = getCurrentUserId();
 
 $inputRaw = file_get_contents('php://input');
-error_log("Raw input: " . $inputRaw);
+// Debug logging removed for production
 $input = json_decode($inputRaw, true);
-error_log("Decoded input: " . print_r($input, true));
+// Debug logging removed for production
 
 if (json_last_error() !== JSON_ERROR_NONE) {
     error_log("JSON decode error: " . json_last_error_msg());
@@ -31,8 +31,8 @@ if (empty($voucherCodes) && !empty($input['voucher_code'])) {
     $voucherCodes = [$input['voucher_code']];
 }
 
-error_log("Items raw: " . print_r($itemsRaw, true));
-error_log("Voucher codes: " . print_r($voucherCodes, true));
+// Debug logging removed for production
+// Debug logging removed for production
 
 $requiredCustomerKeys = ['fullname', 'phone', 'address', 'city_name', 'district_name', 'ward_name'];
 if (!$customer || count(array_diff($requiredCustomerKeys, array_keys($customer))) > 0) {
@@ -75,8 +75,8 @@ try {
         }
     }
     
-    error_log("Extracted cart item IDs: " . print_r($cartItemIds, true));
-    error_log("Extracted product IDs (direct order): " . print_r($productIds, true));
+    // Debug logging removed for production
+    // Debug logging removed for production
 
     $cartItemIds = array_values(array_unique($cartItemIds));
 
@@ -86,7 +86,7 @@ try {
             $placeholders = implode(',', array_fill(0, count($productIds), '?'));
             $productIdList = array_column($productIds, 'product_id');
             
-            error_log("Processing direct order items - Product IDs: " . print_r($productIdList, true));
+            // Debug logging removed for production
             
             $sql = "SELECT p.id AS product_id, p.title as name, 
                            COALESCE(NULLIF(p.category_price, 0), p.market_price) as price, 
@@ -94,14 +94,14 @@ try {
                     FROM products p
                     WHERE p.id IN ($placeholders) AND p.is_active = 1";
             
-            error_log("Direct order SQL: " . $sql);
-            error_log("Direct order params: " . print_r($productIdList, true));
+            // Debug logging removed for production
+            // Debug logging removed for production
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute($productIdList);
             $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            error_log("Direct order products found: " . count($productRows));
+            // Debug logging removed for production
             
             $productRowsById = [];
             foreach ($productRows as $row) {
@@ -161,28 +161,28 @@ try {
                 FROM cart_items c
                 JOIN products p ON c.product_id = p.id
                 WHERE c.user_id = ? AND c.id IN ($placeholders)";
-        error_log("SQL: " . $sql);
-        error_log("Params: userId=" . (int)$userId . ", cartItemIds=" . print_r($cartItemIds, true));
+        // Debug logging removed for production
+        // Debug logging removed for production
         $stmt = $pdo->prepare($sql);
         $params = array_merge([(int)$userId], $cartItemIds);
         $stmt->execute($params);
 
         $cartRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        error_log("Found cart rows: " . count($cartRows));
+        // Debug logging removed for production
         
         // Debug: Log all cart items in database for this user
         $debugSql = "SELECT id, user_id, product_id, quantity FROM cart_items WHERE user_id = ?";
         $debugStmt = $pdo->prepare($debugSql);
         $debugStmt->execute([(int)$userId]);
         $allCartItems = $debugStmt->fetchAll(PDO::FETCH_ASSOC);
-        error_log("All cart items for user " . (int)$userId . ": " . print_r($allCartItems, true));
+        // Debug logging removed for production
         
         // Debug: Log all cart items in database (all users) to check if cart_item_id exists
         $debugSql2 = "SELECT id, user_id, product_id, quantity FROM cart_items ORDER BY id DESC LIMIT 10";
         $debugStmt2 = $pdo->prepare($debugSql2);
         $debugStmt2->execute();
         $allCartItemsAll = $debugStmt2->fetchAll(PDO::FETCH_ASSOC);
-        error_log("Last 10 cart items (all users): " . print_r($allCartItemsAll, true));
+        // Debug logging removed for production
 
         if (empty($cartRows)) {
             sendError('Giỏ hàng không chứa sản phẩm hợp lệ.');
@@ -305,13 +305,13 @@ try {
         'order_status'    => 'pending' // Chờ admin duyệt
     ];
 
-    error_log("Inserting order with data: " . print_r($orderData, true));
+    // Debug logging removed for production
     try {
         $orderId = $db->insert('orders', $orderData);
         error_log("Order inserted successfully with ID: " . $orderId);
     } catch (Exception $e) {
         error_log("Error inserting order: " . $e->getMessage());
-        error_log("Order data was: " . print_r($orderData, true));
+        // Debug logging removed for production
         throw $e;
     }
     
@@ -352,7 +352,7 @@ try {
 
     error_log("Inserting " . count($verifiedItems) . " order items");
     foreach ($verifiedItems as $item) {
-        error_log("Inserting order item: " . print_r($item, true));
+        // Debug logging removed for production
         try {
             $stmt->execute([
                 $orderId,
@@ -364,7 +364,7 @@ try {
             ]);
         } catch (PDOException $e) {
             error_log("Error inserting order item: " . $e->getMessage());
-            error_log("Item data: " . print_r($item, true));
+            // Debug logging removed for production
             throw $e;
         }
     }

@@ -1,13 +1,20 @@
 @charset "UTF-8";
 
+/* HC ECO SYSTEM - Main Stylesheet */
+
+/* Common utilities & components (NEW) */
+@import url('common.css');
+
 /* Compose modular styles */
 @import url('base.css');
 @import url('layout.css');
 @import url('header.css');
+@import url('header-enhanced.css');
 @import url('hero.css');
 @import url('components.css');
 @import url('sections.css');
 @import url('footer.css');
+@import url('footer-enhanced.css');
 @import url('pricing.css');
 @import url('products.css');
 @import url('news.css');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đặt hàng - HC Eco System</title>
+    <title>�?t h�ng - HC Eco System</title>
         
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -122,13 +122,13 @@
             pointer-events: none;
         }
         
-        /* Đảm bảo content nằm trên background */
+        /* �?m b?o content n?m tr�n background */
         main, header, footer {
             position: relative;
             z-index: 1;
         }
         
-        /* Sections trong suốt hoàn toàn - chỉ có viền bao quanh */
+        /* Sections trong su?t ho�n to�n - ch? c� vi?n bao quanh */
         section {
             position: relative;
             background: rgba(255, 255, 255, 0.08) !important;
@@ -148,7 +148,7 @@
             box-shadow: 0 4px 6px rgba(74, 222, 128, 0.15);
         }
         
-        /* Hero section - trong suốt với viền */
+        /* Hero section - trong su?t v?i vi?n */
         section.bg-gradient-to-br {
             background: rgba(22, 163, 74, 0.15) !important;
             backdrop-filter: blur(3px) !important;
@@ -156,7 +156,7 @@
             border-radius: 20px;
         }
         
-        /* Các section có bg-white/bg-gray - trong suốt với viền */
+        /* C�c section c� bg-white/bg-gray - trong su?t v?i vi?n */
         section.bg-white,
         section.bg-gray-50,
         section.bg-gray-100,
@@ -180,7 +180,7 @@
             border-color: rgba(74, 222, 128, 0.40) !important;
         }
         
-        /* Override tất cả các div có bg-white/bg-gray - trong suốt */
+        /* Override t?t c? c�c div c� bg-white/bg-gray - trong su?t */
         main section > div[class*="bg-white"],
         main section > div[class*="bg-gray"],
         section div[class*="bg-white"],
@@ -188,7 +188,7 @@
             background: transparent !important;
         }
         
-        /* Các card bên trong - trong suốt với viền */
+        /* C�c card b�n trong - trong su?t v?i vi?n */
         div.bg-white,
         div[class*="bg-white"],
         .bg-white.dark\:bg-gray-800,
@@ -210,7 +210,7 @@
             box-shadow: 0 2px 4px rgba(74, 222, 128, 0.15);
         }
         
-        /* Article cards - trong suốt với viền */
+        /* Article cards - trong su?t v?i vi?n */
         article[class*="bg-"],
         article.bg-gradient-to-br {
             background: rgba(240, 253, 244, 0.20) !important;
@@ -227,17 +227,17 @@
             box-shadow: 0 4px 8px rgba(74, 222, 128, 0.20);
         }
         
-        /* Container và các div wrapper cũng trong suốt */
+        /* Container v� c�c div wrapper cung trong su?t */
         .container {
             background: transparent !important;
         }
         
-        /* Main content trong suốt */
+        /* Main content trong su?t */
         main {
             background: transparent !important;
         }
         
-        /* Đảm bảo các phần trống hiển thị nền động */
+        /* �?m b?o c�c ph?n tr?ng hi?n th? n?n d?ng */
         body > *:not(header):not(footer):not(.copyright-bar) {
             background: transparent !important;
         }
@@ -249,31 +249,31 @@
             border-top: 1px solid rgba(34, 197, 94, 0.35);
         }
         
-        /* Header giữ nguyên trong suốt */
+        /* Header gi? nguy�n trong su?t */
         header {
             background: rgba(255, 255, 255, 0.90) !important;
             backdrop-filter: blur(10px) !important;
         }
         
-        /* Footer đồng nhất với index.html */
+        /* Footer d?ng nh?t v?i index.html */
         footer {
             background: #1f2937 !important;
         }
         
-        /* Quy tắc: Chỉ áp dụng viền cho chữ lớn (heading) */
+        /* Quy t?c: Ch? �p d?ng vi?n cho ch? l?n (heading) */
         h1, h2, h3 {
             -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.2);
             text-stroke: 0.5px rgba(0, 0, 0, 0.2);
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
         }
         
-        /* Ngoại lệ: Giữ chữ trắng cho các trường hợp sau */
-        /* 1. Footer - nền đen */
+        /* Ngo?i l?: Gi? ch? tr?ng cho c�c tru?ng h?p sau */
+        /* 1. Footer - n?n den */
         footer .text-white {
             color: #f3f4f6 !important;
         }
         
-        /* 2. Button/Badge với nền màu đậm */
+        /* 2. Button/Badge v?i n?n m�u d?m */
         .bg-green-600 .text-white,
         .bg-orange-500 .text-white,
         .bg-blue-500 .text-white,
@@ -285,7 +285,7 @@
             color: #ffffff !important;
         }
         
-        /* 3. Overlay trên hình ảnh (có gradient đen) */
+        /* 3. Overlay tr�n h�nh ?nh (c� gradient den) */
         [class*="from-black"] .text-white,
         [class*="bg-gradient-to-t"][class*="from-black"] .text-white,
         [class*="bg-black"] .text-white {
@@ -313,6 +313,7 @@
         body[data-theme="dark"] .dark\:border-gray-700 { border-color: #4a5568; }
 
     </style>
+    <link rel="stylesheet" href="../assets/css/common.css" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
 
@@ -324,21 +325,21 @@
                     <img class="h-12 w-12 rounded-lg object-cover" src="../assets/img/logo.jpg" alt="Logo HC Eco System" />
                     <div>
                         <div class="font-bold text-lg text-gray-800 dark:text-white">HC<span class="text-green-600">ECO SYSTEM</span></div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Hệ sinh thái cho tương lai</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">H? sinh th�i cho tuong lai</p>
                     </div>
                 </a>
 
                 <nav class="hidden lg:flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
-                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Giới thiệu</a>
-                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Sản phẩm</a>
-                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Dự án</a>
-                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin tức</a>
-                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Hệ sinh thái</a>
-                    <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Liên hệ</a>
+                    <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Gi?i thi?u</a>
+                    <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">S?n ph?m</a>
+                    <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">D? �n</a>
+                    <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Tin t?c</a>
+                    <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">H? sinh th�i</a>
+                    <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 rounded-full transition-all duration-200">Li�n h?</a>
                 </nav>
 
                 <div class="flex items-center gap-2">
-                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nhận tư vấn</a>
+                    <a class="cta hidden sm:inline-block bg-green-600 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/20" href="khao-sat-dien-mat-troi.html">Nh?n tu v?n</a>
                     
                     <div id="auth-buttons" class="hidden sm:flex items-center gap-2"></div>
 
@@ -350,12 +351,12 @@
         </div>
         <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700 p-4">
             <nav class="flex flex-col gap-2">
-                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Giới thiệu</a>
-                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Sản phẩm</a>
-                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Dự án</a>
-                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin tức</a>
-                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Hệ sinh thái</a>
-                <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Liên hệ</a>
+                <a href="gioi-thieu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Gi?i thi?u</a>
+                <a href="pricing.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">S?n ph?m</a>
+                <a href="du-an.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">D? �n</a>
+                <a href="tin-tuc.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Tin t?c</a>
+                <a href="dich-vu.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">H? sinh th�i</a>
+                <a href="lien-he.html" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Li�n h?</a>
 
                 <!-- Mobile Auth Buttons -->
                 <div class="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
@@ -377,8 +378,8 @@
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Thông tin đặt hàng</h1>
-                        <p class="text-blue-50 text-lg">Hoàn tất thông tin để đặt hàng</p>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2">Th�ng tin d?t h�ng</h1>
+                        <p class="text-blue-50 text-lg">Ho�n t?t th�ng tin d? d?t h�ng</p>
                     </div>
         </div>
             </div>
@@ -393,23 +394,23 @@
                                 <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Thông tin liên hệ</h2>
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Th�ng tin li�n h?</h2>
                             </div>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="fullname" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Họ và tên <span class="text-red-500">*</span></label>
+                                    <label for="fullname" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">H? v� t�n <span class="text-red-500">*</span></label>
                                     <input type="text" id="fullname" name="fullname" required 
                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
-                                           placeholder="Nguyễn Văn A" />
+                                           placeholder="Nguy?n Van A" />
                                 </div>
                                 <div>
-                                    <label for="phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Số điện thoại <span class="text-red-500">*</span></label>
+                                    <label for="phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">S? di?n tho?i <span class="text-red-500">*</span></label>
                                     <input type="tel" id="phone" name="phone" required 
                                            pattern="^0[0-9]{9}$"
                                            maxlength="10"
                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
                                            placeholder="0988919868" />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">10 số, bắt đầu bằng 0</p>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">10 s?, b?t d?u b?ng 0</p>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Email</label>
@@ -426,41 +427,41 @@
                                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Địa chỉ giao hàng</h2>
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-white">�?a ch? giao h�ng</h2>
                             </div>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="city" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tỉnh/Thành phố <span class="text-red-500">*</span></label>
+                                    <label for="city" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">T?nh/Th�nh ph? <span class="text-red-500">*</span></label>
                                     <select id="city" name="city" required 
                                             class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
-                                        <option value="">Chọn tỉnh/thành</option>
+                                        <option value="">Ch?n t?nh/th�nh</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="district" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Quận/Huyện <span class="text-red-500">*</span></label>
+                                    <label for="district" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Qu?n/Huy?n <span class="text-red-500">*</span></label>
                                     <select id="district" name="district" required disabled
                                             class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
-                                        <option value="">Chọn tỉnh/thành trước</option>
+                                        <option value="">Ch?n t?nh/th�nh tru?c</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="ward" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phường/Xã <span class="text-red-500">*</span></label>
+                                    <label for="ward" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phu?ng/X� <span class="text-red-500">*</span></label>
                                     <select id="ward" name="ward" required disabled
                                             class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none">
-                                        <option value="">Chọn quận/huyện trước</option>
+                                        <option value="">Ch?n qu?n/huy?n tru?c</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Địa chỉ chi tiết <span class="text-red-500">*</span></label>
+                                    <label for="address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">�?a ch? chi ti?t <span class="text-red-500">*</span></label>
                                     <input type="text" id="address" name="address" required 
                                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none" 
-                                           placeholder="Số nhà, tên đường" />
+                                           placeholder="S? nh�, t�n du?ng" />
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label for="notes" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Ghi chú đơn hàng</label>
+                                    <label for="notes" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Ghi ch� don h�ng</label>
                                     <textarea id="notes" name="notes" rows="3" 
                                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:ring-4 focus:ring-green-500/20 transition-all outline-none resize-none" 
-                                              placeholder="Ghi chú về thời gian giao hàng, yêu cầu đặc biệt..."></textarea>
+                                              placeholder="Ghi ch� v? th?i gian giao h�ng, y�u c?u d?c bi?t..."></textarea>
                                 </div>
         </div>
                         </div>
@@ -472,8 +473,8 @@
                                     <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-amber-900 dark:text-amber-100 mb-2">Lưu ý quan trọng</h3>
-                                    <p class="text-amber-800 dark:text-amber-200 text-sm">Sau khi xác nhận đơn hàng, bộ phận kinh doanh sẽ liên hệ với bạn để xác nhận lại về hình thức giao hàng và thanh toán.</p>
+                                    <h3 class="font-bold text-amber-900 dark:text-amber-100 mb-2">Luu � quan tr?ng</h3>
+                                    <p class="text-amber-800 dark:text-amber-200 text-sm">Sau khi x�c nh?n don h�ng, b? ph?n kinh doanh s? li�n h? v?i b?n d? x�c nh?n l?i v? h�nh th?c giao h�ng v� thanh to�n.</p>
                                 </div>
         </div>
                         </div>
@@ -483,7 +484,7 @@
                 <!-- Order Summary -->
                 <div class="lg:col-span-1">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg sticky top-24">
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Đơn hàng của bạn</h3>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">�on h�ng c?a b?n</h3>
                         
                         <div id="order-items" class="space-y-4 mb-6">
                             <!-- Order items will be loaded here -->
@@ -491,44 +492,44 @@
 
                         <!-- Voucher Section -->
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Mã giảm giá (có thể chọn nhiều)</label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">M� gi?m gi� (c� th? ch?n nhi?u)</label>
                             <div id="voucher-list" class="space-y-2 max-h-60 overflow-y-auto border-2 border-gray-200 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-700">
-                                <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">Đang tải vouchers...</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">�ang t?i vouchers...</p>
                             </div>
                             <div id="voucher-message" class="mt-2 text-sm hidden"></div>
                         </div>
 
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3 mb-6">
                             <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                                <span>Tạm tính:</span>
-                                <span id="subtotal" class="font-semibold">0₫</span>
+                                <span>T?m t�nh:</span>
+                                <span id="subtotal" class="font-semibold">0?</span>
                             </div>
                             <div id="discount-row" class="flex justify-between text-green-600 hidden">
-                                <span>Giảm giá:</span>
-                                <span id="discount" class="font-semibold">0₫</span>
+                                <span>Gi?m gi�:</span>
+                                <span id="discount" class="font-semibold">0?</span>
                             </div>
                             <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                                <span>Phí vận chuyển:</span>
-                                <span class="font-semibold">Liên hệ</span>
+                                <span>Ph� v?n chuy?n:</span>
+                                <span class="font-semibold">Li�n h?</span>
                             </div>
                             <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                                <span>Thuế VAT:</span>
-                                <span class="font-semibold">Đã bao gồm</span>
+                                <span>Thu? VAT:</span>
+                                <span class="font-semibold">�� bao g?m</span>
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 pt-3">
                                 <div class="flex justify-between text-xl font-bold text-gray-800 dark:text-white">
-                                    <span>Tổng cộng:</span>
-                                    <span id="total" class="text-green-600">0₫</span>
+                                    <span>T?ng c?ng:</span>
+                                    <span id="total" class="text-green-600">0?</span>
                                 </div>
         </div>
                         </div>
 
                         <button type="submit" form="checkout-form" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
-                            Xác nhận đặt hàng
+                            X�c nh?n d?t h�ng
                         </button>
 
                         <a href="gio-hang.html" class="mt-4 w-full block text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                            Quay lại giỏ hàng
+                            Quay l?i gi? h�ng
                         </a>
                     </div>
         </div>
@@ -542,8 +543,8 @@
             <div class="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Đặt hàng thành công!</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">�?t h�ng th�nh c�ng!</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">C?m on b?n d� d?t h�ng. Ch�ng t�i s? li�n h? v?i b?n trong th?i gian s?m nh?t.</p>
             
             <!-- Note about approval -->
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
@@ -552,18 +553,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div>
-                        <p class="font-semibold text-blue-800 dark:text-blue-200">Đơn hàng đang chờ xác nhận</p>
-                        <p class="text-sm text-blue-700 dark:text-blue-300">Bạn sẽ nhận vé quay may mắn sau khi đơn hàng được duyệt</p>
+                        <p class="font-semibold text-blue-800 dark:text-blue-200">�on h�ng dang ch? x�c nh?n</p>
+                        <p class="text-sm text-blue-700 dark:text-blue-300">B?n s? nh?n v� quay may m?n sau khi don h�ng du?c duy?t</p>
                     </div>
         </div>
             </div>
             
             <div class="flex gap-3">
                 <button onclick="closeSuccessModal()" class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg">
-                    Hoàn tất
+                    Ho�n t?t
                 </button>
                 <a href="order_history.html" class="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg text-center">
-                    Xem đơn hàng
+                    Xem don h�ng
                 </a>
             </div>
         </div>
@@ -580,7 +581,7 @@
                             <div class="font-bold text-lg text-white">HC<span class="text-green-500">ECO SYSTEM</span></div>
                         </div>
                     </a>
-                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Giữ vững cam kết năng lượng sạch cho mỗi nhà.</p>                    
+                    <p class="text-sm text-gray-400">&copy; 2025 HC Eco System. Gi? v?ng cam k?t nang lu?ng s?ch cho m?i nh�.</p>                    
                     <!-- Ecosystem Logos Animation -->
                     <div class="mt-6 relative overflow-hidden" style="height: 80px;">
                         <div id="ecosystem-logos-container" class="flex gap-6">
@@ -590,27 +591,27 @@
                 </div>
 
                 <div class="space-y-2">
-                    <h4 class="font-semibold text-white">Thông tin liên hệ</h4>
+                    <h4 class="font-semibold text-white">Th�ng tin li�n h?</h4>
                     <ul class="text-sm text-gray-400 space-y-1">
-                        <li><strong>Hotline:</strong> 0969 397 434 (Chính)</li>
-                        <li><strong>Hotline phụ:</strong> 0988 919 868</li>
+                        <li><strong>Hotline:</strong> 0969 397 434 (Ch�nh)</li>
+                        <li><strong>Hotline ph?:</strong> 0988 919 868</li>
                         <li><strong>Zalo:</strong> 0969 397 434</li>
                         <li><strong>Email:</strong> hcecosystem@gmail.com</li>
                         <li><strong>Website:</strong> hceco.io.vn</li>
-                        <li><strong>Địa chỉ Văn phòng:</strong><br>790 Ngô Quyền, Phường An Hải, Thành Phố Đà Nẵng</li>
+                        <li><strong>�?a ch? Van ph�ng:</strong><br>790 Ng� Quy?n, Phu?ng An H?i, Th�nh Ph? �� N?ng</li>
                     </ul>
                 </div>
 
                 <div class="space-y-2">
-                     <h4 class="font-semibold text-white">Chính sách & Dịch vụ</h4>
+                     <h4 class="font-semibold text-white">Ch�nh s�ch & D?ch v?</h4>
                     <ul class="text-sm space-y-1">
-                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">Tầm Nhìn & Sứ Mệnh</a></li>
-                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">Điều Khoản & Điều Kiện</a></li>
-                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Chính Sách Đổi Trả</a></li>
-                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Cá Nhân</a></li>
-                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Mật Thông Tin Thanh Toán</a></li>
-                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Chính Sách Bảo Hành</a></li>
-                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Trở Thành Nhà Phân Phối</a></li>
+                        <li><a href="tam-nhin-su-menh.html" class="text-gray-400 hover:text-white">T?m Nh�n & S? M?nh</a></li>
+                        <li><a href="dieu-khoan-dieu-kien.html" class="text-gray-400 hover:text-white">�i?u Kho?n & �i?u Ki?n</a></li>
+                        <li><a href="chinh-sach-doi-tra.html" class="text-gray-400 hover:text-white">Ch�nh S�ch �?i Tr?</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-ca-nhan.html" class="text-gray-400 hover:text-white">Ch�nh S�ch B?o M?t Th�ng Tin C� Nh�n</a></li>
+                        <li><a href="chinh-sach-bao-mat-thong-tin-thanh-toan.html" class="text-gray-400 hover:text-white">Ch�nh S�ch B?o M?t Th�ng Tin Thanh To�n</a></li>
+                        <li><a href="chinh-sach-bao-hanh.html" class="text-gray-400 hover:text-white">Ch�nh S�ch B?o H�nh</a></li>
+                        <li><a href="tro-thanh-nha-phan-phoi.html" class="text-gray-400 hover:text-white">Tr? Th�nh Nh� Ph�n Ph?i</a></li>
                     </ul>
                 </div>
             </div>
@@ -621,7 +622,7 @@
     <div class="bg-black border-t border-green-500/30 shadow-inner copyright-bar">
         <div class="container mx-auto px-4 py-4">
             <p class="text-center text-sm text-gray-200 tracking-wide">
-                © Bản quyền thuộc về <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung cấp bởi <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
+                � B?n quy?n thu?c v? <a href="https://hceco.io.vn" class="text-green-300 hover:text-white underline font-semibold">https://hceco.io.vn</a> | Cung c?p b?i <a href="https://phuture.io.vn" target="_blank" class="text-green-200 hover:text-white hover:underline font-medium transition-colors duration-200">Phuture</a>
             </p>
         </div>
     </div>
@@ -643,8 +644,8 @@
                 if (data.success && data.logged_in && data.user) {
                     const user = data.user;
                     
-                    // Tự động điền fullname (ưu tiên full_name, nếu không có thì dùng username)
-                    // Chỉ điền khi có giá trị string hợp lệ (không phải boolean hoặc empty)
+                    // T? d?ng di?n fullname (uu ti�n full_name, n?u kh�ng c� th� d�ng username)
+                    // Ch? di?n khi c� gi� tr? string h?p l? (kh�ng ph?i boolean ho?c empty)
                     const fullnameInput = document.getElementById('fullname');
                     if (fullnameInput) {
                         const fullName = typeof user.full_name === 'string' && user.full_name.trim() 
@@ -656,45 +657,41 @@
                         }
                     }
                     
-                    // Tự động điền phone - chỉ điền khi có giá trị string hợp lệ
+                    // T? d?ng di?n phone - ch? di?n khi c� gi� tr? string h?p l?
                     const phoneInput = document.getElementById('phone');
                     if (phoneInput && typeof user.phone === 'string' && user.phone.trim()) {
                         phoneInput.value = user.phone.trim();
                     }
                     
-                    console.log('✅ Đã tự động điền thông tin user:', { 
-                        full_name: user.full_name, 
-                        phone: user.phone,
-                        username: user.username 
-                    });
+                    
                 } else {
-                    console.log('ℹ️ User chưa đăng nhập hoặc không có thông tin');
+                    
                 }
             } catch (error) {
-                console.error('Lỗi khi lấy thông tin user:', error);
-                // Không làm gì nếu lỗi - form vẫn để trống
+                console.error('L?i khi l?y th�ng tin user:', error);
+                // Kh�ng l�m g� n?u l?i - form v?n d? tr?ng
             }
         }
 
         // Load user info when page is ready
         document.addEventListener('DOMContentLoaded', function() {
-            // Đợi một chút để đảm bảo auth.js đã load xong
+            // �?i m?t ch�t d? d?m b?o auth.js d� load xong
             setTimeout(loadUserInfo, 300);
         });
 
-        // Phone number validation - chỉ cho nhập số
+        // Phone number validation - ch? cho nh?p s?
         const phoneInput = document.getElementById('phone');
         if (phoneInput) {
             phoneInput.addEventListener('input', function(e) {
-                // Chỉ giữ lại số
+                // Ch? gi? l?i s?
                 this.value = this.value.replace(/[^0-9]/g, '');
                 
-                // Đảm bảo bắt đầu bằng 0
+                // �?m b?o b?t d?u b?ng 0
                 if (this.value.length > 0 && this.value[0] !== '0') {
                     this.value = '0' + this.value.replace(/^0+/, '').substring(0, 9);
                 }
                 
-                // Giới hạn 10 số
+                // Gi?i h?n 10 s?
                 if (this.value.length > 10) {
                     this.value = this.value.substring(0, 10);
                 }
@@ -706,12 +703,12 @@
                 const numbersOnly = paste.replace(/[^0-9]/g, '');
                 let processedValue = numbersOnly;
                 
-                // Đảm bảo bắt đầu bằng 0
+                // �?m b?o b?t d?u b?ng 0
                 if (processedValue.length > 0 && processedValue[0] !== '0') {
                     processedValue = '0' + processedValue.replace(/^0+/, '');
                 }
                 
-                // Giới hạn 10 số
+                // Gi?i h?n 10 s?
                 if (processedValue.length > 10) {
                     processedValue = processedValue.substring(0, 10);
                 }
@@ -719,11 +716,11 @@
                 this.value = processedValue;
             });
             
-            // Validation khi blur (rời khỏi ô input)
+            // Validation khi blur (r?i kh?i � input)
             phoneInput.addEventListener('blur', function(e) {
                 const phone = this.value.trim();
                 if (phone && !/^0[0-9]{9}$/.test(phone)) {
-                    this.setCustomValidity('Số điện thoại phải có 10 số và bắt đầu bằng 0');
+                    this.setCustomValidity('S? di?n tho?i ph?i c� 10 s? v� b?t d?u b?ng 0');
                     this.classList.add('border-red-500');
                 } else {
                     this.setCustomValidity('');
@@ -807,13 +804,13 @@
             const listContainer = document.getElementById('voucher-list');
             
             if (availableVouchers.length === 0) {
-                listContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">Bạn chưa có voucher nào</p>';
+                listContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">B?n chua c� voucher n�o</p>';
                 return;
             }
             
             listContainer.innerHTML = '';
             availableVouchers.forEach((voucher, index) => {
-                const discountText = Math.round(voucher.discount_amount).toLocaleString('vi-VN') + '₫';
+                const discountText = Math.round(voucher.discount_amount).toLocaleString('vi-VN') + '?';
                 
                 const voucherItem = document.createElement('div');
                 voucherItem.className = 'flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors';
@@ -825,7 +822,7 @@
                            class="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500">
                     <label for="voucher-${index}" class="flex-1 cursor-pointer">
                         <div class="font-semibold text-gray-800 dark:text-white">${voucher.name}</div>
-                        <div class="text-sm text-green-600 dark:text-green-400">Giảm ${discountText}</div>
+                        <div class="text-sm text-green-600 dark:text-green-400">Gi?m ${discountText}</div>
                         ${voucher.description ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">${voucher.description}</div>` : ''}
                     </label>
                 `;
@@ -854,8 +851,8 @@
             // Update message
             if (selectedVouchers.length > 0) {
                 const totalDiscount = selectedVouchers.reduce((sum, v) => sum + v.discount_amount, 0);
-                const discountText = Math.round(totalDiscount).toLocaleString('vi-VN') + '₫';
-                messageEl.textContent = `✓ Đã chọn ${selectedVouchers.length} voucher - Tổng giảm: ${discountText}`;
+                const discountText = Math.round(totalDiscount).toLocaleString('vi-VN') + '?';
+                messageEl.textContent = `? �� ch?n ${selectedVouchers.length} voucher - T?ng gi?m: ${discountText}`;
                 messageEl.className = 'mt-2 text-sm text-green-600 font-semibold';
                 messageEl.classList.remove('hidden');
             } else {
@@ -883,14 +880,14 @@
             let totalDiscount = 0;
             if (selectedVouchers.length > 0) {
                 totalDiscount = selectedVouchers.reduce((sum, voucher) => sum + voucher.discount_amount, 0);
-                discountEl.textContent = '-' + Math.round(totalDiscount).toLocaleString('vi-VN') + '₫';
+                discountEl.textContent = '-' + Math.round(totalDiscount).toLocaleString('vi-VN') + '?';
                 discountRow.classList.remove('hidden');
             } else {
                 discountRow.classList.add('hidden');
             }
             
             const finalTotal = Math.max(0, subtotal - totalDiscount);
-            totalEl.textContent = Math.round(finalTotal).toLocaleString('vi-VN') + '₫';
+            totalEl.textContent = Math.round(finalTotal).toLocaleString('vi-VN') + '?';
         }
 
         // Handle checkout form submission
@@ -902,7 +899,7 @@
                 // Validate phone number
                 const phoneValue = document.getElementById('phone').value.trim();
                 if (!phoneValue || !/^0[0-9]{9}$/.test(phoneValue)) {
-                    alert('Vui lòng nhập số điện thoại hợp lệ (10 số, bắt đầu bằng 0)');
+                    alert('Vui l�ng nh?p s? di?n tho?i h?p l? (10 s?, b?t d?u b?ng 0)');
                     document.getElementById('phone').focus();
                     return;
                 }
@@ -910,7 +907,7 @@
                 // Get cart items from window.orderItems (loaded by checkout-page.js)
                 const cart = window.orderItems || [];
                 if (cart.length === 0) {
-                    alert('Giỏ hàng trống!');
+                    alert('Gi? h�ng tr?ng!');
                     return;
                 }
 
@@ -938,7 +935,7 @@
                 
                 if (hasVirtualItems) {
                     // Survey package order - send items with full info
-                    console.log('Detected survey package order');
+                    
                     
                     const items = cart.map(item => ({
                         product_id: (item.id && typeof item.id === 'number') ? item.id : null,
@@ -958,8 +955,8 @@
                     apiEndpoint = '../api/create_order_from_survey.php';
                     
                 } else if (hasDirectOrderItems) {
-                    // Direct order (from "Đặt hàng ngay" button) - send items with product_id only
-                    console.log('Detected direct order (not from cart)');
+                    // Direct order (from "�?t h�ng ngay" button) - send items with product_id only
+                    
                     
                     const items = cart.map(item => ({
                         product_id: item.product_id || item.id,
@@ -977,7 +974,7 @@
                     
                 } else {
                     // Regular cart order - use cart_item_id
-                    console.log('Regular cart order');
+                    
                     
                     const items = cart.map(item => ({
                         cart_item_id: item.cart_id || item.id,
@@ -996,8 +993,8 @@
                 }
 
                 // Debug: Log the data being sent
-                console.log('Order data being sent:', orderData);
-                console.log('API endpoint:', apiEndpoint);
+                
+                
 
                 try {
                     const response = await fetch(apiEndpoint, {
@@ -1007,7 +1004,7 @@
                     });
 
                     const result = await response.json();
-                    console.log('API Response:', result);
+                    
 
                     if (result.success) {
                         // Only clear cart if order was from cart (not direct order)
@@ -1022,11 +1019,11 @@
                         document.getElementById('success-modal').classList.remove('hidden');
                     } else {
                         console.error('API Error:', result);
-                        alert(result.message || 'Có lỗi xảy ra khi đặt hàng');
+                        alert(result.message || 'C� l?i x?y ra khi d?t h�ng');
                     }
                 } catch (error) {
                     console.error('Error submitting order:', error);
-                    alert('Không thể đặt hàng, vui lòng thử lại sau');
+                    alert('Kh�ng th? d?t h�ng, vui l�ng th? l?i sau');
                 }
             });
         }
@@ -1095,7 +1092,7 @@
                 }
             }
             
-            // Create nodes - tăng số lượng nơ-ron nhiều hơn
+            // Create nodes - tang s? lu?ng no-ron nhi?u hon
             const nodeCount = 120;
             const nodes = [];
             for (let i = 0; i < nodeCount; i++) {
@@ -1105,7 +1102,7 @@
                 ));
             }
             
-            // Connection distance threshold - tăng khoảng cách kết nối
+            // Connection distance threshold - tang kho?ng c�ch k?t n?i
             const connectionDistance = 180;
             
             // Animation loop
@@ -1147,6 +1144,7 @@
         })();
     </script>
 
+    <script src="../assets/js/ui-enhancements.js"></script>
 </body>
 </html>
 
