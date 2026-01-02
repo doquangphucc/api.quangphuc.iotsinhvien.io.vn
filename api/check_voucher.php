@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 session_start();
 require_once __DIR__ . '/db_mysqli.php';
 
-$data = json_decode(getRawRequestBody(), true);
+$data = json_decode(file_get_contents('php://input'), true);
 $code = trim($data['code'] ?? '');
 
 if (empty($code)) {
