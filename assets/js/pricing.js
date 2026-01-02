@@ -539,6 +539,12 @@ async function addToCart(productId) {
         return;
     }
     
+    // Check if product is available
+    if (!product.is_active) {
+        showToast('❌ Sản phẩm tạm hết hàng', 'error');
+        return;
+    }
+    
     // Check if user is logged in
     const user = window.authUtils?.getUser();
     if (!user || !user.id) {
@@ -599,6 +605,12 @@ async function orderNow(productId) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) {
         showToast('❌ Không tìm thấy sản phẩm', 'error');
+        return;
+    }
+    
+    // Check if product is available
+    if (!product.is_active) {
+        showToast('❌ Sản phẩm tạm hết hàng', 'error');
         return;
     }
     

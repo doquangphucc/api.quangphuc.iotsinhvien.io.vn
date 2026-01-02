@@ -328,6 +328,13 @@ function renderProductDetail(product) {
 
 // Add to cart function (global scope for onclick handlers)
 window.addToCart = async function(productId) {
+    const product = window.currentProduct;
+    
+    // Check if product is available
+    if (product && !product.is_active) {
+        showToast('❌ Sản phẩm tạm hết hàng', 'error');
+        return;
+    }
     
     // Check if user is logged in
     const user = window.authUtils?.getUser();
@@ -388,6 +395,12 @@ window.orderNow = function(productId) {
     const product = window.currentProduct;
     if (!product) {
         showToast('❌ Không tìm thấy thông tin sản phẩm', 'error');
+        return;
+    }
+    
+    // Check if product is available
+    if (!product.is_active) {
+        showToast('❌ Sản phẩm tạm hết hàng', 'error');
         return;
     }
     
