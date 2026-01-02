@@ -50,20 +50,22 @@ function applySecurityMiddleware(array $options = []): void {
         }
     }
     
-    // 3. Rate limiting
+    // 3. Rate limiting (file-based for middleware - no DB required)
     if ($options['rate_limit']) {
-        $endpoint = $_SERVER['REQUEST_URI'] ?? '/';
-        $rateLimiter = new RateLimiter($endpoint, $options['rate_limit_requests'], $options['rate_limit_window']);
+        $result = simpleRateLimit(
+            $options['rate_limit_requests'], 
+            $options['rate_limit_window']
+        );
         
-        if (!$rateLimiter->check()) {
+        if (!$result['allowed']) {
             http_response_code(429);
             header('Content-Type: application/json');
-            header('Retry-After: ' . $options['rate_limit_window']);
+            header('Retry-After: ' . $result['retry_after']);
             echo json_encode([
                 'success' => false,
                 'message' => 'Quá nhiều yêu cầu. Vui lòng thử lại sau.',
                 'code' => 'RATE_LIMITED',
-                'retry_after' => $options['rate_limit_window']
+                'retry_after' => $result['retry_after']
             ]);
             exit;
         }
@@ -270,4 +272,87 @@ class SecurityCheck {
         
         return max(0, $score);
     }
+}
+
+/**
+ * Simple file-based rate limiter (no database required)
+ * Used by security middleware for quick rate limiting
+ * 
+ * @param int $maxRequests - Max requests allowed in window
+ * @param int $windowSeconds - Time window in seconds
+ * @return array ['allowed' => bool, 'retry_after' => int]
+ */
+function simpleRateLimit(int $maxRequests = 60, int $windowSeconds = 60): array {
+    // Get client IP
+    $ip = '';
+    $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
+    foreach ($headers as $header) {
+        if (!empty($_SERVER[$header])) {
+            $ip = $_SERVER[$header];
+            if (strpos($ip, ',') !== false) {
+                $ip = trim(explode(',', $ip)[0]);
+            }
+            break;
+        }
+    }
+    $ip = $ip ?: '0.0.0.0';
+    
+    // Create rate limit file storage directory
+    $rateDir = sys_get_temp_dir() . '/hceco_rate_limits';
+    if (!is_dir($rateDir)) {
+        @mkdir($rateDir, 0755, true);
+    }
+    
+    // Create file path based on IP hash
+    $fileKey = md5($ip . '_' . ($_SERVER['REQUEST_URI'] ?? '/'));
+    $filePath = $rateDir . '/' . $fileKey . '.json';
+    
+    $now = time();
+    $data = ['requests' => [], 'blocked_until' => 0];
+    
+    // Read existing data
+    if (file_exists($filePath)) {
+        $content = @file_get_contents($filePath);
+        if ($content) {
+            $data = json_decode($content, true) ?: $data;
+        }
+    }
+    
+    // Check if blocked
+    if ($data['blocked_until'] > $now) {
+        return [
+            'allowed' => false,
+            'retry_after' => $data['blocked_until'] - $now
+        ];
+    }
+    
+    // Clean old requests outside window
+    $data['requests'] = array_filter($data['requests'], function($timestamp) use ($now, $windowSeconds) {
+        return ($now - $timestamp) < $windowSeconds;
+    });
+    
+    // Check request count
+    $requestCount = count($data['requests']);
+    
+    if ($requestCount >= $maxRequests) {
+        // Block for window duration
+        $data['blocked_until'] = $now + $windowSeconds;
+        @file_put_contents($filePath, json_encode($data));
+        
+        return [
+            'allowed' => false,
+            'retry_after' => $windowSeconds
+        ];
+    }
+    
+    // Add current request
+    $data['requests'][] = $now;
+    $data['blocked_until'] = 0;
+    @file_put_contents($filePath, json_encode($data));
+    
+    return [
+        'allowed' => true,
+        'retry_after' => 0,
+        'remaining' => $maxRequests - $requestCount - 1
+    ];
 }
