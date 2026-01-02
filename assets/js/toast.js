@@ -40,7 +40,7 @@ const Toast = {
                     gap: 12px;
                     padding: 16px 20px;
                     border-radius: 12px;
-                    background: #fff;
+                    background: #ffffff !important;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 2px 10px rgba(0,0,0,0.1);
                     transform: translateX(120%);
                     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -156,7 +156,7 @@ const Toast = {
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: rgba(0, 0, 0, 0.5);
+                    background: rgba(0, 0, 0, 0.6) !important;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -173,7 +173,7 @@ const Toast = {
                 }
                 
                 .modal-dialog {
-                    background: #fff;
+                    background: #ffffff !important;
                     border-radius: 16px;
                     box-shadow: 0 25px 50px rgba(0,0,0,0.25);
                     max-width: 400px;
@@ -574,9 +574,13 @@ window.showInfo = (message) => Toast.info(message);
 window.customConfirm = (message, options) => Modal.confirm(message, options);
 window.customAlert = (message, options) => Modal.alert(message, options);
 
-// Override native alert for gradual migration (optional)
-// Uncomment if you want to auto-replace all alerts
-// window.nativeAlert = window.alert;
-// window.alert = (message) => Toast.warning(message);
+// Cleanup any stale modals on page load (in case of errors)
+window.cleanupModals = () => Modal.cleanup();
+
+// Auto cleanup stale modals every 5 seconds (safety net)
+setInterval(() => {
+    // Only cleanup modals that are not visible (stuck ones)
+    document.querySelectorAll('.modal-overlay:not(.show)').forEach(el => el.remove());
+}, 5000);
 
 console.log('Toast & Modal notification system loaded');
