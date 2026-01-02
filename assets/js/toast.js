@@ -395,10 +395,20 @@ const Toast = {
  */
 const Modal = {
     /**
+     * Remove all existing modal overlays
+     */
+    cleanup() {
+        document.querySelectorAll('.modal-overlay').forEach(el => el.remove());
+    },
+    
+    /**
      * Show a confirm dialog
      * @returns {Promise<boolean>}
      */
     confirm(message, options = {}) {
+        // Cleanup any existing modals first
+        this.cleanup();
+        
         return new Promise((resolve) => {
             const {
                 title = 'Xác nhận',
@@ -443,12 +453,16 @@ const Modal = {
             // Handle buttons
             const [cancelBtn, confirmBtn] = overlay.querySelectorAll('.modal-btn');
             
+            let closed = false;
             const close = (result) => {
+                if (closed) return; // Prevent multiple calls
+                closed = true;
                 overlay.classList.remove('show');
+                // Remove immediately after short animation
                 setTimeout(() => {
-                    overlay.remove();
+                    if (overlay.parentNode) overlay.remove();
                     resolve(result);
-                }, 300);
+                }, 200);
             };
             
             cancelBtn.onclick = () => close(false);
@@ -478,6 +492,9 @@ const Modal = {
      * @returns {Promise<void>}
      */
     alert(message, options = {}) {
+        // Cleanup any existing modals first
+        this.cleanup();
+        
         return new Promise((resolve) => {
             const {
                 title = 'Thông báo',
@@ -515,12 +532,15 @@ const Modal = {
                 overlay.classList.add('show');
             });
             
+            let closed = false;
             const close = () => {
+                if (closed) return; // Prevent multiple calls
+                closed = true;
                 overlay.classList.remove('show');
                 setTimeout(() => {
-                    overlay.remove();
+                    if (overlay.parentNode) overlay.remove();
                     resolve();
-                }, 300);
+                }, 200);
             };
             
             overlay.querySelector('.modal-btn').onclick = close;
