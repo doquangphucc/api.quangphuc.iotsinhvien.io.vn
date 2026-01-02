@@ -2,6 +2,7 @@
 /**
  * Rate Limiting Helper
  * Prevents brute force attacks by limiting request frequency
+ * Compatible with PDO connection
  */
 
 class RateLimiter {
@@ -29,7 +30,11 @@ class RateLimiter {
             KEY `idx_blocked_until` (`blocked_until`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
-        $this->conn->query($sql);
+        try {
+            $this->conn->exec($sql);
+        } catch (PDOException $e) {
+            // Table might already exist, ignore
+        }
     }
     
     /**
@@ -51,11 +56,8 @@ class RateLimiter {
              FROM rate_limits 
              WHERE identifier = ? AND action = ?"
         );
-        $stmt->bind_param("ss", $identifier, $action);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $record = $result->fetch_assoc();
-        $stmt->close();
+        $stmt->execute([$identifier, $action]);
+        $record = $stmt->fetch(PDO::FETCH_ASSOC);
         
         $now = time();
         
@@ -113,9 +115,7 @@ class RateLimiter {
              attempts = attempts + 1,
              last_attempt = NOW()"
         );
-        $stmt->bind_param("ss", $identifier, $action);
-        $stmt->execute();
-        $stmt->close();
+        $stmt->execute([$identifier, $action]);
     }
     
     /**
@@ -125,9 +125,7 @@ class RateLimiter {
         $stmt = $this->conn->prepare(
             "DELETE FROM rate_limits WHERE identifier = ? AND action = ?"
         );
-        $stmt->bind_param("ss", $identifier, $action);
-        $stmt->execute();
-        $stmt->close();
+        $stmt->execute([$identifier, $action]);
     }
     
     /**
@@ -137,9 +135,7 @@ class RateLimiter {
         $stmt = $this->conn->prepare(
             "UPDATE rate_limits SET blocked_until = ? WHERE identifier = ? AND action = ?"
         );
-        $stmt->bind_param("sss", $blockedUntil, $identifier, $action);
-        $stmt->execute();
-        $stmt->close();
+        $stmt->execute([$blockedUntil, $identifier, $action]);
     }
     
     /**
@@ -150,9 +146,7 @@ class RateLimiter {
         $stmt = $this->conn->prepare(
             "DELETE FROM rate_limits WHERE last_attempt < ? AND (blocked_until IS NULL OR blocked_until < NOW())"
         );
-        $stmt->bind_param("s", $threshold);
-        $stmt->execute();
-        $stmt->close();
+        $stmt->execute([$threshold]);
     }
     
     /**
@@ -177,33 +171,25 @@ class RateLimiter {
 }
 
 /**
- * Quick rate limit check function
- * @param mysqli $conn - Database connection
+ * Quick rate limit check function (PDO compatible)
+ * @param PDO $conn - Database connection (PDO)
  * @param string $action - Action type
  * @param int $maxAttempts - Max attempts (default: 5)
  * @param int $windowSeconds - Time window (default: 5 minutes)
- * @return bool - True if allowed, exits with error if not
+ * @param int $blockSeconds - Block duration when limit exceeded (default: 15 minutes)
+ * @return array ['allowed' => bool, 'retry_after' => int]
  */
-function checkRateLimit($conn, $action, $maxAttempts = 5, $windowSeconds = 300) {
+function checkRateLimit($conn, $action, $maxAttempts = 5, $windowSeconds = 300, $blockSeconds = 900) {
     $limiter = new RateLimiter($conn);
     $ip = RateLimiter::getClientIP();
-    $result = $limiter->check($ip, $action, $maxAttempts, $windowSeconds);
+    $result = $limiter->check($ip, $action, $maxAttempts, $windowSeconds, $blockSeconds);
     
-    if (!$result['allowed']) {
-        http_response_code(429);
-        header('Retry-After: ' . $result['retry_after']);
-        echo json_encode([
-            'success' => false,
-            'message' => $result['message'],
-            'retry_after' => $result['retry_after']
-        ]);
-        exit;
+    // Record this attempt before checking if blocked
+    if ($result['allowed']) {
+        $limiter->recordAttempt($ip, $action);
     }
     
-    // Record this attempt
-    $limiter->recordAttempt($ip, $action);
-    
-    return true;
+    return $result;
 }
 
 /**
