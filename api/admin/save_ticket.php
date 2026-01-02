@@ -30,10 +30,6 @@ if (!hasPermission($conn, 'tickets', $required_action)) {
     echo json_encode(['success' => false, 'message' => "Bạn không có quyền {$required_action} vé quay"]);
     exit;
 }
-
-$data = json_decode(getRawRequestBody(), true);
-
-$id = isset($data['id']) ? intval($data['id']) : 0;
 $user_id = intval($data['user_id'] ?? 0);
 $ticket_type = $data['ticket_type'] ?? 'bonus';
 $status = $data['status'] ?? 'active';
