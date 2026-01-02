@@ -15,8 +15,8 @@ if (!$rateLimitResult['allowed']) {
     sendError('Quá nhiều lần đăng nhập thất bại. Vui lòng thử lại sau ' . ceil($rateLimitResult['retry_after'] / 60) . ' phút', 429);
 }
 
-// Get JSON input
-$input = json_decode(file_get_contents('php://input'), true);
+// Get JSON input (use getRawRequestBody() since WAF may have already read php://input)
+$input = json_decode(getRawRequestBody(), true);
 
 if (json_last_error() !== JSON_ERROR_NONE) {
     sendError('Dữ liệu JSON không hợp lệ');

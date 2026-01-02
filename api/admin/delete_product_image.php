@@ -21,7 +21,7 @@ if (!is_admin()) {
 }
 
 // Get JSON input
-$input = json_decode(file_get_contents('php://input'), true);
+$input = json_decode(getRawRequestBody(), true);
 
 if (!isset($input['image_id'])) {
     http_response_code(400);

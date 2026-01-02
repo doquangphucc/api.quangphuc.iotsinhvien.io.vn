@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 requireAuth();
 $userId = getCurrentUserId();
 
-$input = json_decode(file_get_contents('php://input'), true);
+$input = json_decode(getRawRequestBody(), true);
 
 if (json_last_error() !== JSON_ERROR_NONE) {
     sendError('Dữ liệu JSON không hợp lệ');

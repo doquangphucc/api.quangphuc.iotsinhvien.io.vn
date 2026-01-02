@@ -20,7 +20,7 @@ if (!hasPermission($conn, 'tickets', 'edit')) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 $user_id = isset($data['user_id']) && $data['user_id'] > 0 ? intval($data['user_id']) : null;
 $ticket_status = $data['ticket_status'] ?? 'active';
 $reward_id = isset($data['reward_id']) && $data['reward_id'] !== null && $data['reward_id'] !== '0' ? intval($data['reward_id']) : null;

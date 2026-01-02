@@ -89,7 +89,7 @@ function applySecurityMiddleware(array $options = []): void {
                     'method' => $method,
                     'uri' => $uri,
                     'query' => $_GET,
-                    'has_body' => !empty($_POST) || !empty(file_get_contents('php://input'))
+                    'has_body' => !empty($_POST) || !empty(getRawRequestBody())
                 ],
                 "$method $uri",
                 'INFO'

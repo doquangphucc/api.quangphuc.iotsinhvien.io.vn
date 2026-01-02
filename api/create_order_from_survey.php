@@ -12,7 +12,7 @@ header('Content-Type: application/json');
 requireAuth();
 
 // Get JSON input
-$input = file_get_contents('php://input');
+$input = getRawRequestBody();
 $data = json_decode($input, true);
 
 if (!$data) {

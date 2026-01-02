@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 requireAuth();
 
-$input = json_decode(file_get_contents('php://input'), true);
+$input = json_decode(getRawRequestBody(), true);
 
 $userId = getCurrentUserId();
 $productId = isset($input['product_id']) ? (int)$input['product_id'] : 0;

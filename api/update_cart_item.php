@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Phương thức không được hỗ trợ', 405);
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+$input = json_decode(getRawRequestBody(), true);
 
 
 

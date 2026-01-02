@@ -12,7 +12,7 @@ if (!hasPermission($conn, 'intro-posts', 'delete')) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 $id = intval($data['id'] ?? 0);
 
 if ($id <= 0) {

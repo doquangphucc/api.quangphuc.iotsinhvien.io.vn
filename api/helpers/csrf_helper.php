@@ -93,7 +93,7 @@ class CSRFProtection {
         }
         
         // Check JSON body
-        $input = file_get_contents('php://input');
+        $input = getRawRequestBody();
         if ($input) {
             $data = json_decode($input, true);
             if (isset($data[self::TOKEN_NAME])) {

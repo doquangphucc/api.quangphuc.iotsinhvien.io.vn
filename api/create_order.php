@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 requireAuth();
 $userId = getCurrentUserId();
 
-$inputRaw = file_get_contents('php://input');
+$inputRaw = getRawRequestBody();
 // Debug logging removed for production
 $input = json_decode($inputRaw, true);
 // Debug logging removed for production

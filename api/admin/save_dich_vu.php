@@ -11,7 +11,7 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Check admin access
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 $id = isset($data['id']) ? intval($data['id']) : 0;
 $required_action = $id > 0 ? 'edit' : 'create';
 
@@ -20,7 +20,7 @@ if (!hasPermission($conn, 'dich-vu', $required_action)) {
     exit;
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+$input = json_decode(getRawRequestBody(), true);
 
 $id = isset($input['id']) ? intval($input['id']) : null;
 $name = $input['name'] ?? '';

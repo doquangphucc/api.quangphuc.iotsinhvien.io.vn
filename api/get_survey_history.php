@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'connect.php';
 
 requireAuth();
@@ -165,6 +165,6 @@ try {
 
 } catch (Exception $e) {
     error_log("Get Survey History error: " . $e->getMessage());
-    sendError('Lỗi hệ thống, không thể lấy lịch sử khảo sát: ' . $e->getMessage(), 500);
+    sendError('L?i h? th?ng, kh�ng th? l?y l?ch s? kh?o s�t: ' . $e->getMessage(), 500);
 }
 ?>

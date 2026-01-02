@@ -18,7 +18,7 @@ require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
 
-$payload = json_decode(file_get_contents('php://input'), true);
+$payload = json_decode(getRawRequestBody(), true);
 if (json_last_error() !== JSON_ERROR_NONE) {
     echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ'], JSON_UNESCAPED_UNICODE);
     exit;

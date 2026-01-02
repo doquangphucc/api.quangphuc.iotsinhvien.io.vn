@@ -16,7 +16,7 @@ try {
         exit;
     }
 
-    $json = file_get_contents('php://input');
+    $json = getRawRequestBody();
     $data = json_decode($json, true);
 
     if (!$data) {

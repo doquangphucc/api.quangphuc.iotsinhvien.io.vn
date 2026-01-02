@@ -21,7 +21,7 @@ if (!hasPermission($conn, 'orders', 'edit')) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 $order_id = intval($data['order_id'] ?? 0);
 $new_status = $data['status'] ?? '';
 

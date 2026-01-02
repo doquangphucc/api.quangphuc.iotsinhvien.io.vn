@@ -18,7 +18,7 @@ if (!is_admin()) {
 
 try {
     // Get JSON input
-    $input = file_get_contents('php://input');
+    $input = getRawRequestBody();
     $data = json_decode($input, true);
     
     if (!$data || !isset($data['regions'])) {

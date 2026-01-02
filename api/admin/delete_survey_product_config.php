@@ -15,7 +15,7 @@ if (!hasPermission($conn, 'survey', 'delete')) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 
 if (!$data) {
     echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);

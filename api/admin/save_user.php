@@ -26,7 +26,7 @@ try {
     }
     
     // Lấy dữ liệu từ request
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode(getRawRequestBody(), true);
     
     $user_id = isset($input['id']) && $input['id'] ? intval($input['id']) : 0;
     $full_name = mysqli_real_escape_string($conn, trim($input['full_name']));

@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verify CSRF for POST
     CSRFProtection::verify();
     
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode(getRawRequestBody(), true);
     $ip = $input['ip'] ?? '';
     
     if (empty($ip) || !filter_var($ip, FILTER_VALIDATE_IP)) {

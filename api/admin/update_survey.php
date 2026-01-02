@@ -26,7 +26,7 @@ if (!is_admin()) {
 try {
     
     // Get JSON input
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode(getRawRequestBody(), true);
     
     if (!$input || !isset($input['survey_id'])) {
         echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ'], JSON_UNESCAPED_UNICODE);

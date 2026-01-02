@@ -19,7 +19,7 @@ if (!hasPermission($conn, 'promotions', 'delete')) {
     exit;
 }
 
-$payload = json_decode(file_get_contents('php://input'), true);
+$payload = json_decode(getRawRequestBody(), true);
 $id = isset($payload['id']) ? (int)$payload['id'] : 0;
 
 if ($id <= 0) {

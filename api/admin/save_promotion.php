@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$payload = json_decode(file_get_contents('php://input'), true);
+$payload = json_decode(getRawRequestBody(), true);
 if (!is_array($payload)) {
     echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
     exit;

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 $id = isset($data['id']) ? intval($data['id']) : 0;
 $required_action = $id > 0 ? 'edit' : 'create';
 
@@ -27,7 +27,7 @@ if (!hasPermission($conn, 'rewards', $required_action)) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 
 $id = isset($data['id']) && $data['id'] > 0 ? intval($data['id']) : 0;
 $reward_name = $data['reward_name'] ?? '';

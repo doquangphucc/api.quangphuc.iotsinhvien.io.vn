@@ -16,7 +16,7 @@ if (!hasPermission($conn, 'dich-vu', 'delete')) {
     exit;
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+$input = json_decode(getRawRequestBody(), true);
 $id = intval($input['id'] ?? 0);
 
 if ($id <= 0) {

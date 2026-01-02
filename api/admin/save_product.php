@@ -16,7 +16,7 @@ require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
 require_once __DIR__ . '/../helpers/audit_logger.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 
 $id = isset($data['id']) ? intval($data['id']) : 0;
 $required_action = $id > 0 ? 'edit' : 'create';

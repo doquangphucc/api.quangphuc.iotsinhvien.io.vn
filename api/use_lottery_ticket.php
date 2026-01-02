@@ -14,7 +14,7 @@ try {
     $pdo = $db->getConnection();
 
     // Get request data
-    $requestData = json_decode(file_get_contents('php://input'), true);
+    $requestData = json_decode(getRawRequestBody(), true);
     $quantity = isset($requestData['quantity']) ? intval($requestData['quantity']) : 1;
     
     if ($quantity < 1 || $quantity > 1000) {

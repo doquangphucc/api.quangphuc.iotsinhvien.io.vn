@@ -15,7 +15,7 @@ require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 $id = isset($data['id']) ? intval($data['id']) : 0;
 $required_action = $id > 0 ? 'edit' : 'create';
 
@@ -24,7 +24,7 @@ if (!hasPermission($conn, 'tickets', $required_action)) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(getRawRequestBody(), true);
 
 $id = isset($data['id']) ? intval($data['id']) : 0;
 $user_id = intval($data['user_id'] ?? 0);

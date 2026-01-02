@@ -4,6 +4,19 @@
  * Provides protection against common web attacks
  */
 
+/**
+ * Get raw request body (safe to call multiple times)
+ * This function caches the body so it can be read multiple times
+ * @return string
+ */
+function getRawRequestBody(): string {
+    global $__RAW_REQUEST_BODY;
+    if (!isset($__RAW_REQUEST_BODY)) {
+        $__RAW_REQUEST_BODY = file_get_contents('php://input');
+    }
+    return $__RAW_REQUEST_BODY ?? '';
+}
+
 class WAF {
     // Attack patterns
     private static $sqlInjectionPatterns = [
@@ -163,9 +176,10 @@ class WAF {
         }
         
         // Check raw POST body for JSON requests
+        // Store in global so other code can reuse it (php://input can only be read once)
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         if (strpos($contentType, 'application/json') !== false) {
-            $rawBody = file_get_contents('php://input');
+            $rawBody = getRawRequestBody();
             if ($rawBody) {
                 $jsonResult = self::checkInput($rawBody, 'JSON_BODY');
                 if ($jsonResult['blocked']) {
