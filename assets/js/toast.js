@@ -149,50 +149,72 @@ const Toast = {
                     border-radius: 0 0 0 12px;
                 }
                 
-                /* Modal styles */
-                .modal-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
+                /* Modal styles - High specificity to override page styles */
+                .modal-overlay,
+                div.modal-overlay,
+                body .modal-overlay {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
                     background: rgba(0, 0, 0, 0.6) !important;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 99999;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    z-index: 999999 !important;
                     opacity: 0;
                     visibility: hidden;
                     transition: all 0.3s ease;
-                    padding: 20px;
+                    padding: 20px !important;
+                    border: none !important;
+                    box-shadow: none !important;
                 }
                 
-                .modal-overlay.show {
-                    opacity: 1;
-                    visibility: visible;
+                .modal-overlay.show,
+                div.modal-overlay.show,
+                body .modal-overlay.show {
+                    opacity: 1 !important;
+                    visibility: visible !important;
                 }
                 
-                .modal-dialog {
+                .modal-dialog,
+                div.modal-dialog,
+                .modal-overlay .modal-dialog,
+                body .modal-overlay .modal-dialog {
                     background: #ffffff !important;
-                    border-radius: 16px;
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-                    max-width: 400px;
-                    width: 100%;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    border-radius: 16px !important;
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.25) !important;
+                    max-width: 400px !important;
+                    width: 100% !important;
                     transform: scale(0.9) translateY(-20px);
                     transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-                    overflow: hidden;
+                    overflow: hidden !important;
+                    border: none !important;
                 }
                 
-                .modal-overlay.show .modal-dialog {
-                    transform: scale(1) translateY(0);
+                .modal-overlay.show .modal-dialog,
+                div.modal-overlay.show .modal-dialog,
+                body .modal-overlay.show .modal-dialog {
+                    transform: scale(1) translateY(0) !important;
                 }
                 
-                .modal-header {
-                    padding: 24px 24px 0;
-                    text-align: center;
+                .modal-header,
+                .modal-dialog .modal-header,
+                .modal-overlay .modal-dialog .modal-header {
+                    padding: 24px 24px 0 !important;
+                    text-align: center !important;
+                    background: transparent !important;
+                    backdrop-filter: none !important;
+                    border: none !important;
                 }
                 
-                .modal-icon {
+                .modal-icon,
+                .modal-dialog .modal-icon {
                     width: 64px;
                     height: 64px;
                     border-radius: 50%;
@@ -223,30 +245,46 @@ const Toast = {
                     color: #10b981;
                 }
                 
-                .modal-title {
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #1f2937;
-                    margin: 0;
+                .modal-title,
+                .modal-dialog .modal-title {
+                    font-size: 18px !important;
+                    font-weight: 600 !important;
+                    color: #1f2937 !important;
+                    margin: 0 !important;
+                    background: transparent !important;
+                    border: none !important;
                 }
                 
-                .modal-body {
-                    padding: 12px 24px 24px;
-                    text-align: center;
+                .modal-body,
+                .modal-dialog .modal-body,
+                .modal-overlay .modal-dialog .modal-body {
+                    padding: 12px 24px 24px !important;
+                    text-align: center !important;
+                    background: transparent !important;
+                    backdrop-filter: none !important;
+                    border: none !important;
                 }
                 
-                .modal-message {
-                    font-size: 14px;
-                    color: #6b7280;
-                    line-height: 1.6;
-                    margin: 0;
+                .modal-message,
+                .modal-dialog .modal-message {
+                    font-size: 14px !important;
+                    color: #6b7280 !important;
+                    line-height: 1.6 !important;
+                    margin: 0 !important;
+                    background: transparent !important;
+                    border: none !important;
                 }
                 
-                .modal-footer {
-                    padding: 0 24px 24px;
-                    display: flex;
-                    gap: 12px;
-                    justify-content: center;
+                .modal-footer,
+                .modal-dialog .modal-footer,
+                .modal-overlay .modal-dialog .modal-footer {
+                    padding: 0 24px 24px !important;
+                    display: flex !important;
+                    gap: 12px !important;
+                    justify-content: center !important;
+                    background: transparent !important;
+                    backdrop-filter: none !important;
+                    border: none !important;
                 }
                 
                 .modal-btn {
@@ -427,16 +465,23 @@ const Modal = {
             
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
+            overlay.style.cssText = 'position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:rgba(0,0,0,0.6)!important;backdrop-filter:none!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:999999!important;padding:20px!important;border:none!important;box-shadow:none!important;';
+            
+            const dialogStyles = 'background:#ffffff!important;backdrop-filter:none!important;border-radius:16px!important;box-shadow:0 25px 50px rgba(0,0,0,0.25)!important;max-width:400px!important;width:100%!important;overflow:hidden!important;border:none!important;';
+            const headerStyles = 'padding:24px 24px 0!important;text-align:center!important;background:transparent!important;backdrop-filter:none!important;border:none!important;';
+            const bodyStyles = 'padding:12px 24px 24px!important;text-align:center!important;background:transparent!important;backdrop-filter:none!important;border:none!important;';
+            const footerStyles = 'padding:0 24px 24px!important;display:flex!important;gap:12px!important;justify-content:center!important;background:transparent!important;backdrop-filter:none!important;border:none!important;';
+            
             overlay.innerHTML = `
-                <div class="modal-dialog">
-                    <div class="modal-header">
+                <div class="modal-dialog" style="${dialogStyles}">
+                    <div class="modal-header" style="${headerStyles}">
                         <div class="modal-icon ${type}">${icon || iconMap[type]}</div>
-                        <h3 class="modal-title">${title}</h3>
+                        <h3 class="modal-title" style="background:transparent!important;border:none!important;">${title}</h3>
                     </div>
-                    <div class="modal-body">
-                        <p class="modal-message">${message}</p>
+                    <div class="modal-body" style="${bodyStyles}">
+                        <p class="modal-message" style="background:transparent!important;border:none!important;">${message}</p>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="${footerStyles}">
                         <button class="modal-btn modal-btn-cancel">${cancelText}</button>
                         <button class="modal-btn ${type === 'danger' ? 'modal-btn-danger' : 'modal-btn-confirm'}">${confirmText}</button>
                     </div>
@@ -511,16 +556,23 @@ const Modal = {
             
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
+            overlay.style.cssText = 'position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:rgba(0,0,0,0.6)!important;backdrop-filter:none!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:999999!important;padding:20px!important;border:none!important;box-shadow:none!important;';
+            
+            const dialogStyles = 'background:#ffffff!important;backdrop-filter:none!important;border-radius:16px!important;box-shadow:0 25px 50px rgba(0,0,0,0.25)!important;max-width:400px!important;width:100%!important;overflow:hidden!important;border:none!important;';
+            const headerStyles = 'padding:24px 24px 0!important;text-align:center!important;background:transparent!important;backdrop-filter:none!important;border:none!important;';
+            const bodyStyles = 'padding:12px 24px 24px!important;text-align:center!important;background:transparent!important;backdrop-filter:none!important;border:none!important;';
+            const footerStyles = 'padding:0 24px 24px!important;display:flex!important;gap:12px!important;justify-content:center!important;background:transparent!important;backdrop-filter:none!important;border:none!important;';
+            
             overlay.innerHTML = `
-                <div class="modal-dialog">
-                    <div class="modal-header">
+                <div class="modal-dialog" style="${dialogStyles}">
+                    <div class="modal-header" style="${headerStyles}">
                         <div class="modal-icon ${type}">${iconMap[type]}</div>
-                        <h3 class="modal-title">${title}</h3>
+                        <h3 class="modal-title" style="background:transparent!important;border:none!important;">${title}</h3>
                     </div>
-                    <div class="modal-body">
-                        <p class="modal-message">${message}</p>
+                    <div class="modal-body" style="${bodyStyles}">
+                        <p class="modal-message" style="background:transparent!important;border:none!important;">${message}</p>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="${footerStyles}">
                         <button class="modal-btn modal-btn-confirm">${okText}</button>
                     </div>
                 </div>
