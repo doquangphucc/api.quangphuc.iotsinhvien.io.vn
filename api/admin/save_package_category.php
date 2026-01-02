@@ -11,11 +11,12 @@ try {
 ob_start();
 
 // Start session with proper config
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
 require_once __DIR__ . '/../helpers/cors_helper.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
 
 // Clean any output from includes
 ob_clean();
@@ -24,10 +25,23 @@ ob_clean();
 setupCORS();
 handlePreflight();
 
+// Apply admin security (WAF, rate limiting)
+applySecurityMiddleware([
+    'csrf' => false,  // TODO: Enable after frontend update
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 30,
+    'rate_limit_window' => 60,
+    'audit' => true,
+    'headers' => false  // CORS already handled above
+]);
+
 header('Content-Type: application/json; charset=utf-8');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+// Check permission: need create for new, edit for update
+$required_action = (isset($_POST['id']) && $_POST['id']) ? 'edit' : 'create';
+if (!hasPermission($conn, 'packages', $required_action)) {
+    echo json_encode(['success' => false, 'message' => "Bạn không có quyền {$required_action} danh mục gói"]);
     exit;
 }
 

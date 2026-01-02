@@ -18,6 +18,7 @@ ini_set('memory_limit', '256M');
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 require_once __DIR__ . '/../helpers/cors_helper.php';
 require_once __DIR__ . '/../helpers/file_validator.php';
 
@@ -27,8 +28,8 @@ handlePreflight();
 
 header('Content-Type: application/json; charset=utf-8');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+if (!hasPermission($conn, 'intro-posts', 'create') && !hasPermission($conn, 'intro-posts', 'edit')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền upload media bài giới thiệu']);
     exit;
 }
 

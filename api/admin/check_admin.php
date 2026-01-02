@@ -1,9 +1,17 @@
 <?php
 // Check if user is admin
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
 
-header('Content-Type: application/json');
+// Apply admin security (WAF, rate limiting, no CSRF for GET)
+applySecurityMiddleware([
+    'csrf' => false,
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 60,
+    'rate_limit_window' => 60
+]);
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

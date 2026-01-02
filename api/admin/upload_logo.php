@@ -12,6 +12,7 @@ ini_set('max_execution_time', 300);
 require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
+require_once __DIR__ . '/permission_helper.php';
 require_once __DIR__ . '/../helpers/cors_helper.php';
 require_once __DIR__ . '/../helpers/file_validator.php';
 
@@ -21,8 +22,10 @@ handlePreflight();
 
 header('Content-Type: application/json; charset=utf-8');
 
-if (!is_admin()) {
-    echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);
+// Logo upload is used by dich-vu and categories modules
+if (!hasPermission($conn, 'dich-vu', 'create') && !hasPermission($conn, 'dich-vu', 'edit') &&
+    !hasPermission($conn, 'categories', 'create') && !hasPermission($conn, 'categories', 'edit')) {
+    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền upload logo']);
     exit;
 }
 

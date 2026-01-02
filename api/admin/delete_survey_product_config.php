@@ -1,14 +1,20 @@
 <?php
 // Delete survey product configuration
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+// Apply admin security (WAF, rate limiting)
+applySecurityMiddleware([
+    'csrf' => false,  // TODO: Enable after frontend update
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 30,
+    'rate_limit_window' => 60,
+    'audit' => true
+]);
 
 if (!hasPermission($conn, 'survey', 'delete')) {
     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền xóa khảo sát']);

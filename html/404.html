@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Không tìm thấy trang | HC Eco System</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter with Vietnamese subset -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    
+    <style>
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F4F9E9 0%, #e8f5e0 100%);
+        }
+        
+        body[data-theme="dark"] .error-container {
+            background: linear-gradient(135deg, #12181B 0%, #1a2e1a 100%);
+        }
+        
+        .error-code {
+            font-size: 10rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1E5631, #3FA34D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1E5631, #3FA34D);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(30, 86, 49, 0.3);
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="error-container">
+        <div class="text-center px-4">
+            <!-- Animated Icon -->
+            <div class="floating mb-8">
+                <svg class="w-32 h-32 mx-auto text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            
+            <!-- Error Code -->
+            <h1 class="error-code">404</h1>
+            
+            <!-- Message -->
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-4">
+                Không tìm thấy trang
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 text-lg max-w-md mx-auto mb-8">
+                Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.
+            </p>
+            
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/" class="btn-primary text-white font-semibold py-3 px-8 rounded-full inline-flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Về trang chủ
+                </a>
+                <button onclick="history.back()" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold py-3 px-8 rounded-full border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 transition-all inline-flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Quay lại
+                </button>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-gray-500 dark:text-gray-400 mb-4">Bạn có thể thử:</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="/san-pham" class="text-green-600 hover:text-green-700 hover:underline">Sản phẩm</a>
+                    <span class="text-gray-300">•</span>
+                    <a href="/dich-vu" class="text-green-600 hover:text-green-700 hover:underline">Dịch vụ</a>
+                    <span class="text-gray-300">•</span>
+                    <a href="/khao-sat-dien-mat-troi" class="text-green-600 hover:text-green-700 hover:underline">Khảo sát</a>
+                    <span class="text-gray-300">•</span>
+                    <a href="/lien-he" class="text-green-600 hover:text-green-700 hover:underline">Liên hệ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme Detection -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+</body>
+</html>
+

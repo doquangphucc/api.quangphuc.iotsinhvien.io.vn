@@ -12,11 +12,22 @@ ini_set('max_execution_time', 300);
 ini_set('max_input_time', 300);
 
 // Start session with proper config
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
 require_once __DIR__ . '/../helpers/cors_helper.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
+
+// Apply admin security (WAF, rate limiting)
+applySecurityMiddleware([
+    'csrf' => false,  // TODO: Enable after frontend update
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 30,
+    'rate_limit_window' => 60,
+    'audit' => true
+]);
 
 // Setup dynamic CORS (works with any domain)
 setupCORS();

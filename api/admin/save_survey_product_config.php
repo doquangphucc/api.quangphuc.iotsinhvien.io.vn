@@ -4,23 +4,23 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
 
-// Set headers first
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+// Apply admin security (WAF, rate limiting)
+applySecurityMiddleware([
+    'csrf' => false,  // TODO: Enable after frontend update
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 30,
+    'rate_limit_window' => 60,
+    'audit' => true
+]);
 
 try {
-    if (!is_admin()) {
-        echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
     $json = getRawRequestBody();
     $data = json_decode($json, true);
 
@@ -30,6 +30,13 @@ try {
             'message' => 'Dữ liệu không hợp lệ',
             'debug' => ['raw_input' => substr($json, 0, 100)]
         ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    
+    // Check permission: need create for new, edit for update
+    $required_action = isset($data['id']) && $data['id'] ? 'edit' : 'create';
+    if (!hasPermission($conn, 'survey', $required_action)) {
+        echo json_encode(['success' => false, 'message' => "Bạn không có quyền {$required_action} cấu hình khảo sát"], JSON_UNESCAPED_UNICODE);
         exit;
     }
 

@@ -4,12 +4,20 @@
  * Lấy bảng giá điện để quản lý (cần đăng nhập admin)
  */
 
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
 
-header('Content-Type: application/json; charset=utf-8');
+// Apply admin security (WAF, rate limiting, no CSRF for GET)
+applySecurityMiddleware([
+    'csrf' => false,
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 60,
+    'rate_limit_window' => 60
+]);
 
 if (!hasPermission($conn, 'survey', 'view')) {
     echo json_encode(['success' => false, 'message' => 'Không có quyền truy cập']);

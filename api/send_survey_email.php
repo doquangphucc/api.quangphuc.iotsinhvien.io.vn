@@ -216,7 +216,7 @@ try {
     }
     
     // Gửi HTML email qua PHP mail() với headers đúng để render HTML
-    $to = 'doquangphuc21@gmail.com';
+    $to = ORDER_NOTIFICATION_EMAIL ?: 'admin@hceco.io.vn';
     $subject = "Báo Giá Điện Mặt Trời - Khách hàng: $fullname ($phone)";
     
     error_log("send_survey_email.php - Preparing to send HTML email to: " . $to);
@@ -246,8 +246,10 @@ try {
         } else {
             error_log("send_survey_email.php - mail() returned false, trying FormSubmit fallback");
             // Fallback to FormSubmit nếu mail() fail
-            $formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
-            sendEmailViaFormSubmit($formSubmitUrl, $subject, $fullname, $email, $phone, $emailContent, $surveyData, $results);
+            $formSubmitUrl = ORDER_NOTIFICATION_FORM_SUBMIT ?: '';
+            if ($formSubmitUrl) {
+                sendEmailViaFormSubmit($formSubmitUrl, $subject, $fullname, $email, $phone, $emailContent, $surveyData, $results);
+            }
         }
     } else {
         // For non-FastCGI
@@ -259,8 +261,10 @@ try {
         } else {
             error_log("send_survey_email.php - mail() returned false, trying FormSubmit fallback");
             // Fallback to FormSubmit nếu mail() fail
-            $formSubmitUrl = 'https://formsubmit.co/ajax/doquangphuc21@gmail.com';
-            sendEmailViaFormSubmit($formSubmitUrl, $subject, $fullname, $email, $phone, $emailContent, $surveyData, $results);
+            $formSubmitUrl = ORDER_NOTIFICATION_FORM_SUBMIT ?: '';
+            if ($formSubmitUrl) {
+                sendEmailViaFormSubmit($formSubmitUrl, $subject, $fullname, $email, $phone, $emailContent, $surveyData, $results);
+            }
         }
         
         sendSuccess(['sent' => true], 'Đã gửi báo giá đến email thành công!');
@@ -582,7 +586,7 @@ function buildSurveyEmailHTML($fullname, $phone, $email, $surveyData, $results) 
         
         <div class="footer">
             <p>© 2025 ' . SITE_NAME . ' - Hệ sinh thái cho tương lai</p>
-            <p>Hotline: 0969 397 434 | Email: hcecosystem@gmail.com</p>
+            <p>Hotline: 0969 397 434 | Email: ' . SITE_EMAIL . '</p>
             <p>Website: ' . SITE_WEBSITE . '</p>
         </div>
     </div>

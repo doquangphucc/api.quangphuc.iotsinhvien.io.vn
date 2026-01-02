@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../helpers/security_middleware.php';
 require_once __DIR__ . '/../helpers/waf_helper.php';
-require_once __DIR__ . '/../check_admin_access.php';
+require_once __DIR__ . '/permission_helper.php';
 
 // Apply admin security (without WAF check for this endpoint)
 applySecurityMiddleware([
@@ -16,8 +16,8 @@ applySecurityMiddleware([
     'audit' => true
 ]);
 
-// Check admin access
-checkAdminAccess();
+// Only full admin can manage blocked IPs
+requireFullAdmin();
 
 // GET: List blocked IPs
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

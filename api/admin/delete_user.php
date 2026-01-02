@@ -4,15 +4,20 @@
  * Xóa user và tất cả permissions liên quan
  */
 
-header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Credentials: true');
-
-require_once '../config.php';
-require_once '../db_mysqli.php';
-require_once '../session.php';
+require_once __DIR__ . '/../connect.php';
+require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../helpers/audit_logger.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
+
+// Apply admin security (WAF, rate limiting)
+applySecurityMiddleware([
+    'csrf' => false,  // TODO: Enable after frontend update
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 30,
+    'rate_limit_window' => 60,
+    'audit' => true
+]);
 
 try {
     // Kiểm tra admin

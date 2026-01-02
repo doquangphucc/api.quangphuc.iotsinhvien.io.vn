@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>403 - Truy cập bị từ chối | HC Eco System</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter with Vietnamese subset -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="../assets/img/logo.jpg" />
+    
+    <style>
+        :root {
+            --color-primary: #1E5631;
+            --color-secondary: #3FA34D;
+            --color-accent: #C5E384;
+            --color-bg-light: #F4F9E9;
+            --color-text-dark: #1a202c;
+            --color-text-light: #f7fafc;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body[data-theme="dark"] {
+            background-color: #12181B;
+            color: var(--color-text-light);
+        }
+        
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+        
+        body[data-theme="dark"] .error-container {
+            background: linear-gradient(135deg, #12181B 0%, #2d2410 100%);
+        }
+        
+        .error-code {
+            font-size: 10rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1E5631, #3FA34D);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(30, 86, 49, 0.3);
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="error-container">
+        <div class="text-center px-4">
+            <!-- Animated Icon -->
+            <div class="relative mb-8 inline-block">
+                <div class="absolute inset-0 bg-amber-400 rounded-full pulse-ring opacity-50"></div>
+                <div class="relative">
+                    <svg class="w-32 h-32 mx-auto text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                              d="M12 15v.01M12 9v2m-7 4h14a2 2 0 001.414-3.414l-7-7a2 2 0 00-2.828 0l-7 7A2 2 0 005 15z" />
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Error Code -->
+            <h1 class="error-code shake">403</h1>
+            
+            <!-- Message -->
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mt-4 mb-4">
+                Truy cập bị từ chối
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 text-lg max-w-md mx-auto mb-8">
+                Bạn không có quyền truy cập trang này. Vui lòng đăng nhập hoặc liên hệ quản trị viên.
+            </p>
+            
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/" class="btn-primary text-white font-semibold py-3 px-8 rounded-full inline-flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Về trang chủ
+                </a>
+                <a href="/html/login.html" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold py-3 px-8 rounded-full border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 transition-all inline-flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    Đăng nhập
+                </a>
+            </div>
+            
+            <!-- Info Box -->
+            <div class="mt-12 p-6 bg-white/50 dark:bg-gray-800/50 rounded-2xl max-w-lg mx-auto backdrop-blur">
+                <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Lý do có thể:</h3>
+                <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Phiên đăng nhập đã hết hạn
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Tài khoản không có quyền truy cập
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Đường dẫn bị chặn bởi hệ thống bảo mật
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme Detection -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+</body>
+</html>
+

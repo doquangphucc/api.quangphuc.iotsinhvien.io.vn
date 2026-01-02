@@ -28,8 +28,10 @@ if (session_status() === PHP_SESSION_NONE) {
     // Configure session settings
     ini_set('session.cookie_httponly', 1);
     ini_set('session.use_only_cookies', 1);
+    ini_set('session.use_strict_mode', 1); // Reject uninitialized session IDs
     ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.cookie_secure', $isSecure ? 1 : 0);
+    ini_set('session.gc_maxlifetime', 86400); // 24 hours
     
     // Try to set session save path to avoid isolation issues
     // If hosting has session isolation enabled, this might be ignored

@@ -7,13 +7,13 @@
 require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../helpers/security_middleware.php';
 require_once __DIR__ . '/../helpers/audit_logger.php';
-require_once __DIR__ . '/../check_admin_access.php';
+require_once __DIR__ . '/permission_helper.php';
 
 // Apply admin security
 applyAdminSecurity();
 
-// Check admin access
-checkAdminAccess();
+// Only full admin can view audit logs
+requireFullAdmin();
 
 // Get filter parameters
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;

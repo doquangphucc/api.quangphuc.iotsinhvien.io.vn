@@ -12,12 +12,21 @@ ini_set('max_execution_time', 600);
 ini_set('max_input_time', 600);
 ini_set('memory_limit', '256M');
 
-require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/../db_mysqli.php';
 require_once __DIR__ . '/../auth_helpers.php';
 require_once __DIR__ . '/permission_helper.php';
+require_once __DIR__ . '/../helpers/security_middleware.php';
 
-header('Content-Type: application/json; charset=utf-8');
+// Apply admin security (WAF, rate limiting)
+applySecurityMiddleware([
+    'csrf' => false,  // TODO: Enable after frontend update
+    'waf' => true,
+    'rate_limit' => true,
+    'rate_limit_requests' => 30,
+    'rate_limit_window' => 60,
+    'audit' => true
+]);
 
 $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 $required_action = $id > 0 ? 'edit' : 'create';
