@@ -5,6 +5,9 @@
  * If .env doesn't exist, fallback to defaults (for development only)
  */
 
+// Store env variables in array (avoid putenv which may be disabled on some hosts)
+$_ENV_VARS = [];
+
 // Load .env file if exists
 $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {
@@ -19,16 +22,19 @@ if (file_exists($envFile)) {
             $key = trim($key);
             $value = trim($value);
             
-            // Set as environment variable if not already set
-            if (!getenv($key)) {
-                putenv("$key=$value");
-            }
+            // Store in our array
+            $_ENV_VARS[$key] = $value;
         }
     }
 }
 
 // Helper function to get env with fallback
 function env($key, $default = null) {
+    global $_ENV_VARS;
+    // First check our loaded vars, then system env
+    if (isset($_ENV_VARS[$key])) {
+        return $_ENV_VARS[$key];
+    }
     $value = getenv($key);
     return $value !== false ? $value : $default;
 }
