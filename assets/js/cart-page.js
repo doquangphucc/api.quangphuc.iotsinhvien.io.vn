@@ -56,7 +56,7 @@ function renderCart() {
                 <!-- Product Image -->
                 <div class="w-32 h-32 flex-shrink-0">
                     <img 
-                        src="../${item.image_url}" 
+                        src="${item.image_url}" 
                         alt="${item.name}"
                         class="w-full h-full object-cover rounded-xl"
                         onerror="this.src='../assets/img/logo.jpg'"
